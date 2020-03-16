@@ -1,0 +1,36 @@
+/**
+ * environmentConfig.interface.ts
+ * Interfaces for the environment config.
+ */
+
+// Enumerators.
+import { UserRole } from '../../api/user/user.enum';
+
+export interface EnvironmentProperties {
+  authenticationTimeout: string;
+  database?: DatabaseProperties;
+  env: string;
+  ip: string;
+  port: string | number;
+  providers: Array<string>;
+  refreshBuffer: string;
+  roles: Array<UserRole>;
+  root: string;
+  s3?: S3Properties;
+  security?: SecurityProperties;
+}
+
+export interface DatabaseProperties {
+  secret: string;
+  name: string;
+  uri: string;
+}
+
+export interface SecurityProperties {
+  secret: string;
+  csrfSecret: string;
+}
+
+export interface S3Properties {
+  bucket: string;
+}

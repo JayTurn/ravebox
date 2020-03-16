@@ -1,0 +1,38 @@
+/**
+ * Local Environment Configuration Example.
+ *
+ * Simply copy this file as 'local.js' with the following optional overrides.
+ *
+ * Override Options:
+ *  port - Set a local port for which to start the Express Server.
+ *  ip   - Define a custom ip address for the Express Server.
+ *  root - Define a root path for the Express Server.
+ */
+'use strict';
+
+// Interfaces.
+import { EnvironmentProperties } from './environmentConfig.interface';
+
+// Define the dbname and uri to be set in the config.
+const dbname: string = process.env.MONGODB_NAME,
+      uri = `${process.env.MONGODB_URI}/${process.env.MONGODB_NAME}`;
+
+const config: Partial<EnvironmentProperties> = {
+  database: {
+    name: dbname,
+    uri: uri,
+    secret: 'yVDtwrgYpk1SarMBZULYjnYjJTmNdyem337hdjdf'
+  },
+  //domain: 'http://localhost:9000',
+  //liveReloadPort: 9001,
+  port: 9000,
+  security: {
+    secret: 'xVDtwrgYpk1SarMBZULYjnYjJTmNaEJgoyQEWenM',
+    csrfSecret: 'xYDtwrgYpk1SarMBZULYjnYjJTmNaEJgoyQEWenM'
+  },
+  s3: {
+    bucket: "ravebox-dev"
+  }
+};
+
+export default config;

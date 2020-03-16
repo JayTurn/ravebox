@@ -1,0 +1,15 @@
+/**
+ * Navigation.scss
+ * Navigation styles.
+ */
+
+.block--navigation {
+  a {
+    color: #FFF;
+    text-decoration: none;
+
+    &.active {
+      text-decoration: underline;
+    }
+  }
+}

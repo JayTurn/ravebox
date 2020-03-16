@@ -1,0 +1,67 @@
+version: '2.3'
+
+networks:
+  node-tier:
+    driver: bridge
+
+services:
+  node_server:
+    container_name: node_server
+    build: server/
+    #image: jayturn/node-server:1.0.1
+    command: yarn start-debug
+    expose:
+      - 9000
+      - 9229
+    depends_on:
+      - mongodb
+    networks:
+      - node-tier
+    ports:
+      - 9000:9000
+      - 9001:9001
+      - 9229:9229
+    volumes:
+      - ./server/:/server/app
+      - /server/node_modules
+  mongodb:
+    container_name: mongodb
+    image: mongo:4.2.3
+    command: 
+      - '--wiredTigerCacheSizeGB=6'
+    networks:
+    - node-tier
+    ports:
+      - 27017:27017
+    restart: unless-stopped
+    volumes:
+      - /data/db:/data/db
+  react_client:
+    build: client/
+    command: yarn start:${BUILD}
+    container_name: react_client
+    #image: jayturn/node-server:1.0.1
+    depends_on:
+      - mongodb
+      - node_server
+    expose:
+      - 3000
+      - 9228
+    networks:
+      - node-tier
+    ports:
+      - 3000:3000
+      - 3001:3001
+      - 9228:9229
+    volumes:
+      - ./client/:/client/app
+      - /client/node_modules
+  #react_client_sass:
+    #container_name: react_client_sass
+    #build: client/
+    #image: jayturn/node-server:1.0.1
+    #command: yarn watch-css
+    #volumes:
+      #- ./client/:/client/app
+      #- /client/node_modules
+
