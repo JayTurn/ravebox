@@ -66,7 +66,7 @@ const server = express()
          <head>
            <meta http-equiv="X-UA-Compatible" content="IE=edge" />
            <meta charSet='utf-8' />
-           <title>Two Review</title>
+           <title>Ravebox</title>
            <meta name="viewport" content="width=device-width, initial-scale=1">
            <link rel="shortcut icon" href="favicon.ico">
            ${

@@ -13,7 +13,7 @@ import { PrivateProfile } from '../User.interface';
 /**
  * Interface for the signup form.
  */
-export interface SignupProps extends RouteComponentProps {
+export interface SignupFormProps extends RouteComponentProps {
   addXsrf?: (token: string) => {};
   login?: (user: PrivateProfile) => {};
 }
@@ -21,6 +21,6 @@ export interface SignupProps extends RouteComponentProps {
 /**
  * Interface for the signup api response.
  */
-export interface SignupResponse extends APIResponse {
+export interface SignupFormResponse extends APIResponse {
   user: PrivateProfile;
 }

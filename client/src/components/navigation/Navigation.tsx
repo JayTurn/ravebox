@@ -13,13 +13,15 @@ import { connect } from 'react-redux';
 import { withRouter } from 'react-router';
 import { NavLink } from 'react-router-dom';
 import { bindActionCreators, Dispatch, AnyAction } from 'redux';
+import Cookies from 'universal-cookie';
+
+// Actions.
+import { remove } from '../../store/xsrf/Actions';
+import { logout } from '../../store/user/Actions';
 
 // Dependent interfaces.
 import { NavigationProps } from './Navigation.interface';
 import { PrivateProfile } from '../user/User.interface';
-
-// Dependent models.
-import { logout } from '../../store/user/Actions';
 
 // Dependent styles.
 import './Navigation.css';
@@ -36,11 +38,23 @@ const Navigation: React.FC<NavigationProps> = (props: NavigationProps) => {
   const handleLogout: (
   ) => void = (
   ): void => {
-    if (props.logout && props.profile) {
-      props.logout(props.profile);
-      // Redirect to the home screen.
-      props.history.push('/');
+
+    // Remove the cookies from the application.
+    const cookies: Cookies = new Cookies();
+    cookies.remove('XSRF-TOKEN');
+
+    if (props.removeXsrf) {
+      // Remove the tokens and user from the redux store.
+      props.removeXsrf('');
     }
+
+    if (props.profile && props.logout) {
+      props.logout(props.profile);
+    }
+
+    // Redirect to the home screen.
+    props.history.push('/');
+
   }
 
   /**
@@ -55,8 +69,15 @@ const Navigation: React.FC<NavigationProps> = (props: NavigationProps) => {
           </NavLink>
         </Button>
         <Button color="inherit">
-          <NavLink to="/user/profile" activeClassName="active">Profile</NavLink>
+          <NavLink to="/review/add" exact activeClassName="active">
+            Add review
+          </NavLink>
         </Button>
+        { props.profile &&
+          <Button color="inherit">
+            <NavLink to="/user/profile" activeClassName="active">Profile</NavLink>
+          </Button>
+        }
         {props.profile ? (
           <Button color="inherit" onClick={handleLogout}>
             Logout
@@ -96,7 +117,8 @@ function mapStatetoProps(state: any, ownProps: NavigationProps) {
 const mapDispatchToProps = (dispatch: Dispatch<AnyAction>) =>
   bindActionCreators(
     {
-      logout: logout
+      logout: logout,
+      removeXsrf: remove
     },
     dispatch
   );

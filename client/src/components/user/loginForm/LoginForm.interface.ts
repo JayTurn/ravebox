@@ -1,6 +1,6 @@
 /**
- * UserLogin.interface.tsx
- * Interfaces for user login components.
+ * LoginForm.interface.tsx
+ * Interfaces for user login form.
  */
 
 // Modules.
@@ -11,17 +11,17 @@ import { PrivateProfile } from '../User.interface';
 import { APIResponse } from '../../../utils/api/Api.interface';
 
 /**
- * User login properties.
+ * Login form properties.
  */
-export interface UserLoginProps extends RouteComponentProps {
+export interface LoginFormProps extends RouteComponentProps {
   addXsrf?: (token: string) => {};
   login?: (user: PrivateProfile) => {};
 }
 
 /**
- * User login state.
+ * Login form state.
  */
-export interface UserLoginState { 
+export interface LoginFormState { 
 }
 
 /**
@@ -35,8 +35,8 @@ export interface AuthenticationToken {
 }
 
 /**
- * Login response.
+ * Login form response.
  */
-export interface LoginResponse extends APIResponse {
+export interface LoginFormResponse extends APIResponse {
   user: PrivateProfile;
 }
