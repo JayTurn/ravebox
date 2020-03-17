@@ -224,9 +224,6 @@
         "label": "Car & Vehicle Electronics",
         "key": "car_and_vehicle_electronics"
       }, {
-        "label": "Computers, Components & Accessories",
-        "key": "computers_components_and_accessories"
-      }, {
         "label": "Headphones, Earbuds & Accessories",
         "key": "headphones_earbuds_and_accessories"
       }, {
@@ -293,21 +290,215 @@
       }, {
         "label": "Pretend Play Products",
         "key": "stuffed_and_plush_animals"
+      }, {
+        "label": "Puzzles",
+        "key": "puzzles"
+      }, {
+        "label": "Kids School Supplies",
+        "key": "kids_school_supplies"
+      }, {
+        "label": "Sport & Outdoor Toys",
+        "key": "sport_and_outdoor_toys"
+      }, {
+        "label": "Toy Figures & Playsets",
+        "key": "toy_figures_and_playsets"
       }]
   }, {
     "label": "Computers",
-    "key": "computers"
+    "key": "computers",
+      "children": [{
+        "label": "Computer Accessories",
+        "key": "computer_accessories"
+      }, {
+        "label": "Computer Components",
+        "key": "computer_components"
+      }, {
+        "label": "Data Storage",
+        "key": "data_storage"
+      }, {
+        "label": "Desktop PCs",
+        "key": "desktop_pcs"
+      }, {
+        "label": "External Computer Components",
+        "key": "external_computer_components"
+      }, {
+        "label": "Laptop Components & Replacement Parts",
+        "key": "laptop_components_and_replacement_parts"
+      }, {
+        "label": "Laptops",
+        "key": "laptops"
+      }, {
+        "label": "Monitors",
+        "key": "monitors"
+      }, {
+        "label": "Networking Devices",
+        "key": "networking_devices"
+      }, {
+        "label": "Printers & Accessries",
+        "key": "printers_and_accessories"
+      }, {
+        "label": "Tablets",
+        "key": "tablets"
+      }]
   }, {
     "label": "Musical Instruments",
-    "key": "musical_instruments"
+    "key": "musical_instruments",
+      "children": [{
+        "label": "Bass Guitars & Gear",
+        "key": "bass_guitars_and_gear"
+      }, {
+        "label": "DJ & VJ Equipment",
+        "key": "dj_and_vj_equipment"
+      }, {
+        "label": "Drums & Percussion",
+        "key": "drums_and_percussion"
+      }, {
+        "label": "General Music-Making Accessories",
+        "key": "general_music_making_accessories"
+      }, {
+        "label": "Guitars & Gear",
+        "key": "guitars_and_gear"
+      }, {
+        "label": "Microphones",
+        "key": "microphones"
+      }, {
+        "label": "PA & Stage",
+        "key": "pa_and_stage"
+      }, {
+        "label": "Recording & Computer",
+        "key": "recording_and_computer"
+      }, {
+        "label": "Scores, Songbooks & Lyrics",
+        "key": "scores_songbooks_and_lyrics"
+      }, {
+        "label": "String Instruments",
+        "key": "string_instruments"
+      }, {
+        "label": "Wind Instruments",
+        "key": "wind_instruments"
+      }]
   }, {
     "label": "Garden",
-    "key": "garden"
+    "key": "garden",
+      "children": [{
+        "label": "Backyard Birding & Wildlife",
+        "key": "backyard_birding_and_wildlife"
+      }, {
+        "label": "Backyard Livestock & Bee Care",
+        "key": "backyard_livestock_and_bee_care"
+      }, {
+        "label": "Outdoor Cooking",
+        "key": "outdoor_cooking"
+      }, {
+        "label": "Gardening Supplies",
+        "key": "gardening_supplies"
+      }, {
+        "label": "Outdoor Lighting",
+        "key": "outdoor_lighting"
+      }, {
+        "label": "Outdoor Power & Lawn Equipment",
+        "key": "outdoor_power_and_lawn_equipment"
+      }, {
+        "label": "Outdoor Décor",
+        "key": "outdoor_decor"
+      }, {
+        "label": "Outdoor Heating & Cooling",
+        "key": "outdoor_heating_and_cooling"
+      }, {
+        "label": "Patio Furniture & Accessories",
+        "key": "patio_furniture_and_accessories"
+      }, {
+        "label": "Pools, Hot Tubs & Supplies",
+        "key": "pools_hot_tubs_and_supplies"
+      }, {
+        "label": "Thermometers & Meteorological Instruments",
+        "key": "thermometers_and_meteorological_instruments"
+      }]
   }, {
     "label": "Video Games",
-    "key": "video_games"
+    "key": "video_games",
+      "children": [{
+        "label": "Legacy Systems & Microconsoles",
+        "key": "legacy_systems_and_microconsoles"
+      }, {
+        "label": "Nintendo 3DS & 2DS Consoles, Games & Accessories",
+        "key": "nintendo_3ds_and_2ds_consoles_games_and_accessories"
+      }, {
+        "label": "Nintendo DS Consoles, Games & Accessories",
+        "key": "nintendo_ds_consoles_games_and_accessories"
+      }, {
+        "label": "Nintendo Switch Consoles, Games & Accessories",
+        "key": "nintendo_switch_consoles_games_and_accessories"
+      }, {
+        "label": "PC Consoles, Games & Accessories",
+        "key": "pc_consoles_games_and_accessories"
+      }, {
+        "label": "Playstation 3 Consoles, Games & Accessories",
+        "key": "playstation_3_consoles_games_and_accessories"
+      }, {
+        "label": "Playstation 4 Consoles, Games & Accessories",
+        "key": "playstation_4_consoles_games_and_accessories"
+      }, {
+        "label": "Playstation Vita Consoles, Games & Accessories",
+        "key": "playstation_vita_consoles_games_and_accessories"
+      }, {
+        "label": "PSP Consoles, Games & Accessories",
+        "key": "psp_consoles_games_and_accessories"
+      }, {
+        "label": "Wii Consoles, Games & Accessories",
+        "key": "wii_consoles_games_and_accessories"
+      }, {
+        "label": "Wii U Consoles, Games & Accessories",
+        "key": "wii_u_consoles_games_and_accessories"
+      }, {
+        "label": "XBox 360 Consoles, Games & Accessories",
+        "key": "xbox_360_consoles_games_and_accessories"
+      }, {
+        "label": "XBox One Consoles, Games & Accessories",
+        "key": "xbox_one_consoles_games_and_accessories"
+      }]
   }, {
     "label": "Food & Drinks",
-    "key": "food_and_drinks"
+    "key": "food_and_drinks",
+    "children": [{
+      "label": "Baby Foods",
+      "key": "baby_foods"
+    }, {
+      "label": "Cereals & Breakfast Bars",
+      "key": "cereals_and_breakfast_bars"
+    }, {
+      "label": "Condiments & Sauces",
+      "key": "condiments_and_sauces"
+    }, {
+      "label": "Cooking Ingredients",
+      "key": "cooking_ingredients"
+    }, {
+      "label": "Drinks",
+      "key": "drinks"
+    }, {
+      "label": "Vitamins & Supplements",
+      "key": "vitamins_and_supplements"
+    }, {
+      "label": "Herbs, Spices & Seasonings",
+      "key": "herbs_spices_and_seasonings"
+    }, {
+      "label": "Instant Meals & Sides",
+      "key": "instant_meals_and_sides"
+    }, {
+      "label": "Jams, Honey & Spreads",
+      "key": "jams_honey_and_spreads"
+    }, {
+      "label": "Oils, Vinegars & Salad Dressings",
+      "key": "oils_vinegars_and_salad_dressings"
+    }, {
+      "label": "Rice, Pasta & Grains",
+      "key": "rice_pasta_and_grains"
+    }, {
+      "label": "Snacks & Sweets",
+      "key": "snacks_and_sweets"
+    }, {
+      "label": "Tinned & Jarred Food",
+      "key": "tinned_and_jarred_food"
+    }]
   }]
 }
