@@ -17,6 +17,7 @@ import Cookies from 'universal-cookie';
 
 // Components.
 import MultistepNavigation from '../multiStepNavigation/MultiStepNavigation';
+import ProductDetailsForm from './productDetails/ProductDetailsForm';
 
 // Enumerators.
 import {
@@ -81,10 +82,13 @@ const AddReviewForm: React.FC<AddReviewFormProps> = (props: AddReviewFormProps) 
         spacing={2}
         alignItems='stretch'
       >
-        <Grid item xs={12}>
-        </Grid>
-        <Grid item xs={12}>
-        </Grid>
+        { activeStep === 0 &&
+          <ProductDetailsForm />
+        }
+        { activeStep === 1 &&
+          <Grid item xs={12}>
+          </Grid>
+        }
         <Grid item xs={12} sm={9} md={3}>
           <Button
             variant='contained'
