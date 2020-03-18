@@ -18,9 +18,9 @@ const Input: React.FC<InputProps> = (props: InputProps) => {
    * Called when updates to the input field are performed.
    */
   const updateValues: (
-    fieldEvent: React.ChangeEvent<HTMLInputElement>
+    fieldEvent: React.FocusEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => void = (
-    fieldEvent: React.ChangeEvent<HTMLInputElement>
+    fieldEvent: React.FocusEvent<HTMLInputElement | HTMLTextAreaElement>
   ): void => {
     props.handleChange({
       key: props.name,
@@ -35,7 +35,7 @@ const Input: React.FC<InputProps> = (props: InputProps) => {
         helperText={props.description}
         id={props.name}
         label={props.title}
-        onChange={updateValues}
+        onBlur={updateValues}
         required={props.required}
         type={props.type}
       />

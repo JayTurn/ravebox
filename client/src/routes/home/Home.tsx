@@ -6,6 +6,7 @@
 // Modules.
 import * as React from 'react';
 import Grid from '@material-ui/core/Grid';
+import Typography from '@material-ui/core/Typography';
 import { bindActionCreators, Dispatch, AnyAction } from 'redux';
 import { connect } from 'react-redux';
 
@@ -14,7 +15,6 @@ import { HomeProps, HomeState } from './Home.interface';
 
 // Dependent components.
 //import Search from '../../components/search/Search';
-import Signup from '../../components/user/signup/Signup';
 
 /**
  * Home route component.
@@ -31,7 +31,9 @@ const Home: React.FC<HomeProps> = (props: HomeProps) => {
         justify='flex-start'
         alignItems='center'
       >
-        <Signup />
+        <Typography variant='h1'>
+          Welcome to Ravebox
+        </Typography>
       </Grid>
     </div>
   );

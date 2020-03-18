@@ -12,6 +12,7 @@ import * as H from 'history';
 import ConfigurationReducer from './configuration/Reducer';
 import WatchlistReducer from './watchlist/Reducer';
 import UserReducer from './user/Reducer';
+import XsrfReducer from './xsrf/Reducer';
 
 // Combine the router reducer with the application reducers to create a single
 // root reducer.
@@ -20,6 +21,7 @@ const RootReducer = (history: H.History) =>
     router: connectRouter(history),
     configuration: ConfigurationReducer,
     user: UserReducer,
+    xsrf: XsrfReducer,
     watchlist: WatchlistReducer
   });
 

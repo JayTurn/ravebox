@@ -1,6 +1,6 @@
 /**
- * Signup.tsx
- * Component to prompt the user to sign up.
+ * SignupForm.tsx
+ * Signup form component.
  */
 
 // Modules.
@@ -26,7 +26,7 @@ import API from '../../../utils/api/Api.model';
 
 // Interfaces.
 import { InputData } from '../../forms/input/Input.interface';
-import { SignupProps, SignupResponse } from './Signup.interface';
+import { SignupFormProps, SignupFormResponse } from './SignupForm.interface';
 import { PrivateProfile } from '../User.interface';
 
 // Styles defined for the signup form container grid.
@@ -37,7 +37,7 @@ import { PrivateProfile } from '../User.interface';
 /**
  * Signup form for new accounts.
  */
-const Signup: React.FC<SignupProps> = (props: SignupProps) => {
+const SignupForm: React.FC<SignupFormProps> = (props: SignupFormProps) => {
   // Define the base state for the signup form.
   const [values, setValues] = React.useState({
     email: '',
@@ -69,11 +69,11 @@ const Signup: React.FC<SignupProps> = (props: SignupProps) => {
   const submit: (
   ) => void = (
   ): void => {
-    API.requestAPI<SignupResponse>('user/signup', {
+    API.requestAPI<SignupFormResponse>('user/signup', {
       method: 'POST',
       body: JSON.stringify(values)
     })
-    .then((response: SignupResponse) => {
+    .then((response: SignupFormResponse) => {
       if (response.errorCode) {
         setError(response.title);
         return;
@@ -95,7 +95,9 @@ const Signup: React.FC<SignupProps> = (props: SignupProps) => {
 
   return(
     <div style={{'minWidth': '50%'}}>
-      <h1>Join Two Review</h1>
+      <Typography variant='h1' gutterBottom>
+        Join Ravebox
+      </Typography>
       <form noValidate autoComplete="off">
         <Grid
           container
@@ -160,7 +162,7 @@ const mapDispatchToProps = (dispatch: Dispatch<AnyAction>) =>
 /**
  * Maps the user store properties to the signup component.
  */
-const mapStatetoProps = (state: any, ownProps: SignupProps): SignupProps => {
+const mapStatetoProps = (state: any, ownProps: SignupFormProps): SignupFormProps => {
   return {
     ...ownProps,
   };
@@ -169,4 +171,4 @@ const mapStatetoProps = (state: any, ownProps: SignupProps): SignupProps => {
 export default withRouter(connect(
   mapStatetoProps,
   mapDispatchToProps
-)(Signup));
+)(SignupForm));

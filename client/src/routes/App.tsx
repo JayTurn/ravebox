@@ -18,15 +18,20 @@ import Container from '@material-ui/core/Container';
 import {
   login,
 } from '../store/user/Actions';
+import {
+  add,
+} from '../store/xsrf/Actions';
 
 // Components.
+import AddProduct from './product/add/AddProduct';
+import AddReview from './review/add/AddReview';
 import Home from './home/Home';
-import PageNotFound from './page-not-found/PageNotFound';
-import ScrollToTop from '../utils/scroll/ScrollToTop';
-import Navigation from '../components/navigation/Navigation';
 import Login from './user/login/Login';
-import Profile from './user/profile/Profile';
+import Navigation from '../components/navigation/Navigation';
+import PageNotFound from './page-not-found/PageNotFound';
 import PrivateRoute from './privateRoute/PrivateRoute';
+import Profile from './user/profile/Profile';
+import ScrollToTop from '../utils/scroll/ScrollToTop';
 
 // Hooks.
 import { useRetrieveProfile } from '../components/user/profile/useRetrieveProfile.hook';
@@ -57,7 +62,8 @@ const App: React.FC<AppProps> = (props: AppProps) => {
   // Retrieve the user profile if we have a valid token.
   const {profileStatus} = useRetrieveProfile({
     profile: props.profile,
-    updateProfile: props.login
+    updateProfile: props.login,
+    updateXsrf: props.updateXsrf
   });
 
   /**
@@ -65,7 +71,7 @@ const App: React.FC<AppProps> = (props: AppProps) => {
    */
   return (
     <div className={`app`}>
-      <Helmet title="Two Review" defaultTitle="Two Review" />
+      <Helmet title="Ravebox" defaultTitle="Ravebox" />
       <ScrollToTop />
       <Navigation />
       <Container maxWidth="lg">
@@ -87,6 +93,12 @@ const App: React.FC<AppProps> = (props: AppProps) => {
                     </PrivateRoute>
                     <Route exact={true} path="/user/login">
                       <Login />
+                    </Route>
+                    <Route exact={true} path="/product/add">
+                      <AddProduct />
+                    </Route>
+                    <Route exact={true} path="/product/:id/review">
+                      <AddReview />
                     </Route>
                     <Route exact={true} path="/">
                       <Home />
@@ -127,7 +139,8 @@ function mapStatetoProps(state: any, ownProps: AppProps) {
 const mapDispatchToProps = (dispatch: Dispatch<AnyAction>) =>
   bindActionCreators(
     {
-      login: login
+      login: login,
+      updateXsrf: add
     },
     dispatch
   );

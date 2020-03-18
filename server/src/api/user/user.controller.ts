@@ -97,7 +97,7 @@ export default class UserController {
    * @param {object} res
    * The response object.
    */
-  static Profile(request: AuthenticatedUserRequest, response: Response) {
+  static Profile(request: AuthenticatedUserRequest, response: Response): void {
     // Set the response object.
     let responseObject;
 
@@ -118,7 +118,7 @@ export default class UserController {
         response.status(responseObject.status).json(responseObject.data);
 
       })
-      .catch((error: Error) => {
+      .catch(() => {
         // Attach the private user profile to the response.
         responseObject = Connect.setResponse({
           data: {

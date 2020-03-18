@@ -82,20 +82,25 @@ export default class API {
    */
   public static async requestAPI<T>(path: string, data?: RequestInit): Promise<T> {
 
-    // Set the default request headers.
-    let defaults: RequestInit = API.setDefaultHeaders();
-
     // If we have data, we need to merge the defaults with the provided data
     // arguments.
     if (data) {
-      defaults = Object.assign(defaults, data);
+      data.headers = {
+        ...data.headers,
+        'Content-Type': 'application/json',
+        'Accept': 'application/json'
+      };
+
+      data.credentials = 'include';
+    } else {
+      data = API.setDefaultHeaders();
     }
 
     // Define the api path to be requested.
     path = `${API.getServerPath()}${path}`;
 
     // Perform the fetch of the data.
-    return fetch(path, defaults)
+    return fetch(path, data)
       .then(API.getJSON)
       .then((data: any) => {
         // Return the data in the generic form requested.

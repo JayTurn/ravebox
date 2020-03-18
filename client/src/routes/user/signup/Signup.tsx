@@ -12,16 +12,16 @@ import { connect } from 'react-redux';
 
 // Dependent interfaces.
 import {
-  LoginProps,
-} from './Login.interface';
+  SignupProps,
+} from './Signup.interface';
 
 // Dependent components.
-import LoginForm from '../../../components/user/loginForm/LoginForm';
+import SignupForm from '../../../components/user/signupForm/SignupForm';
 
 /**
- * Login component.
+ * Signup component.
  */
-const Login: React.FC<LoginProps> = (props: LoginProps) => {
+const Signup: React.FC<SignupProps> = (props: SignupProps) => {
 
   return (
     <div style={{'flexGrow': 1}}>
@@ -31,7 +31,7 @@ const Login: React.FC<LoginProps> = (props: LoginProps) => {
         justify='flex-start'
         alignItems='center'
       >
-        <LoginForm />
+        <SignupForm />
       </Grid>
     </div>
   );
@@ -41,7 +41,7 @@ const Login: React.FC<LoginProps> = (props: LoginProps) => {
  * Map the api image configuration state to the properties.
  *
  */
-function mapStatetoProps(state: {}, ownProps: LoginProps) {
+function mapStatetoProps(state: {}, ownProps: SignupProps) {
   return {
     ...ownProps,
   };
@@ -49,4 +49,4 @@ function mapStatetoProps(state: {}, ownProps: LoginProps) {
 
 export default withRouter(connect(
     mapStatetoProps
-  )(Login));
+  )(Signup));

@@ -1,0 +1,504 @@
+{
+  "ontology": [{
+    "label": "Beauty",
+    "key": "beauty",
+    "children": [{
+      "label": "Bath & Body",
+      "key": "bath_and_body",
+      "children": [{
+        "label": "Bath additives",
+        "key": "bath_additives"
+      }, {
+        "label": "Bathing accessories",
+        "key": "bathing_accessories"
+      }, {
+        "label": "Body Cleansers",
+        "key": "body_cleansers"
+      }, {
+        "label": "Scrubs & Body Treatments",
+        "key": "scrubs_and_body_treatments"
+      }]
+    }, {
+      "label": "Perfumes & Fragrances",
+      "key": "perfumes_and_fragrances",
+      "children": [{
+        "label": "Women's Fragrances",
+        "key": "womens_fragrances"
+      }, {
+        "label": "Men's Fragrances",
+        "key": "mens_fragrances"
+      }, {
+        "label": "Non-Binary Fragrances",
+        "key": "non_binary_fragrances"
+      }]
+    }, {
+      "label": "Hair Care",
+      "key": "hair_care",
+      "children": [{
+        "label": "Hair Care Products",
+        "key": "hair_care_products"
+      }, {
+        "label": "Hair Care Coloring",
+        "key": "hair_coloring"
+      }, {
+        "label": "Hair Cutting",
+        "key": "hair_cutting"
+      }, {
+        "label": "Hair Styling Accessories",
+        "key": "hair_styling_accessories"
+      }, {
+        "label": "Hair Styling Products",
+        "key": "hair_styling_products"
+      }, {
+        "label": "Hair Styling Tools",
+        "key": "hair_styling_tools"
+      }]
+    }, {
+      "label": "Makeup",
+      "key": "makeup",
+      "children": [{
+        "label": "Body Makeup",
+        "key": "body_makeup"
+      }, {
+        "label": "Eye Makeup",
+        "key": "eye_makeup"
+      }, {
+        "label": "Face Makeup",
+        "key": "face_makeup"
+      }, {
+        "label": "Lip Makeup",
+        "key": "lip_makeup"
+      }, {
+        "label": "Makeup Sets",
+        "key": "makeup_sets"
+      }, {
+        "label": "Makeup Brushes & Tools",
+        "key": "makeup_brushes_and_tools"
+      }]
+    }, {
+      "label": "Manicure & Pedicure",
+      "key": "manicure_and_pedicure",
+      "children": [{
+        "label": "Gel Nails & Polishes",
+        "key": "gel_nails_and_polishes"
+      }, {
+        "label": "Ingrown Toenail Care",
+        "key": "ingrown_toenail_care"
+      }, {
+        "label": "Nail Design Products",
+        "key": "nail_design_products"
+      }, {
+        "label": "Nail Polishes",
+        "key": "nail_polishes"
+      }, {
+        "label": "Foot Pumice Stones",
+        "key": "foot_pumice_stones"
+      }, {
+        "label": "Nail Tools & Accessories",
+        "key": "nail_tools_and_accessories"
+      }]
+    }, {
+      "label": "Skin Care",
+      "key": "skin_care",
+      "children": [{
+        "label": "Body Skin Care",
+        "key": "body_skin_care"
+      }, {
+        "label": "Eye Treatment",
+        "key": "eye_treatment"
+      }, {
+        "label": "Facial Skin Care",
+        "key": "facial_skin_care"
+      }, {
+        "label": "Hand Skin Care",
+        "key": "hands_skin_care"
+      }, {
+        "label": "Feet Skin Care",
+        "key": "feet_skin_care"
+      }, {
+        "label": "Sun Skin Care",
+        "key": "sun_skin_care"
+      }]
+    }, {
+      "label": "Beauty Tools & Accessories",
+      "key": "beauty_tools_and_accessories",
+      "children": [{
+        "label": "Make-up Bags",
+        "key": "makeup_bags"
+      }, {
+        "label": "Cotton Balls Pads & Swabs",
+        "key": "cotton_balls_pads_and_swabs"
+      }, {
+        "label": "Makeup Brushes & Tools",
+        "key": "makeup_brushes_and_tools"
+      }, {
+        "label": "Skin Care Tools",
+        "key": "skin_care_tools"
+      }]
+    }]
+  }, {
+    "label": "Books",
+    "key": "books",
+    "children": [{
+      "label": "Literature & Fiction",
+      "key": "literature_and_fiction"
+    }, {
+      "label": "Mystery, Thriller & Suspense",
+      "key": "mystery_thriller_and_suspense"
+    }, {
+      "label": "Romance",
+      "key": "science_fiction_and_fantasy"
+    }, {
+      "label": "Teen & Young Adult",
+      "key": "teen_and_young_adult"
+    }, {
+      "label": "Textbooks & Study Guides",
+      "key": "textbooks_and_study_guides"
+    }]
+  }, {
+    "label": "Clothing & Shoes",
+    "key": "clothing_and_shoes",
+    "children": [{
+      "label": "Women's Fashion",
+      "key": "womens_fashion",
+      "children": [{
+        "label": "Women's Clothing",
+        "key": "womens_clothing"
+      }, {
+        "label": "Women's Shoes",
+        "key": "womens_shoes"
+      }]
+    }, {
+      "label": "Men's Fashion",
+      "key": "mens_fashion",
+      "children": [{
+        "label": "Men's Clothing",
+        "key": "mens_clothing"
+      }, {
+        "label": "Men's Shoes",
+        "key": "mens_shoes"
+      }]
+    }, {
+      "label": "Non-Binary Fashion",
+      "key": "non_binary_fashion",
+      "children": [{
+        "label": "Non-binary Clothing",
+        "key": "non_binary_clothing"
+      }, {
+        "label": "Non-binary Shoes",
+        "key": "non_binary_shoes"
+      }]
+    }]
+  }, {
+    "label": "Kitchen & Dining",
+    "key": "kitchen_and_dining",
+      "children": [{
+        "label": "Bakeware",
+        "key": "bakeware"
+      }, {
+        "label": "Coffee, Tea & Espresso",
+        "key": "coffee_tea__and_espresso"
+      }, {
+        "label": "Cookware",
+        "key": "cookware"
+      }, {
+        "label": "Home Brewing & Wine Making",
+        "key": "home_brewing_and_wine_making"
+      }, {
+        "label": "Kitchen Storage & Organisation",
+        "key": "kitchen_storage_and_organisation"
+      }, {
+        "label": "Kitchen Tools & Gadgets",
+        "key": "kitchen_tools_and_gadgets"
+      }, {
+        "label": "Tableware",
+        "key": "tableware"
+      }]
+  }, {
+    "label": "Electronics",
+    "key": "electronics",
+      "children": [{
+        "label": "Camera & Photo",
+        "key": "camera_and_photo"
+      }, {
+        "label": "Car & Vehicle Electronics",
+        "key": "car_and_vehicle_electronics"
+      }, {
+        "label": "Headphones, Earbuds & Accessories",
+        "key": "headphones_earbuds_and_accessories"
+      }, {
+        "label": "Hi-Fi & Home Audio",
+        "key": "hifi_and_home_audio"
+      }, {
+        "label": "Mobile Phones & Communication",
+        "key": "mobile_phones_and_communication"
+      }, {
+        "label": "Portable Sound & Vision",
+        "key": "portable_sound_and_vision"
+      }, {
+        "label": "Home Cinema, TV & Video",
+        "key": "home_cinema_tv_and_video"
+      }, {
+        "label": "Wearable Technology",
+        "key": "wearable_technology"
+      }]
+  }, {
+    "label": "Toys & Games",
+    "key": "toys_and_games",
+      "children": [{
+        "label": "Arts & Crafts Supplies",
+        "key": "arts_and_crafts_supplies"
+      }, {
+        "label": "Baby & Toddler Toys",
+        "key": "baby_and_toddler_toys"
+      }, {
+        "label": "Building & Construction Toys",
+        "key": "building_and_construction_toys"
+      }, {
+        "label": "Pre-built Model Vehicles",
+        "key": "prebuilt_model_vehicles"
+      }, {
+        "label": "Dolls & Accessories",
+        "key": "dolls_and_accessories"
+      }, {
+        "label": "Dress Up & Costumes",
+        "key": "dress_up_and_costumes"
+      }, {
+        "label": "Games & Accessories",
+        "key": "games_and_accessories"
+      }, {
+        "label": "Hobby Products",
+        "key": "hobby_products"
+      }, {
+        "label": "Kids Electronics",
+        "key": "kids_electronics"
+      }, {
+        "label": "Learning & Education Toys",
+        "key": "learning_and_education_toys"
+      }, {
+        "label": "Kids Musical Instruments",
+        "key": "kids_musical_instruments"
+      }, {
+        "label": "Novelty & Gag Toys",
+        "key": "novelty_and_gag_toys"
+      }, {
+        "label": "Kid's Party Supplies",
+        "key": "kids_party_supplies"
+      }, {
+        "label": "Stuffed & Plush Animals",
+        "key": "stuffed_and_plush_animals"
+      }, {
+        "label": "Pretend Play Products",
+        "key": "pretend_play_products"
+      }, {
+        "label": "Puzzles",
+        "key": "puzzles"
+      }, {
+        "label": "Kids School Supplies",
+        "key": "kids_school_supplies"
+      }, {
+        "label": "Sport & Outdoor Toys",
+        "key": "sport_and_outdoor_toys"
+      }, {
+        "label": "Toy Figures & Playsets",
+        "key": "toy_figures_and_playsets"
+      }]
+  }, {
+    "label": "Computers",
+    "key": "computers",
+      "children": [{
+        "label": "Computer Accessories",
+        "key": "computer_accessories"
+      }, {
+        "label": "Computer Components",
+        "key": "computer_components"
+      }, {
+        "label": "Data Storage",
+        "key": "data_storage"
+      }, {
+        "label": "Desktop PCs",
+        "key": "desktop_pcs"
+      }, {
+        "label": "External Computer Components",
+        "key": "external_computer_components"
+      }, {
+        "label": "Laptop Components & Replacement Parts",
+        "key": "laptop_components_and_replacement_parts"
+      }, {
+        "label": "Laptops",
+        "key": "laptops"
+      }, {
+        "label": "Monitors",
+        "key": "monitors"
+      }, {
+        "label": "Networking Devices",
+        "key": "networking_devices"
+      }, {
+        "label": "Printers & Accessries",
+        "key": "printers_and_accessories"
+      }, {
+        "label": "Tablets",
+        "key": "tablets"
+      }]
+  }, {
+    "label": "Musical Instruments",
+    "key": "musical_instruments",
+      "children": [{
+        "label": "Bass Guitars & Gear",
+        "key": "bass_guitars_and_gear"
+      }, {
+        "label": "DJ & VJ Equipment",
+        "key": "dj_and_vj_equipment"
+      }, {
+        "label": "Drums & Percussion",
+        "key": "drums_and_percussion"
+      }, {
+        "label": "General Music-Making Accessories",
+        "key": "general_music_making_accessories"
+      }, {
+        "label": "Guitars & Gear",
+        "key": "guitars_and_gear"
+      }, {
+        "label": "Microphones",
+        "key": "microphones"
+      }, {
+        "label": "PA & Stage",
+        "key": "pa_and_stage"
+      }, {
+        "label": "Recording & Computer",
+        "key": "recording_and_computer"
+      }, {
+        "label": "Scores, Songbooks & Lyrics",
+        "key": "scores_songbooks_and_lyrics"
+      }, {
+        "label": "String Instruments",
+        "key": "string_instruments"
+      }, {
+        "label": "Wind Instruments",
+        "key": "wind_instruments"
+      }]
+  }, {
+    "label": "Garden",
+    "key": "garden",
+      "children": [{
+        "label": "Backyard Birding & Wildlife",
+        "key": "backyard_birding_and_wildlife"
+      }, {
+        "label": "Backyard Livestock & Bee Care",
+        "key": "backyard_livestock_and_bee_care"
+      }, {
+        "label": "Outdoor Cooking",
+        "key": "outdoor_cooking"
+      }, {
+        "label": "Gardening Supplies",
+        "key": "gardening_supplies"
+      }, {
+        "label": "Outdoor Lighting",
+        "key": "outdoor_lighting"
+      }, {
+        "label": "Outdoor Power & Lawn Equipment",
+        "key": "outdoor_power_and_lawn_equipment"
+      }, {
+        "label": "Outdoor Décor",
+        "key": "outdoor_decor"
+      }, {
+        "label": "Outdoor Heating & Cooling",
+        "key": "outdoor_heating_and_cooling"
+      }, {
+        "label": "Patio Furniture & Accessories",
+        "key": "patio_furniture_and_accessories"
+      }, {
+        "label": "Pools, Hot Tubs & Supplies",
+        "key": "pools_hot_tubs_and_supplies"
+      }, {
+        "label": "Thermometers & Meteorological Instruments",
+        "key": "thermometers_and_meteorological_instruments"
+      }]
+  }, {
+    "label": "Video Games",
+    "key": "video_games",
+      "children": [{
+        "label": "Legacy Systems & Microconsoles",
+        "key": "legacy_systems_and_microconsoles"
+      }, {
+        "label": "Nintendo 3DS & 2DS Consoles, Games & Accessories",
+        "key": "nintendo_3ds_and_2ds_consoles_games_and_accessories"
+      }, {
+        "label": "Nintendo DS Consoles, Games & Accessories",
+        "key": "nintendo_ds_consoles_games_and_accessories"
+      }, {
+        "label": "Nintendo Switch Consoles, Games & Accessories",
+        "key": "nintendo_switch_consoles_games_and_accessories"
+      }, {
+        "label": "PC Consoles, Games & Accessories",
+        "key": "pc_consoles_games_and_accessories"
+      }, {
+        "label": "Playstation 3 Consoles, Games & Accessories",
+        "key": "playstation_3_consoles_games_and_accessories"
+      }, {
+        "label": "Playstation 4 Consoles, Games & Accessories",
+        "key": "playstation_4_consoles_games_and_accessories"
+      }, {
+        "label": "Playstation Vita Consoles, Games & Accessories",
+        "key": "playstation_vita_consoles_games_and_accessories"
+      }, {
+        "label": "PSP Consoles, Games & Accessories",
+        "key": "psp_consoles_games_and_accessories"
+      }, {
+        "label": "Wii Consoles, Games & Accessories",
+        "key": "wii_consoles_games_and_accessories"
+      }, {
+        "label": "Wii U Consoles, Games & Accessories",
+        "key": "wii_u_consoles_games_and_accessories"
+      }, {
+        "label": "XBox 360 Consoles, Games & Accessories",
+        "key": "xbox_360_consoles_games_and_accessories"
+      }, {
+        "label": "XBox One Consoles, Games & Accessories",
+        "key": "xbox_one_consoles_games_and_accessories"
+      }]
+  }, {
+    "label": "Food & Drinks",
+    "key": "food_and_drinks",
+    "children": [{
+      "label": "Baby Foods",
+      "key": "baby_foods"
+    }, {
+      "label": "Cereals & Breakfast Bars",
+      "key": "cereals_and_breakfast_bars"
+    }, {
+      "label": "Condiments & Sauces",
+      "key": "condiments_and_sauces"
+    }, {
+      "label": "Cooking Ingredients",
+      "key": "cooking_ingredients"
+    }, {
+      "label": "Drinks",
+      "key": "drinks"
+    }, {
+      "label": "Vitamins & Supplements",
+      "key": "vitamins_and_supplements"
+    }, {
+      "label": "Herbs, Spices & Seasonings",
+      "key": "herbs_spices_and_seasonings"
+    }, {
+      "label": "Instant Meals & Sides",
+      "key": "instant_meals_and_sides"
+    }, {
+      "label": "Jams, Honey & Spreads",
+      "key": "jams_honey_and_spreads"
+    }, {
+      "label": "Oils, Vinegars & Salad Dressings",
+      "key": "oils_vinegars_and_salad_dressings"
+    }, {
+      "label": "Rice, Pasta & Grains",
+      "key": "rice_pasta_and_grains"
+    }, {
+      "label": "Snacks & Sweets",
+      "key": "snacks_and_sweets"
+    }, {
+      "label": "Tinned & Jarred Food",
+      "key": "tinned_and_jarred_food"
+    }]
+  }]
+}

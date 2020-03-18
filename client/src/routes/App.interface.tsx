@@ -18,6 +18,7 @@ export interface AppProps extends RouteComponentProps {
   showLogin?: Function;
   profile?: PrivateProfile;
   login?: (profile: PrivateProfile) => {};
+  updateXsrf?: (token: string) => {};
 }
 
 /**

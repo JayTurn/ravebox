@@ -6,13 +6,14 @@
 // Modules.
 import API from '../../../utils/api/Api.model';
 import Button from '@material-ui/core/Button';
-import Cookies from 'universal-cookie';
 import Grid from '@material-ui/core/Grid';
+import Typography from '@material-ui/core/Typography';
 import Input from '../../forms/input/Input'; 
 import * as React from 'react';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router';
 import { bindActionCreators, Dispatch, AnyAction } from 'redux';
+import Cookies from 'universal-cookie';
 
 // Actions.
 import {
@@ -24,16 +25,14 @@ import { add } from '../../../store/xsrf/Actions';
 import { InputData } from '../../forms/input/Input.interface';
 import { PrivateProfile } from '../User.interface';
 import {
-  LoginResponse, 
-  UserLoginProps,
-  UserLoginState
-} from './UserLogin.interface';
+  LoginFormResponse, 
+  LoginFormProps
+} from './LoginForm.interface';
 
 /**
- * Login component.
- * @class UserLogin
+ * Login form component.
  */
-const UserLogin: React.FC<UserLoginProps> = (props: UserLoginProps) => {
+const LoginForm: React.FC<LoginFormProps> = (props: LoginFormProps) => {
 
   // Define the base state for the signup form.
   const [values, setValues] = React.useState({
@@ -65,11 +64,11 @@ const UserLogin: React.FC<UserLoginProps> = (props: UserLoginProps) => {
   ) => void = (
   ): void => {
     //const instance: UserLogin = this;
-    API.requestAPI<LoginResponse>('user/login', {
+    API.requestAPI<LoginFormResponse>('user/login', {
       method: 'POST',
       body: JSON.stringify(values)
     })
-    .then((response: LoginResponse) => {
+    .then((response: LoginFormResponse) => {
       if (props.addXsrf && props.login) {
         // Retrieve the xsrf cookie to be set on the header for future requests. 
         const cookies: Cookies = new Cookies();
@@ -92,7 +91,9 @@ const UserLogin: React.FC<UserLoginProps> = (props: UserLoginProps) => {
    */
   return (
     <div style={{'minWidth': '50%'}}>
-      <h1>Log in</h1>
+      <Typography variant='h1' gutterBottom>
+        Log in
+      </Typography>
       <form noValidate autoComplete="off">
         <Grid
           container
@@ -125,7 +126,7 @@ const UserLogin: React.FC<UserLoginProps> = (props: UserLoginProps) => {
               variant='contained'
               color='primary'
               onClick={authenticate}
-            >Join</Button>
+            >Log in</Button>
           </Grid>
         </Grid>
       </form>
@@ -150,7 +151,7 @@ const mapDispatchToProps = (dispatch: Dispatch<AnyAction>) =>
 /**
  * Maps the user store properties to the login component.
  */
-const mapStatetoProps = (state: any, ownProps: UserLoginProps): UserLoginProps => {
+const mapStatetoProps = (state: any, ownProps: LoginFormProps): LoginFormProps => {
   return {
     ...ownProps,
   };
@@ -159,4 +160,4 @@ const mapStatetoProps = (state: any, ownProps: UserLoginProps): UserLoginProps =
 export default withRouter(connect(
   mapStatetoProps,
   mapDispatchToProps
-)(UserLogin));
+)(LoginForm));
