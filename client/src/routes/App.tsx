@@ -18,8 +18,12 @@ import Container from '@material-ui/core/Container';
 import {
   login,
 } from '../store/user/Actions';
+import {
+  add,
+} from '../store/xsrf/Actions';
 
 // Components.
+import AddProduct from './product/add/AddProduct';
 import AddReview from './review/add/AddReview';
 import Home from './home/Home';
 import Login from './user/login/Login';
@@ -58,7 +62,8 @@ const App: React.FC<AppProps> = (props: AppProps) => {
   // Retrieve the user profile if we have a valid token.
   const {profileStatus} = useRetrieveProfile({
     profile: props.profile,
-    updateProfile: props.login
+    updateProfile: props.login,
+    updateXsrf: props.updateXsrf
   });
 
   /**
@@ -89,7 +94,10 @@ const App: React.FC<AppProps> = (props: AppProps) => {
                     <Route exact={true} path="/user/login">
                       <Login />
                     </Route>
-                    <Route exact={true} path="/review/add">
+                    <Route exact={true} path="/product/add">
+                      <AddProduct />
+                    </Route>
+                    <Route exact={true} path="/product/:id/review">
                       <AddReview />
                     </Route>
                     <Route exact={true} path="/">
@@ -131,7 +139,8 @@ function mapStatetoProps(state: any, ownProps: AppProps) {
 const mapDispatchToProps = (dispatch: Dispatch<AnyAction>) =>
   bindActionCreators(
     {
-      login: login
+      login: login,
+      updateXsrf: add
     },
     dispatch
   );

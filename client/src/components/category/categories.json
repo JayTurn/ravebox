@@ -237,7 +237,7 @@
         "key": "portable_sound_and_vision"
       }, {
         "label": "Home Cinema, TV & Video",
-        "key": "portable_sound_and_vision"
+        "key": "home_cinema_tv_and_video"
       }, {
         "label": "Wearable Technology",
         "key": "wearable_technology"
@@ -289,7 +289,7 @@
         "key": "stuffed_and_plush_animals"
       }, {
         "label": "Pretend Play Products",
-        "key": "stuffed_and_plush_animals"
+        "key": "pretend_play_products"
       }, {
         "label": "Puzzles",
         "key": "puzzles"

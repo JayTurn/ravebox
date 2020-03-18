@@ -69,8 +69,8 @@ const Navigation: React.FC<NavigationProps> = (props: NavigationProps) => {
           </NavLink>
         </Button>
         <Button color="inherit">
-          <NavLink to="/review/add" exact activeClassName="active">
-            Add review
+          <NavLink to="/product/add" exact activeClassName="active">
+            Add a review
           </NavLink>
         </Button>
         { props.profile &&

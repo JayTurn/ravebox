@@ -1,7 +1,22 @@
 /**
  * product.controller.ts
  */
+
+// Modules.
+import Authenticate from '../../models/authentication/authenticate.model';
+import Connect from '../../models/database/connect.model';
 import { Request, Response, Router } from 'express';
+import Product from './product.model';
+
+// Interfaces.
+import {
+  AuthenticatedUserRequest
+} from '../../models/authentication/authentication.interface';
+import {
+  ProductDetails,
+  ProductDetailsDocument
+} from './product.interface';
+import { ResponseObject } from '../../models/database/connect.interface';
 
 /**
  * Routing controller for products.
@@ -22,6 +37,13 @@ export default class ProductController {
     router.get(path, (req: Request, res: Response) => {
       new ProductController().getStatus(req, res);
     });
+
+    // Create a new product.
+    router.post(
+      `${path}/create`,
+      Authenticate.isAuthenticated, 
+      ProductController.Create
+    );
   }
 
   /**
@@ -40,8 +62,41 @@ export default class ProductController {
    * @param {object} res
    * The response object.
    */
-  static Product(request: Request, response: Response) {
-    // Set the response object.
-    let responseObject;
+  static Create(request: AuthenticatedUserRequest, response: Response): void {
+    // Define the provided product details.
+    const productDetails: ProductDetails = request.body;
+
+    // Create a new product from the request data.
+    const newProduct: ProductDetailsDocument = new Product({
+      ...productDetails,
+      creator: request.auth._id
+    });
+
+    // Save the new product.
+    newProduct.save()
+      .then((product: ProductDetailsDocument) => {
+        // Set the response object.
+        const responseObject: ResponseObject = Connect.setResponse({
+          data: {
+            product: product
+          }
+        }, 201, 'Product created successfully');
+
+        // Return the response for the authenticated user.
+        response.status(responseObject.status).json(responseObject.data);
+
+      })
+      .catch(() => {
+        // Attach the private user profile to the response.
+        const responseObject = Connect.setResponse({
+          data: {
+            errorCode: 'PRODUCT_NOT_CREATED',
+            message: 'There was a problem creating your product'
+          }
+        }, 401, 'There was a problem creating your product');
+
+        // Return the error response for the user.
+        response.status(401).json(responseObject.data);
+      });
   }
 }

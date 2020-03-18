@@ -31,17 +31,15 @@ import {
 const MultiStepNavigation: React.FC<MultiStepNavigationProps> = (props: MultiStepNavigationProps) => {
 
   return(
-    <div>
-      <Stepper activeStep={props.activeStep} alternativeLabel>
-        {props.steps.map((step: string, index: number) => {
-          return (
-            <Step key={index}>
-              <StepLabel>{step}</StepLabel>
-            </Step>
-          )
-        })}
-      </Stepper>
-    </div>
+    <Stepper activeStep={props.activeStep} alternativeLabel>
+      {props.steps.map((step: string, index: number) => {
+        return (
+          <Step key={index}>
+            <StepLabel>{step}</StepLabel>
+          </Step>
+        )
+      })}
+    </Stepper>
   );
 }
 

@@ -30,16 +30,26 @@ import { PrivateProfile } from '../User.interface';
  */
 const setRetrievalStatus: (
   profile: PrivateProfile | undefined
+) => (
+  addXsrf?: (token: string) => {}
 ) => RetrievalStatus = (
   profile: PrivateProfile | undefined
+) => (
+  addXsrf?: (token: string) => {}
 ): RetrievalStatus => {
-
-  if (profile) {
-    return RetrievalStatus.SUCCESS;
-  }
 
   const cookie: Cookies = new Cookies(),
         security: string = cookie.get('XSRF-TOKEN');
+
+  if (profile) {
+
+    if (addXsrf) {
+      addXsrf(security);
+    }
+
+    return RetrievalStatus.SUCCESS;
+  }
+
 
   if (security) {
     return RetrievalStatus.REQUESTED;
@@ -57,11 +67,12 @@ export function useRetrieveProfile(params: RetrieveProfileParams) {
   // Retrieve the parameters.
   const {
     profile,
-    updateProfile
+    updateProfile,
+    updateXsrf
   } = {...params};
 
   // Check if the current profile exists and contains a valid cookie.
-  const [retrieved, setRetrieved] = React.useState(setRetrievalStatus(profile)); 
+  const [retrieved, setRetrieved] = React.useState(setRetrievalStatus(profile)(updateXsrf)); 
 
   /**
    * Handle state updates based on the presence of a profile.
@@ -84,6 +95,12 @@ export function useRetrieveProfile(params: RetrieveProfileParams) {
         if (updateProfile) {
           setRetrieved(RetrievalStatus.SUCCESS);
           updateProfile(response.user);
+
+          // Add the xsrf token.
+          if (updateXsrf) {
+            updateXsrf(security);
+          }
+
         } else {
           setRetrieved(RetrievalStatus.NOT_FOUND);
         }

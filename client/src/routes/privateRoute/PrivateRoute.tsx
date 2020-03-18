@@ -4,6 +4,7 @@
  */
 
 // Modules.
+import Typography from '@material-ui/core/Typography';
 import * as React from 'react';
 import { connect } from 'react-redux';
 import { RouteProps } from 'react-router';
@@ -52,9 +53,7 @@ const PrivateRoute: React.FC<PrivateRouteProps> = (
               {props.children}
             </React.Fragment>
           ) : (
-            <React.Fragment>
-              <h2>Loading...</h2>
-            </React.Fragment>
+            <Typography variant='h3'>Loading...</Typography>
           )}
         </React.Fragment>
       )}

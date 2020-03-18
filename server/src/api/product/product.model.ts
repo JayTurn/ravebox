@@ -25,23 +25,16 @@ const ProductSchema = new Schema({
     type: Date,
     default: Date.now
   },
-  color: {
-    type: String
-  },
-  dimensions: {
-    type: String
-  },
   name: {
     type: String
   },
-  rating: {
-    type: Number
-  },
   reviews: {
-    type: Number
+    type: Array,
+    default: []
   },
-  url: {
-    type: String
+  creator:  { 
+    type: Schema.Types.ObjectId, 
+    ref: 'User'
   }
 });
 

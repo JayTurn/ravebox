@@ -13,11 +13,19 @@ export interface ProductDetailsDocument extends Mongoose.Document {
   _id: string;
   brand: string;
   categories: Array<string>;
-  created: Date;
-  color?: string;
-  dimensions?: string;
+  creator: string;
+  added?: Date;
   name: string;
-  rating?: number;
-  reviews?: number;
-  url: string;
+  reviews?: Array<ProductReview>;
+}
+
+export interface ProductDetails {
+  brand: string;
+  categories: Array<string>;
+  name: string;
+}
+
+export interface ProductReview {
+  user: string;
+  score: string;
 }

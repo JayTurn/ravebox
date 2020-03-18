@@ -38,7 +38,7 @@ export default class LocalController {
   ): void {
     // Authenticate the user via the passport local strategy.
     passport.authenticate('local', (error, user, info) => {
-      let responseObject;
+      let responseObject: ResponseObject;
 
       // Define the error with a fallback to the info parameter.
       error = error || info;

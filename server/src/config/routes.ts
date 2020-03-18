@@ -5,6 +5,7 @@ import { Router } from 'express';
 
 // Route Controllers.
 import ReviewController from '../api/review/review.controller';
+import ProductController from '../api/product/product.controller';
 import UserController from '../api/user/user.controller';
 //import EvaluationController from '../api/execution/evaluation.controller';
 //import HealthController from '../api/health/health.controller';
@@ -31,6 +32,8 @@ export default class RoutesController {
     // Instantiate the router to be pass to classes for route registration.
     this.router = Router();
 
+    // Register the product routes.
+    ProductController.createRoutes(this.router, this.apiPath);
     // Register the review routes.
     ReviewController.createRoutes(this.router, this.apiPath);
     // Register the user routes.

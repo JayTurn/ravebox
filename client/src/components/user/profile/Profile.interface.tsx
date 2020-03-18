@@ -10,6 +10,7 @@ import { PrivateProfile } from '../User.interface';
 export interface RetrieveProfileParams {
   profile?: PrivateProfile;
   updateProfile?: (profile: PrivateProfile) => {};
+  updateXsrf?: (token: string) => {};
 }
 
 export interface ProfileResponse extends APIResponse {
