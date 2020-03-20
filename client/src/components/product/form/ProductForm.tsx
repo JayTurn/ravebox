@@ -21,6 +21,7 @@ import {
 } from '../../../utils/api/Api.enum';
 
 // Interfaces.
+import { CategoryItem } from '../../category/Category.interface';
 import { InputData } from '../../forms/input/Input.interface';
 import { Product } from '../../product/Product.interface';
 import {
@@ -38,7 +39,10 @@ const ProductForm: React.FC<ProductFormProps> = (
   // Define the product details.
   const [product, setProduct] = React.useState({
     brand: '',
-    categories: [''],
+    categories: [{
+      key: '',
+      label: ''
+    }],
     name: '',
   });
 
@@ -48,9 +52,9 @@ const ProductForm: React.FC<ProductFormProps> = (
    * @param { Array<string> } selected - the selected categories.
    */
   const updateCategories: (
-    selected: Array<string>
+    selected: Array<CategoryItem>
   ) => void = (
-    selected: Array<string>
+    selected: Array<CategoryItem>
   ): void => {
 
     setProduct({

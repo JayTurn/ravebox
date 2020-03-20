@@ -3,12 +3,17 @@
  * Interfaces for the reviews.
  */
 
+// Enumerators.
+import { Recommended } from './recommendation/Recommendation.enum';
+
 /**
  * Review interface.
  */
 export interface Review {
   _id: string;
-  productId: string;
+  product: string;
+  user?: string;
   title: string;
-  userId: string;
+  recommended: Recommended;
+  videoURL?: string;
 }

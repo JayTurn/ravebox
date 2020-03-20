@@ -13,7 +13,6 @@ import { StaticRouter } from 'react-router';
 import { Provider } from 'react-redux';
 import { Store } from 'redux';
 import Serialize from 'serialize-javascript';
-//import Cors from 'cors';
 
 // Import the dependent components.
 import AppContainer from '../routes/AppContainer';
@@ -39,10 +38,8 @@ syncLoadAssets();
  */
 const server = express()
   .disable('x-powered-by')
-  //.use(Cors())
   .use(express.static(process.env.RAZZLE_PUBLIC_DIR!))
   .get('/*', (req: express.Request, res: express.Response) => {
-
     const context = {};
 
     // Load the application as a static route using the request url and create

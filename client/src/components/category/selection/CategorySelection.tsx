@@ -11,7 +11,7 @@ import * as React from 'react';
 import Typography from '@material-ui/core/Typography';
 
 // Interfaces.
-import { Category } from '../Category.interface';
+import { Category, CategoryItem } from '../Category.interface';
 import { CategorySelectionProps } from './CategorySelection.interface';
 
 // Retrieve the list of categories.
@@ -62,13 +62,16 @@ const CategorySelection: React.FC<CategorySelectionProps> = (props: CategorySele
     index: number
   ): void => {
     const selectedCategoryList: Array<Category> | undefined = list[index].children,
-          selectedCategoryKey: string = list[index].key;
+          selectedCategory: CategoryItem = {
+            key: list[index].key,
+            label: list[index].label
+          };
 
     if (selectedCategoryList) {
       setSubCategories([...selectedCategoryList]);
       setSelectedCategoryIndex(index);
       setSelectedSubCategoryIndex(-1);
-      props.update([selectedCategoryKey]);
+      props.update([selectedCategory]);
     }
   }
 
@@ -82,12 +85,18 @@ const CategorySelection: React.FC<CategorySelectionProps> = (props: CategorySele
   ) => void = (
     index: number
   ): void => {
-    const categoryKey: string = list[selectedCategoryIndex].key,
-          subCategoryKey: string = subCategories[index].key;
+    const selectedCategory: CategoryItem = {
+            key: list[selectedCategoryIndex].key,
+            label: list[selectedCategoryIndex].label
+          },
+          selectedSubCategory: CategoryItem = {
+            key: subCategories[index].key,
+            label: subCategories[index].label
+          };
 
-    if (categoryKey && subCategoryKey) {
+    if (selectedCategory && selectedSubCategory) {
       setSelectedSubCategoryIndex(index);
-      props.update([categoryKey, subCategoryKey]);
+      props.update([selectedCategory, selectedSubCategory]);
     }
   }
 
