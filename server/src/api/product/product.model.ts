@@ -7,7 +7,10 @@
 import * as Mongoose from 'mongoose';
 
 // Interfaces.
-import { ProductDetailsDocument } from './product.interface';
+import {
+  ProductDetailsDocument,
+  Category
+} from './product.interface';
 
 // Get the Mongoose Shema method.
 const Schema = Mongoose.Schema;
@@ -28,15 +31,23 @@ const ProductSchema = new Schema({
   name: {
     type: String
   },
-  reviews: {
-    type: Array,
-    default: []
-  },
   creator:  { 
     type: Schema.Types.ObjectId, 
     ref: 'User'
   }
 });
+
+// Define a view to be used for product responses.
+ProductSchema
+  .virtual('details')
+  .get(function() {
+    return {
+      '_id': this._id,
+      'brand': this.brand,
+      'categories': this.categories,
+      'name': this.name
+    };
+  });
 
 // Declare the product mongoose model.
 const Product: Mongoose.Model<ProductDetailsDocument> = Mongoose.model('Product', ProductSchema);

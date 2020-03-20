@@ -72,17 +72,23 @@ export function useRetrieveProfile(params: RetrieveProfileParams) {
   } = {...params};
 
   // Check if the current profile exists and contains a valid cookie.
-  const [retrieved, setRetrieved] = React.useState(setRetrievalStatus(profile)(updateXsrf)); 
+  const [retrieved, setRetrieved] = React.useState(RetrievalStatus.REQUESTED); 
 
   /**
    * Handle state updates based on the presence of a profile.
    */
   React.useEffect(() => {
+    const cookie: Cookies = new Cookies(),
+          security: string = cookie.get('XSRF-TOKEN');
+
+    if (profile && updateXsrf) {
+      updateXsrf(security);
+      setRetrieved(RetrievalStatus.SUCCESS);
+    }
+
     if (retrieved === RetrievalStatus.REQUESTED) {
       setRetrieved(RetrievalStatus.WAITING);
 
-      const cookie: Cookies = new Cookies(),
-            security: string = cookie.get('XSRF-TOKEN');
 
       // Perform the API request to get the user's profile.
       API.requestAPI<ProfileResponse>('user/profile', {
@@ -112,7 +118,7 @@ export function useRetrieveProfile(params: RetrieveProfileParams) {
       
       // Update the user's profile in the redux store.
     }
-  }, [profile, setRetrieved]);
+  }, [profile]);
 
   return {
     profileStatus: retrieved

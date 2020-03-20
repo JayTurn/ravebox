@@ -69,10 +69,14 @@ app.set('views', path.join(__dirname, '../views'));
 app.engine('html', ejs.renderFile);
 app.set('view engine', 'html');
 
- //Set the cors acceptance headers.
+// Set the cors acceptance headers.
 app.use(cors({
   credentials: true,
-  origin: ['http://localhost:3000', 'http://localhost:9003'],
+  origin: [
+    'http://localhost:3000',
+    'http://localhost:9003',
+    'http://localhost:3005'
+  ],
   optionsSuccessStatus: 200
 }));
 

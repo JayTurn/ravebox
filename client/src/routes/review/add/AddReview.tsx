@@ -4,26 +4,44 @@
  */
 
 // Modules.
+import Grid from '@material-ui/core/Grid';
 import * as React from 'react';
 import { withRouter } from 'react-router';
 import { bindActionCreators, Dispatch, AnyAction } from 'redux';
 import { connect } from 'react-redux';
 
 // Components.
-import AddReviewForm from '../../../components/addReviewForm/AddReviewForm';
+import ReviewForm from '../../../components/review/form/ReviewForm';
+import ProductPreview from '../../../components/product/preview/ProductPreview';
+
+// Enumerators.
+import { RetrievalStatus } from '../../../utils/api/Api.enum';
 
 // Interfaces.
 import { AddReviewProps } from './AddReview.interface';
+
+// Hooks.
+import { useRetrieveProduct } from '../../../components/product/useRetrieveProduct.hook';
 
 /**
  * AddReview component.
  */
 const AddReview: React.FC<AddReviewProps> = (props: AddReviewProps) => {
 
+  const {
+    product,
+    productStatus
+  } = useRetrieveProduct({id: props.match.params.id});
+
   return (
-    <div className="block block--profile-container">
-      <AddReviewForm />
-    </div>
+    <Grid container direction='column'>
+      {productStatus === RetrievalStatus.SUCCESS &&
+        <Grid item xs={12}>
+          <ProductPreview {...product} />
+          <ReviewForm productId={product._id}/>
+        </Grid>
+      }
+    </Grid>
   );
 }
 

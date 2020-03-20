@@ -1,6 +1,6 @@
 /**
- * review.enum.ts
- * Enumerators for the reviews.
+ * Recommendation.enum.tsx
+ * Enumerators for the recommendations.
  */
 
 export enum Recommended {

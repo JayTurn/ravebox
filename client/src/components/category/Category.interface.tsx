@@ -3,8 +3,11 @@
  * Interfaces for categories.
  */
 
-export interface Category {
+export interface Category extends CategoryItem {
+  children?: Category[]; 
+}
+
+export interface CategoryItem {
   key: string;
   label: string;
-  children?: Category[]; 
 }

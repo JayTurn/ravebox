@@ -4,6 +4,7 @@
  */
 
 // Modules.
+import { frontloadConnect } from 'react-frontload';
 import * as React from 'react';
 import { Route, Switch } from 'react-router-dom';
 import { withRouter } from 'react-router';
