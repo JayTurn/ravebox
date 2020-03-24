@@ -6,15 +6,20 @@
 import { Request, Response, Router } from 'express';
 import Authenticate from '../../models/authentication/authenticate.model';
 import Connect from '../../models/database/connect.model';
+import * as S3 from 'aws-sdk/clients/s3';
 import Review from './review.model';
+import Video from '../../shared/video/Video.model';
+
+// Enumerators.
+import { Workflow } from '../../shared/enumerators/workflow.enum';
 
 // Interfaces.
 import {
   AuthenticatedUserRequest
 } from '../../models/authentication/authentication.interface';
 import {
-  ReviewDetails,
-  ReviewDocument
+  ReviewDocument,
+  ReviewRequestBody
 } from './review.interface';
 import { ResponseObject } from '../../models/database/connect.interface';
 
@@ -41,7 +46,7 @@ export default class ReviewController {
     // Create a new review.
     router.post(
       `${path}/create`,
-      Authenticate.isAuthenticated, 
+      Authenticate.isAuthenticated,
       ReviewController.Create
     );
   }
@@ -65,30 +70,47 @@ export default class ReviewController {
    */
   static Create(request: AuthenticatedUserRequest, response: Response): void {
     // Define the provided review details.
-    const reviewDetails: ReviewDetails = request.body;
+    const reviewDetails: ReviewRequestBody = request.body;
 
     // Create a new review from the request data.
     const newReview: ReviewDocument = new Review({
-      ...reviewDetails,
+      product: reviewDetails.product,
+      recommended: reviewDetails.recommended,
+      published: Workflow.PUBLISHED,
+      title: reviewDetails.title,
       user: request.auth._id
     });
 
-    // Save the new product.
-    newReview.save()
-      .then((review: ReviewDocument) => {
-        // Set the response object.
-        const responseObject: ResponseObject = Connect.setResponse({
-          data: {
-            review: review
-          }
-        }, 201, 'Review created successfully');
+    // Create a presigned url for uploading a video to S3.
+    Video.CreatePresignedRequest(
+      reviewDetails.videoTitle,
+      reviewDetails.videoSize,
+      reviewDetails.videoType,
+      `reviews/raw/${newReview._id}`
+    )
+    .then((requestData: S3.PresignedPost) => {
+      newReview.save()
+        .then((review: ReviewDocument) => {
 
-        // Return the response for the authenticated user.
-        response.status(responseObject.status).json(responseObject.data);
+          // Set the response object.
+          const responseObject: ResponseObject = Connect.setResponse({
+            data: {
+              review: review.details,
+              presigned: requestData
+            }
+          }, 201, 'Review created successfully');
 
+          // Return the response for the authenticated user.
+          response.status(responseObject.status).json(responseObject.data);
+
+        })
+        .catch((error: Error) => {
+          throw error;
+        });
       })
-      .catch(() => {
-        // Attach the private user profile to the response.
+      .catch((error: Error) => {
+        console.log(error);
+        // Return an error indicating the review wasn't created.
         const responseObject = Connect.setResponse({
           data: {
             errorCode: 'REVIEW_NOT_CREATED',

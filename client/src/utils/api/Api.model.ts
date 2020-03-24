@@ -86,9 +86,9 @@ export default class API {
     // arguments.
     if (data) {
       data.headers = {
-        ...data.headers,
         'Content-Type': 'application/json',
-        'Accept': 'application/json'
+        'Accept': 'application/json',
+        ...data.headers,
       };
 
       data.credentials = 'include';

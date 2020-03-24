@@ -15,8 +15,10 @@ import { UserRole } from '../../api/user/user.enum';
 
 // Interfaces.
 import {
+  AWSProperties,
   EnvironmentProperties,
   DatabaseProperties,
+  S3Properties,
   SecurityProperties
 } from './environmentConfig.interface';
 //import AWS from 'aws-sdk';
@@ -33,6 +35,12 @@ const config: EnvironmentProperties = require(__dirname + '/' + process.env.ENVI
 class EnvConfig implements EnvironmentProperties {
   // Node environment.
   public authenticationTimeout: string; 
+  public aws: AWSProperties = {
+    accessKeyId: '',
+    secretAccessKey: '',
+    region: '',
+    signatureVersion: ''
+  };
   public env: string = process.env.NODE_ENV;
   public root: string = Path.normalize(__dirname + '/../../../');
   public port: string | number = process.env.PORT || 9000;
@@ -42,6 +50,9 @@ class EnvConfig implements EnvironmentProperties {
   public roles: Array<UserRole>;
   public providers: Array<string>;
   public security: SecurityProperties;
+  public s3: S3Properties = {
+    bucket: ''
+  };
 
   /**
    * EnvConfig constructor.
