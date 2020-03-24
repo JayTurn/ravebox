@@ -5,12 +5,12 @@
 
 // Export the configuration shared across environments.
 export const sharedConfig = {
-  //aws: {
-    //accessKeyId: process.env.AWSACCESSKEY,
-    //secretAccessKey: process.env.AWSACCESSSECRET,
-    //region: process.env.AWSREGION,
-    //signatureVersion: process.env.AWSSIGNATURE
-  //},
+  aws: {
+    accessKeyId: process.env.AWSACCESSKEY,
+    secretAccessKey: process.env.AWSACCESSSECRET,
+    region: process.env.AWSREGION,
+    signatureVersion: process.env.AWSSIGNATURE
+  },
   database: {
     secret: process.env.DATABASESECRET // AWS ENV
   },

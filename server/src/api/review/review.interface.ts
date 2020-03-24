@@ -21,14 +21,29 @@ export interface ReviewDocument extends Mongoose.Document {
   recommended: Recommended;
   title: string;
   user: string;
-  videoURL?: string;
+  details: ReviewDetails;
 }
 
 /**
  * Review interface.
  */
 export interface ReviewDetails {
-  title: string;
+  _id: string;
+  product: string;
   recommended: Recommended;
-  videoURL?: string;
+  title: string;
+  videoURL: boolean;
 }
+
+/**
+ * Review request body interface.
+ */
+export interface ReviewRequestBody {
+  product: string;
+  recommended: Recommended;
+  title: string;
+  videoTitle: string;
+  videoSize: string;
+  videoType: string;
+}
+

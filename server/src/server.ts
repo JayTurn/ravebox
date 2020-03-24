@@ -83,7 +83,7 @@ app.use(cors({
 app.use(compression());
 app.use(logger('dev'));
 app.use(CookieParser());
-app.use(bodyParser.json());
+app.use(bodyParser.json({limit: '50mb'}));
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, 'public'), { maxAge: 31557600000 }));
 

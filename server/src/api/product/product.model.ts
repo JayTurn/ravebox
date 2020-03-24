@@ -8,8 +8,7 @@ import * as Mongoose from 'mongoose';
 
 // Interfaces.
 import {
-  ProductDetailsDocument,
-  Category
+  ProductDetailsDocument
 } from './product.interface';
 
 // Get the Mongoose Shema method.

@@ -18,6 +18,12 @@ const dbname: string = process.env.MONGODB_NAME,
       uri = `${process.env.MONGODB_URI}/${process.env.MONGODB_NAME}`;
 
 const config: Partial<EnvironmentProperties> = {
+  aws: {
+    accessKeyId: 'AKIAQZGCV7RFVDNF32PN',
+    secretAccessKey: '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',
+    region: 'ap-southeast-2',
+    signatureVersion: "v4"
+  },
   database: {
     name: dbname,
     uri: uri,

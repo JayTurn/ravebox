@@ -44,6 +44,20 @@ const ReviewSchema = new Schema({
   }
 });
 
+// Define a view to be used for product responses.
+ReviewSchema
+  .virtual('details')
+  .get(function() {
+    return {
+      '_id': this._id,
+      'product': this.product,
+      'recommended': this.recommended,
+      'title': this.title,
+      'user': this.user,
+      'videoURL': this.videoURL
+    };
+  });
+
 // Declare the review mongoose model.
 const Review: Mongoose.Model<ReviewDocument> = Mongoose.model('Review', ReviewSchema);
 
