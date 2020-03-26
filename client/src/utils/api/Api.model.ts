@@ -99,7 +99,6 @@ export default class API {
     // Define the api path to be requested.
     path = `${API.getServerPath()}${path}`;
 
-    console.log('DATA', data);
     // Perform the fetch of the data.
     return fetch(path, data)
       .then(API.getJSON)

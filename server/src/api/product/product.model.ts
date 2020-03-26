@@ -8,6 +8,7 @@ import * as Mongoose from 'mongoose';
 
 // Interfaces.
 import {
+  Category,
   ProductDetailsDocument
 } from './product.interface';
 
@@ -33,6 +34,10 @@ const ProductSchema = new Schema({
   creator:  { 
     type: Schema.Types.ObjectId, 
     ref: 'User'
+  },
+  url: {
+    type: String,
+    index: true
   }
 });
 
@@ -46,6 +51,34 @@ ProductSchema
       'categories': this.categories,
       'name': this.name
     };
+  });
+
+/**
+ * Pre-Save hook to set a custom url before saving.
+ */
+ProductSchema
+  .pre<ProductDetailsDocument>('save', function(next: Mongoose.HookNextFunction) {
+    const name: string = this.name.split(' ').join('-')
+            .split('&').join('and').toLowerCase(),
+          brand: string = encodeURIComponent(this.brand.split(' ').join('-')
+            .split('&').join('and').toLowerCase());
+
+    let url = '',
+        i = 0;
+
+    do {
+      const current: Category = this.categories[i];
+
+      const label: string = current.label.split(' ').join('-')
+        .split('&').join('and').toLowerCase();
+
+      url += `${label}/`
+      i++;
+    } while (i < this.categories.length);
+
+    this.url = `${url}${brand}/${name}`;
+
+    next();
   });
 
 // Declare the product mongoose model.

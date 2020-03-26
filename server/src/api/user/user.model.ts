@@ -52,7 +52,7 @@ const UserSchema = new Schema({
   },
   salt: {
     type: String,
-  },
+  }
 });
 
 // Define a private profile to be used for responses.
@@ -67,13 +67,25 @@ UserSchema
       //'phone': this.phone,
       //'address': this.address,
       // @todo: avatar
-      // @todo: current residential address
-      'expires': this.expires,
-      //'listings': this.listings,
+      'expires': this.expires
       //'searchPreferences': this.searchPreferences,
       //'settings': this.settings,
-      //'hasTenantApplication': (this.tenantApplication) ? true : false,
-      //'tenantApplicationCompletionStatus': (this.tenantApplication) ? this.tenantApplication.completionStatus : false,
+    };
+  });
+
+// Define a public profile to be used for responses.
+UserSchema
+  .virtual('publicProfile')
+  .get(function() {
+    return {
+      '_id': this._id,
+      'email': this.email
+      //'name': this.name,
+      //'phone': this.phone,
+      //'address': this.address,
+      // @todo: avatar
+      //'searchPreferences': this.searchPreferences,
+      //'settings': this.settings,
     };
   });
 

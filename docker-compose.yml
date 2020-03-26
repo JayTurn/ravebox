@@ -46,6 +46,7 @@ services:
       - node_server
     expose:
       - 3000
+      - 3001
       - 9228
     networks:
       - node-tier
