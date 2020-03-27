@@ -33,6 +33,7 @@
     "react-dom": "16.13.1",
     "react-frontload": "1.1.0",
     "react-helmet": "5.2.1",
+    "react-player": "1.15.3",
     "react-redux": "7.2.0",
     "react-router": "5.1.2",
     "react-router-dom": "5.1.2",
