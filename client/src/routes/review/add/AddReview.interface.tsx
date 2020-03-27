@@ -7,9 +7,9 @@
 import { RouteComponentProps } from 'react-router';
 
 // Interfaces.
-import { ProductMatchParams } from '../../../components/product/Product.interface';
+import { ProductByIdMatchParams } from '../../../components/product/Product.interface';
 
 /**
  * AddReview properties.
  */
-export interface AddReviewProps extends RouteComponentProps<ProductMatchParams> { }
+export interface AddReviewProps extends RouteComponentProps<ProductByIdMatchParams> { }

@@ -29,11 +29,11 @@ import { PrivateProfile } from '../User.interface';
  * @return RetrievalStatus
  */
 const setRetrievalStatus: (
-  profile: PrivateProfile | undefined
+  profile: PrivateProfile | null
 ) => (
   addXsrf?: (token: string) => {}
 ) => RetrievalStatus = (
-  profile: PrivateProfile | undefined
+  profile: PrivateProfile | null
 ) => (
   addXsrf?: (token: string) => {}
 ): RetrievalStatus => {
@@ -99,6 +99,11 @@ export function useRetrieveProfile(params: RetrieveProfileParams) {
       })
       .then((response: ProfileResponse) => {
         if (updateProfile) {
+          if (response.errorCode) {
+            setRetrieved(RetrievalStatus.FAILED);
+            return;
+          }
+
           setRetrieved(RetrievalStatus.SUCCESS);
           updateProfile(response.user);
 
@@ -112,7 +117,6 @@ export function useRetrieveProfile(params: RetrieveProfileParams) {
         }
       })
       .catch((error: Error) => {
-        console.error(error);
         setRetrieved(RetrievalStatus.FAILED);
       });
       

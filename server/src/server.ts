@@ -69,16 +69,24 @@ app.set('views', path.join(__dirname, '../views'));
 app.engine('html', ejs.renderFile);
 app.set('view engine', 'html');
 
-// Set the cors acceptance headers.
 app.use(cors({
   credentials: true,
   origin: [
     'http://localhost:3000',
-    'http://localhost:9003',
-    'http://localhost:3005'
+    'http://react_client:3000'
   ],
   optionsSuccessStatus: 200
 }));
+//app.use(cors({
+  //credentials: true,
+  //origin: [
+    //'http://localhost:3000',
+    //'http://localhost:3001',
+    //'http://localhost:9003',
+    //'http://localhost:3005'
+  //],
+  //optionsSuccessStatus: 200
+//}));
 
 app.use(compression());
 app.use(logger('dev'));

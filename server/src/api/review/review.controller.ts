@@ -3,7 +3,7 @@
  */
 
 // Modules.
-import { Request, Response, Router } from 'express';
+import { Request, Response, Router, NextFunction } from 'express';
 import Authenticate from '../../models/authentication/authenticate.model';
 import Connect from '../../models/database/connect.model';
 import * as S3 from 'aws-sdk/clients/s3';
@@ -17,7 +17,9 @@ import { Workflow } from '../../shared/enumerators/workflow.enum';
 import {
   AuthenticatedUserRequest
 } from '../../models/authentication/authentication.interface';
+import { ProductDetailsDocument } from '../product/product.interface';
 import {
+  ReviewDetails,
   ReviewDocument,
   ReviewRequestBody
 } from './review.interface';
@@ -49,6 +51,12 @@ export default class ReviewController {
       Authenticate.isAuthenticated,
       ReviewController.Create
     );
+
+    // Retrieve a review by it's path.
+    router.get(
+      `${path}/view/:brand/:productName/:reviewTitle`,
+      ReviewController.RetrieveByURL
+    )
   }
 
   /**
@@ -109,7 +117,6 @@ export default class ReviewController {
         });
       })
       .catch((error: Error) => {
-        console.log(error);
         // Return an error indicating the review wasn't created.
         const responseObject = Connect.setResponse({
           data: {
@@ -121,5 +128,81 @@ export default class ReviewController {
         // Return the error response for the user.
         response.status(401).json(responseObject.data);
       });
+  }
+
+  /**
+   * Retrieves a review and product using the url provided.
+   *
+   * @param {object} req
+   * The request object.
+   *
+   * @param {object} res
+   * The response object.
+   */
+  static RetrieveByURL(request: AuthenticatedUserRequest, response: Response): void {
+    const brand = request.params.brand,
+          productName = request.params.productName,
+          reviewTitle = request.params.reviewTitle;
+
+    const path = `${brand}/${productName}/${reviewTitle}`;
+
+    Review.findOne({
+      url: path,
+      published: Workflow.PUBLISHED
+    })
+    .populate({
+      path: 'product',
+      model: 'Product',
+    })
+    .populate({
+      path: 'user',
+      model: 'User'
+    })
+    .then((reviewDocument: ReviewDocument) => {
+      return {
+        ...reviewDocument.details,
+        product: reviewDocument.product.details,
+        user: reviewDocument.user.publicProfile
+      };
+    })
+    .then((review: ReviewDetails) => {
+      let responseObject: ResponseObject;
+
+      if (!review) {
+
+        // Set the response object.
+        responseObject = Connect.setResponse({
+          data: {
+            errorCode: 'REVIEW_NOT_FOUND',
+            message: 'There was a problem retrieving this review'
+          }
+        }, 400, `The review could not be found`);
+
+      } else {
+
+        // Set the response object.
+        responseObject = Connect.setResponse({
+          data: {
+            review: review
+          }
+        }, 201, 'Review returned successfully');
+      }
+
+      // Return the response for the authenticated user.
+      response.status(responseObject.status).json(responseObject.data);
+
+    })
+    .catch(() => {
+      // Return an error indicating the review wasn't created.
+      const responseObject = Connect.setResponse({
+        data: {
+          errorCode: 'REVIEW_RETRIEVAL_ERROR',
+          message: 'There was a problem retrieving this review'
+        }
+      }, 401, 'There was a problem retrieving the review');
+
+      // Return the error response for the user.
+      response.status(401).json(responseObject.data);
+    });
   }
 }

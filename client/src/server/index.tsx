@@ -33,17 +33,35 @@ const syncLoadAssets = () => {
 // Synchronize the assets from the environment variables.
 syncLoadAssets();
 
+const serverRender = async (url: string, context: any) => {
+  const markup: string = await frontloadServerRender(() =>
+      renderToString(
+        <Provider store={store}>
+          <StaticRouter location={url} context={context}>
+            <Frontload>
+              <AppContainer />
+            </Frontload>
+          </StaticRouter>
+        </Provider>
+      )
+  );
+
+  return markup;
+}
+
 /**
  * Creates an express server.
  */
 const server = express()
   .disable('x-powered-by')
   .use(express.static(process.env.RAZZLE_PUBLIC_DIR!))
-  .get('/*', (req: express.Request, res: express.Response) => {
+  .get('/*', async (req: express.Request, res: express.Response) => {
     const context = {};
 
+    const markup = await serverRender(req.url, context);
     // Load the application as a static route using the request url and create
     // a string to be returned in the response.
+    /*
     frontloadServerRender(() =>
       renderToString(
         <Provider store={store}>
@@ -55,9 +73,11 @@ const server = express()
         </Provider>
       )
     ).then((markup: string) => {
+     */
       const storeState: Store = store.getState();
+
       // Send the html response to the client.
-      res.send(
+      res.status(200).send(
         `<!doctype html>
          <html lang="">
          <head>
@@ -86,7 +106,7 @@ const server = express()
          </html>`
       );
 
-    });
+    //});
     
   });
 

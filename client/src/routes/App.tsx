@@ -26,6 +26,7 @@ import {
 // Components.
 import AddProduct from './product/add/AddProduct';
 import AddReview from './review/add/AddReview';
+import ViewReview from './review/view/ViewReview';
 import Home from './home/Home';
 import Login from './user/login/Login';
 import Navigation from '../components/navigation/Navigation';
@@ -98,8 +99,11 @@ const App: React.FC<AppProps> = (props: AppProps) => {
                     <Route exact={true} path="/product/add">
                       <AddProduct />
                     </Route>
-                    <Route exact={true} path="/product/:id/review">
+                    <PrivateRoute exact={true} path="/product/:id/review">
                       <AddReview />
+                    </PrivateRoute>
+                    <Route exact={true} path="/review/:brand/:productName/:reviewTitle">
+                      <ViewReview />
                     </Route>
                     <Route exact={true} path="/">
                       <Home />
@@ -120,11 +124,7 @@ const App: React.FC<AppProps> = (props: AppProps) => {
  *
  */
 function mapStatetoProps(state: any, ownProps: AppProps) {
-  let profile: PrivateProfile | undefined = state.user ? state.user.profile : undefined;
-
-  if (profile && !profile._id) {
-    profile = undefined;
-  }
+  let profile: PrivateProfile = state.user ? state.user.profile : {_id: '', email: ''};
 
   return {
     ...ownProps,

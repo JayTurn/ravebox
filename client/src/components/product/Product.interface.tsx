@@ -16,8 +16,17 @@ export interface Product {
 /**
  * Paramters used when retrieving a product from the api.
  */
-export interface RetrieveProductParams {
+export interface RetrieveProductByIdParams {
   id: string;
+}
+
+/**
+ * Paramters used when retrieving a product from the api.
+ */
+export interface RetrieveProductByURLParams {
+  brand: string;
+  productName: string;
+  reviewTitle: string;
 }
 
 /**
@@ -27,6 +36,10 @@ export interface ProductResponse {
   product: Product;
 }
 
-export interface ProductMatchParams {
+export interface ProductByIdMatchParams {
+  id: string;
+}
+
+export interface ProductByURLMatchParams {
   id: string;
 }

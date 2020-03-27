@@ -1,0 +1,50 @@
+{
+  "StartAt": "Input Validate",
+  "States": {
+    "Input Validate": {
+      "Type": "Task",
+      "Resource": "arn:aws:lambda:us-east-1:054095379531:function:ravebox-test-media-input-validate",
+      "Next": "Mediainfo"
+    },
+    "Mediainfo": {
+      "Type": "Task",
+      "Resource": "arn:aws:lambda:us-east-1:054095379531:function:ravebox-test-media-mediainfo",
+      "Next": "Duration"
+    },
+    "Duration": {
+      "Type": "Choice",
+      "Choices": [
+        {
+          "Variable": "$.srcMediaDuration",
+          "NumericLessThanEquals": 120,
+          "Next": "DynamoDB Update"
+        }
+      ],
+      "Default": "Remove Source"
+    },
+    "Remove Source": {
+      "Type": "Task",
+      "Resource": "arn:aws:lambda:us-east-1:054095379531:function:ravebox-media-delete-source",
+      "Next": "Failed State"
+    },
+    "DynamoDB Update": {
+      "Type": "Task",
+      "Resource": "arn:aws:lambda:us-east-1:054095379531:function:ravebox-test-media-dynamo",
+      "Next": "SNS Notification"
+    },
+    "SNS Notification": {
+      "Type": "Task",
+      "Resource": "arn:aws:lambda:us-east-1:054095379531:function:ravebox-test-media-sns-notification",
+      "Next": "Process Execute"
+    },
+    "Process Execute": {
+      "Type": "Task",
+      "Resource": "arn:aws:lambda:us-east-1:054095379531:function:ravebox-test-media-step-functions",
+      "End": true
+    },
+    "Failed State": {
+      "Type": "Fail",
+      "Cause": "Greater than allowable duration"
+    }
+  }
+}

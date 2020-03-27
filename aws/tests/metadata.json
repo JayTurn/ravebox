@@ -1,0 +1,6 @@
+{
+  "srcVideo": "test-file-duration.mov",
+  "archiveSource": true,
+  "frameCapture": true,
+  "srcBucket": "ravebox-media-source"
+}
