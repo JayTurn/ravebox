@@ -12,7 +12,11 @@ import { Workflow } from '../../shared/enumerators/workflow.enum';
 
 // Interfaces.
 import { ReviewDocument } from './review.interface';
+import { ProductDetailsDocument } from '../product/product.interface';
 
+// Models.
+import Product from '../product/product.model';
+ 
 // Get the Mongoose Shema method.
 const Schema = Mongoose.Schema;
 
@@ -35,6 +39,10 @@ const ReviewSchema = new Schema({
   title: {
     type: String
   },
+  url: {
+    type: String,
+    index: true
+  },
   user:  { 
     type: Schema.Types.ObjectId, 
     ref: 'User'
@@ -43,6 +51,40 @@ const ReviewSchema = new Schema({
     type: String
   }
 });
+
+/**
+ * Pre-Save hook to set a custom url before saving.
+ */
+ReviewSchema
+  .pre<ReviewDocument>('save', function(next: Mongoose.HookNextFunction) {
+    let _this: ReviewDocument;
+
+    if (this.product) {
+      _this = this;
+
+      // Load the related prouct for this review.
+      Product.findById(this.product) 
+        .then((product: ProductDetailsDocument) => {
+          const productName: string = product.name.split(' ').join('-')
+                  .split('&').join('and').toLowerCase(),
+                brand: string = encodeURIComponent(product.brand.split(' ').join('-')
+                  .split('&').join('and').toLowerCase()),
+                reviewTitle: string = encodeURIComponent(_this.title.split(' ').join('-')
+                  .split('&').join('and').toLowerCase());
+
+          _this.url = `${brand}/${productName}/${reviewTitle}`;
+
+          next();
+        })
+        .catch((error: Error) => {
+          console.log(error);
+          next();
+        });
+    } else {
+      throw new Error(`Product id doesn't exist`);
+    }
+
+  });
 
 // Define a view to be used for product responses.
 ReviewSchema

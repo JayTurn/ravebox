@@ -44,7 +44,7 @@ export default class ProductController {
     );
 
     // Retrieves a product.
-    router.get(`${path}/:id`, ProductController.Retrieve);
+    router.get(`${path}/:id`, ProductController.RetrieveById);
   }
 
   /**
@@ -111,7 +111,7 @@ export default class ProductController {
    * @param {object} res
    * The response object.
    */
-  static Retrieve(request: Request, response: Response, next: NextFunction): void {
+  static RetrieveById(request: Request, response: Response, next: NextFunction): void {
     // Get the id.
     const id: string = request.params.id;
 

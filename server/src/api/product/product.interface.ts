@@ -18,6 +18,7 @@ export interface ProductDetailsDocument extends Mongoose.Document {
   name: string;
   reviews?: Array<ProductReview>;
   details: ProductDetails;
+  url: string;
 }
 
 export interface ProductDetails {
@@ -25,6 +26,7 @@ export interface ProductDetails {
   brand: string;
   categories: Array<Category>;
   name: string;
+  url: string;
 }
 
 export interface ProductReview {

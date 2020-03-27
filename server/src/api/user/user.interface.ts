@@ -19,6 +19,7 @@ export interface UserDetailsDocument extends Mongoose.Document {
   password: string;
   provider: string;
   privateProfile: PrivateUserDetails;
+  publicProfile: PublicUserDetails;
   role: Array<UserRole>;
   salt: string;
 }
@@ -28,6 +29,11 @@ export interface PrivateUserDetails {
   role: Array<UserRole>;
   email: string;
   expires: number;
+}
+
+export interface PublicUserDetails {
+  _id: string;
+  email: string;
 }
 
 export interface AuthenticatedUserDetails {

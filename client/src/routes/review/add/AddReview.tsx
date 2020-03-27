@@ -21,7 +21,7 @@ import { RetrievalStatus } from '../../../utils/api/Api.enum';
 import { AddReviewProps } from './AddReview.interface';
 
 // Hooks.
-import { useRetrieveProduct } from '../../../components/product/useRetrieveProduct.hook';
+import { useRetrieveProductById } from '../../../components/product/useRetrieveProduct.hook';
 
 /**
  * AddReview component.
@@ -31,7 +31,7 @@ const AddReview: React.FC<AddReviewProps> = (props: AddReviewProps) => {
   const {
     product,
     productStatus
-  } = useRetrieveProduct({id: props.match.params.id});
+  } = useRetrieveProductById({id: props.match.params.id});
 
   return (
     <Grid container direction='column'>
