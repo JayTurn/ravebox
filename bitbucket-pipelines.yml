@@ -1,0 +1,24 @@
+image: atlassian/default-image:2
+
+pipelines:
+  default:
+    - step:
+        name: Build app
+        script:
+        - zip -r ravebox-staging.zip Dockerrun.aws.json server client
+        artifacts:
+        - ravebox-staging.zip
+    - step:
+        name: Deploy to AWS EBS
+        caches:
+          - pip
+        script:
+        - pipe: atlassian/aws-elasticbeanstalk-deploy:0.5.2
+          variables:
+            AWS_ACCESS_KEY_ID: $AWS_ACCESS_KEY_ID
+            AWS_SECRET_ACCESS_KEY: $AWS_SECRET_ACCESS_KEY
+            AWS_DEFAULT_REGION: 'ap-southeast-2'
+            APPLICATION_NAME: 'ravebox'
+            ENVIRONMENT_NAME: 'ravebox-staging'
+            ZIP_FILE: 'docker-multicontainer-v2.zip'
+            WAIT: 'true'
