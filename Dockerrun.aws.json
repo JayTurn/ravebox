@@ -1,0 +1,62 @@
+{
+  "AWSEBDockerrunVersion": 2,
+  "volumes": [
+    {
+      "name": "server",
+      "host": {
+        "sourcePath": "/server"
+      }
+    },
+    {
+      "name": "react",
+      "host": {
+        "sourcePath": "/client"
+      }
+    }
+  ],
+  "containerDefinitions": [
+    {
+      "name": "node_server",
+      "image": "jayturn/node_server:1.2.0",
+      "essential": true,
+      "memory": 128,
+      "mountPoints": [
+        {
+          "sourceVolume": "server",
+          "containerPath": "/server/app",
+          "readOnly": true
+        },
+        {
+          "sourceVolume": "server/node_modules",
+          "containerPath": "/server/node_modules"
+        }
+      ]
+    },
+    {
+      "name": "react_client",
+      "image": "jayturn/react:1.1.0",
+      "essential": true,
+      "memory": 128,
+      "portMappings": [
+        {
+          "hostPort": 80,
+          "containerPort": 80
+        }
+      ],
+      "links": [
+        "node_server"
+      ],
+      "mountPoints": [
+        {
+          "sourceVolume": "react",
+          "containerPath": "/client/app",
+          "readOnly": true
+        },
+        {
+          "sourceVolume": "react/node_modules",
+          "containerPath": "/client/node_modules"
+        }
+      ]
+    }
+  ]
+}
