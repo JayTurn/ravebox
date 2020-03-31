@@ -32,7 +32,8 @@ import { FileUploadStatus } from '../../forms/fileUpload/FileUpload.interface';
 import { InputData } from '../../forms/input/Input.interface';
 import {
   ReviewFormResponse, 
-  ReviewFormProps
+  ReviewFormProps,
+  ReviewMetadataResponse
 } from './ReviewForm.interface';
 
 /**
@@ -100,9 +101,44 @@ const AddReviewForm: React.FC<ReviewFormProps> = (props: ReviewFormProps) => {
   }
 
   /**
+   * Handles the updating of the metadata file to trigger the video processing.
+   */
+  const uploadMetadata: (
+    filename: string
+  ) => (
+    reviewId: string
+  ) => void = (
+    filename: string
+  ) => (
+    reviewId: string
+  ): void => {
+    // Perform the api request using the video file name.
+    API.requestAPI<ReviewMetadataResponse>('review/metadata', {
+      headers: {
+        'x-xsrf-token': props.xsrf || ''
+      },
+      method: RequestType.POST,
+      body: JSON.stringify({
+        reviewId: reviewId,
+        videoTitle: filename
+      })
+    })
+    .then((response: ReviewMetadataResponse) => {
+      setUploadProgress({
+        completion: 100,
+        state: FileUploadState.COMPLETE
+      });
+    })
+    .catch((error: Error) => {
+      console.log(error);
+    });
+  }
+
+  /**
    * Submits the review for creation.
    */
   const submit: () => void = (): void => {
+    //uploadMetadata('testfile.mov')('5e7dfa55c6a4250061e39571');
     // Define the filename.
     const filename: string = video.name.split(' ').join('-').toLowerCase();
 
@@ -140,10 +176,7 @@ const AddReviewForm: React.FC<ReviewFormProps> = (props: ReviewFormProps) => {
 
       // Add an event listener for the upload completion.
       request.upload.addEventListener('load', (e: ProgressEvent) => {
-        setUploadProgress({
-          completion: 100,
-          state: FileUploadState.COMPLETE
-        });
+        uploadMetadata(filename)(response.review._id);
       });
 
       // Add an event listener for the upload error.

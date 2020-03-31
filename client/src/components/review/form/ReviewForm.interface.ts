@@ -42,3 +42,10 @@ export interface ReviewFormRequest {
   recommended: Recommended;
   video: File;
 }
+
+/**
+ * Metadata file upload response.
+ */
+export interface ReviewMetadataResponse {
+  message: string;
+}

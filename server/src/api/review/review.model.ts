@@ -11,8 +11,12 @@ import { Recommended } from './review.enum';
 import { Workflow } from '../../shared/enumerators/workflow.enum';
 
 // Interfaces.
-import { ReviewDocument } from './review.interface';
+import {
+  ReviewDocument,
+  ReviewPublishedSNS
+} from './review.interface';
 import { ProductDetailsDocument } from '../product/product.interface';
+import { VideoPaths } from '../../shared/video/Video.interface';
 
 // Models.
 import Product from '../product/product.model';
@@ -21,7 +25,7 @@ import Product from '../product/product.model';
 const Schema = Mongoose.Schema;
 
 // Create the review schema to be the base for the review model.
-const ReviewSchema = new Schema({
+const ReviewSchema = new Schema<ReviewDocument>({
   created: {
     type: Date,
     default: Date.now
@@ -31,7 +35,8 @@ const ReviewSchema = new Schema({
     ref: 'Product'
   },
   published: {
-    type: Workflow
+    type: Workflow,
+    default: Workflow.DRAFT
   },
   recommended: {
     type: Recommended
@@ -47,8 +52,8 @@ const ReviewSchema = new Schema({
     type: Schema.Types.ObjectId, 
     ref: 'User'
   },
-  videoURL: {
-    type: String
+  videoPaths: {
+    type: Object
   }
 });
 
@@ -96,7 +101,7 @@ ReviewSchema
       'recommended': this.recommended,
       'title': this.title,
       'user': this.user,
-      'videoURL': this.videoURL
+      'videoURL': this.videoPaths.mp4Urls[1]
     };
   });
 

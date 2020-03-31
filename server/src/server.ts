@@ -24,7 +24,7 @@ import * as mongoose from 'mongoose';
  * Load environment variables from .env file, where API keys and passwords
  * are configured.
  */
-dotenv.config({ path: '.env.local' });
+dotenv.config({ path: `.env.${process.env.NODE_ENV}` });
 
 // Create a log directory if it doesn't exist.
 //FileManagement.retrieveDirectoryList(Path.normalize(Path.join(__dirname, '../logs')));
@@ -72,8 +72,7 @@ app.set('view engine', 'html');
 app.use(cors({
   credentials: true,
   origin: [
-    'http://localhost:3000',
-    'http://react_client:3000'
+    'http://localhost:3000'
   ],
   optionsSuccessStatus: 200
 }));
@@ -91,8 +90,9 @@ app.use(cors({
 app.use(compression());
 app.use(logger('dev'));
 app.use(CookieParser());
-app.use(bodyParser.json({limit: '50mb'}));
+app.use(bodyParser.json({limit: '5mb'}));
 app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.text({limit: '200kb'}))
 app.use(express.static(path.join(__dirname, 'public'), { maxAge: 31557600000 }));
 
 /**

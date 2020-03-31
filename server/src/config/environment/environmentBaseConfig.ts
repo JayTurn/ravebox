@@ -51,7 +51,7 @@ class EnvConfig implements EnvironmentProperties {
   public providers: Array<string>;
   public security: SecurityProperties;
   public s3: S3Properties = {
-    bucket: ''
+    video: ''
   };
 
   /**

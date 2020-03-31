@@ -1,4 +1,4 @@
-FROM node:12.16.1-alpine3.9
+FROM node:12.16.1-alpine3.11
 
 ADD ./package.json /client/package.json
 WORKDIR /client

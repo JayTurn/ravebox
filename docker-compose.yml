@@ -7,9 +7,9 @@ networks:
 services:
   node_server:
     container_name: node_server
-    build: server/
-    #image: jayturn/node-server:1.0.1
-    command: yarn start-debug
+    #build: ./server
+    image: jayturn/node-server:1.2.0
+    command: yarn start-debug:${BUILD}
     expose:
       - 9000
       - 9229
@@ -36,11 +36,22 @@ services:
     restart: unless-stopped
     volumes:
       - /data/db:/data/db
+  ngrok_routing:
+    container_name: ngrok_routing
+    image: nginx
+    command: /ngrok/ngrok http node_server:9000 --config=/ngrok/ngrok.conf
+    depends_on:
+      - node_server
+    networks:
+      - node-tier
+    ports: 
+      - 4040:4040
+    volumes:
+      - ./ngrok:/ngrok/
   react_client:
     build: client/
     command: yarn start:${BUILD}
-    container_name: react_client
-    #image: jayturn/node-server:1.0.1
+    image: jayturn/react:1.1.0
     depends_on:
       - mongodb
       - node_server

@@ -10,6 +10,7 @@ import Grid from '@material-ui/core/Grid';
 import Typography from '@material-ui/core/Typography';
 import * as React from 'react';
 import { connect } from 'react-redux';
+import { withRouter } from 'react-router';
 
 // Components.
 import CategorySelection from '../../category/selection/CategorySelection';
@@ -93,6 +94,7 @@ const ProductForm: React.FC<ProductFormProps> = (
       body: JSON.stringify(product)
     })
     .then((response: ProductFormResponse) => {
+      props.history.push(`/product/${response.product._id}/review`);
       console.log(response);
     })
     .catch((error: Error) => {
@@ -156,4 +158,6 @@ function mapStatetoProps(state: any, ownProps: ProductFormProps) {
   };
 }
 
-export default connect(mapStatetoProps)(ProductForm);
+export default withRouter(connect(
+  mapStatetoProps
+)(ProductForm));

@@ -15,6 +15,7 @@ import { updateActive } from '../../../store/review/Actions';
 
 // Components.
 import ProductPreview from '../../product/preview/ProductPreview';
+import RaveVideo from '../../raveVideo/RaveVideo';
 
 // Interfaces.
 import { Product } from '../../product/Product.interface';
@@ -39,6 +40,9 @@ const ReviewDetails: React.FC<ReviewDetailsProps> = (props: ReviewDetailsProps) 
           <Typography variant='h1'>
             { props.review.title } 
           </Typography>
+          {props.review.videoURL &&
+            <RaveVideo url={props.review.videoURL} />
+          }
           {user &&
             <Typography variant='body1'>
               {user.email}

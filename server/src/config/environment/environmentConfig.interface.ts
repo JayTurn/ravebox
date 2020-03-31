@@ -40,5 +40,5 @@ export interface SecurityProperties {
 }
 
 export interface S3Properties {
-  bucket: string;
+  video: string;
 }

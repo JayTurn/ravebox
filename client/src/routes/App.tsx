@@ -34,6 +34,7 @@ import PageNotFound from './page-not-found/PageNotFound';
 import PrivateRoute from './privateRoute/PrivateRoute';
 import Profile from './user/profile/Profile';
 import ScrollToTop from '../utils/scroll/ScrollToTop';
+import Signup from './user/signup/Signup';
 
 // Hooks.
 import { useRetrieveProfile } from '../components/user/profile/useRetrieveProfile.hook';
@@ -95,6 +96,9 @@ const App: React.FC<AppProps> = (props: AppProps) => {
                     </PrivateRoute>
                     <Route exact={true} path="/user/login">
                       <Login />
+                    </Route>
+                    <Route exact={true} path="/user/signup">
+                      <Signup />
                     </Route>
                     <Route exact={true} path="/product/add">
                       <AddProduct />

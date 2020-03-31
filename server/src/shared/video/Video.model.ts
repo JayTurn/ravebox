@@ -7,6 +7,12 @@
 import * as S3 from 'aws-sdk/clients/s3';
 import EnvConfig from '../../config/environment/environmentBaseConfig';
 
+// Interfaces.
+import {
+  UploadStream,
+  VideoUploadMetadata
+} from './Video.interface';
+
 /**
  * Video management class.
  */
@@ -20,7 +26,7 @@ export default class Video {
    * @param { string } fileType - the type of the file to be uploaded.
    * @param { string } s3Location - the path to the s3 file location.
    */
-  static CreatePresignedRequest(
+  static CreatePresignedVideoRequest(
     filename: string,
     fileSize: string,
     fileType: string,
@@ -32,7 +38,7 @@ export default class Video {
 
     // Create the S3 presign paramters to generate a new request object.
     const params: S3.PresignedPost.Params = {
-      Bucket: `ravebox-dev`,
+      Bucket: `ravebox-media-source`,
       Conditions: [
         ['content-length-range', 100, fileSize],
         ['starts-with', '$key', filePath]
@@ -60,6 +66,39 @@ export default class Video {
 
         resolve(data);
       });
+    });
+  }
+
+  /**
+   * Creates a presigned request to be used for video metadata uploads.
+   *
+   * @param { string } filename - the name of the file to be uploaded.
+   * @param { string } fileSize - the size of the file to be uploaded.
+   * @param { string } fileType - the type of the file to be uploaded.
+   * @param { string } s3Location - the path to the s3 file location.
+   */
+  static CreateMetadataFile(
+    metadata: VideoUploadMetadata 
+  ): S3.ManagedUpload {
+
+    const extensionIndex: number = metadata.srcVideo.lastIndexOf('.'); 
+
+    const key = `${metadata.srcVideo.substr(0, extensionIndex)}.json`;
+
+    const metadataBuffer: Buffer = Buffer.from(JSON.stringify(metadata, null, 2));
+
+    // Creates the s3 client connection.
+    const client: S3 = new S3({
+      accessKeyId: EnvConfig.aws.accessKeyId,
+      secretAccessKey: EnvConfig.aws.secretAccessKey,
+      region: EnvConfig.aws.region,
+      signatureVersion: EnvConfig.aws.signatureVersion
+    }); 
+
+    return client.upload({
+      Bucket: metadata.srcBucket,
+      Key: key,
+      Body: metadataBuffer
     });
   }
 }

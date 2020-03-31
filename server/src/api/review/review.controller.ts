@@ -6,12 +6,16 @@
 import { Request, Response, Router, NextFunction } from 'express';
 import Authenticate from '../../models/authentication/authenticate.model';
 import Connect from '../../models/database/connect.model';
+import EnvConfig from '../../config/environment/environmentBaseConfig';
+import * as http from 'http';
+import * as https from 'https';
 import * as S3 from 'aws-sdk/clients/s3';
 import Review from './review.model';
 import Video from '../../shared/video/Video.model';
 
 // Enumerators.
 import { Workflow } from '../../shared/enumerators/workflow.enum';
+import { SNSMessageType } from '../../shared/sns/sns.enum';
 
 // Interfaces.
 import {
@@ -21,9 +25,18 @@ import { ProductDetailsDocument } from '../product/product.interface';
 import {
   ReviewDetails,
   ReviewDocument,
+  ReviewPublishedSNS,
   ReviewRequestBody
 } from './review.interface';
 import { ResponseObject } from '../../models/database/connect.interface';
+import {
+  SNSConfirmation,
+  SNSNotification
+} from '../../shared/sns/sns.interface';
+import { VideoUploadMetadata } from '../../shared/video/Video.interface';
+
+// Import the SNS validator module to confirm the authenticity of SNS messages.
+const MessageValidator = require('sns-validator');
 
 /**
  * Routing controller for reviews.
@@ -45,18 +58,31 @@ export default class ReviewController {
       new ReviewController().getStatus(req, res);
     });
 
-    // Create a new review.
+    // Create a new review and a presigned url to upload video to S3.
     router.post(
       `${path}/create`,
       Authenticate.isAuthenticated,
       ReviewController.Create
     );
 
+    // Create a metadata file for a review an upload to S3.
+    router.post(
+      `${path}/metadata`,
+      Authenticate.isAuthenticated,
+      ReviewController.CreateVideoMetadata
+    );
+
     // Retrieve a review by it's path.
     router.get(
       `${path}/view/:brand/:productName/:reviewTitle`,
       ReviewController.RetrieveByURL
-    )
+    );
+
+    // Review published successfully.
+    router.post(
+      `${path}/published`,
+      ReviewController.Published
+    );
   }
 
   /**
@@ -89,45 +115,177 @@ export default class ReviewController {
       user: request.auth._id
     });
 
-    // Create a presigned url for uploading a video to S3.
-    Video.CreatePresignedRequest(
+
+    Video.CreatePresignedVideoRequest(
       reviewDetails.videoTitle,
       reviewDetails.videoSize,
       reviewDetails.videoType,
-      `reviews/raw/${newReview._id}`
-    )
-    .then((requestData: S3.PresignedPost) => {
-      newReview.save()
-        .then((review: ReviewDocument) => {
+      `reviews/${newReview._id}`
+    ).then((requestData: S3.PresignedPost) => {
 
-          // Set the response object.
-          const responseObject: ResponseObject = Connect.setResponse({
-            data: {
-              review: review.details,
-              presigned: requestData
-            }
-          }, 201, 'Review created successfully');
+        newReview.save()
+          .then((review: ReviewDocument) => {
 
-          // Return the response for the authenticated user.
-          response.status(responseObject.status).json(responseObject.data);
+            // Set the response object.
+            const responseObject: ResponseObject = Connect.setResponse({
+              data: {
+                review: review.details,
+                presigned: requestData
+              }
+            }, 201, 'Review created successfully');
 
+            // Return the response for the authenticated user.
+            response.status(responseObject.status).json(responseObject.data);
+
+          })
+          .catch((error: Error) => {
+            throw error;
+          });
         })
         .catch((error: Error) => {
-          throw error;
+          // Return an error indicating the review wasn't created.
+          const responseObject = Connect.setResponse({
+            data: {
+              errorCode: 'REVIEW_NOT_CREATED',
+              message: 'There was a problem creating your review'
+            }
+          }, 401, 'There was a problem creating your review');
+
+          // Return the error response for the user.
+          response.status(401).json(responseObject.data);
         });
+  }
+
+  /**
+   * Performs a request to POST the video metadata.
+   *
+   * @param {object} req
+   * The request object.
+   *
+   * @param {object} res
+   * The response object.
+   */
+  static CreateVideoMetadata(request: AuthenticatedUserRequest, response: Response): void {
+
+    const videoTitle = `reviews/${request.body.reviewId}/${request.body.videoTitle}`;
+
+    const metadata: VideoUploadMetadata = {
+      srcVideo: videoTitle,
+      archiveSource: true,
+      frameCapture: true,
+      srcBucket: 'ravebox-media-source',
+      destBucket: EnvConfig.s3.video,
+      reviewId: request.body.reviewId
+    };
+
+    Video.CreateMetadataFile(metadata).promise()
+      .then((value: any) => {
+
+        // Set the response object.
+        const responseObject: ResponseObject = Connect.setResponse({
+          data: {
+            message: 'SUCCESS'
+          }
+        }, 201, 'Review video metadata created successfully');
+
+        // Return the response for the authenticated user.
+        response.status(responseObject.status).json(responseObject.data);
+
       })
-      .catch((error: Error) => {
+      .catch(() => {
         // Return an error indicating the review wasn't created.
         const responseObject = Connect.setResponse({
           data: {
-            errorCode: 'REVIEW_NOT_CREATED',
-            message: 'There was a problem creating your review'
+            errorCode: 'METADATA_SUBMISSION_FAILED',
+            message: 'The video review metadata failed to upload'
           }
-        }, 401, 'There was a problem creating your review');
+        }, 401, 'The video review metadata file failed to upload');
 
-        // Return the error response for the user.
-        response.status(401).json(responseObject.data);
+        response.status(responseObject.status).json(responseObject.data);
       });
+  }
+
+  /**
+   * Publishes the review based on the message provided.
+   *
+   * @param {object} req
+   * The request object.
+   *
+   * @param {object} res
+   * The response object.
+   */
+  static Published(request: Request, response: Response): void {
+    const validator = new MessageValidator();
+
+    validator.validate(request.body, function(error: Error, message: SNSConfirmation | SNSNotification) {
+      if (error) {
+        console.log('ERROR: ', error);
+
+        // Return an error indicating the review wasn't created.
+        const responseObject = Connect.setResponse({
+          data: {
+            errorCode: 'SNS_VALIDATION_FAILED',
+            message: 'The SNS message could not be validated with AWS'
+          }
+        }, 401, 'The SNS message could not be validated with AWS');
+
+        return response.status(responseObject.status).json(responseObject.data);
+      }
+
+      let publishMessage: ReviewPublishedSNS;
+
+      // Adapt the publishing action based on the SNS type.
+      switch (message.Type) {
+        case SNSMessageType.NOTIFICATION:
+          message = JSON.parse(request.body) as SNSNotification;
+
+          publishMessage = JSON.parse(message.Message);
+
+          if (publishMessage.status === 'Error') {
+            console.log('Error: ', publishMessage);
+            break;
+          }
+
+          Review.findOneAndUpdate({
+            _id: publishMessage.reviewId
+          }, {
+            published: Workflow.PUBLISHED,
+            videoPaths: publishMessage.videoPaths
+          }, {
+            new: true,
+            upsert: false
+          })
+          .then((updatedReview: ReviewDocument) => {
+            console.log('Review status updated.')
+          })
+          .catch((error: Error) => {
+            console.log(error);
+          });
+
+          break;
+        case SNSMessageType.SUBSCRIPTION:
+          message = JSON.parse(request.body) as SNSConfirmation;
+
+          https.get(message.SubscribeURL, (response: http.IncomingMessage) => {
+            console.log('SUBSCRIPTION_RESPONSE: ', response);
+          });
+          break;
+        default:
+
+      }
+
+      // Set the response object.
+      const responseObject: ResponseObject = Connect.setResponse({
+        data: {
+          message: 'SUCCESS'
+        }
+      }, 200, 'SNS message received successfully');
+
+      // Return the response for the authenticated user.
+      response.status(responseObject.status).json(responseObject.data);
+
+    });
+
   }
 
   /**

@@ -314,6 +314,10 @@
     "@types/express-serve-static-core" "*"
     "@types/mime" "*"
 
+"@types/sns-validator@0.3.0":
+  version "0.3.0"
+  resolved "https://registry.yarnpkg.com/@types/sns-validator/-/sns-validator-0.3.0.tgz#0e9e2c1936751d8a2ce65b3e8c92232ec90d4f5b"
+
 "@types/underscore.string@0.0.38":
   version "0.0.38"
   resolved "https://registry.yarnpkg.com/@types/underscore.string/-/underscore.string-0.0.38.tgz#4081755f005f5691fb7fbd4eff3aabe6066a6c63"
@@ -1804,10 +1808,6 @@ nice-try@^1.0.4:
   version "1.0.5"
   resolved "https://registry.yarnpkg.com/nice-try/-/nice-try-1.0.5.tgz#a3378a7696ce7d223e88fc9b764bd7ef1089e366"
 
-node-mediainfo@1.0.3:
-  version "1.0.3"
-  resolved "https://registry.yarnpkg.com/node-mediainfo/-/node-mediainfo-1.0.3.tgz#1b0e76bcbc97e4e58f9d174071fd89798850f8cf"
-
 nodemon@2.0.2:
   version "2.0.2"
   resolved "https://registry.yarnpkg.com/nodemon/-/nodemon-2.0.2.tgz#9c7efeaaf9b8259295a97e5d4585ba8f0cbe50b0"
@@ -2288,6 +2288,10 @@ slice-ansi@^2.1.0:
 sliced@1.0.1:
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/sliced/-/sliced-1.0.1.tgz#0b3a662b5d04c3177b1926bea82b03f837a2ef41"
+
+sns-validator@0.3.4:
+  version "0.3.4"
+  resolved "https://registry.yarnpkg.com/sns-validator/-/sns-validator-0.3.4.tgz#a858be7c0bcdf0d68d6d992a521026e2c9bcf947"
 
 sparse-bitfield@^3.0.3:
   version "3.0.3"
