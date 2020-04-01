@@ -20,6 +20,7 @@
       "image": "jayturn/node-server:1.2.0",
       "command": ["yarn", "start:staging"],
       "essential": true,
+      "memoryReservation": 1024,
       "portMappings": [
         {
           "hostPort": 80,
