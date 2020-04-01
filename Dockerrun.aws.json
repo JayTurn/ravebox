@@ -42,8 +42,7 @@
       "mountPoints": [
         {
           "sourceVolume": "server",
-          "containerPath": "/usr/src/server/app",
-          "readOnly": true
+          "containerPath": "/usr/src/server/app"
         },
         {
           "sourceVolume": "server_modules",
