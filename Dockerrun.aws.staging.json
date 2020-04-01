@@ -18,7 +18,7 @@
     {
       "name": "node_server",
       "image": "jayturn/node-server:1.2.0",
-      "command": ["yarn start:staging"],
+      "command": ["tail", "-f", "/dev/null"],
       "essential": true,
       "memoryReservation": 1024,
       "portMappings": [
