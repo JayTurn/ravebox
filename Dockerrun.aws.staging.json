@@ -24,7 +24,7 @@
       "mountPoints": [
         {
           "sourceVolume": "server",
-          "containerPath": "/server"
+          "containerPath": "/server/app"
         }
       ]
     }
