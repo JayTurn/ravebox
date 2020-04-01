@@ -3,10 +3,10 @@ image: atlassian/default-image:2
 pipelines:
   default:
     - step:
-        name: Build the api
+        name: Package the files for the staging environment
         script:
         - cp Dockerrun.aws.staging.json Dockerrun.aws.json
-        - zip -r ravebox-staging.zip Dockerrun.aws.json server client
+        - zip -r ravebox-staging.zip Dockerrun.aws.json server
         - rm Dockerrun.aws.json
         artifacts:
         - ravebox-staging.zip
