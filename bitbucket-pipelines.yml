@@ -3,29 +3,6 @@ image: atlassian/default-image:2
 pipelines:
   default:
     - step:
-        name: Build the api
-        script:
-        - cp Dockerrun.aws.server.json Dockerrun.aws.json
-        - zip -r ravebox-staging.zip Dockerrun.aws.json server
-        - rm Dockerrun.aws.json
-        artifacts:
-        - ravebox-staging.zip
-    - step:
-        name: Deploy the API to AWS
-        caches:
-          - pip
-        script:
-        - pipe: atlassian/aws-elasticbeanstalk-deploy:0.5.2
-          variables:
-            AWS_ACCESS_KEY_ID: $AWS_ACCESS_KEY_ID
-            AWS_SECRET_ACCESS_KEY: $AWS_SECRET_ACCESS_KEY
-            AWS_DEFAULT_REGION: 'ap-southeast-2'
-            APPLICATION_NAME: 'ravebox'
-            ENVIRONMENT_NAME: 'ravebox-staging'
-            ZIP_FILE: 'ravebox-staging.zip'
-            S3_BUCKET: 'ravebox-staging-deployment'
-            WAIT: 'true'
-    - step:
         name: Build the client
         script:
         - cp Dockerrun.aws.client.json Dockerrun.aws.json
