@@ -3,13 +3,15 @@ image: atlassian/default-image:2
 pipelines:
   default:
     - step:
-        name: Build app
+        name: Build the api
         script:
+        - cp Dockerrun.aws.server.json Dockerrun.aws.json
         - zip -r ravebox-staging.zip Dockerrun.aws.json server client
+        - rm Dockerrun.aws.json
         artifacts:
         - ravebox-staging.zip
     - step:
-        name: Deploy to AWS EBS
+        name: Deploy the API to AWS
         caches:
           - pip
         script:
