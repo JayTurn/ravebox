@@ -21,7 +21,8 @@ pipelines:
             AWS_SECRET_ACCESS_KEY: $AWS_SECRET_ACCESS_KEY
             AWS_DEFAULT_REGION: 'ap-southeast-2'
             APPLICATION_NAME: 'ravebox'
-            ENVIRONMENT_NAME: 'ravebox-staging-react'
+            ENVIRONMENT_NAME: 'ravebox-staging'
             ZIP_FILE: 'ravebox-client.zip'
             S3_BUCKET: 'ravebox-staging-deployment'
+            VERSION_LABEL: 'ravebox-client-$BITBUCKET_BUILD_NUMBER'
             WAIT: 'true'
