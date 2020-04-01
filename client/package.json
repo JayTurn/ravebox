@@ -57,8 +57,10 @@
     "build": "razzle build",
     "start:local": "razzle start --inspect=0.0.0.0:9229",
     "build:development": "env-cmd .env.development razzle build",
-    "start:staging": "env-cmd -f .env.staging razzle start --inspect=0.0.0.0:9229",
+    "start:staging": "npm run build:staging && npm run serve:staging",
+    "start-debug:staging": "env-cmd -f .env.staging razzle start --inspect=0.0.0.0:9229",
     "build:staging": "env-cmd -f .env.staging razzle build",
+    "serve:staging": "env-cmd -f .env.staging node build/server.js",
     "test": "razzle test --env=jsdom",
     "build-css": "node-sass-chokidar src/ -o src/",
     "watch-css": "npm run build-css && node-sass-chokidar src/ -o src/ --watch --recursive"

@@ -9,7 +9,7 @@ services:
     container_name: node_server
     #build: ./server
     image: jayturn/node-server:1.2.0
-    command: yarn start-debug:${BUILD}
+    command: yarn start:${BUILD}
     expose:
       - 9000
       - 9229

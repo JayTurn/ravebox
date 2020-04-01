@@ -18,6 +18,7 @@
     {
       "name": "node_server",
       "image": "jayturn/node_server:1.2.0",
+      "command": ["yarn", "start:staging"],
       "essential": true,
       "memory": 128,
       "mountPoints": [
@@ -35,6 +36,7 @@
     {
       "name": "react_client",
       "image": "jayturn/react:1.1.0",
+      "command": ["yarn", "start:staging"],
       "essential": true,
       "memory": 128,
       "portMappings": [
