@@ -18,12 +18,12 @@
     {
       "name": "node_server",
       "image": "jayturn/node-server:1.2.0",
-      "command": ["/server/node_modules/yarn", "start:staging"],
+      "command": ["yarn", "start:staging"],
       "essential": true,
       "memoryReservation": 1024,
       "portMappings": [
         {
-          "hostPort": 80,
+          "hostPort": 9000,
           "containerPort": 9000
         }
       ],
