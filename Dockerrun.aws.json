@@ -8,9 +8,21 @@
       }
     },
     {
+      "name": "server_modules",
+      "host": {
+        "sourcePath": "/server/node_modules"
+      }
+    },
+    {
       "name": "react",
       "host": {
         "sourcePath": "/client"
+      }
+    },
+    {
+      "name": "react_modules",
+      "host": {
+        "sourcePath": "/client/node_modules"
       }
     }
   ],
@@ -28,7 +40,7 @@
           "readOnly": true
         },
         {
-          "sourceVolume": "server/node_modules",
+          "sourceVolume": "server_modules",
           "containerPath": "/server/node_modules"
         }
       ]
@@ -55,7 +67,7 @@
           "readOnly": true
         },
         {
-          "sourceVolume": "react/node_modules",
+          "sourceVolume": "react_modules",
           "containerPath": "/client/node_modules"
         }
       ]
