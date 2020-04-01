@@ -4,13 +4,7 @@
     {
       "name": "server",
       "host": {
-        "sourcePath": "/var/app/current/."
-      }
-    },
-    {
-      "name": "server_modules",
-      "host": {
-        "sourcePath": "/var/app/current/node_modules"
+        "sourcePath": "/var/app/current"
       }
     }
   ],
@@ -31,10 +25,6 @@
         {
           "sourceVolume": "server",
           "containerPath": "/server"
-        },
-        {
-          "sourceVolume": "server_modules",
-          "containerPath": "/server/node_modules"
         }
       ]
     }
