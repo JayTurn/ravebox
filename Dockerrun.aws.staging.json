@@ -4,13 +4,13 @@
     {
       "name": "server",
       "host": {
-        "sourcePath": "/server/app"
+        "sourcePath": "/var/app/current/."
       }
     },
     {
       "name": "server_modules",
       "host": {
-        "sourcePath": "/server/node_modules"
+        "sourcePath": "/var/app/current/node_modules"
       }
     }
   ],
