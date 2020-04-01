@@ -50,33 +50,6 @@
           "containerPath": "/usr/src/server/node_modules"
         }
       ]
-    },
-    {
-      "name": "react_client",
-      "image": "jayturn/react:1.1.0",
-      "command": ["yarn", "start:staging"],
-      "essential": true,
-      "memory": 450,
-      "portMappings": [
-        {
-          "hostPort": 80,
-          "containerPort": 3000
-        }
-      ],
-      "links": [
-        "node_server"
-      ],
-      "mountPoints": [
-        {
-          "sourceVolume": "react",
-          "containerPath": "/usr/src/client/app",
-          "readOnly": true
-        },
-        {
-          "sourceVolume": "react_modules",
-          "containerPath": "/usr/src/client/node_modules"
-        }
-      ]
     }
   ]
 }
