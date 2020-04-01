@@ -4,13 +4,13 @@
     {
       "name": "server",
       "host": {
-        "sourcePath": "/var/app/current/server/."
+        "sourcePath": "/server/app"
       }
     },
     {
       "name": "server_modules",
       "host": {
-        "sourcePath": "/var/app/current/server/node_modules"
+        "sourcePath": "/server/node_modules"
       }
     }
   ],
@@ -18,7 +18,7 @@
     {
       "name": "node_server",
       "image": "jayturn/node-server:1.2.0",
-      "command": ["yarn", "start:staging"],
+      "command": ["/server/node_modules/yarn", "start:staging"],
       "essential": true,
       "memoryReservation": 1024,
       "portMappings": [
@@ -30,7 +30,7 @@
       "mountPoints": [
         {
           "sourceVolume": "server",
-          "containerPath": "/server/app"
+          "containerPath": "/server"
         },
         {
           "sourceVolume": "server_modules",
