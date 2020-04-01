@@ -29,7 +29,7 @@
   "containerDefinitions": [
     {
       "name": "node_server",
-      "image": "jayturn/node_server:1.2.0",
+      "image": "jayturn/node-server:1.2.0",
       "command": ["yarn", "start:staging"],
       "essential": true,
       "memory": 128,
