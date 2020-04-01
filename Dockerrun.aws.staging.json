@@ -4,7 +4,7 @@
     {
       "name": "server",
       "host": {
-        "sourcePath": "/var/app/current"
+        "sourcePath": "/var/app/current/server/."
       }
     }
   ],
@@ -24,7 +24,7 @@
       "mountPoints": [
         {
           "sourceVolume": "server",
-          "containerPath": "/somewhereelse"
+          "containerPath": "/server"
         }
       ]
     }
