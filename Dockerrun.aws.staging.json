@@ -12,18 +12,6 @@
       "host": {
         "sourcePath": "/var/app/current/server/node_modules"
       }
-    },
-    {
-      "name": "react",
-      "host": {
-        "sourcePath": "/var/app/current/client"
-      }
-    },
-    {
-      "name": "react_modules",
-      "host": {
-        "sourcePath": "/var/app/current/client/node_modules"
-      }
     }
   ],
   "containerDefinitions": [
@@ -48,30 +36,6 @@
         {
           "sourceVolume": "server_modules",
           "containerPath": "/usr/src/server/node_modules"
-        }
-      ]
-    },
-    {
-      "name": "react_client",
-      "image": "jayturn/react:1.1.0",
-      "command": ["yarn", "start:staging"],
-      "essential": true,
-      "memory": 1024,
-      "portMappings": [
-        {
-          "hostPort": 80,
-          "containerPort": 3000
-        }
-      ],
-      "mountPoints": [
-        {
-          "sourceVolume": "react",
-          "containerPath": "/usr/src/client/app",
-          "readOnly": true
-        },
-        {
-          "sourceVolume": "react_modules",
-          "containerPath": "/usr/src/client/node_modules"
         }
       ]
     }
