@@ -38,7 +38,7 @@
           "hostPort": 9000,
           "containerPort": 9000
         }
-      ]
+      ],
       "mountPoints": [
         {
           "sourceVolume": "server",
