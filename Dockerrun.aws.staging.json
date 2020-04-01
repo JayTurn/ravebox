@@ -2,6 +2,18 @@
   "AWSEBDockerrunVersion": 2,
   "volumes": [
     {
+      "name": "server",
+      "host": {
+        "sourcePath": "/var/app/current/server/."
+      }
+    },
+    {
+      "name": "server_modules",
+      "host": {
+        "sourcePath": "/var/app/current/server/node_modules"
+      }
+    },
+    {
       "name": "react",
       "host": {
         "sourcePath": "/var/app/current/client"
@@ -16,11 +28,35 @@
   ],
   "containerDefinitions": [
     {
+      "name": "node_server",
+      "image": "jayturn/node-server:1.2.0",
+      "command": ["yarn", "start:staging"],
+      "essential": true,
+      "memory": 450,
+      "portMappings": [
+        {
+          "hostPort": 9000,
+          "containerPort": 9000
+        }
+      ],
+      "mountPoints": [
+        {
+          "sourceVolume": "server",
+          "containerPath": "/usr/src/server/app",
+          "readOnly": true
+        },
+        {
+          "sourceVolume": "server_modules",
+          "containerPath": "/usr/src/server/node_modules"
+        }
+      ]
+    },
+    {
       "name": "react_client",
       "image": "jayturn/react:1.1.0",
       "command": ["yarn", "start:staging"],
       "essential": true,
-      "memory": 900,
+      "memory": 1024,
       "portMappings": [
         {
           "hostPort": 80,
