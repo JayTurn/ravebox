@@ -20,5 +20,5 @@ pipelines:
             AWS_DEFAULT_REGION: 'ap-southeast-2'
             APPLICATION_NAME: 'ravebox'
             ENVIRONMENT_NAME: 'ravebox-staging'
-            ZIP_FILE: 'docker-multicontainer-v2.zip'
+            ZIP_FILE: 'ravebox-staging.zip'
             WAIT: 'true'
