@@ -20,7 +20,7 @@
       "image": "jayturn/react:1.1.0",
       "command": ["yarn", "start:staging"],
       "essential": true,
-      "memory": 450,
+      "memory": 700,
       "portMappings": [
         {
           "hostPort": 80,
