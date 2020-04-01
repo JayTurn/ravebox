@@ -21,4 +21,5 @@ pipelines:
             APPLICATION_NAME: 'ravebox'
             ENVIRONMENT_NAME: 'ravebox-staging'
             ZIP_FILE: 'ravebox-staging.zip'
+            S3_BUCKET: 'ravebox-staging-deployment'
             WAIT: 'true'
