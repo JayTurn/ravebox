@@ -12,18 +12,6 @@
       "host": {
         "sourcePath": "/var/app/current/server/node_modules"
       }
-    },
-    {
-      "name": "react",
-      "host": {
-        "sourcePath": "/var/app/current/client/."
-      }
-    },
-    {
-      "name": "react_modules",
-      "host": {
-        "sourcePath": "/var/app/current/client/node_modules"
-      }
     }
   ],
   "containerDefinitions": [
@@ -42,8 +30,7 @@
       "mountPoints": [
         {
           "sourceVolume": "server",
-          "containerPath": "/usr/src/server/app",
-          "readOnly": true
+          "containerPath": "/usr/src/server/app"
         },
         {
           "sourceVolume": "server_modules",
