@@ -4,25 +4,25 @@
     {
       "name": "server",
       "host": {
-        "sourcePath": "/server"
+        "sourcePath": "/var/app/current/server/."
       }
     },
     {
       "name": "server_modules",
       "host": {
-        "sourcePath": "/server/node_modules"
+        "sourcePath": "/var/app/current/server/node_modules"
       }
     },
     {
       "name": "react",
       "host": {
-        "sourcePath": "/client"
+        "sourcePath": "/var/app/current/client"
       }
     },
     {
       "name": "react_modules",
       "host": {
-        "sourcePath": "/client/node_modules"
+        "sourcePath": "/var/app/current/client/node_modules"
       }
     }
   ],
@@ -42,12 +42,12 @@
       "mountPoints": [
         {
           "sourceVolume": "server",
-          "containerPath": "/server/app",
+          "containerPath": "/usr/src/server/app",
           "readOnly": true
         },
         {
           "sourceVolume": "server_modules",
-          "containerPath": "/server/node_modules"
+          "containerPath": "/usr/src/server/node_modules"
         }
       ]
     },
@@ -69,12 +69,12 @@
       "mountPoints": [
         {
           "sourceVolume": "react",
-          "containerPath": "/client/app",
+          "containerPath": "/usr/src/client/app",
           "readOnly": true
         },
         {
           "sourceVolume": "react_modules",
-          "containerPath": "/client/node_modules"
+          "containerPath": "/usr/src/client/node_modules"
         }
       ]
     }
