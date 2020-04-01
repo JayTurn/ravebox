@@ -20,22 +20,21 @@
       "image": "jayturn/node-server:1.2.0",
       "command": ["yarn", "start:staging"],
       "essential": true,
-      "memory": 450,
       "portMappings": [
         {
-          "hostPort": 9000,
+          "hostPort": 80,
           "containerPort": 9000
         }
       ],
       "mountPoints": [
         {
           "sourceVolume": "server",
-          "containerPath": "/usr/src/server/app",
+          "containerPath": "/server/app",
           "readOnly": true
         },
         {
           "sourceVolume": "server_modules",
-          "containerPath": "/usr/src/server/node_modules"
+          "containerPath": "/server/node_modules"
         }
       ]
     }
