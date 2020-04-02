@@ -37,7 +37,7 @@
     {
       "name": "react_client",
       "image": "jayturn/react:1.2.0",
-      "command": ["tail", "-f", "/dev/null"],
+      "command": ["yarn", "start:staging"],
       "essential": true,
       "memoryReservation": 512,
       "portMappings": [
