@@ -86,7 +86,7 @@
     "@types/mongodb": "3.3.16",
     "@types/mongoose": "5.7.2",
     "@types/morgan": "1.7.37",
-    "@types/node": "12.12.6",
+    "@types/node": "13.9.8",
     "@types/passport": "1.0.3",
     "@types/passport-local": "1.0.33",
     "@types/rx": "4.1.1",
@@ -98,5 +98,8 @@
     "eslint": "6.8.0",
     "nodemon": "2.0.2",
     "typescript": "3.8.2"
+  },
+  "resolutions": {
+    "@types/node": "13.9.8"
   }
 }
