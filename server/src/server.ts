@@ -18,6 +18,7 @@ import * as ejs from 'ejs';
 //import * as flash from 'express-flash';
 import * as path from 'path';
 import * as mongoose from 'mongoose';
+import EnvConfig from './config/environment/environmentBaseConfig';
 //import * as passport from 'passport';
 
 /**
@@ -71,21 +72,9 @@ app.set('view engine', 'html');
 
 app.use(cors({
   credentials: true,
-  origin: [
-    'http://localhost:3000'
-  ],
+  origin: EnvConfig.origins,
   optionsSuccessStatus: 200
 }));
-//app.use(cors({
-  //credentials: true,
-  //origin: [
-    //'http://localhost:3000',
-    //'http://localhost:3001',
-    //'http://localhost:9003',
-    //'http://localhost:3005'
-  //],
-  //optionsSuccessStatus: 200
-//}));
 
 app.use(compression());
 app.use(logger('dev'));

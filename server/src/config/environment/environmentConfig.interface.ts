@@ -12,6 +12,7 @@ export interface EnvironmentProperties {
   database?: DatabaseProperties;
   env: string;
   ip: string;
+  origins: Array<string>;
   port: string | number;
   providers: Array<string>;
   refreshBuffer: string;

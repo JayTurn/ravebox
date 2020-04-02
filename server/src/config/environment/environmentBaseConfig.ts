@@ -46,9 +46,10 @@ class EnvConfig implements EnvironmentProperties {
   public port: string | number = process.env.PORT || 9000;
   public ip: string = process.env.IP || '0.0.0.0';
   public database: DatabaseProperties;
+  public origins: Array<string> = [];
+  public providers: Array<string>;
   public refreshBuffer: string;
   public roles: Array<UserRole>;
-  public providers: Array<string>;
   public security: SecurityProperties;
   public s3: S3Properties = {
     video: ''
