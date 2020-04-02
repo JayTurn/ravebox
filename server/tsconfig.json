@@ -7,7 +7,7 @@
     "sourceMap": true,
     "outDir": "dist",
     "baseUrl": ".",
-    "slipLibCheck": true,
+    "skipLibCheck": true,
     "typeRoots": [ 
       "node_modules/@types"
     ],
