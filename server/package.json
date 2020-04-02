@@ -98,8 +98,5 @@
     "eslint": "6.8.0",
     "nodemon": "2.0.2",
     "typescript": "3.8.2"
-  },
-  "resolutions": {
-    "@types/express-serve-static-core/node_modules/@types/node": "13.9.8"
   }
 }
