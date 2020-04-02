@@ -2,6 +2,12 @@
   "AWSEBDockerrunVersion": 2,
   "volumes": [
     {
+      "name": "server",
+      "host": {
+        "sourcePath": "/var/app/current/server/."
+      }
+    },
+    {
       "name": "client",
       "host": {
         "sourcePath": "/var/app/current/client/."
@@ -9,6 +15,25 @@
     }
   ],
   "containerDefinitions": [
+    {
+      "name": "node_server",
+      "image": "jayturn/node-server:1.3.0",
+      "command": ["yarn", "start:staging"],
+      "essential": true,
+      "memoryReservation": 1024,
+      "portMappings": [
+        {
+          "hostPort": 80,
+          "containerPort": 9000
+        }
+      ],
+      "mountPoints": [
+        {
+          "sourceVolume": "server",
+          "containerPath": "/server/app"
+        }
+      ]
+    },
     {
       "name": "react_client",
       "image": "jayturn/react:1.2.0",

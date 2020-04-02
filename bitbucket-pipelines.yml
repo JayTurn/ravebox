@@ -6,7 +6,7 @@ pipelines:
         name: Package the files for the staging environment
         script:
         - cp Dockerrun.aws.staging.json Dockerrun.aws.json
-        - zip -r ravebox-staging.zip Dockerrun.aws.json client
+        - zip -r ravebox-staging.zip Dockerrun.aws.json server client
         - rm Dockerrun.aws.json
         artifacts:
         - ravebox-staging.zip
