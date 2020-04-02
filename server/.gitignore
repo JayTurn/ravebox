@@ -27,6 +27,9 @@ data/futures/**/*
 node_modules
 bower_components
 
+# Lock file
+yarn.lock
+
 # Editors
 .idea
 *.iml
