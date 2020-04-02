@@ -101,6 +101,6 @@
     "typescript": "3.8.2"
   },
   "resolutions": {
-    "@types/node": "13.9.8"
+    "@types/express-serve-static-core/node_modules/@types/node": "13.9.8"
   }
 }
