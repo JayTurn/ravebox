@@ -20,7 +20,7 @@
       "image": "jayturn/node-server:1.3.0",
       "command": ["yarn", "start:staging"],
       "essential": true,
-      "memoryReservation": 256,
+      "memoryReservation": 384,
       "portMappings": [
         {
           "hostPort": 9000,
@@ -39,7 +39,7 @@
       "image": "jayturn/react:1.2.0",
       "command": ["yarn", "start:staging"],
       "essential": true,
-      "memoryReservation": 256,
+      "memoryReservation": 384,
       "portMappings": [
         {
           "hostPort": 80,

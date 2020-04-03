@@ -30,6 +30,9 @@ const config: Partial<EnvironmentProperties> = {
   origins: [
     'http://staging.ravebox.io'
   ],
+  notifications: {
+    key: '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'
+  },
   port: 9000,
   security: {
     secret: 'xVDtwrgYpk1SarMBZULYjnYjJTmNaEJgoyQEWenM',

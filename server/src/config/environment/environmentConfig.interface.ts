@@ -12,6 +12,7 @@ export interface EnvironmentProperties {
   database?: DatabaseProperties;
   env: string;
   ip: string;
+  notifications: NotificationProperties;
   origins: Array<string>;
   port: string | number;
   providers: Array<string>;
@@ -42,4 +43,8 @@ export interface SecurityProperties {
 
 export interface S3Properties {
   video: string;
+}
+
+export interface NotificationProperties {
+  key: string;
 }
