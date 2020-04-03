@@ -81,7 +81,7 @@ export function useRetrieveProfile(params: RetrieveProfileParams) {
     const cookie: Cookies = new Cookies(),
           security: string = cookie.get('XSRF-TOKEN');
 
-    if (profile && updateXsrf) {
+    if (profile && profile._id && updateXsrf && security) {
       updateXsrf(security);
       setRetrieved(RetrievalStatus.SUCCESS);
     }

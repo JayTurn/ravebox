@@ -106,4 +106,3 @@ export default withRouter(connect(
     onUpdate: false
   })(ViewReview)
 ));
-

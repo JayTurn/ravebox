@@ -18,6 +18,7 @@ import {
 import {
   UserDetailsDocument
 } from '../user/user.interface';
+import { VideoPaths } from '../../shared/video/Video.interface';
 
 /**
  * Review document interface.
@@ -32,6 +33,7 @@ export interface ReviewDocument extends Mongoose.Document {
   user: UserDetailsDocument;
   details: ReviewDetails;
   url: string;
+  videoPaths: VideoPaths;
 }
 
 /**
@@ -42,7 +44,7 @@ export interface ReviewDetails {
   product: ProductDetails;
   recommended: Recommended;
   title: string;
-  videoURL: boolean;
+  videoURL: string;
 }
 
 /**
@@ -57,3 +59,11 @@ export interface ReviewRequestBody {
   videoType: string;
 }
 
+/**
+ * SNS Notification message.
+ */
+export interface ReviewPublishedSNS {
+  status: string;
+  reviewId: string;
+  videoPaths: VideoPaths;
+}
