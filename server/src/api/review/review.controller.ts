@@ -3,7 +3,7 @@
  */
 
 // Modules.
-import { Request, Response, Router, NextFunction } from 'express';
+import { Request, Response, Router } from 'express';
 import Authenticate from '../../models/authentication/authenticate.model';
 import Connect from '../../models/database/connect.model';
 import EnvConfig from '../../config/environment/environmentBaseConfig';
@@ -21,7 +21,6 @@ import { SNSMessageType } from '../../shared/sns/sns.enum';
 import {
   AuthenticatedUserRequest
 } from '../../models/authentication/authentication.interface';
-import { ProductDetailsDocument } from '../product/product.interface';
 import {
   ReviewDetails,
   ReviewDocument,
@@ -142,7 +141,7 @@ export default class ReviewController {
             throw error;
           });
         })
-        .catch((error: Error) => {
+        .catch(() => {
           // Return an error indicating the review wasn't created.
           const responseObject = Connect.setResponse({
             data: {
@@ -179,7 +178,7 @@ export default class ReviewController {
     };
 
     Video.CreateMetadataFile(metadata).promise()
-      .then((value: any) => {
+      .then(() => {
 
         // Set the response object.
         const responseObject: ResponseObject = Connect.setResponse({
@@ -256,7 +255,9 @@ export default class ReviewController {
             upsert: false
           })
           .then((updatedReview: ReviewDocument) => {
-            console.log('Review status updated.')
+            // Send a notification to the user informing them of their review
+            // transitioning to a published state.
+            console.log('Review status updated');
           })
           .catch((error: Error) => {
             console.log(error);

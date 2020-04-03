@@ -12,11 +12,9 @@ import { Workflow } from '../../shared/enumerators/workflow.enum';
 
 // Interfaces.
 import {
-  ReviewDocument,
-  ReviewPublishedSNS
+  ReviewDocument
 } from './review.interface';
 import { ProductDetailsDocument } from '../product/product.interface';
-import { VideoPaths } from '../../shared/video/Video.interface';
 
 // Models.
 import Product from '../product/product.model';

@@ -19,13 +19,15 @@ import Notifications from '../../shared/notifications/Notifications.model';
 
 // Enumerators.
 import { UserRole } from './user.enum';
-import { EmailTemplate } from '../../shared/notifications/Notifications.enum';
+import {
+  EmailTemplate,
+  ContactList
+} from '../../shared/notifications/Notifications.enum';
 
 // Interfaces.
 import {
   AuthenticatedUserRequest
 } from '../../models/authentication/authentication.interface';
-import { EmailContact } from '../../shared/notifications/Notifications.interface';
 import { ResponseObject } from '../../models/database/connect.interface';
 import {
   SignupDetails,
@@ -218,44 +220,17 @@ export default class UserController {
           }, 201, 'Account created successfully');
 
           // Send a welcome email to the user.
-          Notifications.SendTransactionalEmail(
-            {email: user.email, name: ''},
-            EmailTemplate.SIGNUP
-          );
-        /*
-        UserNotifications.userCreateAccount([{
-            email: newUser.email,
-            name: ''
-          }]
-        );
-        */
-
-        /*
-        // If Mailchimp is enabled.
-        if (EnvConfig.mailchimp.enabled) {
-          // Declare a role category object.
-          let roleCategory = {};
-
-          // Set the roleCategory to the tenant interestID for Mailchimp
-          // categorisation.
-          roleCategory[EnvConfig.mailchimp.interestsID.tenant] = true;
-
-          // Post the email address to the leads list and assign the interest
-          // based on the type of role this user has.
-          mailchimp.post('/lists/' + EnvConfig.mailchimp.usersListID, {
-            'members': [{
-              'email_address': newUser.email,
-              'status': 'subscribed',
-              'interests': roleCategory
-            }]
-          })
-          .then(() => { })
-          .catch(error => {
-            console.log(error);
-          });
-
-        }
-        */
+          Notifications.AddEmailToList(user.email, ContactList.ALL)
+            .then((email: string) => {
+              Notifications.SendTransactionalEmail(
+                {email: email, name: 'N/A'},
+                EmailTemplate.SIGNUP
+              );
+            })
+            .catch((error: Error) => {
+              // Log the failed email handling.
+              console.log(error);
+            });
 
         // Set CSRF values.
         Authenticate.setAuthenticatedResponseHeader(token, response);
@@ -268,7 +243,6 @@ export default class UserController {
       })
     })
     .catch((error: Error) => {
-      console.log(error);
       // Declare the responseObject.
       let responseObject: ResponseObject;
 
