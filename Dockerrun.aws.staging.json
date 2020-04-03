@@ -6,6 +6,12 @@
       "host": {
         "sourcePath": "/var/app/current/server/."
       }
+    },
+    {
+      "name": "client",
+      "host": {
+        "sourcePath": "/var/app/current/client/."
+      }
     }
   ],
   "containerDefinitions": [
@@ -25,6 +31,25 @@
         {
           "sourceVolume": "server",
           "containerPath": "/server/app"
+        }
+      ]
+    },
+    {
+      "name": "react_client",
+      "image": "jayturn/react:1.2.0",
+      "command": ["yarn", "start:staging"],
+      "essential": true,
+      "memoryReservation": 256,
+      "portMappings": [
+        {
+          "hostPort": 80,
+          "containerPort": 3000
+        }
+      ],
+      "mountPoints": [
+        {
+          "sourceVolume": "client",
+          "containerPath": "/client/app"
         }
       ]
     }
