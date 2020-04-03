@@ -3,11 +3,14 @@
  * Interfaces for the product form.
  */
 
+// Modules.
+import { RouteComponentProps } from 'react-router';
+
 // Interfaces.
 import { APIResponse } from '../../../utils/api/Api.interface';
 import { Product } from '../Product.interface';
 
-export interface ProductFormProps {
+export interface ProductFormProps extends RouteComponentProps {
   xsrf?: string;
 }
 

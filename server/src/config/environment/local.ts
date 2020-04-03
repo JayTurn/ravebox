@@ -29,6 +29,9 @@ const config: Partial<EnvironmentProperties> = {
     uri: uri,
     secret: 'yVDtwrgYpk1SarMBZULYjnYjJTmNdyem337hdjdf'
   },
+  origins: [
+    'http://localhost:3000'
+  ],
   //domain: 'http://localhost:9000',
   //liveReloadPort: 9001,
   port: 9000,
@@ -37,7 +40,7 @@ const config: Partial<EnvironmentProperties> = {
     csrfSecret: 'xYDtwrgYpk1SarMBZULYjnYjJTmNaEJgoyQEWenM'
   },
   s3: {
-    bucket: "ravebox-dev"
+    video: "ravebox-dev-media"
   }
 };
 

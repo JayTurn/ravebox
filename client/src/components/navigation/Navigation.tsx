@@ -83,9 +83,14 @@ const Navigation: React.FC<NavigationProps> = (props: NavigationProps) => {
             Logout
           </Button>
         ) : (
-          <Button color="inherit">
-            <NavLink to="/user/login" activeClassName="active">Login</NavLink>
-          </Button>
+          <React.Fragment>
+            <Button color="inherit">
+              <NavLink to="/user/login" activeClassName="active">Login</NavLink>
+            </Button>
+            <Button color="inherit">
+              <NavLink to="/user/signup" activeClassName="active">Signup</NavLink>
+            </Button>
+          </React.Fragment>
         )}
       </Toolbar>
     </AppBar>

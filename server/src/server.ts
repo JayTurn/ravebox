@@ -18,13 +18,14 @@ import * as ejs from 'ejs';
 //import * as flash from 'express-flash';
 import * as path from 'path';
 import * as mongoose from 'mongoose';
+import EnvConfig from './config/environment/environmentBaseConfig';
 //import * as passport from 'passport';
 
 /**
  * Load environment variables from .env file, where API keys and passwords
  * are configured.
  */
-dotenv.config({ path: '.env.local' });
+dotenv.config({ path: `.env.${process.env.NODE_ENV}` });
 
 // Create a log directory if it doesn't exist.
 //FileManagement.retrieveDirectoryList(Path.normalize(Path.join(__dirname, '../logs')));
@@ -71,28 +72,16 @@ app.set('view engine', 'html');
 
 app.use(cors({
   credentials: true,
-  origin: [
-    'http://localhost:3000',
-    'http://react_client:3000'
-  ],
+  origin: EnvConfig.origins,
   optionsSuccessStatus: 200
 }));
-//app.use(cors({
-  //credentials: true,
-  //origin: [
-    //'http://localhost:3000',
-    //'http://localhost:3001',
-    //'http://localhost:9003',
-    //'http://localhost:3005'
-  //],
-  //optionsSuccessStatus: 200
-//}));
 
 app.use(compression());
 app.use(logger('dev'));
 app.use(CookieParser());
-app.use(bodyParser.json({limit: '50mb'}));
+app.use(bodyParser.json({limit: '5mb'}));
 app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.text({limit: '200kb'}))
 app.use(express.static(path.join(__dirname, 'public'), { maxAge: 31557600000 }));
 
 /**

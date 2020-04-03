@@ -33,6 +33,7 @@
     "react-dom": "16.13.1",
     "react-frontload": "1.1.0",
     "react-helmet": "5.2.1",
+    "react-player": "1.15.3",
     "react-redux": "7.2.0",
     "react-router": "5.1.2",
     "react-router-dom": "5.1.2",
@@ -56,6 +57,10 @@
     "build": "razzle build",
     "start:local": "razzle start --inspect=0.0.0.0:9229",
     "build:development": "env-cmd .env.development razzle build",
+    "start:staging": "npm run build:staging && npm run serve:staging",
+    "start-debug:staging": "env-cmd -f .env.staging razzle start --inspect=0.0.0.0:9229",
+    "build:staging": "env-cmd -f .env.staging razzle build",
+    "serve:staging": "env-cmd -f .env.staging node build/server.js",
     "test": "razzle test --env=jsdom",
     "build-css": "node-sass-chokidar src/ -o src/",
     "watch-css": "npm run build-css && node-sass-chokidar src/ -o src/ --watch --recursive"
@@ -69,7 +74,7 @@
     "@types/isomorphic-fetch": "0.0.35",
     "@types/jest": "24.9.0",
     "@types/lodash.debounce": "4.0.6",
-    "@types/node": "12.12.6",
+    "@types/node": "13.9.8",
     "@types/react": "16.9.23",
     "@types/react-dom": "16.9.5",
     "@types/react-frontload": "1.0.0",
@@ -90,6 +95,9 @@
     "ts-jest": "25.2.1",
     "ts-loader": "6.2.1",
     "typescript": "3.8.2"
+  },
+  "resolutions": {
+    "@types/node": "13.9.8"
   },
   "eslintConfig": {
     "extends": "react-app"
