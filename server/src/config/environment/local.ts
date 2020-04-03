@@ -29,6 +29,9 @@ const config: Partial<EnvironmentProperties> = {
     uri: uri,
     secret: 'yVDtwrgYpk1SarMBZULYjnYjJTmNdyem337hdjdf'
   },
+  notifications: {
+    key: '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'
+  },
   origins: [
     'http://localhost:3000'
   ],

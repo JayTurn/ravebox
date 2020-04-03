@@ -15,19 +15,22 @@ import User from './user.model';
 //import UserNotifications from './userNotifications.model';
 //import Mailchimp from 'mailchimp-api-v3';
 import LocalController from './authenticate/local.strategy';
+import Notifications from '../../shared/notifications/Notifications.model';
 
 // Enumerators.
 import { UserRole } from './user.enum';
+import { EmailTemplate } from '../../shared/notifications/Notifications.enum';
 
 // Interfaces.
+import {
+  AuthenticatedUserRequest
+} from '../../models/authentication/authentication.interface';
+import { EmailContact } from '../../shared/notifications/Notifications.interface';
+import { ResponseObject } from '../../models/database/connect.interface';
 import {
   SignupDetails,
   UserDetailsDocument
 } from './user.interface';
-import {
-  AuthenticatedUserRequest
-} from '../../models/authentication/authentication.interface';
-import { ResponseObject } from '../../models/database/connect.interface';
 
 /**
  * Defines the UserController Class.
@@ -214,7 +217,11 @@ export default class UserController {
             }
           }, 201, 'Account created successfully');
 
-        // Send a welcome email to the user.
+          // Send a welcome email to the user.
+          Notifications.SendTransactionalEmail(
+            {email: user.email, name: ''},
+            EmailTemplate.SIGNUP
+          );
         /*
         UserNotifications.userCreateAccount([{
             email: newUser.email,
