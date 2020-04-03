@@ -28,8 +28,7 @@ const config: Partial<EnvironmentProperties> = {
     secret: 'yVDtwrgYpk1SarMBZULYjnYjJTmNdyem337hdjdf'
   },
   origins: [
-    'http://staging.ravebox.io',
-    'https://staging.ravebox.io'
+    'http://staging.ravebox.io'
   ],
   port: 9000,
   security: {
