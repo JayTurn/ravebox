@@ -8,11 +8,11 @@ pipelines:
           script:
           - cp Dockerrun.aws.staging.client.json Dockerrun.aws.json
           - cp robots.staging.txt client/public/robots.txt
-          - zip -r ravebox-client-$BITBUCKET_BUILD_NUMBER.zip Dockerrun.aws.json client
+          - zip -r ravebox-client.zip Dockerrun.aws.json client
           - rm Dockerrun.aws.json
           - rm client/public/robots.txt
           artifacts:
-          - ravebox-client-$BITBUCKET_BUILD_NUMBER.zip
+          - ravebox-client.zip
       - step:
           name: Deploy the API to AWS
           caches:
@@ -25,7 +25,7 @@ pipelines:
               AWS_DEFAULT_REGION: 'ap-southeast-2'
               APPLICATION_NAME: 'ravebox'
               ENVIRONMENT_NAME: 'ravebox-staging'
-              ZIP_FILE: 'ravebox-client-$BITBUCKET_BUILD_NUMBER.zip'
+              ZIP_FILE: 'ravebox-client.zip'
               S3_BUCKET: 'ravebox-staging-deployment'
               VERSION_LABEL: 'ravebox-client-$BITBUCKET_BUILD_NUMBER'
               WAIT: 'true'
