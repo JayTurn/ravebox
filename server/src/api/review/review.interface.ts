@@ -34,6 +34,7 @@ export interface ReviewDocument extends Mongoose.Document {
   details: ReviewDetails;
   url: string;
   videoPaths: VideoPaths;
+  thumbnails: Array<string>;
 }
 
 /**
@@ -45,6 +46,7 @@ export interface ReviewDetails {
   recommended: Recommended;
   title: string;
   videoURL: string;
+  thumbnail: string;
 }
 
 /**
@@ -63,7 +65,9 @@ export interface ReviewRequestBody {
  * SNS Notification message.
  */
 export interface ReviewPublishedSNS {
-  status: string;
+  workflowStatus: string;
   reviewId: string;
   videoPaths: VideoPaths;
+  thumbnailUrls: Array<string>;
+  errorCode?: string;
 }

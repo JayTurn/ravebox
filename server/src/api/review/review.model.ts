@@ -52,6 +52,9 @@ const ReviewSchema = new Schema<ReviewDocument>({
   },
   videoPaths: {
     type: Object
+  },
+  thumbnails: {
+    type: Array
   }
 });
 
@@ -93,13 +96,22 @@ ReviewSchema
 ReviewSchema
   .virtual('details')
   .get(function() {
+
+    let videoURL = '';
+
+    if (this.videoPaths && this.videoPaths.mp4Urls) {
+      if (this.videoPaths.mp4Urls.length > 1) {
+        videoURL = this.videoPaths.mp4Urls[1];
+      }
+    }
+
     return {
       '_id': this._id,
       'product': this.product,
       'recommended': this.recommended,
       'title': this.title,
       'user': this.user,
-      'videoURL': this.videoPaths.mp4Urls[1]
+      'videoURL': videoURL
     };
   });
 

@@ -11,6 +11,7 @@ import * as http from 'http';
 import * as https from 'https';
 import * as S3 from 'aws-sdk/clients/s3';
 import Review from './review.model';
+import ReviewCommon from './review.common';
 import Video from '../../shared/video/Video.model';
 
 // Enumerators.
@@ -240,28 +241,15 @@ export default class ReviewController {
 
           publishMessage = JSON.parse(message.Message);
 
-          if (publishMessage.status === 'Error') {
+          if (publishMessage.workflowStatus === 'Error') {
             console.log('Error: ', publishMessage);
+
+            ReviewCommon.ProcessingFailed(publishMessage);
             break;
           }
 
-          Review.findOneAndUpdate({
-            _id: publishMessage.reviewId
-          }, {
-            published: Workflow.PUBLISHED,
-            videoPaths: publishMessage.videoPaths
-          }, {
-            new: true,
-            upsert: false
-          })
-          .then((updatedReview: ReviewDocument) => {
-            // Send a notification to the user informing them of their review
-            // transitioning to a published state.
-            console.log('Review status updated');
-          })
-          .catch((error: Error) => {
-            console.log(error);
-          });
+          // Publish the video and notify the user.
+          ReviewCommon.PublishReview(publishMessage);
 
           break;
         case SNSMessageType.SUBSCRIPTION:

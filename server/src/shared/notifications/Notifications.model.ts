@@ -32,7 +32,7 @@ export default class Notification {
     const instance: SIB.SMTPApi = new SIB.SMTPApi();
 
     // Set the api key.
-    instance.setApiKey(0, EnvConfig.notifications.key); 
+    instance.setApiKey(0, EnvConfig.notifications.key);
 
     return instance;
   }
@@ -46,7 +46,7 @@ export default class Notification {
     const instance: SIB.ContactsApi = new SIB.ContactsApi();
 
     // Set the api key.
-    instance.setApiKey(0, EnvConfig.notifications.key); 
+    instance.setApiKey(0, EnvConfig.notifications.key);
 
     return instance;
   }
@@ -106,8 +106,8 @@ export default class Notification {
       // Retrieve the contact info.
       instance.getContactInfo(email)
         .then((data: {
-          response: http.IncomingMessage; 
-          body: SIB.GetExtendedContactDetails; 
+          response: http.IncomingMessage;
+          body: SIB.GetExtendedContactDetails;
         }) => {
           // Check if the user is already in the specified list.
           const inList: number = data.body.listIds.indexOf(list);
@@ -119,10 +119,7 @@ export default class Notification {
 
           // The user isn't in the list so let's add them.
           instance.addContactToList(list, { emails: [email] })
-            .then((data: {
-              response: http.IncomingMessage;
-              body: SIB.PostContactInfo;
-            }) => {
+            .then(() => {
               resolve(email);
             })
             .catch((error: Error) => {
@@ -130,8 +127,8 @@ export default class Notification {
             })
         })
         .catch((error: {
-          response: http.IncomingMessage; 
-          body: SIB.GetExtendedContactDetails; 
+          response: http.IncomingMessage;
+          body: SIB.GetExtendedContactDetails;
         }) => {
           // If the error was that the user couldn't be found, let's add them.
           if (error.response.statusCode === 404) {
@@ -143,10 +140,7 @@ export default class Notification {
             createContact.listIds = [list];
 
             instance.createContact(createContact)
-              .then((data: {
-                response: http.IncomingMessage;
-        body: SIB.CreateUpdateContactModel;
-              }) => {
+              .then(() => {
                 resolve(email);
               })
               .catch((error: Error) => {
