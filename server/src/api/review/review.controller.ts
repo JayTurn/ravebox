@@ -3,7 +3,7 @@
  */
 
 // Modules.
-import { Request, Response, Router, NextFunction } from 'express';
+import { Request, Response, Router } from 'express';
 import Authenticate from '../../models/authentication/authenticate.model';
 import Connect from '../../models/database/connect.model';
 import EnvConfig from '../../config/environment/environmentBaseConfig';
@@ -11,6 +11,7 @@ import * as http from 'http';
 import * as https from 'https';
 import * as S3 from 'aws-sdk/clients/s3';
 import Review from './review.model';
+import ReviewCommon from './review.common';
 import Video from '../../shared/video/Video.model';
 
 // Enumerators.
@@ -21,7 +22,6 @@ import { SNSMessageType } from '../../shared/sns/sns.enum';
 import {
   AuthenticatedUserRequest
 } from '../../models/authentication/authentication.interface';
-import { ProductDetailsDocument } from '../product/product.interface';
 import {
   ReviewDetails,
   ReviewDocument,
@@ -142,7 +142,7 @@ export default class ReviewController {
             throw error;
           });
         })
-        .catch((error: Error) => {
+        .catch(() => {
           // Return an error indicating the review wasn't created.
           const responseObject = Connect.setResponse({
             data: {
@@ -179,7 +179,7 @@ export default class ReviewController {
     };
 
     Video.CreateMetadataFile(metadata).promise()
-      .then((value: any) => {
+      .then(() => {
 
         // Set the response object.
         const responseObject: ResponseObject = Connect.setResponse({
@@ -241,26 +241,15 @@ export default class ReviewController {
 
           publishMessage = JSON.parse(message.Message);
 
-          if (publishMessage.status === 'Error') {
+          if (publishMessage.workflowStatus === 'Error') {
             console.log('Error: ', publishMessage);
+
+            ReviewCommon.ProcessingFailed(publishMessage);
             break;
           }
 
-          Review.findOneAndUpdate({
-            _id: publishMessage.reviewId
-          }, {
-            published: Workflow.PUBLISHED,
-            videoPaths: publishMessage.videoPaths
-          }, {
-            new: true,
-            upsert: false
-          })
-          .then((updatedReview: ReviewDocument) => {
-            console.log('Review status updated.')
-          })
-          .catch((error: Error) => {
-            console.log(error);
-          });
+          // Publish the video and notify the user.
+          ReviewCommon.PublishReview(publishMessage);
 
           break;
         case SNSMessageType.SUBSCRIPTION:

@@ -8,10 +8,7 @@ import * as S3 from 'aws-sdk/clients/s3';
 import EnvConfig from '../../config/environment/environmentBaseConfig';
 
 // Interfaces.
-import {
-  UploadStream,
-  VideoUploadMetadata
-} from './Video.interface';
+import { VideoUploadMetadata } from './Video.interface';
 
 /**
  * Video management class.
