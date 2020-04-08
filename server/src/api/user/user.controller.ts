@@ -52,6 +52,9 @@ export default class UserController {
 
     // Attempt to retrieve the user.
     router.get(`${path}/profile`, Authenticate.isAuthenticated, UserController.Profile);
+
+    // Validate the existing of a user handle.
+    router.get(`${path}/handle/:id`, UserController.HandleAvailability);
   }
 
   /**
@@ -266,6 +269,61 @@ export default class UserController {
       // Return the response.
       response.status(responseObject.status).json(responseObject.data);
     });
+  }
+
+  /**
+   * Checks if a user handle is available.
+   *
+   * @param {object} req
+   *   The request object.
+   * @param {object} res
+   *   The response object.
+   */
+  public static HandleAvailability(request: Request, response: Response): void {
+    // Determine if the handle is available.
+    User.findOne({
+      'handle': request.params.id
+    })
+    .lean()
+    .then((user: UserDetailsDocument) => {
+      let responseObject: ResponseObject;
+
+      if (!user) {
+        // Set the response object.
+        responseObject = Connect.setResponse({
+          data: {
+            title: `This user handle is available`
+          }
+        }, 200, `This user handle is available`);
+
+      } else {
+
+        // Set the response object.
+        responseObject = Connect.setResponse({
+          data: {
+            errorCode: 'HANDLE_NOT_AVAILABLE',
+            title: `This user handle isn't available`
+          }
+        }, 404, `This user handle isn't available`);
+
+      }
+
+      // Return the response.
+      response.status(responseObject.status).json(responseObject.data);
+
+    })
+    .catch(() => {
+      // Define the responseObject.
+      const responseObject = Connect.setResponse({
+          data: {
+            errorCode: 'FAILED_TO_CHECK_HANDLE',
+            title: `There was a problem checking the availability of this handle. Please try again`
+          }
+        }, 404, `There was a problem checking the availability of this handle. Please try again`);
+
+      // Return the response.
+      response.status(responseObject.status).json(responseObject.data);
+    })
   }
 
   /**

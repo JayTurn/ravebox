@@ -4,22 +4,25 @@
  */
 'use strict';
 
-// Import the dependent modules.
+// Modules.
 import * as React from 'react';
+import { BaseTextFieldProps } from '@material-ui/core/TextField';
+
+// Interfaces.
+import { ValidationRules } from '../validation/Validation.interface';
 
 /**
  * Input interface.
  */
-export interface InputProps {
+export interface InputProps extends BaseTextFieldProps {
   defaultValue?: string;
-  description?: string;
   handleChange: (data: InputData) => void;
-  hasError: string;
   name: string;
   required?: boolean;
   title: string;
   type: string;
   width?: number;
+  validation?: ValidationRules;
 }
 
 /**

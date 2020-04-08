@@ -6,9 +6,10 @@
 // Modules.
 import API from '../../../utils/api/Api.model';
 import Button from '@material-ui/core/Button';
+import CircularProgress from '@material-ui/core/CircularProgress';
 import Grid from '@material-ui/core/Grid';
 import Typography from '@material-ui/core/Typography';
-import Input from '../../forms/input/Input'; 
+import { createStyles, makeStyles, withStyles, Theme } from '@material-ui/core/styles';
 import * as React from 'react';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router';
@@ -21,6 +22,14 @@ import {
 } from '../../../store/user/Actions';
 import { add } from '../../../store/xsrf/Actions';
 
+// Components.
+import ErrorMessages from '../../forms/errorMessages/ErrorMessages';
+import Input from '../../forms/input/Input'; 
+import StyledButton from '../../elements/buttons/StyledButton';
+
+// Hooks.
+import { useValidation } from '../../forms/validation/useValidation.hook';
+
 // Interfaces.
 import { InputData } from '../../forms/input/Input.interface';
 import { PrivateProfile } from '../User.interface';
@@ -28,6 +37,24 @@ import {
   LoginFormResponse, 
   LoginFormProps
 } from './LoginForm.interface';
+import { ValidationSchema } from '../../forms/validation/Validation.interface';
+
+// Validation rules.
+import { isRequired, isEmail } from '../../forms/validation/ValidationRules';
+
+/**
+ * Login form validation schema.
+ */
+const loginValidation: ValidationSchema = {
+  email: {
+    errorMessage: '',
+    rules: [isRequired, isEmail]
+  },
+  password: {
+    errorMessage: '',
+    rules: [isRequired]
+  }
+};
 
 /**
  * Login form component.
@@ -40,6 +67,23 @@ const LoginForm: React.FC<LoginFormProps> = (props: LoginFormProps) => {
     password: ''
   });
 
+  // Form error messages to be displayed if fields haven't been validated
+  // and prevents submissions to the api.
+  const [formErrorMessages, setFormErrorMessages] = React.useState(['']);
+
+  // Set a form submission state, used to inform the user their form has been
+  // submitted and to prevent duplicate submissions.
+  const [submitting, setSubmitting] = React.useState(false);
+
+  // Validation hook.
+  const {
+    validation,
+    validateField,
+    validateAllFields
+  } = useValidation({
+    validation: loginValidation
+  });
+
   /**
    * Handles updates to the signup form field.
    *
@@ -50,6 +94,15 @@ const LoginForm: React.FC<LoginFormProps> = (props: LoginFormProps) => {
   ) => void = (
     data: InputData
   ): void => {
+
+    // Reset the form errors based on field input.
+    setFormErrorMessages(['']);
+
+    // Validate the field if it has rules associated with it.
+    if (validation[data.key]) {
+      validateField(data.key)(data.value);
+    }
+
     setValues({
       ...values,
       [data.key]: data.value
@@ -61,14 +114,40 @@ const LoginForm: React.FC<LoginFormProps> = (props: LoginFormProps) => {
    * @method getRequestToken
    */
   const authenticate: (
-  ) => void = (
-  ): void => {
+  ) => Promise<void> = async (
+  ): Promise<void> => {
+
+    // Don't do anything if we're already submitting.
+    if (submitting) {
+      return;
+    }
+
+    // Validate all of the fieds in the form.
+    const errors: Array<string> = await validateAllFields(
+      values as Record<string, string>);
+
+    // If we have errors, exist and trigger the error message.
+    if (errors.length > 0) {
+      setFormErrorMessages(errors);
+      return;
+    }
+
+    // Set the submission state.
+    setSubmitting(true)
+
     //const instance: UserLogin = this;
     API.requestAPI<LoginFormResponse>('user/login', {
       method: 'POST',
       body: JSON.stringify(values)
     })
     .then((response: LoginFormResponse) => {
+      // Present any errors that were returned in the response.
+      if (response.errorCode) {
+        setSubmitting(false);
+        setFormErrorMessages([response.title])
+        return;
+      }
+
       if (props.addXsrf && props.login) {
         // Retrieve the xsrf cookie to be set on the header for future requests. 
         const cookies: Cookies = new Cookies();
@@ -77,9 +156,17 @@ const LoginForm: React.FC<LoginFormProps> = (props: LoginFormProps) => {
         if (xsrf) {
           props.addXsrf(xsrf);
           props.login(response.user);
-          props.history.push('/user/profile');
+          props.history.push('/');
         }
+
+        // Set the submission state.
+        setSubmitting(false);
       }
+    })
+    .catch(() => {
+      // Present any errors that were returned in the response.
+      setSubmitting(false);
+      setFormErrorMessages([`Something went wrong. Please try to log in again`])
     });
   }
 
@@ -90,47 +177,43 @@ const LoginForm: React.FC<LoginFormProps> = (props: LoginFormProps) => {
    * @return React.ReactNode
    */
   return (
-    <div style={{'minWidth': '50%'}}>
-      <Typography variant='h1' gutterBottom>
-        Log in
-      </Typography>
-      <form noValidate autoComplete="off">
-        <Grid
-          container
-          direction='column'
-          spacing={2}
-          alignItems='stretch'
-        >
-          <Grid item xs={12}>
-            <Input
-              handleChange={updateForm}
-              hasError={''}
-              name='email'
-              required={true}
-              type='email'
-              title="Email" 
-            />
-          </Grid>
-          <Grid item xs={12}>
-            <Input
-              handleChange={updateForm}
-              hasError={''}
-              name='password'
-              required={true}
-              type='password'
-              title="Password" 
-            />
-          </Grid>
-          <Grid item xs={12} sm={9} md={3}>
-            <Button
-              variant='contained'
-              color='primary'
-              onClick={authenticate}
-            >Log in</Button>
-          </Grid>
+    <form noValidate autoComplete="off">
+      <Grid
+        container
+        direction='column'
+        spacing={2}
+        alignItems='stretch'
+      >
+        <Grid item xs={12} md={6}>
+          <Input
+            handleChange={updateForm}
+            name='email'
+            type='email'
+            title="Email"
+            validation={validation.email}
+          />
         </Grid>
-      </form>
-    </div>
+        <Grid item xs={12} md={6}>
+          <Input
+            handleChange={updateForm}
+            name='password'
+            type='password'
+            title="Password" 
+            validation={validation.password}
+          />
+        </Grid>
+        <Grid item xs={12} md={6}>
+          <ErrorMessages errors={formErrorMessages} />
+        </Grid>
+        <Grid item xs={12} md={6}>
+          <StyledButton
+            title='Log in'
+            clickAction={authenticate}
+            submitting={submitting}
+          />
+        </Grid>
+      </Grid>
+    </form>
   );
 }
 

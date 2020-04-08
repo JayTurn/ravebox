@@ -217,7 +217,6 @@ const AddReviewForm: React.FC<ReviewFormProps> = (props: ReviewFormProps) => {
             <Typography variant='h3' gutterBottom>Add your review</Typography>
             <Input
               handleChange={updateInputs}
-              hasError={''}
               name='title'
               required={true}
               type='text'

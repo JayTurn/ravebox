@@ -1,6 +1,6 @@
 /**
- * Login.tsx
- * Login route component.
+ * Account.tsx
+ * Account route component.
  */
 
 // Dependent modules.
@@ -9,23 +9,16 @@ import Grid from '@material-ui/core/Grid';
 import { withRouter } from 'react-router';
 import { bindActionCreators, Dispatch, AnyAction } from 'redux';
 import { connect } from 'react-redux';
-import AccessType from '../../../components/user/accessType/AccessType';
-
-// Enumerators.
-import { AccessOptions } from '../../../components/user/accessType/AccessType.enum';
 
 // Interfaces.
 import {
-  LoginProps,
-} from './Login.interface';
-
-// Dependent components.
-import LoginForm from '../../../components/user/loginForm/LoginForm';
+  AccountProps,
+} from './Account.interface';
 
 /**
- * Login component.
+ * Account component.
  */
-const Login: React.FC<LoginProps> = (props: LoginProps) => {
+const Account: React.FC<AccountProps> = (props: AccountProps) => {
 
   return (
     <div style={{flexGrow: 1, marginTop: '3rem' }}>
@@ -34,8 +27,6 @@ const Login: React.FC<LoginProps> = (props: LoginProps) => {
         direction='column'
         justify='flex-start'
       >
-        <AccessType selected={AccessOptions.LOGIN} />
-        <LoginForm />
       </Grid>
     </div>
   );
@@ -45,7 +36,7 @@ const Login: React.FC<LoginProps> = (props: LoginProps) => {
  * Map the api image configuration state to the properties.
  *
  */
-function mapStatetoProps(state: {}, ownProps: LoginProps) {
+function mapStatetoProps(state: {}, ownProps: AccountProps) {
   return {
     ...ownProps,
   };
@@ -53,4 +44,4 @@ function mapStatetoProps(state: {}, ownProps: LoginProps) {
 
 export default withRouter(connect(
     mapStatetoProps
-  )(Login));
+  )(Account));

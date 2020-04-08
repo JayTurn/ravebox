@@ -15,10 +15,10 @@
     ]
   },
   "dependencies": {
-    "@material-ui/core": "4.9.4",
+    "@material-ui/core": "4.9.9",
     "@material-ui/icons": "4.9.1",
-    "@material-ui/lab": "4.0.0-alpha.46",
-    "@material-ui/styles": "4.9.0",
+    "@material-ui/lab": "4.0.0-alpha.48",
+    "@material-ui/styles": "4.9.6",
     "connected-react-router": "6.7.0",
     "env-cmd": "10.1.0",
     "express": "4.17.1",
@@ -87,6 +87,7 @@
     "@types/serialize-javascript": "1.5.0",
     "@types/universal-cookie": "2.2.0",
     "@types/webpack-env": "1.15.1",
+    "@svgr/webpack": "5.3.1",
     "enzyme": "3.11.0",
     "enzyme-adapter-react-16": "1.15.2",
     "enzyme-to-json": "3.4.4",

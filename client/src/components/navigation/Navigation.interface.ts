@@ -13,8 +13,6 @@ import { RouteComponentProps } from 'react-router';
  * Navigation properties.
  */
 export interface NavigationProps  extends RouteComponentProps {
-  logout?: Function;
   showLogin?: Function;
-  removeXsrf?: (token: string) => {};
   profile?: PrivateProfile;
 }

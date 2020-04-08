@@ -24,6 +24,7 @@ import {
 } from '../store/xsrf/Actions';
 
 // Components.
+import { ThemeProvider } from '@material-ui/core/styles';
 import AddProduct from './product/add/AddProduct';
 import AddReview from './review/add/AddReview';
 import ViewReview from './review/view/ViewReview';
@@ -32,7 +33,7 @@ import Login from './user/login/Login';
 import Navigation from '../components/navigation/Navigation';
 import PageNotFound from './page-not-found/PageNotFound';
 import PrivateRoute from './privateRoute/PrivateRoute';
-import Profile from './user/profile/Profile';
+import Account from './user/account/Account';
 import ScrollToTop from '../utils/scroll/ScrollToTop';
 import Signup from './user/signup/Signup';
 
@@ -52,6 +53,9 @@ import {
   APIImageConfig,
   RequestInterface
 } from '../utils/api/Api.interface'; 
+
+// Theme.
+import RaveboxTheme from '../theme/RaveboxTheme';
 
 // Dependent styles.
 import './App.css';
@@ -73,53 +77,47 @@ const App: React.FC<AppProps> = (props: AppProps) => {
    * Renders the application.
    */
   return (
-    <div className={`app`}>
-      <Helmet title="Ravebox" defaultTitle="Ravebox" />
-      <ScrollToTop />
-      <Navigation />
-      <Container maxWidth="lg">
-        <Route
-          render={(route: RouteComponentProps) => {
-            return (
-              <TransitionGroup>
-                <CSSTransition
-                  key={route.location.pathname}
-                  timeout={1000}
-                  classNames="fade"
-                >
-                  <Switch location={route.location}>
-                    <Route path="/page-not-found" exact={true}>
-                      <PageNotFound />
-                    </Route>
-                    <PrivateRoute exact={true} path="/user/profile">
-                      <Profile />
-                    </PrivateRoute>
-                    <Route exact={true} path="/user/login">
-                      <Login />
-                    </Route>
-                    <Route exact={true} path="/user/signup">
-                      <Signup />
-                    </Route>
-                    <Route exact={true} path="/product/add">
-                      <AddProduct />
-                    </Route>
-                    <PrivateRoute exact={true} path="/product/:id/review">
-                      <AddReview />
-                    </PrivateRoute>
-                    <Route exact={true} path="/review/:brand/:productName/:reviewTitle">
-                      <ViewReview />
-                    </Route>
-                    <Route exact={true} path="/">
-                      <Home />
-                    </Route>
-                  </Switch>
-                </CSSTransition>
-              </TransitionGroup>
-            );
-          }}
-        />
-      </Container>
-    </div>
+    <ThemeProvider theme={RaveboxTheme}>
+      <div className={`app`}>
+        <Helmet title="Ravebox" defaultTitle="Ravebox" />
+        <ScrollToTop />
+        <Navigation />
+        <Container maxWidth="lg">
+          <Route
+            render={(route: RouteComponentProps) => {
+              return (
+                <Switch location={route.location}>
+                  <Route path="/page-not-found" exact={true}>
+                    <PageNotFound />
+                  </Route>
+                  <PrivateRoute exact={true} path="/user/account">
+                    <Account />
+                  </PrivateRoute>
+                  <Route exact={true} path="/user/login">
+                    <Login />
+                  </Route>
+                  <Route exact={true} path="/user/signup">
+                    <Signup />
+                  </Route>
+                  <Route exact={true} path="/product/add">
+                    <AddProduct />
+                  </Route>
+                  <PrivateRoute exact={true} path="/product/:id/review">
+                    <AddReview />
+                  </PrivateRoute>
+                  <Route exact={true} path="/review/:brand/:productName/:reviewTitle">
+                    <ViewReview />
+                  </Route>
+                  <Route exact={true} path="/">
+                    <Home />
+                  </Route>
+                </Switch>
+              );
+            }}
+          />
+        </Container>
+      </div>
+    </ThemeProvider>
   );
 }
 

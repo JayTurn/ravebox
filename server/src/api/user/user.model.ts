@@ -28,6 +28,9 @@ const UserSchema = new Schema({
     type: String,
     lowercase: true,
   },
+  handle: {
+    type: String
+  },
   //name: {
     //type: Name,
     //es_indexed: false

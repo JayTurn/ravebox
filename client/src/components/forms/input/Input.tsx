@@ -28,18 +28,24 @@ const Input: React.FC<InputProps> = (props: InputProps) => {
     });
   }
 
+  let message = props.helperText;
+
+  if (props.validation && props.validation.errorMessage) {
+    message = props.validation.errorMessage 
+  }
+
   return (
-    <div className={`form-group ${props.hasError}`}>
-      <TextField
-        fullWidth={true}
-        helperText={props.description}
-        id={props.name}
-        label={props.title}
-        onBlur={updateValues}
-        required={props.required}
-        type={props.type}
-      />
-    </div>
+    <TextField
+      error={props.validation && props.validation.errorMessage !== ''}
+      fullWidth={true}
+      helperText={message}
+      id={props.name}
+      label={props.title}
+      onBlur={updateValues}
+      required={props.required}
+      type={props.type}
+      variant='outlined'
+    />
   );
 };
 

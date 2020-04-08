@@ -15,6 +15,7 @@ export interface UserDetailsDocument extends Mongoose.Document {
   email: string;
   encryptPassword: Function;
   expires: number;
+  handle: string;
   _id: string;
   password: string;
   provider: string;
@@ -26,6 +27,7 @@ export interface UserDetailsDocument extends Mongoose.Document {
 
 export interface PrivateUserDetails {
   _id: string;
+  handle: string;
   role: Array<UserRole>;
   email: string;
   expires: number;
@@ -33,7 +35,7 @@ export interface PrivateUserDetails {
 
 export interface PublicUserDetails {
   _id: string;
-  email: string;
+  handle: string;
 }
 
 export interface AuthenticatedUserDetails {
@@ -46,6 +48,7 @@ export interface AuthenticatedUserDetails {
 
 export interface SignupDetails {
   email: string;
+  handle: string;
   password: string;
   provider: string;
 }
