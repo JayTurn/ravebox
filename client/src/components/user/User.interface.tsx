@@ -9,11 +9,13 @@
 export interface PrivateProfile {
   _id: string;
   email: string;
+  emailVerified: boolean;
+  handle: string;
 }
 
 /**
  * Public profile for a user's public facing display.
  */
 export interface PublicProfile {
-  email: string;
+  handle: string;
 }

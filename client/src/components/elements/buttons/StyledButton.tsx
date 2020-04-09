@@ -47,8 +47,9 @@ const StyledCircularProgress = withStyles(theme => ({
 const ButtonElement = withStyles(theme => ({
   root: {
     '&:disabled': {
-      color: theme.palette.primary.light,
-      backgroundColor: theme.palette.primary.light
+      color: theme.palette.primary.contrastText,
+      backgroundColor: theme.palette.primary.main,
+      opacity: '.45'
     }
   }
 }))(Button);
@@ -65,7 +66,7 @@ const StyledButton: React.FC<StyledButtonProps> = (props: StyledButtonProps) => 
     <div className={classes.wrapper}>
       <ButtonElement
         color='primary'
-        disabled={props.submitting}
+        disabled={props.disabled || props.submitting}
         disableElevation
         fullWidth={true}
         onClick={props.clickAction}

@@ -60,10 +60,13 @@ export default createMuiTheme({
   typography: {
     fontFamily: 'Muli, Arial, sans-serif',
     h1: {
-      fontSize: '3rem'
+      fontSize: '3rem',
+      marginBottom: '0.5rem'
     },
     h2: {
-      fontSize: '1.875rem'
+      fontSize: '1.875rem',
+      fontWeight: 400,
+      marginBottom: '0.5rem'
     },
     h3: {
       fontSize: '1.171rem'

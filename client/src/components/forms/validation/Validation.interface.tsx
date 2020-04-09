@@ -22,7 +22,7 @@ export interface ValidationHook {
 
 export type ValidationSchema = Record<string, ValidationRules>;
 
-export type ValidationValues = Record<string, string>
+export type ValidationValues = Record<string, string | boolean>;
 
 /**
  * User handle check response.

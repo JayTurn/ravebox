@@ -36,6 +36,7 @@ const Input: React.FC<InputProps> = (props: InputProps) => {
 
   return (
     <TextField
+      defaultValue={props.defaultValue}
       error={props.validation && props.validation.errorMessage !== ''}
       fullWidth={true}
       helperText={message}
@@ -45,6 +46,7 @@ const Input: React.FC<InputProps> = (props: InputProps) => {
       required={props.required}
       type={props.type}
       variant='outlined'
+      value={props.value}
     />
   );
 };

@@ -121,7 +121,7 @@ const ProfileMenu: React.FC<ProfileMenuProps> = (props: ProfileMenuProps) => {
     handleClose();
 
     // Redirect to the home screen.
-    props.history.push('/user/account');
+    props.history.push('/account');
   }
   
   return (

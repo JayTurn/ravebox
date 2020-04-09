@@ -13,6 +13,7 @@ export interface UserDetailsDocument extends Mongoose.Document {
   authenticate: Function;
   createSalt: Function;
   email: string;
+  emailVerified: boolean;
   encryptPassword: Function;
   expires: number;
   handle: string;
@@ -30,6 +31,7 @@ export interface PrivateUserDetails {
   handle: string;
   role: Array<UserRole>;
   email: string;
+  emailVerified: boolean;
   expires: number;
 }
 
@@ -51,4 +53,8 @@ export interface SignupDetails {
   handle: string;
   password: string;
   provider: string;
+}
+
+export interface ProfileSettings {
+  handle: string;
 }

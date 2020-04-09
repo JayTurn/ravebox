@@ -28,6 +28,10 @@ const UserSchema = new Schema({
     type: String,
     lowercase: true,
   },
+  emailVerified: {
+    type: Boolean,
+    default: false
+  },
   handle: {
     type: String
   },
@@ -66,6 +70,8 @@ UserSchema
       '_id': this._id,
       'role': this.role,
       'email': this.email,
+      'emailVerified': this.emailVerified,
+      'handle': this.handle,
       //'name': this.name,
       //'phone': this.phone,
       //'address': this.address,

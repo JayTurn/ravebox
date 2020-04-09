@@ -45,7 +45,7 @@ const ReviewDetails: React.FC<ReviewDetailsProps> = (props: ReviewDetailsProps) 
           }
           {user &&
             <Typography variant='body1'>
-              {user.email}
+              {user.handle}
             </Typography>
           }
           {product &&

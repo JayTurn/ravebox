@@ -39,3 +39,11 @@ export const showLogin = () => action(
  */
 export const hideLogin = () => action(
   UserVerb.HIDE_LOGIN, false);
+
+/**
+ * Updates a user in the redux store.
+ *
+ * @param { User } user - the user to be updated.
+ */
+export const update = (profile: PrivateProfile) => action(
+  UserVerb.UPDATE, profile);

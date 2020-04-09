@@ -90,7 +90,7 @@ const App: React.FC<AppProps> = (props: AppProps) => {
                   <Route path="/page-not-found" exact={true}>
                     <PageNotFound />
                   </Route>
-                  <PrivateRoute exact={true} path="/user/account">
+                  <PrivateRoute exact={true} path="/account">
                     <Account />
                   </PrivateRoute>
                   <Route exact={true} path="/user/login">

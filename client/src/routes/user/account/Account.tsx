@@ -10,6 +10,9 @@ import { withRouter } from 'react-router';
 import { bindActionCreators, Dispatch, AnyAction } from 'redux';
 import { connect } from 'react-redux';
 
+// Components.
+import Settings from '../../../components/user/settings/Settings';
+
 // Interfaces.
 import {
   AccountProps,
@@ -27,6 +30,7 @@ const Account: React.FC<AccountProps> = (props: AccountProps) => {
         direction='column'
         justify='flex-start'
       >
+        <Settings />
       </Grid>
     </div>
   );

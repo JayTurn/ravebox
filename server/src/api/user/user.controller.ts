@@ -30,6 +30,7 @@ import {
 } from '../../models/authentication/authentication.interface';
 import { ResponseObject } from '../../models/database/connect.interface';
 import {
+  ProfileSettings,
   SignupDetails,
   UserDetailsDocument
 } from './user.interface';
@@ -52,6 +53,9 @@ export default class UserController {
 
     // Attempt to retrieve the user.
     router.get(`${path}/profile`, Authenticate.isAuthenticated, UserController.Profile);
+
+    // Attempt to retrieve the user.
+    router.patch(`${path}/update/profile`, Authenticate.isAuthenticated, UserController.UpdateProfile);
 
     // Validate the existing of a user handle.
     router.get(`${path}/handle/:id`, UserController.HandleAvailability);
@@ -324,6 +328,50 @@ export default class UserController {
       // Return the response.
       response.status(responseObject.status).json(responseObject.data);
     })
+  }
+
+  /**
+   * Get current user handler.
+   *
+   * @param {object} req
+   * The request object.
+   *
+   * @param {object} res
+   * The response object.
+   */
+  static UpdateProfile(request: AuthenticatedUserRequest, response: Response): void {
+    const settings: ProfileSettings = request.body;
+
+    // Find the user and update the profile settings.
+    User.findByIdAndUpdate(
+      request.auth._id,
+      { handle: settings.handle },
+      { new: true, upsert: false }
+    )
+    .then((user: UserDetailsDocument) => {
+      // Set the response object.
+      const responseObject: ResponseObject = Connect.setResponse({
+        data: {
+          user: user.privateProfile
+        }
+      }, 200, 'Account updated successfully');
+
+      // Return the response.
+      response.status(responseObject.status).json(responseObject.data);
+    })
+    .catch(() => {
+
+      // Define the responseObject.
+      const responseObject = Connect.setResponse({
+          data: {
+            errorCode: 'FAILED_TO_UPDATE_PROFILE',
+            title: `There was a problem updating your profile`
+          }
+        }, 403, `There was a problem updating your profile`);
+
+      // Return the response.
+      response.status(responseObject.status).json(responseObject.data);
+    });
   }
 
   /**
