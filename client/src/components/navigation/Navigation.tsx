@@ -14,7 +14,7 @@ import MenuItem from '@material-ui/core/MenuItem';
 import Toolbar from '@material-ui/core/Toolbar';
 import useMediaQuery from '@material-ui/core/useMediaQuery';
 import { useTheme } from '@material-ui/core/styles';
-import { styled, makeStyles, withStyles, Theme } from '@material-ui/core/styles';
+import { createStyles, styled, makeStyles, withStyles, Theme } from '@material-ui/core/styles';
 import * as React from 'react';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router';
@@ -35,11 +35,8 @@ import { NavigationProps } from './Navigation.interface';
 import { PrivateProfile } from '../user/User.interface';
 
 // Make the app specific styles.
-const useStyles = makeStyles((theme: Theme) => ({
-  root: {
-    boxShadow: 'none',
-    borderBottom: `2px solid ${theme.palette.primary.light}`
-  },
+const useStyles = makeStyles((theme: Theme) => createStyles({
+  root: { },
   linksNoHover: {
     textDecoration: 'none'
   },
@@ -61,6 +58,14 @@ const useStyles = makeStyles((theme: Theme) => ({
     }
   }
 }));
+
+const StyledAppBar = withStyles((theme: Theme) => ({
+  root: {
+    backgroundColor: theme.palette.common.white,
+    boxShadow: 'none',
+    borderBottom: `2px solid ${theme.palette.primary.light}`
+  }
+  }))(AppBar);
 
 const MenuIconButton = withStyles((theme: Theme) => ({
   root: {
@@ -115,7 +120,7 @@ const Navigation: React.FC<NavigationProps> = (props: NavigationProps) => {
    * Renders the navigation menu.
    */
   return (
-    <AppBar position='static' color='transparent' className={classes.root}>
+    <StyledAppBar position='sticky' color='inherit'>
       <Toolbar variant='dense'>
         {largeScreen ? (
           <React.Fragment>
@@ -156,15 +161,15 @@ const Navigation: React.FC<NavigationProps> = (props: NavigationProps) => {
           <React.Fragment>
             <div style={{flexGrow: 1}} />
             <MenuButton color="inherit">
-              <NavLink to="/user/login" activeClassName="active" className={classes.links}>Login</NavLink>
+              <NavLink to="/user/login" activeClassName="active" className={classes.links}>Log in</NavLink>
             </MenuButton>
             <MenuButtonContained color="primary" variant='contained' disableElevation>
-              <NavLink to="/user/signup" activeClassName="active" className={classes.linksInverse}>Signup</NavLink>
+              <NavLink to="/user/signup" activeClassName="active" className={classes.linksInverse}>Sign up</NavLink>
             </MenuButtonContained>
           </React.Fragment>
         )}
       </Toolbar>
-    </AppBar>
+    </StyledAppBar>
   );
 }
 

@@ -98,7 +98,7 @@ export default class Notification {
    *
    * @return Promise<string>
    */
-  static AddEmailToList(email: string, list: ContactList): Promise<string> {
+  static AddEmailToList(email: string, name: string, list: ContactList): Promise<string> {
     return new Promise<string>((resolve: Function, reject: Function) => {
       // Create the contacts instance.
       const instance: SIB.ContactsApi = Notification.CreateContactInstance();
@@ -137,6 +137,9 @@ export default class Notification {
 
             // Update the contact object with details we know.
             createContact.email = email;
+            createContact.attributes = {
+              firstName: name
+            };
             createContact.listIds = [list];
 
             instance.createContact(createContact)

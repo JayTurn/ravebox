@@ -12,6 +12,7 @@ import { Request, Response, Router } from 'express';
 import * as Jwt from 'jsonwebtoken';
 //import * as Mongoose from 'mongoose';
 import User from './user.model';
+import UserCommon from './user.common';
 //import UserNotifications from './userNotifications.model';
 //import Mailchimp from 'mailchimp-api-v3';
 import LocalController from './authenticate/local.strategy';
@@ -56,6 +57,12 @@ export default class UserController {
 
     // Attempt to retrieve the user.
     router.patch(`${path}/update/profile`, Authenticate.isAuthenticated, UserController.UpdateProfile);
+
+    // Attempt to change the email address.
+    router.patch(`${path}/update/email`, Authenticate.isAuthenticated, UserController.UpdateEmail);
+
+    // Verify the email address.
+    router.get(`${path}/verify/:token`, UserController.VerifyEmail);
 
     // Validate the existing of a user handle.
     router.get(`${path}/handle/:id`, UserController.HandleAvailability);
@@ -227,12 +234,19 @@ export default class UserController {
           }, 201, 'Account created successfully');
 
           // Send a welcome email to the user.
-          Notifications.AddEmailToList(user.email, ContactList.ALL)
+          Notifications.AddEmailToList(
+            user.email,
+            user.handle,
+            ContactList.ALL
+          )
             .then((email: string) => {
               Notifications.SendTransactionalEmail(
-                {email: email, name: 'N/A'},
+                {email: email, name: user.handle},
                 EmailTemplate.SIGNUP
               );
+
+              UserCommon.SendEmailVerification(user);
+
             })
             .catch((error: Error) => {
               // Log the failed email handling.
@@ -374,6 +388,144 @@ export default class UserController {
     });
   }
 
+  /**
+   * Send an email verification link.
+   *
+   * @param {object} req
+   *   The request object.
+   * @param {object} res
+   *   The response object.
+   */
+  static UpdateEmail(request: AuthenticatedUserRequest, response: Response): void {
+    // Declare the response object
+    const email: string = request.body.email;
+
+    // if we don't have an email throw a response error. 
+    if (!email) {
+      // Define the responseObject.
+      const responseObject = Connect.setResponse({
+          data: {
+            errorCode: 'FAILED_TO_PROVIDE_EMAIL',
+            title: `We need a new email to update your existing one`
+          }
+        }, 403, `We need a new email to update your existing one`);
+
+      // Return the response.
+      throw responseObject;
+    }
+
+    // Search for the user by the email address provided.
+    User.findById(request.auth._id)
+    .then((user: UserDetailsDocument) => {
+
+      // If we have found a user.
+      if (user) {
+        // Set the new email and the old email.
+        user.oldEmail = user.email;
+        user.email = email;
+        user.emailVerified = false;
+
+        return User.findByIdAndUpdate(
+          user._id,
+          {
+            oldEmail: user.email,
+            email: email,
+            emailVerified: false
+          },
+          { new: true, upsert: false}
+        );
+      } else {
+        throw new Error('User not found');
+      }
+    })
+    .then((user: UserDetailsDocument) => {
+
+      // Send the verification email.
+      UserCommon.SendEmailVerification(user);
+
+      // Set the response object.
+      const responseObject: ResponseObject = Connect.setResponse({
+        data: {
+          user: user.privateProfile
+        }
+      }, 200, 'Email updated successfully.');
+
+      // Return the response.
+      response.status(responseObject.status).json(responseObject.data);
+    })
+    .catch(() => {
+      // Define the responseObject.
+      const responseObject = Connect.setResponse({
+        data: {
+          errorCode: 'FAILED_EMAIL_RESET_LOOKUP',
+          message: 'Please enter your email and try again'
+        }
+      }, 404, 'We could not reset your password');
+
+      // Return the response.
+      response.status(responseObject.status).json(responseObject.data);
+
+    });
+  }
+
+  /**
+   * Verifies the email token provided.
+   *
+   * @param {object} req
+   *   The request object.
+   * @param {object} res
+   *   The response object.
+   */
+  public static VerifyEmail(request: Request, response: Response): void {
+    const token: string = request.params.token;
+
+    // Decode the token so we can confirm the email address matches in the
+    // database.
+    const decoded: string | {[key: string]: any} = Jwt.decode(token, {
+      complete: true,
+      json: true
+    });
+
+    const email: string = decoded.payload.email as string,
+          _id: string = decoded.payload.userId as string;
+
+    // Find the user by their id, email address and update their verification
+    // status.
+    User.findOneAndUpdate({
+      _id: _id,
+      email: email
+    }, {
+      emailVerified: true
+    }, {
+      new: true,
+      upsert: false
+    })
+    .then((user: UserDetailsDocument) => {
+      // Set the response object.
+      const responseObject: ResponseObject = Connect.setResponse({
+        data: {
+          user: user.privateProfile
+        }
+      }, 200, 'Your email has been successfully verified');
+
+      // Return the response.
+      response.status(responseObject.status).json(responseObject.data);
+    })
+    .catch((error: Error) => {
+      // Define the responseObject.
+      const responseObject = Connect.setResponse({
+        data: {
+          errorCode: 'FAILED_EMAIL_VERIFICATION',
+          message: `We couldn't verify your email address`
+        }
+      }, 404, `We couldn't verify your email address`);
+
+      // Return the response.
+      response.status(responseObject.status).json(responseObject.data);
+    });
+
+    
+  }
   /**
    * Send a password reset link.
    *

@@ -36,6 +36,7 @@ import PrivateRoute from './privateRoute/PrivateRoute';
 import Account from './user/account/Account';
 import ScrollToTop from '../utils/scroll/ScrollToTop';
 import Signup from './user/signup/Signup';
+import Verify from './user/verify/Verify';
 
 // Hooks.
 import { useRetrieveProfile } from '../components/user/profile/useRetrieveProfile.hook';
@@ -98,6 +99,9 @@ const App: React.FC<AppProps> = (props: AppProps) => {
                   </Route>
                   <Route exact={true} path="/user/signup">
                     <Signup />
+                  </Route>
+                  <Route exact={true} path="/user/verify/:token">
+                    <Verify />
                   </Route>
                   <Route exact={true} path="/product/add">
                     <AddProduct />

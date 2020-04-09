@@ -81,15 +81,8 @@ const Settings: React.FC<SettingsProps> = (props: SettingsProps) => {
         <form noValidate autoComplete="off">
           {props.profile && props.update &&
             <Grid container direction='column'>
-              <ChangeProfile profile={props.profile} update={props.update} />
-              <Grid item xs={12} md={6}>
-                <Typography variant='h2'color='textPrimary'>Contact details</Typography>
-                <PaddedDivider />
-                <ChangeEmail
-                  email={props.profile.email}
-                  emailVerified={props.profile.emailVerified}
-                />
-              </Grid>
+              <ChangeProfile />
+              <ChangeEmail />
               <Grid item xs={12} md={6}>
                 <Typography variant='h2' color='textPrimary'>Security</Typography>
                 <PaddedDivider />

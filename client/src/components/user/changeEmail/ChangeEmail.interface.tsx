@@ -3,10 +3,22 @@
  * Interfaces for the change email component.
  */
 
+// Interfaces.
+import { APIResponse } from '../../../utils/api/Api.interface';
+import { PrivateProfile } from '../User.interface';
+
 /**
  * Change email component properties.
  */
 export interface ChangeEmailProps {
-  email: string;
-  emailVerified: boolean;
+  profile?: PrivateProfile;
+  update?: (profile: PrivateProfile) => void;
+  xsrf?: string;
+}
+
+/**
+ * Interface for the email update response.
+ */
+export interface ChangeEmailResponse extends APIResponse {
+  user: PrivateProfile;
 }

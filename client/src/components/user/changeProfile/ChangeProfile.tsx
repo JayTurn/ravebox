@@ -5,7 +5,6 @@
 
 // Modules.
 import Box from '@material-ui/core/Box';
-import Divider from '@material-ui/core/Divider';
 import Grid from '@material-ui/core/Grid';
 import Typography from '@material-ui/core/Typography';
 import API from '../../../utils/api/Api.model';
@@ -22,7 +21,6 @@ import {
 import Input from '../../forms/input/Input';
 import PaddedDivider from '../../elements/dividers/PaddedDivider';
 import StyledButton from '../../elements/buttons/StyledButton';
-
 
 // Enumerators.
 import { RequestType } from '../../../utils/api/Api.enum';
@@ -61,7 +59,7 @@ const profileValidation: ValidationSchema = {
 /**
  * Renders the form for a user to change their email.
  */
-const ChangeEmail: React.FC<ChangeProfileProps> = (props: ChangeProfileProps) => {
+const ChangeProfile: React.FC<ChangeProfileProps> = (props: ChangeProfileProps) => {
 
   // Define the settings to be updated upon save.
   const [settings, updateSettings] = React.useState<PrivateProfile>({_id: '', email: '', emailVerified: false, handle: ''});
@@ -200,7 +198,7 @@ const ChangeEmail: React.FC<ChangeProfileProps> = (props: ChangeProfileProps) =>
     >
       <Grid item xs={12} md={6} style={{marginBottom: 40}}>
         <Typography variant='h2' color='textPrimary'>Profile</Typography>
-        <Typography variant='subtitle2' color='textPrimary'>Change information others can see on your profile</Typography>
+        <Typography variant='subtitle1' color='textPrimary'>Change information others can see on your profile</Typography>
         <PaddedDivider />
         {props.profile && settings._id &&
           <Input
@@ -216,7 +214,7 @@ const ChangeEmail: React.FC<ChangeProfileProps> = (props: ChangeProfileProps) =>
         <Box style={{marginTop: 20, marginBottom: 40}}>
           <StyledButton
             disabled={!changed}
-            title='Save profile'
+            title='Save handle'
             clickAction={submitProfile}
             submitting={submitting}
           />
@@ -263,4 +261,4 @@ function mapStatetoProps(state: any, ownProps: ChangeProfileProps) {
 export default connect(
   mapStatetoProps,
   mapDispatchToProps
-)(ChangeEmail);
+)(ChangeProfile);

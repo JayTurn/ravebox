@@ -55,7 +55,10 @@ export default class ReviewCommon {
         .then(() => {
 
           // Send a notification to the user informing them of their review
-          Notifications.AddEmailToList(reviewDocument.user.email, ContactList.REVIEWERS)
+          Notifications.AddEmailToList(
+            reviewDocument.user.email,
+            reviewDocument.user.handle,
+            ContactList.REVIEWERS)
             .then((email: string) => {
               Notifications.SendTransactionalEmail(
                 {email: email, name: 'N/A'},

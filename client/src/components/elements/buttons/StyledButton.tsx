@@ -46,6 +46,7 @@ const StyledCircularProgress = withStyles(theme => ({
  */
 const ButtonElement = withStyles(theme => ({
   root: {
+    fontSize: '.9rem',
     '&:disabled': {
       color: theme.palette.primary.contrastText,
       backgroundColor: theme.palette.primary.main,

@@ -18,6 +18,7 @@ export interface UserDetailsDocument extends Mongoose.Document {
   expires: number;
   handle: string;
   _id: string;
+  oldEmail: string;
   password: string;
   provider: string;
   privateProfile: PrivateUserDetails;

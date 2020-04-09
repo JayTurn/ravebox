@@ -47,6 +47,10 @@ const UserSchema = new Schema({
     //type: Location,
     //es_indexed: false
   //},
+  oldEmail: {
+    type: String,
+    lowercase: true,
+  },
   password: {
     type: String,
   },
@@ -71,12 +75,13 @@ UserSchema
       'role': this.role,
       'email': this.email,
       'emailVerified': this.emailVerified,
+      'expires': this.expires,
       'handle': this.handle,
+      'oldEmail': this.oldEmail
       //'name': this.name,
       //'phone': this.phone,
       //'address': this.address,
       // @todo: avatar
-      'expires': this.expires
       //'searchPreferences': this.searchPreferences,
       //'settings': this.settings,
     };

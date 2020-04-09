@@ -17,8 +17,8 @@ import { PaddedDividerProps } from './PaddedDivider.interface';
 const StyledDivider = withStyles((theme: Theme) => ({
   root: {
     backgroundColor: theme.palette.text.primary,
-    opacity: '.25',
-    marginBottom: 20,
+    opacity: '.45',
+    marginBottom: 40,
     marginTop: 10
   }
 }))(Divider);
