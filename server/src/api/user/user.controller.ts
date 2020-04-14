@@ -61,8 +61,14 @@ export default class UserController {
     // Attempt to change the email address.
     router.patch(`${path}/update/email`, Authenticate.isAuthenticated, UserController.UpdateEmail);
 
+    // Attempt to change the user's password.
+    router.patch(`${path}/update/password`, Authenticate.isAuthenticated, UserController.UpdatePassword);
+
     // Verify the email address.
     router.get(`${path}/verify/:token`, UserController.VerifyEmail);
+
+    // Attempt to verify the user's password.
+    router.patch(`${path}/password/verify`, Authenticate.isAuthenticated, UserController.VerifyPassword);
 
     // Validate the existing of a user handle.
     router.get(`${path}/handle/:id`, UserController.HandleAvailability);
@@ -400,7 +406,7 @@ export default class UserController {
     // Declare the response object
     const email: string = request.body.email;
 
-    // if we don't have an email throw a response error. 
+    // if we don't have an email throw a response error.
     if (!email) {
       // Define the responseObject.
       const responseObject = Connect.setResponse({
@@ -420,10 +426,6 @@ export default class UserController {
 
       // If we have found a user.
       if (user) {
-        // Set the new email and the old email.
-        user.oldEmail = user.email;
-        user.email = email;
-        user.emailVerified = false;
 
         return User.findByIdAndUpdate(
           user._id,
@@ -486,6 +488,19 @@ export default class UserController {
       json: true
     });
 
+    if (!decoded) {
+      // Define the responseObject.
+      const responseObject = Connect.setResponse({
+          data: {
+            errorCode: 'FAILED_TO_RETRIEVE_EMAIL',
+            title: `We couldn't retrieve your email`
+          }
+        }, 403, `We couldn't retrieve your email`);
+
+      // Return the response.
+      throw responseObject;
+    }
+
     const email: string = decoded.payload.email as string,
           _id: string = decoded.payload.userId as string;
 
@@ -495,23 +510,41 @@ export default class UserController {
       _id: _id,
       email: email
     }, {
-      emailVerified: true
+      emailVerified: true,
     }, {
       new: true,
       upsert: false
     })
     .then((user: UserDetailsDocument) => {
-      // Set the response object.
-      const responseObject: ResponseObject = Connect.setResponse({
-        data: {
-          user: user.privateProfile
+
+      // Define the response object.
+      let responseObject: ResponseObject;
+
+      if (!user) {
+        // Set the response object.
+        responseObject = Connect.setResponse({
+          data: {
+            verified: false
+          }
+        }, 200, 'Your email could not be verified');
+      } else {
+        if (user.oldEmail) {
+          // Remove the old email from all notification lists.
+          Notifications.UpdateContactEmail(user.oldEmail, user.email);
         }
-      }, 200, 'Your email has been successfully verified');
+        // Set the response object.
+        responseObject = Connect.setResponse({
+          data: {
+            verified: true
+          }
+        }, 200, 'Your email has been successfully verified');
+      }
 
       // Return the response.
       response.status(responseObject.status).json(responseObject.data);
+
     })
-    .catch((error: Error) => {
+    .catch(() => {
       // Define the responseObject.
       const responseObject = Connect.setResponse({
         data: {
@@ -523,9 +556,134 @@ export default class UserController {
       // Return the response.
       response.status(responseObject.status).json(responseObject.data);
     });
-
-    
   }
+
+  /**
+   * Updates the current user's password.
+   *
+   * @param {object} req
+   * The request object.
+   *
+   * @param {object} res
+   * The response object.
+   */
+  static UpdatePassword(request: AuthenticatedUserRequest, response: Response): void {
+    const oldPassword: string = request.body.oldPassword,
+          password: string = request.body.password;
+
+    // Retrieve the current logged in user.
+    User.findById(request.auth._id)
+      .then((user: UserDetailsDocument) => {
+        user.authenticate(oldPassword, (error: Error, verified: boolean) => {
+          if (error) {
+            throw error;
+          }
+
+          if (verified) {
+            user.updatePassword(password, (error: Error, hash: string, salt: string) => {
+              if (error) {
+                throw error;
+              }
+              User.findByIdAndUpdate(
+                user._id,
+                { password: hash, salt: salt },
+                { 
+                  new: true,
+                  upsert: false
+                }
+              )
+              .then((user: UserDetailsDocument) => {
+                // Set the response object.
+                const responseObject = Connect.setResponse({
+                  data: {
+                    user: user.privateProfile
+                  }
+                }, 200, 'Verification complete');
+
+                // Return the response.
+                response.status(responseObject.status).json(responseObject.data);
+              })
+              .catch((error: Error) => {
+                throw error;
+              })
+            });
+          } else {
+
+            // Define the responseObject.
+            const responseObject = Connect.setResponse({
+              data: {
+                errorCode: 'FAILED_PASSWORD_UPDATE',
+                message: `The old password you entered was incorrect`
+              }
+            }, 404, `The old password you entered was incorrect`);
+
+            // Return the response.
+            response.status(responseObject.status).json(responseObject.data);
+          }
+        });
+      })
+      .catch((error: Error) => {
+
+        // Define the responseObject.
+        const responseObject = Connect.setResponse({
+          data: {
+            errorCode: 'FAILED_PASSWORD_VERIFICATION',
+            message: `We couldn't verify your password`
+          }
+        }, 404, `We couldn't verify your password`);
+
+        // Return the response.
+        response.status(responseObject.status).json(responseObject.data);
+
+      })
+  }
+
+  /**
+   * Verifies the current user's password.
+   *
+   * @param {object} req
+   * The request object.
+   *
+   * @param {object} res
+   * The response object.
+   */
+  static VerifyPassword(request: AuthenticatedUserRequest, response: Response): void {
+    const password: string = request.body.password;
+
+    // Retrieve the current logged in user.
+    User.findById(request.auth._id)
+      .then((user: UserDetailsDocument) => {
+        user.authenticate(password, (error: Error, verified: boolean) => {
+          if (error) {
+            throw error;
+          }
+          // Set the response object.
+          const responseObject = Connect.setResponse({
+            data: {
+              verified: verified
+            }
+          }, 200, 'Verification complete');
+
+          // Return the response.
+          response.status(responseObject.status).json(responseObject.data);
+        });
+      })
+      .catch((error: Error) => {
+
+        // Define the responseObject.
+        const responseObject = Connect.setResponse({
+          data: {
+            errorCode: 'FAILED_PASSWORD_VERIFICATION',
+            message: `We couldn't verify your password`
+          }
+        }, 404, `We couldn't verify your password`);
+
+        // Return the response.
+        response.status(responseObject.status).json(responseObject.data);
+
+      })
+  }
+
   /**
    * Send a password reset link.
    *

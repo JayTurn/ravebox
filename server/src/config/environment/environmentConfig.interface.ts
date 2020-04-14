@@ -47,4 +47,5 @@ export interface S3Properties {
 
 export interface NotificationProperties {
   key: string;
+  lists: Array<number>;
 }

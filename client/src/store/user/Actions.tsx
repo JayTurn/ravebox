@@ -8,6 +8,7 @@ import { action } from 'typesafe-actions';
 
 // Dependent enumerators.
 import { UserVerb } from './Actions.enum';
+import { VerificationStatus } from '../../routes/user/verify/Verify.enum';
 
 // Dependent interfaces.
 import { PrivateProfile } from '../../components/user/User.interface';
@@ -47,3 +48,11 @@ export const hideLogin = () => action(
  */
 export const update = (profile: PrivateProfile) => action(
   UserVerb.UPDATE, profile);
+
+/**
+ * Updates a verification state in the redux store.
+ *
+ * @param { User } user - the user to be updated.
+ */
+export const verify = (verified: VerificationStatus) => action(
+  UserVerb.VERIFY, verified);

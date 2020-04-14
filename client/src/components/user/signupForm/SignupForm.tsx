@@ -166,7 +166,7 @@ const SignupForm: React.FC<SignupFormProps> = (props: SignupFormProps) => {
         if (xsrf) {
           props.addXsrf(xsrf);
           props.login(response.user);
-          props.history.push('/user/profile');
+          props.history.push('/');
         }
 
         // Set the submission state.

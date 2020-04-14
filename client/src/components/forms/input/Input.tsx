@@ -43,6 +43,7 @@ const Input: React.FC<InputProps> = (props: InputProps) => {
       id={props.name}
       label={props.title}
       onBlur={updateValues}
+      onFocus={props.handleFocus}
       required={props.required}
       type={props.type}
       variant='outlined'

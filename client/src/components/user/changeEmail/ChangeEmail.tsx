@@ -45,7 +45,7 @@ import {
  * Contact validation schema.
  */
 const contactValidation: ValidationSchema = {
-  handle: {
+  email: {
     errorMessage: '',
     rules: [
       isRequired,
@@ -120,6 +120,7 @@ const ChangeEmail: React.FC<ChangeEmailProps> = (props: ChangeEmailProps) => {
             profileString: string = JSON.stringify(props.profile);
 
       if (settingsString === profileString) {
+        setChanged(false);
         return;
       } else {
         setChanged(true);
@@ -135,6 +136,17 @@ const ChangeEmail: React.FC<ChangeEmailProps> = (props: ChangeEmailProps) => {
       ...settings,
       [data.key]: data.value
     });
+  }
+
+  /**
+   * When focusing on the field.
+   */
+  const handleFocus: (
+    e: React.SyntheticEvent
+  ) => void = (
+    e: React.SyntheticEvent
+  ): void => {
+    setChanged(true);
   }
 
   /**
@@ -207,6 +219,7 @@ const ChangeEmail: React.FC<ChangeEmailProps> = (props: ChangeEmailProps) => {
           <Input
             defaultValue={props.profile.email}
             handleChange={updateForm}
+            handleFocus={handleFocus}
             name='email'
             type='email'
             title="Email" 

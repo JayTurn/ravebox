@@ -25,6 +25,7 @@ export interface UserDetailsDocument extends Mongoose.Document {
   publicProfile: PublicUserDetails;
   role: Array<UserRole>;
   salt: string;
+  updatePassword: Function;
 }
 
 export interface PrivateUserDetails {

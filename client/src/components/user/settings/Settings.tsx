@@ -20,6 +20,7 @@ import {
 // Components.
 import ChangeEmail from '../changeEmail/ChangeEmail';
 import ChangeProfile from '../changeProfile/ChangeProfile';
+import ChangePassword from '../changePassword/ChangePassword';
 import Input from '../../forms/input/Input'; 
 import PaddedDivider from '../../elements/dividers/PaddedDivider';
 import StyledButton from '../../elements/buttons/StyledButton';
@@ -83,10 +84,7 @@ const Settings: React.FC<SettingsProps> = (props: SettingsProps) => {
             <Grid container direction='column'>
               <ChangeProfile />
               <ChangeEmail />
-              <Grid item xs={12} md={6}>
-                <Typography variant='h2' color='textPrimary'>Security</Typography>
-                <PaddedDivider />
-              </Grid>
+              <ChangePassword />
             </Grid>
           }
         </form>

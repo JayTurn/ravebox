@@ -60,7 +60,7 @@ export default class UserCommon {
       {email: user.email, name: user.handle},
       EmailTemplate.EMAIL_VERIFICATION,
       {
-        token: `${process.env.PUBLIC_CLIENT}/verify/${token}`
+        tokenURL: `${process.env.PUBLIC_CLIENT}/user/verify/${token}`
       }
     );
   }

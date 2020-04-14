@@ -42,8 +42,8 @@ const StyledDivider = withStyles((theme: Theme) => ({
 const ErrorMessages: React.FC<ErrorMessagesProps> = (props: ErrorMessagesProps) => {
   const show: boolean = props.errors.length > 0 && props.errors[0] ? true : false;
   return(
-    <Box>
-      <Collapse in={show}>
+    <Collapse in={show}>
+      <Box style={{marginBottom: 20}}>
         <StyledErrorAlert severity='error'>
           {props.title &&
             <AlertTitle>{props.title}</AlertTitle>
@@ -64,8 +64,8 @@ const ErrorMessages: React.FC<ErrorMessagesProps> = (props: ErrorMessagesProps) 
             })
           }
         </StyledErrorAlert>
-      </Collapse>
-    </Box>
+      </Box>
+    </Collapse>
   );
 }
 

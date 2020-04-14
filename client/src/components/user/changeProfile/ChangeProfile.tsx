@@ -39,8 +39,10 @@ import { ValidationSchema } from '../../forms/validation/Validation.interface';
 
 // Validation rules.
 import {
+  allowedCharacters,
   isRequired,
   handleAvailable,
+  minLength
 } from '../../forms/validation/ValidationRules';
 
 /**
@@ -51,6 +53,8 @@ const profileValidation: ValidationSchema = {
     errorMessage: '',
     rules: [
       isRequired,
+      minLength(3),
+      allowedCharacters(/^[A-Za-z0-9-_]+$/),
       handleAvailable
     ]
   }
@@ -118,6 +122,7 @@ const ChangeProfile: React.FC<ChangeProfileProps> = (props: ChangeProfileProps) 
             profileString: string = JSON.stringify(props.profile);
 
       if (settingsString === profileString) {
+        setChanged(false);
         return;
       } else {
         setChanged(true);
@@ -133,6 +138,17 @@ const ChangeProfile: React.FC<ChangeProfileProps> = (props: ChangeProfileProps) 
       ...settings,
       [data.key]: data.value
     });
+  }
+
+  /**
+   * When focusing on the field.
+   */
+  const handleFocus: (
+    e: React.SyntheticEvent
+  ) => void = (
+    e: React.SyntheticEvent
+  ): void => {
+    setChanged(true);
   }
 
   /**
@@ -205,6 +221,7 @@ const ChangeProfile: React.FC<ChangeProfileProps> = (props: ChangeProfileProps) 
             defaultValue={props.profile.handle}
             handleChange={updateForm}
             helperText='This is the name people will know you by on ravebox. It may only contain alphanumeric characters, hyphens and underscores.'
+            handleFocus={handleFocus}
             name='handle'
             type='text'
             title="Handle"
