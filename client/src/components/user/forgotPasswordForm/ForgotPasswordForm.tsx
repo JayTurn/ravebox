@@ -1,33 +1,25 @@
 /**
- * UserLogin.tsx
- * Login component to prompt the user for login.
+ * ForgotPassword.tsx
+ * ForgotPassword component to prompt the user for login.
  */
 
 // Modules.
 import API from '../../../utils/api/Api.model';
-import Box from '@material-ui/core/Box';
 import Button from '@material-ui/core/Button';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import Grid from '@material-ui/core/Grid';
 import Typography from '@material-ui/core/Typography';
 import { createStyles, makeStyles, withStyles, Theme } from '@material-ui/core/styles';
 import * as React from 'react';
-import { connect } from 'react-redux';
-import { withRouter } from 'react-router';
-import { bindActionCreators, Dispatch, AnyAction } from 'redux';
 import Cookies from 'universal-cookie';
-
-// Actions.
-import {
-  login,
-} from '../../../store/user/Actions';
-import { add } from '../../../store/xsrf/Actions';
 
 // Components.
 import ErrorMessages from '../../forms/errorMessages/ErrorMessages';
 import Input from '../../forms/input/Input'; 
-import Link from '../../elements/link/Link';
 import StyledButton from '../../elements/buttons/StyledButton';
+
+// Enumerators.
+import { RequestType } from '../../../utils/api/Api.enum';
 
 // Hooks.
 import { useValidation } from '../../forms/validation/useValidation.hook';
@@ -36,37 +28,32 @@ import { useValidation } from '../../forms/validation/useValidation.hook';
 import { InputData } from '../../forms/input/Input.interface';
 import { PrivateProfile } from '../User.interface';
 import {
-  LoginFormResponse, 
-  LoginFormProps
-} from './LoginForm.interface';
+  ForgotPasswordFormResponse, 
+  ForgotPasswordFormProps
+} from './ForgotPasswordForm.interface';
 import { ValidationSchema } from '../../forms/validation/Validation.interface';
 
 // Validation rules.
 import { isRequired, isEmail } from '../../forms/validation/ValidationRules';
 
 /**
- * Login form validation schema.
+ * ForgotPassword form validation schema.
  */
-const loginValidation: ValidationSchema = {
+const passwordResetValidation: ValidationSchema = {
   email: {
     errorMessage: '',
     rules: [isRequired, isEmail]
-  },
-  password: {
-    errorMessage: '',
-    rules: [isRequired]
   }
 };
 
 /**
- * Login form component.
+ * ForgotPassword form component.
  */
-const LoginForm: React.FC<LoginFormProps> = (props: LoginFormProps) => {
+const ForgotPasswordForm: React.FC<ForgotPasswordFormProps> = (props: ForgotPasswordFormProps) => {
 
   // Define the base state for the signup form.
   const [values, setValues] = React.useState({
-    email: '',
-    password: ''
+    email: ''
   });
 
   // Form error messages to be displayed if fields haven't been validated
@@ -77,13 +64,15 @@ const LoginForm: React.FC<LoginFormProps> = (props: LoginFormProps) => {
   // submitted and to prevent duplicate submissions.
   const [submitting, setSubmitting] = React.useState(false);
 
+  const [submitted, setSubmitted] = React.useState(false);
+
   // Validation hook.
   const {
     validation,
     validateField,
     validateAllFields
   } = useValidation({
-    validation: loginValidation
+    validation: passwordResetValidation
   });
 
   /**
@@ -112,10 +101,10 @@ const LoginForm: React.FC<LoginFormProps> = (props: LoginFormProps) => {
   }
 
   /**
-   * Requests the authentication token.
+   * Requests the password reset token.
    * @method getRequestToken
    */
-  const authenticate: (
+  const submitReset: (
   ) => Promise<void> = async (
   ): Promise<void> => {
 
@@ -137,33 +126,21 @@ const LoginForm: React.FC<LoginFormProps> = (props: LoginFormProps) => {
     // Set the submission state.
     setSubmitting(true)
 
-    //const instance: UserLogin = this;
-    API.requestAPI<LoginFormResponse>('user/login', {
-      method: 'POST',
+    //const instance: UserForgotPassword = this;
+    API.requestAPI<ForgotPasswordFormResponse>('user/password/reset', {
+      method: RequestType.PATCH,
       body: JSON.stringify(values)
     })
-    .then((response: LoginFormResponse) => {
+    .then((response: ForgotPasswordFormResponse) => {
       // Present any errors that were returned in the response.
       if (response.errorCode) {
         setSubmitting(false);
         setFormErrorMessages([response.title])
         return;
       }
-
-      if (props.addXsrf && props.login) {
-        // Retrieve the xsrf cookie to be set on the header for future requests. 
-        const cookies: Cookies = new Cookies();
-        const xsrf: string = cookies.get('XSRF-TOKEN');
-
-        if (xsrf) {
-          props.addXsrf(xsrf);
-          props.login(response.user);
-          props.history.push('/');
-        }
-
-        // Set the submission state.
-        setSubmitting(false);
-      }
+      // Set the submission state.
+      setSubmitted(true);
+      setSubmitting(false);
     })
     .catch(() => {
       // Present any errors that were returned in the response.
@@ -179,78 +156,58 @@ const LoginForm: React.FC<LoginFormProps> = (props: LoginFormProps) => {
    * @return React.ReactNode
    */
   return (
-    <form noValidate autoComplete="off">
-      <Grid
-        container
-        direction='column'
-        spacing={2}
-        alignItems='stretch'
-      >
-        <Grid item xs={12} md={6}>
-          <Input
-            handleChange={updateForm}
-            name='email'
-            type='email'
-            title="Email"
-            validation={validation.email}
-          />
+    <React.Fragment>
+      {submitted ? (
+        <Grid
+          container
+          direction='column'
+          spacing={2}
+          alignItems='stretch'
+        >
+          <Typography variant='h3'>
+            Password reset email sent
+          </Typography>
+          <Typography variant='body1'>
+            We've sent you an email with instructions to help you reset your password.    
+          </Typography>
         </Grid>
-        <Grid item xs={12} md={6}>
-          <Input
-            handleChange={updateForm}
-            name='password'
-            type='password'
-            title="Password" 
-            validation={validation.password}
-          />
-          <Box style={{marginTop: 10}}>
-            <Link 
-              variant='subtitle2'
-              color='primary'
-              title='Forgot your password?'
-              path='/user/reset'
+      ) : (
+      <form noValidate autoComplete="off">
+        <Grid
+          container
+          direction='column'
+          spacing={2}
+          alignItems='stretch'
+        >
+          <Grid item xs={12} md={6}>
+            <Typography variant='subtitle1'>
+              If you're having trouble accessing your account, enter your email address below and we'll send you instructions to reset your password
+            </Typography>
+          </Grid>
+          <Grid item xs={12} md={6}>
+            <Input
+              handleChange={updateForm}
+              name='email'
+              type='email'
+              title="Email"
+              validation={validation.email}
             />
-          </Box>
+          </Grid>
+          <Grid item xs={12} md={6}>
+            <ErrorMessages errors={formErrorMessages} />
+          </Grid>
+          <Grid item xs={12} md={6}>
+            <StyledButton
+              title='Send instructions'
+              clickAction={submitReset}
+              submitting={submitting}
+            />
+          </Grid>
         </Grid>
-        <Grid item xs={12} md={6}>
-          <ErrorMessages errors={formErrorMessages} />
-        </Grid>
-        <Grid item xs={12} md={6}>
-          <StyledButton
-            title='Log in'
-            clickAction={authenticate}
-            submitting={submitting}
-          />
-        </Grid>
-      </Grid>
-    </form>
+      </form>
+      )}
+    </React.Fragment>
   );
 }
 
-/**
- * Map dispatch actions to the login dialog.
- *
- * @param { Dispatch<AnyAction> } dispatch - the dispatch function to be mapped.
- */
-const mapDispatchToProps = (dispatch: Dispatch<AnyAction>) =>
-  bindActionCreators(
-    {
-      addXsrf: add,
-      login: login
-    },
-    dispatch
-  );
-
-/**
- * Maps the user store properties to the login component.
- */
-const mapStatetoProps = (state: any, ownProps: LoginFormProps): LoginFormProps => {
-  return {
-    ...ownProps,
-  };
-};
-
-export default withRouter(connect(
-  mapStatetoProps,
-  mapDispatchToProps
-)(LoginForm));
+export default ForgotPasswordForm;

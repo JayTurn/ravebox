@@ -9,6 +9,7 @@ import { action } from 'typesafe-actions';
 // Dependent enumerators.
 import { UserVerb } from './Actions.enum';
 import { VerificationStatus } from '../../routes/user/verify/Verify.enum';
+import { ResetTokenStatus } from '../../routes/user/reset/PasswordReset.enum';
 
 // Dependent interfaces.
 import { PrivateProfile } from '../../components/user/User.interface';
@@ -52,7 +53,15 @@ export const update = (profile: PrivateProfile) => action(
 /**
  * Updates a verification state in the redux store.
  *
- * @param { User } user - the user to be updated.
+ * @param { VerificationStatus } verified - the verification status.
  */
 export const verify = (verified: VerificationStatus) => action(
   UserVerb.VERIFY, verified);
+
+/**
+ * Updates a password reset state in the redux store.
+ *
+ * @param { ResetTokenStatus } status - the password reset status.
+ */
+export const reset = (allowed: ResetTokenStatus) => action(
+  UserVerb.RESET, allowed);

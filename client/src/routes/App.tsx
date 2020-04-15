@@ -32,6 +32,8 @@ import Home from './home/Home';
 import Login from './user/login/Login';
 import Navigation from '../components/navigation/Navigation';
 import PageNotFound from './page-not-found/PageNotFound';
+import PasswordReset from './user/reset/PasswordReset';
+import PasswordResetRequest from './user/reset/PasswordResetRequest';
 import PrivateRoute from './privateRoute/PrivateRoute';
 import Account from './user/account/Account';
 import ScrollToTop from '../utils/scroll/ScrollToTop';
@@ -102,6 +104,12 @@ const App: React.FC<AppProps> = (props: AppProps) => {
                   </Route>
                   <Route exact={true} path="/user/verify/:token">
                     <Verify />
+                  </Route>
+                  <Route exact={true} path="/user/reset/:token">
+                    <PasswordReset />
+                  </Route>
+                  <Route exact={true} path="/user/reset">
+                    <PasswordResetRequest />
                   </Route>
                   <Route exact={true} path="/product/add">
                     <AddProduct />

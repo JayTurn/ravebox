@@ -7,10 +7,11 @@
  * Redux Actions.
  */
 export enum UserVerb {
+  HIDE_LOGIN = 'user/hide_login',
   LOGIN = 'user/login',
   LOGOUT = 'user/logout',
+  RESET = 'user/reset',
   SHOW_LOGIN = 'user/show_login',
-  HIDE_LOGIN = 'user/hide_login',
   UPDATE = 'user/update',
   VERIFY = 'user/verify'
 }

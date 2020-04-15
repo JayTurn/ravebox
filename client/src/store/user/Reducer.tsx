@@ -8,6 +8,7 @@ import { combineReducers } from 'redux';
 
 // Dependent enumerators.
 import { UserVerb } from './Actions.enum';
+import { ResetTokenStatus } from '../../routes/user/reset/PasswordReset.enum';
 import { VerificationStatus } from '../../routes/user/verify/Verify.enum';
 
 // Dependent interfaces.
@@ -80,6 +81,25 @@ export default combineReducers<UserStore, UserAction>({
     // Update the configuration based on the redux action triggered.
     switch (action.type) {
       case UserVerb.VERIFY:
+        // Append the new value to the list of watched items.
+        return action.payload;
+      default:
+        return state;
+    }
+  },
+
+  /**
+   * Define the reset token state.
+   *
+   * @param { ResetTokenStatus } state - the current reset token state.
+   * @param {  } action - the filters action.
+   *
+   * @return APIImageConfig
+   */
+  reset: (state: ResetTokenStatus = ResetTokenStatus.WAITING, action: ShowPromptAction) => {
+    // Update the configuration based on the redux action triggered.
+    switch (action.type) {
+      case UserVerb.RESET:
         // Append the new value to the list of watched items.
         return action.payload;
       default:

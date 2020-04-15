@@ -9,6 +9,7 @@ import { ActionType } from 'typesafe-actions';
 import * as actions from './Actions';
 
 // Enumerators.
+import { ResetTokenStatus } from '../../routes/user/reset/PasswordReset.enum';
 import { VerificationStatus } from '../../routes/user/verify/Verify.enum';
 
 // Interfaces.
@@ -31,4 +32,5 @@ export interface UserStore {
   profile: PrivateProfile;
   showLogin: boolean;
   verified: VerificationStatus;
+  reset: ResetTokenStatus;
 }
