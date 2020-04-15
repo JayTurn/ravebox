@@ -102,7 +102,7 @@ const App: React.FC<AppProps> = (props: AppProps) => {
           <ScrollToTop />
           <TopNavigation />
           <SideNavigation expanded={false} />
-          <Container maxWidth="lg">
+          <Container maxWidth="lg" style={{marginLeft: 90}}>
             <Route
               render={(route: RouteComponentProps) => {
                 return (

@@ -51,7 +51,8 @@
           "sourceVolume": "client",
           "containerPath": "/client/app"
         }
-      ]
+      ],
+      "update": true
     }
   ]
 }
