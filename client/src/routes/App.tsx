@@ -32,14 +32,15 @@ import AddReview from './review/add/AddReview';
 import ViewReview from './review/view/ViewReview';
 import Home from './home/Home';
 import Login from './user/login/Login';
-import Navigation from '../components/navigation/Navigation';
 import PageNotFound from './page-not-found/PageNotFound';
 import PasswordReset from './user/reset/PasswordReset';
 import PasswordResetRequest from './user/reset/PasswordResetRequest';
 import PrivateRoute from './privateRoute/PrivateRoute';
 import Account from './user/account/Account';
 import ScrollToTop from '../utils/scroll/ScrollToTop';
+import SideNavigation from '../components/navigation/side/SideNavigation';
 import Signup from './user/signup/Signup';
+import TopNavigation from '../components/navigation/top/TopNavigation';
 import Verify from './user/verify/Verify';
 
 // Hooks.
@@ -99,7 +100,8 @@ const App: React.FC<AppProps> = (props: AppProps) => {
         <div className={`app`}>
           <Helmet title="Ravebox" defaultTitle="Ravebox" />
           <ScrollToTop />
-          <Navigation />
+          <TopNavigation />
+          <SideNavigation expanded={false} />
           <Container maxWidth="lg">
             <Route
               render={(route: RouteComponentProps) => {
@@ -126,9 +128,9 @@ const App: React.FC<AppProps> = (props: AppProps) => {
                     <Route exact={true} path="/user/reset">
                       <PasswordResetRequest />
                     </Route>
-                    <Route exact={true} path="/product/add">
+                    <PrivateRoute exact={true} path="/product/add">
                       <AddProduct />
-                    </Route>
+                    </PrivateRoute>
                     <PrivateRoute exact={true} path="/product/:id/review">
                       <AddReview />
                     </PrivateRoute>
