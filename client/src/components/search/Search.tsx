@@ -155,7 +155,6 @@ class Search extends React.Component<
                   type="text"
                   title="Search for your favourite TV shows"
                   handleChange={this.handleChange}
-                  hasError={``}
                 />
               </Grid>
               <Grid item xs={12} sm={3}>

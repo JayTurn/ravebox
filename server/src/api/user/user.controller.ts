@@ -12,6 +12,7 @@ import { Request, Response, Router } from 'express';
 import * as Jwt from 'jsonwebtoken';
 //import * as Mongoose from 'mongoose';
 import User from './user.model';
+import UserCommon from './user.common';
 //import UserNotifications from './userNotifications.model';
 //import Mailchimp from 'mailchimp-api-v3';
 import LocalController from './authenticate/local.strategy';
@@ -30,6 +31,7 @@ import {
 } from '../../models/authentication/authentication.interface';
 import { ResponseObject } from '../../models/database/connect.interface';
 import {
+  ProfileSettings,
   SignupDetails,
   UserDetailsDocument
 } from './user.interface';
@@ -52,6 +54,33 @@ export default class UserController {
 
     // Attempt to retrieve the user.
     router.get(`${path}/profile`, Authenticate.isAuthenticated, UserController.Profile);
+
+    // Attempt to retrieve the user.
+    router.patch(`${path}/update/profile`, Authenticate.isAuthenticated, UserController.UpdateProfile);
+
+    // Attempt to change the email address.
+    router.patch(`${path}/update/email`, Authenticate.isAuthenticated, UserController.UpdateEmail);
+
+    // Attempt to change the user's password.
+    router.patch(`${path}/update/password`, Authenticate.isAuthenticated, UserController.UpdatePassword);
+
+    // Verify the email address.
+    router.get(`${path}/verify/:token`, UserController.VerifyEmail);
+
+    // Attempt to verify the user's password.
+    router.patch(`${path}/password/verify`, Authenticate.isAuthenticated, UserController.VerifyPassword);
+
+    // Attempt to verify a password token for reset.
+    router.get(`${path}/password/:token`, UserController.VerifyPasswordToken);
+
+    // Attempt to reset the user's password.
+    router.patch(`${path}/password/reset`, UserController.RequestPasswordResetLink);
+
+    // Attempt to reset the user's password.
+    router.patch(`${path}/password/new`, UserController.SetNewPassword);
+
+    // Validate the existing of a user handle.
+    router.get(`${path}/handle/:id`, UserController.HandleAvailability);
   }
 
   /**
@@ -220,12 +249,19 @@ export default class UserController {
           }, 201, 'Account created successfully');
 
           // Send a welcome email to the user.
-          Notifications.AddEmailToList(user.email, ContactList.ALL)
+          Notifications.AddEmailToList(
+            user.email,
+            user.handle,
+            ContactList.ALL
+          )
             .then((email: string) => {
               Notifications.SendTransactionalEmail(
-                {email: email, name: 'N/A'},
+                {email: email, name: user.handle},
                 EmailTemplate.SIGNUP
               );
+
+              UserCommon.SendEmailVerification(user);
+
             })
             .catch((error: Error) => {
               // Log the failed email handling.
@@ -269,61 +305,168 @@ export default class UserController {
   }
 
   /**
-   * Send a password reset link.
+   * Checks if a user handle is available.
    *
    * @param {object} req
    *   The request object.
    * @param {object} res
    *   The response object.
    */
-  /*
-  static SendPasswordResetLink(req, res) {
-    // Declare the response object
-    let responseObject;
-
-    // Search for the user by the email address provided.
+  public static HandleAvailability(request: Request, response: Response): void {
+    // Determine if the handle is available.
     User.findOne({
-      'email': req.body.email,
+      'handle': request.params.id
     })
-    .select('email name')
-    .execAsync()
-    .spread(user => {
+    .lean()
+    .then((user: UserDetailsDocument) => {
+      let responseObject: ResponseObject;
 
-      // If we have found a user.
-      if (user) {
-        // Create a password reset link for the applicant.
-        let passwordResetLink = User.generatePasswordResetToken(user.email, user._id),
-            name = '';
+      if (!user) {
+        // Set the response object.
+        responseObject = Connect.setResponse({
+          data: {
+            title: `This user handle is available`
+          }
+        }, 200, `This user handle is available`);
 
-        // If the user's name is present.
-        if (user.name) {
-          // Set the user's name.
-          name = user.fullname;
-        }
+      } else {
 
-        // Request the user to reset their password.
-        UserNotifications.sendResetPasswordToken([{
-            email: user.email,
-            name: name
-          }],
-          passwordResetLink
-        );
+        // Set the response object.
+        responseObject = Connect.setResponse({
+          data: {
+            errorCode: 'HANDLE_NOT_AVAILABLE',
+            title: `This user handle isn't available`
+          }
+        }, 404, `This user handle isn't available`);
 
       }
 
-      // Set the response object.
-      responseObject = Connect.setResponse({
-        data: { }
-      }, 200, 'Password reset link sent successfully');
-
       // Return the response.
-      res.status(responseObject.status).json(responseObject.data);
+      response.status(responseObject.status).json(responseObject.data);
 
     })
-    .catch(error => {
-      console.log(error);
+    .catch(() => {
       // Define the responseObject.
-      responseObject = Connect.setResponse({
+      const responseObject = Connect.setResponse({
+          data: {
+            errorCode: 'FAILED_TO_CHECK_HANDLE',
+            title: `There was a problem checking the availability of this handle. Please try again`
+          }
+        }, 404, `There was a problem checking the availability of this handle. Please try again`);
+
+      // Return the response.
+      response.status(responseObject.status).json(responseObject.data);
+    })
+  }
+
+  /**
+   * Get current user handler.
+   *
+   * @param {object} req
+   * The request object.
+   *
+   * @param {object} res
+   * The response object.
+   */
+  static UpdateProfile(request: AuthenticatedUserRequest, response: Response): void {
+    const settings: ProfileSettings = request.body;
+
+    // Find the user and update the profile settings.
+    User.findByIdAndUpdate(
+      request.auth._id,
+      { handle: settings.handle },
+      { new: true, upsert: false }
+    )
+    .then((user: UserDetailsDocument) => {
+      // Set the response object.
+      const responseObject: ResponseObject = Connect.setResponse({
+        data: {
+          user: user.privateProfile
+        }
+      }, 200, 'Account updated successfully');
+
+      // Return the response.
+      response.status(responseObject.status).json(responseObject.data);
+    })
+    .catch(() => {
+
+      // Define the responseObject.
+      const responseObject = Connect.setResponse({
+          data: {
+            errorCode: 'FAILED_TO_UPDATE_PROFILE',
+            title: `There was a problem updating your profile`
+          }
+        }, 403, `There was a problem updating your profile`);
+
+      // Return the response.
+      response.status(responseObject.status).json(responseObject.data);
+    });
+  }
+
+  /**
+   * Send an email verification link.
+   *
+   * @param {object} req
+   *   The request object.
+   * @param {object} res
+   *   The response object.
+   */
+  static UpdateEmail(request: AuthenticatedUserRequest, response: Response): void {
+    // Declare the response object
+    const email: string = request.body.email;
+
+    // if we don't have an email throw a response error.
+    if (!email) {
+      // Define the responseObject.
+      const responseObject = Connect.setResponse({
+          data: {
+            errorCode: 'FAILED_TO_PROVIDE_EMAIL',
+            title: `We need a new email to update your existing one`
+          }
+        }, 403, `We need a new email to update your existing one`);
+
+      // Return the response.
+      throw responseObject;
+    }
+
+    // Search for the user by the email address provided.
+    User.findById(request.auth._id)
+    .then((user: UserDetailsDocument) => {
+
+      // If we have found a user.
+      if (user) {
+
+        return User.findByIdAndUpdate(
+          user._id,
+          {
+            oldEmail: user.email,
+            email: email,
+            emailVerified: false
+          },
+          { new: true, upsert: false}
+        );
+      } else {
+        throw new Error('User not found');
+      }
+    })
+    .then((user: UserDetailsDocument) => {
+
+      // Send the verification email.
+      UserCommon.SendEmailVerification(user);
+
+      // Set the response object.
+      const responseObject: ResponseObject = Connect.setResponse({
+        data: {
+          user: user.privateProfile
+        }
+      }, 200, 'Email updated successfully.');
+
+      // Return the response.
+      response.status(responseObject.status).json(responseObject.data);
+    })
+    .catch(() => {
+      // Define the responseObject.
+      const responseObject = Connect.setResponse({
         data: {
           errorCode: 'FAILED_EMAIL_RESET_LOOKUP',
           message: 'Please enter your email and try again'
@@ -331,11 +474,452 @@ export default class UserController {
       }, 404, 'We could not reset your password');
 
       // Return the response.
-      res.status(responseObject.status).json(responseObject.data);
+      response.status(responseObject.status).json(responseObject.data);
 
     });
   }
-  */
+
+  /**
+   * Verifies the email token provided.
+   *
+   * @param {object} req
+   *   The request object.
+   * @param {object} res
+   *   The response object.
+   */
+  public static VerifyEmail(request: Request, response: Response): void {
+    const token: string = request.params.token;
+
+    // Decode the token so we can confirm the email address matches in the
+    // database.
+    const decoded: string | {[key: string]: any} = Jwt.decode(token, {
+      complete: true,
+      json: true
+    });
+
+    if (!decoded) {
+      // Define the responseObject.
+      const responseObject = Connect.setResponse({
+          data: {
+            errorCode: 'FAILED_TO_RETRIEVE_EMAIL',
+            title: `We couldn't retrieve your email`
+          }
+        }, 403, `We couldn't retrieve your email`);
+
+      // Return the response.
+      throw responseObject;
+    }
+
+    const email: string = decoded.payload.email as string,
+          _id: string = decoded.payload.userId as string;
+
+    // Find the user by their id, email address and update their verification
+    // status.
+    User.findOneAndUpdate({
+      _id: _id,
+      email: email
+    }, {
+      emailVerified: true,
+    }, {
+      new: true,
+      upsert: false
+    })
+    .then((user: UserDetailsDocument) => {
+
+      // Define the response object.
+      let responseObject: ResponseObject;
+
+      if (!user) {
+        // Set the response object.
+        responseObject = Connect.setResponse({
+          data: {
+            verified: false
+          }
+        }, 200, 'Your email could not be verified');
+      } else {
+        if (user.oldEmail) {
+          // Remove the old email from all notification lists.
+          Notifications.UpdateContactEmail(user.oldEmail, user.email);
+        }
+        // Set the response object.
+        responseObject = Connect.setResponse({
+          data: {
+            verified: true
+          }
+        }, 200, 'Your email has been successfully verified');
+      }
+
+      // Return the response.
+      response.status(responseObject.status).json(responseObject.data);
+
+    })
+    .catch(() => {
+      // Define the responseObject.
+      const responseObject = Connect.setResponse({
+        data: {
+          errorCode: 'FAILED_EMAIL_VERIFICATION',
+          message: `We couldn't verify your email address`
+        }
+      }, 404, `We couldn't verify your email address`);
+
+      // Return the response.
+      response.status(responseObject.status).json(responseObject.data);
+    });
+  }
+
+  /**
+   * Updates the current user's password.
+   *
+   * @param {object} req
+   * The request object.
+   *
+   * @param {object} res
+   * The response object.
+   */
+  static UpdatePassword(request: AuthenticatedUserRequest, response: Response): void {
+    const oldPassword: string = request.body.oldPassword,
+          password: string = request.body.password;
+
+    // Retrieve the current logged in user.
+    User.findById(request.auth._id)
+      .then((user: UserDetailsDocument) => {
+        user.authenticate(oldPassword, (error: Error, verified: boolean) => {
+          if (error) {
+            throw error;
+          }
+
+          if (verified) {
+            user.updatePassword(password, (error: Error, hash: string, salt: string) => {
+              if (error) {
+                throw error;
+              }
+              User.findByIdAndUpdate(
+                user._id,
+                { password: hash, salt: salt },
+                { 
+                  new: true,
+                  upsert: false
+                }
+              )
+              .then((user: UserDetailsDocument) => {
+                // Set the response object.
+                const responseObject = Connect.setResponse({
+                  data: {
+                    user: user.privateProfile
+                  }
+                }, 200, 'Verification complete');
+
+                // Return the response.
+                response.status(responseObject.status).json(responseObject.data);
+              })
+              .catch((error: Error) => {
+                throw error;
+              })
+            });
+          } else {
+
+            // Define the responseObject.
+            const responseObject = Connect.setResponse({
+              data: {
+                errorCode: 'FAILED_PASSWORD_UPDATE',
+                message: `The old password you entered was incorrect`
+              }
+            }, 404, `The old password you entered was incorrect`);
+
+            // Return the response.
+            response.status(responseObject.status).json(responseObject.data);
+          }
+        });
+      })
+      .catch((error: Error) => {
+
+        // Define the responseObject.
+        const responseObject = Connect.setResponse({
+          data: {
+            errorCode: 'FAILED_PASSWORD_VERIFICATION',
+            message: `We couldn't verify your password`
+          }
+        }, 404, `We couldn't verify your password`);
+
+        // Return the response.
+        response.status(responseObject.status).json(responseObject.data);
+
+      })
+  }
+
+  /**
+   * Verifies the password token provided.
+   *
+   * @param {object} req
+   *   The request object.
+   * @param {object} res
+   *   The response object.
+   */
+  public static VerifyPasswordToken(request: Request, response: Response): void {
+    const token: string = request.params.token;
+
+    // Decode the token so we can confirm the email address matches in the
+    // database.
+    const decoded: string | {[key: string]: any} = Jwt.decode(token, {
+      complete: true,
+      json: true
+    });
+
+    if (!decoded) {
+      // Define the responseObject.
+      const responseObject = Connect.setResponse({
+          data: {
+            errorCode: 'FAILED_TO_CONFIRM_ACCOUNT',
+            title: `We couldn't confirm your account`
+          }
+        }, 403, `We couldn't confirm your account`);
+
+      // Return the response.
+      throw responseObject;
+    }
+
+    const email: string = decoded.payload.email as string,
+          _id: string = decoded.payload.userId as string;
+
+    // Find the user by their id and email address.
+    User.findOne({
+      _id: _id,
+      email: email
+    })
+    .then((user: UserDetailsDocument) => {
+
+      // Define the response object.
+      let responseObject: ResponseObject;
+
+      if (!user) {
+        // Set the response object.
+        responseObject = Connect.setResponse({
+          data: {
+            allowed: false
+          }
+        }, 200, 'Account not found');
+      } else {
+        // Set the response object.
+        responseObject = Connect.setResponse({
+          data: {
+            allowed: true
+          }
+        }, 200, 'Account found');
+      }
+
+      // Return the response.
+      response.status(responseObject.status).json(responseObject.data);
+
+    })
+    .catch(() => {
+      // Define the responseObject.
+      const responseObject = Connect.setResponse({
+        data: {
+          errorCode: 'FAILED_EMAIL_VERIFICATION',
+          message: `We couldn't verify your email address`
+        }
+      }, 404, `We couldn't verify your email address`);
+
+      // Return the response.
+      response.status(responseObject.status).json(responseObject.data);
+    });
+  }
+
+  /**
+   * Verifies the current user's password.
+   *
+   * @param {object} req
+   * The request object.
+   *
+   * @param {object} res
+   * The response object.
+   */
+  static VerifyPassword(request: AuthenticatedUserRequest, response: Response): void {
+    const password: string = request.body.password;
+
+    // Retrieve the current logged in user.
+    User.findById(request.auth._id)
+      .then((user: UserDetailsDocument) => {
+        user.authenticate(password, (error: Error, verified: boolean) => {
+          if (error) {
+            throw error;
+          }
+          // Set the response object.
+          const responseObject = Connect.setResponse({
+            data: {
+              verified: verified
+            }
+          }, 200, 'Verification complete');
+
+          // Return the response.
+          response.status(responseObject.status).json(responseObject.data);
+        });
+      })
+      .catch((error: Error) => {
+
+        // Define the responseObject.
+        const responseObject = Connect.setResponse({
+          data: {
+            errorCode: 'FAILED_PASSWORD_VERIFICATION',
+            message: `We couldn't verify your password`
+          }
+        }, 404, `We couldn't verify your password`);
+
+        // Return the response.
+        response.status(responseObject.status).json(responseObject.data);
+
+      })
+  }
+
+  /**
+   * Request a password reset link.
+   *
+   * @param {object} req
+   *   The request object.
+   * @param {object} res
+   *   The response object.
+   */
+  static RequestPasswordResetLink(request: Request, response: Response) {
+
+    const email: string = request.body.email;
+
+    if (!email) {
+      // Define the responseObject.
+      const responseObject = Connect.setResponse({
+          data: {
+            errorCode: 'FAILED_TO_RETRIEVE_EMAIL',
+            title: `We couldn't retrieve your email`
+          }
+        }, 403, `We couldn't retrieve your email`);
+
+      // Return the response.
+      return response.status(responseObject.status).json(responseObject.data);
+    }
+
+    // Search for the user by the email address provided.
+    User.findOne({
+      'email': email,
+    })
+    .then((user: UserDetailsDocument) => {
+
+      // If we have found a user.
+      if (user) {
+        UserCommon.SendPasswordResetLink(user.privateProfile);
+      }
+
+      // Set the response object.
+      const responseObject = Connect.setResponse({
+        data: { }
+      }, 200, 'Password reset link sent successfully');
+
+      // Return the response.
+      response.status(responseObject.status).json(responseObject.data);
+
+    })
+    .catch(error => {
+      console.log(error);
+      // Define the responseObject.
+      const responseObject = Connect.setResponse({
+        data: {
+          errorCode: 'FAILED_PASSWORD_RESET_LINK',
+          message: `We couldn't send a password reset link. Please try again`
+        }
+      }, 403, `We couldn't send a password reset link. Please try again`);
+
+      // Return the response.
+      response.status(responseObject.status).json(responseObject.data);
+
+    });
+  }
+
+  /**
+   * Sets a new password using the token and new password provided.
+   *
+   * @param {object} req
+   *   The request object.
+   * @param {object} res
+   *   The response object.
+   */
+  static SetNewPassword(request: Request, response: Response) {
+    const password: string = request.body.password,
+          token: string = request.body.token;
+
+    // Decode the token so we can confirm the email address matches in the
+    // database.
+    const decoded: string | {[key: string]: any} = Jwt.decode(token, {
+      complete: true,
+      json: true
+    });
+
+    if (!password || !decoded) {
+      // Define the responseObject.
+      const responseObject = Connect.setResponse({
+          data: {
+            errorCode: 'FAILED_TO_SET_NEW_PASSWORD',
+            title: `We couldn't update your password with the token provided`
+          }
+        }, 403, `We couldn't update your password with the token provided`);
+
+      // Return the response.
+      return response.status(responseObject.status).json(responseObject.data);
+    }
+
+    const email: string = decoded.payload.email as string, 
+          _id: string = decoded.payload.userId as string;
+
+    // Encrypt the password and store it with the user.
+    User.findOne({
+      _id: _id,
+      email: email
+    })
+    .then((user: UserDetailsDocument) => {
+
+      if (!user) {
+        throw new Error(`User doesn't exsit`);
+      }
+
+      // Update the user's password.
+      user.updatePassword(password, (error: Error, hash: string, salt: string) => {
+        if (error) {
+          throw error;
+        }
+        User.findByIdAndUpdate(
+          user._id,
+          { password: hash, salt: salt },
+          { 
+            new: true,
+            upsert: false
+          }
+        )
+        .then((user: UserDetailsDocument) => {
+          // Set the response object.
+          const responseObject = Connect.setResponse({
+            data: {
+              success: true
+            }
+          }, 200, 'Password updated');
+
+          // Return the response.
+          response.status(responseObject.status).json(responseObject.data);
+        })
+        .catch((error: Error) => {
+          throw error;
+        })
+      });
+    })
+    .catch(() => {
+      // Define the responseObject.
+      const responseObject = Connect.setResponse({
+          data: {
+            errorCode: 'FAILED_TO_SET_NEW_PASSWORD',
+            title: `We couldn't update your password with the token provided`
+          }
+        }, 403, `We couldn't update your password with the token provided`);
+
+      // Return the response.
+      return response.status(responseObject.status).json(responseObject.data);
+    })
+  }
 
   /**
    * Change the user password.

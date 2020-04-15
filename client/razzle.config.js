@@ -19,5 +19,15 @@ module.exports = {
         },
       },
     },
+  ],
+  rules: [
+    {
+      test: /\.svg$/,
+      use: ['@svgr/webpack', 'file-loader']
+    },
+    {
+      test: /\.(eot|svg|ttf|woff|woff2|otf)$/,
+      loader: 'file-loader',
+    }
   ]
 };

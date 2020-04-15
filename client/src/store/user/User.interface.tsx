@@ -2,13 +2,17 @@
  * Interfaces for the watchlist store.
  */
 
-// Dependent modules.
+// Modules.
 import { ActionType } from 'typesafe-actions';
 
-// Dependent models.
+// Actions.
 import * as actions from './Actions';
 
-// Dependent interfaces.
+// Enumerators.
+import { ResetTokenStatus } from '../../routes/user/reset/PasswordReset.enum';
+import { VerificationStatus } from '../../routes/user/verify/Verify.enum';
+
+// Interfaces.
 import { PrivateProfile } from '../../components/user/User.interface';
 
 /**
@@ -27,4 +31,6 @@ export type ShowPromptAction = ActionType<typeof actions>;
 export interface UserStore {
   profile: PrivateProfile;
   showLogin: boolean;
+  verified: VerificationStatus;
+  reset: ResetTokenStatus;
 }

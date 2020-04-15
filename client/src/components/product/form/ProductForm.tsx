@@ -115,7 +115,6 @@ const ProductForm: React.FC<ProductFormProps> = (
           <Typography variant='h3' gutterBottom>Enter the product details</Typography>
           <Input
             handleChange={updateInputs}
-            hasError={''}
             name='name'
             required={true}
             type='text'
@@ -123,7 +122,6 @@ const ProductForm: React.FC<ProductFormProps> = (
           />
           <Input
             handleChange={updateInputs}
-            hasError={''}
             name='brand'
             required={true}
             type='text'

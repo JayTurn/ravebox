@@ -9,8 +9,12 @@ import Grid from '@material-ui/core/Grid';
 import { withRouter } from 'react-router';
 import { bindActionCreators, Dispatch, AnyAction } from 'redux';
 import { connect } from 'react-redux';
+import AccessType from '../../../components/user/accessType/AccessType';
 
-// Dependent interfaces.
+// Enumerators.
+import { AccessOptions } from '../../../components/user/accessType/AccessType.enum';
+
+// Interfaces.
 import {
   LoginProps,
 } from './Login.interface';
@@ -24,13 +28,13 @@ import LoginForm from '../../../components/user/loginForm/LoginForm';
 const Login: React.FC<LoginProps> = (props: LoginProps) => {
 
   return (
-    <div style={{'flexGrow': 1}}>
+    <div style={{flexGrow: 1, marginTop: '3rem' }}>
       <Grid
         container
         direction='column'
         justify='flex-start'
-        alignItems='center'
       >
+        <AccessType selected={AccessOptions.LOGIN} />
         <LoginForm />
       </Grid>
     </div>

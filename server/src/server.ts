@@ -48,7 +48,7 @@ mongoose.connect(
   `${process.env.MONGODB_URI}/${process.env.MONGODB_NAME}`,
   {
     useUnifiedTopology: true,
-    useFindAndModify: true,
+    useFindAndModify: false,
     useCreateIndex: true,
     useNewUrlParser: true
   }

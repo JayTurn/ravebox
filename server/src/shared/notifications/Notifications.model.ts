@@ -92,13 +92,55 @@ export default class Notification {
   }
 
   /**
+   * Updates the email contact.
+   */
+  static UpdateContactEmail(oldEmail: string, email: string): void {
+    // Create the contacts instance.
+    const instance: SIB.ContactsApi = Notification.CreateContactInstance(),
+          updateContact = new SIB.UpdateContact();
+
+    updateContact.attributes = {
+      email: email
+    };
+
+    instance.updateContact(oldEmail, updateContact)
+      .then((data: {
+        response: http.IncomingMessage;
+        body?: any;
+      }) => {
+        console.log(data);
+      })
+      .catch((error: Error) => {
+        console.log(error);
+      });
+  }
+
+  /**
+   * Removes the email from a list.
+   */
+  static RemoveEmailFromList(email: string, lists: Array<number>): void {
+    // Create the contacts instance.
+    const instance: SIB.ContactsApi = Notification.CreateContactInstance(),
+          contactEmails = new SIB.RemoveContactFromList();
+
+    contactEmails.emails = [email];
+
+    let i = 0;
+
+    do {
+      instance.removeContactFromList(lists[i], contactEmails);
+      i++;
+    } while (i < lists.length);
+  }
+
+  /**
    * Checks if an account exists for the email we are notifying.
    *
    * @param { string } email - the email to be returned or added.
    *
    * @return Promise<string>
    */
-  static AddEmailToList(email: string, list: ContactList): Promise<string> {
+  static AddEmailToList(email: string, name: string, list: ContactList): Promise<string> {
     return new Promise<string>((resolve: Function, reject: Function) => {
       // Create the contacts instance.
       const instance: SIB.ContactsApi = Notification.CreateContactInstance();
@@ -137,6 +179,9 @@ export default class Notification {
 
             // Update the contact object with details we know.
             createContact.email = email;
+            createContact.attributes = {
+              firstName: name
+            };
             createContact.listIds = [list];
 
             instance.createContact(createContact)
