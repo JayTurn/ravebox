@@ -4,14 +4,15 @@
  */
 
 // Modules.
+import * as React from 'react';
 import API from '../../../utils/api/Api.model';
 import { bindActionCreators, Dispatch, AnyAction } from 'redux';
-import { connect } from 'react-redux';
 import Box from '@material-ui/core/Box';
+import { connect } from 'react-redux';
 import Grid from '@material-ui/core/Grid';
 import Typography from '@material-ui/core/Typography';
-import * as React from 'react';
 import { useTheme } from '@material-ui/core/styles';
+import { VariantType, useSnackbar } from 'notistack';
 
 // Actions.
 import {
@@ -65,6 +66,8 @@ const passwordValidation: ValidationSchema = {
  * @return JSXElement
  */
 const ChangePassword: React.FC<ChangePasswordProps> = (props: ChangePasswordProps) => {
+  // Register the theme and snackbar providers.
+  const { enqueueSnackbar } = useSnackbar();
   const theme = useTheme();
 
   // Define the settings to be updated upon save.
@@ -84,6 +87,8 @@ const ChangePassword: React.FC<ChangePasswordProps> = (props: ChangePasswordProp
   // Define the state for checking if values have changed.
   const [changed, setChanged] = React.useState<boolean>(false);
 
+  const [passwordUpdated, setPasswordUpdated] = React.useState<boolean>(false);
+
   // Set a form submission state, used to inform the user their form has been
   // submitted and to prevent duplicate submissions.
   const [submitting, setSubmitting] = React.useState(false);
@@ -96,17 +101,6 @@ const ChangePassword: React.FC<ChangePasswordProps> = (props: ChangePasswordProp
   } = useValidation({
     validation: passwordValidation
   });
-
-  /**
-   * Updates the settings state based on changes to the user profile.
-   */
-  /*
-  React.useEffect(() => {
-    if (!settings._id && props.profile) {
-      updateSettings({...props.profile});
-    }
-  }, [props.profile, settings, updateSettings]);
-  */
 
   /**
    * Handles updates to the profile form.
@@ -172,6 +166,8 @@ const ChangePassword: React.FC<ChangePasswordProps> = (props: ChangePasswordProp
 
     // Set the submission state.
     setSubmitting(true);
+
+    setPasswordUpdated(false);
 
     API.requestAPI<VerifyPasswordResponse>('user/password/verify', {
       headers: {
@@ -267,6 +263,10 @@ const ChangePassword: React.FC<ChangePasswordProps> = (props: ChangePasswordProp
       // Set the submission state.
       setSubmitting(false);
 
+      setPasswordUpdated(true); 
+
+      // Display the success message to the user.
+      enqueueSnackbar('Handle updated successfully', { variant: 'success' });
     })
     .catch((error: Error) => {
       console.log(error);
@@ -301,7 +301,7 @@ const ChangePassword: React.FC<ChangePasswordProps> = (props: ChangePasswordProp
             </Grid>
             {settings.allowed ? (
               <React.Fragment>
-                <Typography variant='subtitle1' color='textPrimary' style={{marginBottom: 20}}>
+                <Typography variant='subtitle1' color='textPrimary' style={{marginBottom: '1rem'}}>
                   Password verification <Box component='span' style={{fontWeight: 900, color: theme.palette.success.main}}>successful</Box>, enter your new password below
                 </Typography>
                 <Input
@@ -325,6 +325,13 @@ const ChangePassword: React.FC<ChangePasswordProps> = (props: ChangePasswordProp
               </React.Fragment>
             ) : (
               <React.Fragment>
+                {passwordUpdated &&
+                  <Box style={{marginBottom: '1rem'}}>
+                    <Typography variant='subtitle1'>
+                      <Box component='span' style={{fontWeight: 900, color: theme.palette.success.main}}>Password changed.</Box> Your new password is active immediately.
+                    </Typography>
+                  </Box>
+                }
                 <ErrorMessages errors={formErrorMessages} />
                 <Grid item xs={12}>
                   <StyledButton

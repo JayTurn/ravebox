@@ -4,16 +4,18 @@
  */
 
 // Modules.
-import { frontloadConnect } from 'react-frontload';
 import * as React from 'react';
-import { Route, Switch } from 'react-router-dom';
-import { withRouter } from 'react-router';
-import { Helmet } from 'react-helmet';
-import { TransitionGroup, CSSTransition } from 'react-transition-group';
-import { RouteComponentProps } from 'react-router';
 import { bindActionCreators, Dispatch, AnyAction } from 'redux';
 import { connect } from 'react-redux';
 import Container from '@material-ui/core/Container';
+import { frontloadConnect } from 'react-frontload';
+import { Helmet } from 'react-helmet';
+import { SnackbarProvider } from 'notistack';
+import { Route, Switch } from 'react-router-dom';
+import { RouteComponentProps } from 'react-router';
+import { TransitionGroup, CSSTransition } from 'react-transition-group';
+import { withRouter } from 'react-router';
+import { withStyles, Theme } from '@material-ui/core/styles';
 
 // Actions.
 import {
@@ -63,6 +65,18 @@ import RaveboxTheme from '../theme/RaveboxTheme';
 // Dependent styles.
 import './App.css';
 
+// Define the snackbar styles.
+const StyledSnackbar = withStyles((theme: Theme) => ({
+  variantSuccess: {
+    backgroundColor: theme.palette.primary.dark,
+    color: theme.palette.common.white
+  },
+  variantError: {
+    backgroundColor: theme.palette.error.dark,
+    color: theme.palette.common.white
+  }
+}))(SnackbarProvider);
+
 /**
  * Application class.
  * @class App
@@ -81,54 +95,56 @@ const App: React.FC<AppProps> = (props: AppProps) => {
    */
   return (
     <ThemeProvider theme={RaveboxTheme}>
-      <div className={`app`}>
-        <Helmet title="Ravebox" defaultTitle="Ravebox" />
-        <ScrollToTop />
-        <Navigation />
-        <Container maxWidth="lg">
-          <Route
-            render={(route: RouteComponentProps) => {
-              return (
-                <Switch location={route.location}>
-                  <Route path="/page-not-found" exact={true}>
-                    <PageNotFound />
-                  </Route>
-                  <PrivateRoute exact={true} path="/account">
-                    <Account />
-                  </PrivateRoute>
-                  <Route exact={true} path="/user/login">
-                    <Login />
-                  </Route>
-                  <Route exact={true} path="/user/signup">
-                    <Signup />
-                  </Route>
-                  <Route exact={true} path="/user/verify/:token">
-                    <Verify />
-                  </Route>
-                  <Route exact={true} path="/user/reset/:token">
-                    <PasswordReset />
-                  </Route>
-                  <Route exact={true} path="/user/reset">
-                    <PasswordResetRequest />
-                  </Route>
-                  <Route exact={true} path="/product/add">
-                    <AddProduct />
-                  </Route>
-                  <PrivateRoute exact={true} path="/product/:id/review">
-                    <AddReview />
-                  </PrivateRoute>
-                  <Route exact={true} path="/review/:brand/:productName/:reviewTitle">
-                    <ViewReview />
-                  </Route>
-                  <Route exact={true} path="/">
-                    <Home />
-                  </Route>
-                </Switch>
-              );
-            }}
-          />
-        </Container>
-      </div>
+      <StyledSnackbar>
+        <div className={`app`}>
+          <Helmet title="Ravebox" defaultTitle="Ravebox" />
+          <ScrollToTop />
+          <Navigation />
+          <Container maxWidth="lg">
+            <Route
+              render={(route: RouteComponentProps) => {
+                return (
+                  <Switch location={route.location}>
+                    <Route path="/page-not-found" exact={true}>
+                      <PageNotFound />
+                    </Route>
+                    <PrivateRoute exact={true} path="/account">
+                      <Account />
+                    </PrivateRoute>
+                    <Route exact={true} path="/user/login">
+                      <Login />
+                    </Route>
+                    <Route exact={true} path="/user/signup">
+                      <Signup />
+                    </Route>
+                    <Route exact={true} path="/user/verify/:token">
+                      <Verify />
+                    </Route>
+                    <Route exact={true} path="/user/reset/:token">
+                      <PasswordReset />
+                    </Route>
+                    <Route exact={true} path="/user/reset">
+                      <PasswordResetRequest />
+                    </Route>
+                    <Route exact={true} path="/product/add">
+                      <AddProduct />
+                    </Route>
+                    <PrivateRoute exact={true} path="/product/:id/review">
+                      <AddReview />
+                    </PrivateRoute>
+                    <Route exact={true} path="/review/:brand/:productName/:reviewTitle">
+                      <ViewReview />
+                    </Route>
+                    <Route exact={true} path="/">
+                      <Home />
+                    </Route>
+                  </Switch>
+                );
+              }}
+            />
+          </Container>
+        </div>
+      </StyledSnackbar>
     </ThemeProvider>
   );
 }

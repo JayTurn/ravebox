@@ -12,6 +12,7 @@ import Grid from '@material-ui/core/Grid';
 import Typography from '@material-ui/core/Typography';
 import * as React from 'react';
 import { useTheme } from '@material-ui/core/styles';
+import { VariantType, useSnackbar } from 'notistack';
 
 // Actions.
 import {
@@ -62,7 +63,9 @@ const contactValidation: ValidationSchema = {
  * @return JSXElement
  */
 const ChangeEmail: React.FC<ChangeEmailProps> = (props: ChangeEmailProps) => {
+  // Register the snackbar and theme providers.
   const theme = useTheme();
+  const { enqueueSnackbar } = useSnackbar();
 
   // Define the settings to be updated upon save.
   const [settings, updateSettings] = React.useState<PrivateProfile>({_id: '', email: '', emailVerified: false, handle: ''});
@@ -73,6 +76,9 @@ const ChangeEmail: React.FC<ChangeEmailProps> = (props: ChangeEmailProps) => {
 
   // Define the state for checking if values have changed.
   const [changed, setChanged] = React.useState<boolean>(false);
+
+  // Define the state for an updated email.
+  const [emailChanged, setEmailChanged] = React.useState<boolean>(false);
 
   // Set a form submission state, used to inform the user their form has been
   // submitted and to prevent duplicate submissions.
@@ -123,6 +129,7 @@ const ChangeEmail: React.FC<ChangeEmailProps> = (props: ChangeEmailProps) => {
         setChanged(false);
         return;
       } else {
+        setEmailChanged(false);
         setChanged(true);
       }
     }
@@ -198,6 +205,8 @@ const ChangeEmail: React.FC<ChangeEmailProps> = (props: ChangeEmailProps) => {
       // Set the submission state.
       setSubmitting(false);
 
+      setEmailChanged(true);
+      enqueueSnackbar('Email updated successfully', { variant: 'success' });
     })
     .catch((error: Error) => {
       console.log(error);
@@ -226,17 +235,25 @@ const ChangeEmail: React.FC<ChangeEmailProps> = (props: ChangeEmailProps) => {
             validation={validation.email}
           />
         }
-        <Box style={{marginTop: 20, marginBottom: 40}}>
-          {props.profile && props.profile.emailVerified ? (
+        {emailChanged ? (
+          <Box style={{marginTop: 20, marginBottom: 40}}>
             <Typography variant='subtitle1'>
-              <Box component='span' style={{fontWeight: 900, color: theme.palette.success.main}}>Verified.</Box> Thank you for verifying your email address.
+              <Box component='span' style={{fontWeight: 900, color: theme.palette.success.main}}>Verification email sent.</Box> Check your email, we've sent a verification message to your account.
             </Typography>
-          ) : (
-            <Typography variant='subtitle1'>
-              <Box component='span' style={{fontWeight: 700, color: theme.palette.error.main}}>Not verified.</Box> Please verify your email so you can enjoy all of our great features.
-            </Typography>
-          )}
-        </Box>
+          </Box>
+        ) : (
+          <Box style={{marginTop: 20, marginBottom: 40}}>
+            {props.profile && props.profile.emailVerified ? (
+              <Typography variant='subtitle1'>
+                <Box component='span' style={{fontWeight: 900, color: theme.palette.success.main}}>Verified.</Box> Thank you for verifying your email address.
+              </Typography>
+            ) : (
+              <Typography variant='subtitle1'>
+                <Box component='span' style={{fontWeight: 700, color: theme.palette.error.main}}>Not verified.</Box> Please verify your email so you can enjoy all of our great features.
+              </Typography>
+            )}
+          </Box>
+        )}
         <Box style={{marginTop: 20, marginBottom: 40}}>
           <StyledButton
             disabled={!changed}

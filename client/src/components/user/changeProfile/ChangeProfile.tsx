@@ -4,13 +4,14 @@
  */
 
 // Modules.
+import * as React from 'react';
+import API from '../../../utils/api/Api.model';
+import { bindActionCreators, Dispatch, AnyAction } from 'redux';
 import Box from '@material-ui/core/Box';
+import { connect } from 'react-redux';
 import Grid from '@material-ui/core/Grid';
 import Typography from '@material-ui/core/Typography';
-import API from '../../../utils/api/Api.model';
-import * as React from 'react';
-import { connect } from 'react-redux';
-import { bindActionCreators, Dispatch, AnyAction } from 'redux';
+import { VariantType, useSnackbar } from 'notistack';
 
 // Actions.
 import {
@@ -64,6 +65,8 @@ const profileValidation: ValidationSchema = {
  * Renders the form for a user to change their email.
  */
 const ChangeProfile: React.FC<ChangeProfileProps> = (props: ChangeProfileProps) => {
+  // Register the snackbar.
+  const { enqueueSnackbar } = useSnackbar();
 
   // Define the settings to be updated upon save.
   const [settings, updateSettings] = React.useState<PrivateProfile>({_id: '', email: '', emailVerified: false, handle: ''});
@@ -199,6 +202,9 @@ const ChangeProfile: React.FC<ChangeProfileProps> = (props: ChangeProfileProps) 
 
       // Set the submission state.
       setSubmitting(false);
+
+      // Display the success message to the user.
+      enqueueSnackbar('Handle updated successfully', { variant: 'success' });
     })
     .catch((error: Error) => {
       console.log(error);
