@@ -6,6 +6,7 @@
 // Modules.
 import * as React from 'react';
 import { bindActionCreators, Dispatch, AnyAction } from 'redux';
+import clsx from 'clsx';
 import { connect } from 'react-redux';
 import Container from '@material-ui/core/Container';
 import { frontloadConnect } from 'react-frontload';
@@ -15,7 +16,14 @@ import { Route, Switch } from 'react-router-dom';
 import { RouteComponentProps } from 'react-router';
 import { TransitionGroup, CSSTransition } from 'react-transition-group';
 import { withRouter } from 'react-router';
-import { withStyles, Theme } from '@material-ui/core/styles';
+import {
+  createStyles,
+  makeStyles,
+  Theme,
+  useTheme,
+  withStyles
+} from '@material-ui/core/styles';
+import useMediaQuery from '@material-ui/core/useMediaQuery';
 
 // Actions.
 import {
@@ -32,14 +40,16 @@ import AddReview from './review/add/AddReview';
 import ViewReview from './review/view/ViewReview';
 import Home from './home/Home';
 import Login from './user/login/Login';
-import Navigation from '../components/navigation/Navigation';
 import PageNotFound from './page-not-found/PageNotFound';
 import PasswordReset from './user/reset/PasswordReset';
 import PasswordResetRequest from './user/reset/PasswordResetRequest';
 import PrivateRoute from './privateRoute/PrivateRoute';
 import Account from './user/account/Account';
 import ScrollToTop from '../utils/scroll/ScrollToTop';
+import SideNavigation from '../components/navigation/side/SideNavigation';
+import MobileNavigation from '../components/navigation/mobile/MobileNavigation';
 import Signup from './user/signup/Signup';
+import TopNavigation from '../components/navigation/top/TopNavigation';
 import Verify from './user/verify/Verify';
 
 // Hooks.
@@ -49,7 +59,7 @@ import { useRetrieveProfile } from '../components/user/profile/useRetrieveProfil
 import { PrivateProfile } from '../components/user/User.interface';
 
 // Models.
-import API from '../utils/api/Api.model'; 
+import API from '../utils/api/Api.model';
 import { updateAPIImageConfig } from '../store/configuration/Actions';
 
 // Dependent interfaces.
@@ -57,7 +67,7 @@ import { AppProps, AppState } from './App.interface';
 import {
   APIImageConfig,
   RequestInterface
-} from '../utils/api/Api.interface'; 
+} from '../utils/api/Api.interface';
 
 // Theme.
 import RaveboxTheme from '../theme/RaveboxTheme';
@@ -77,11 +87,38 @@ const StyledSnackbar = withStyles((theme: Theme) => ({
   }
 }))(SnackbarProvider);
 
+const lgOpenDrawerWidth: number = 240,
+      lgClosedDrawerWidth: number = 70;
+
+/**
+ * Create styles for the shifting content.
+ */
+const useStyles = makeStyles((theme: Theme) => createStyles({
+  lgContent: {
+    transition: theme.transitions.create('margin', {
+      easing: theme.transitions.easing.sharp,
+      duration: theme.transitions.duration.leavingScreen,
+    })
+  },
+  lgContentOpen: {
+    width: `calc(100% - ${lgOpenDrawerWidth}px)`,
+    marginLeft: lgOpenDrawerWidth
+  },
+  lgContentClosed: {
+    width: `calc(100% - ${lgClosedDrawerWidth}px)`,
+    marginLeft: lgClosedDrawerWidth
+  }
+}));
+
 /**
  * Application class.
  * @class App
  */
 const App: React.FC<AppProps> = (props: AppProps) => {
+  // Match the large media query size.
+  const theme = useTheme(),
+        largeScreen = useMediaQuery(theme.breakpoints.up('md')),
+        classes = useStyles();
 
   // Retrieve the user profile if we have a valid token.
   const {profileStatus} = useRetrieveProfile({
@@ -99,8 +136,17 @@ const App: React.FC<AppProps> = (props: AppProps) => {
         <div className={`app`}>
           <Helmet title="Ravebox" defaultTitle="Ravebox" />
           <ScrollToTop />
-          <Navigation />
-          <Container maxWidth="lg">
+          <TopNavigation />
+          {largeScreen ? (
+            <SideNavigation expanded={false} />
+          ) : (
+            <MobileNavigation expanded={false} />
+          )}
+          <Container maxWidth="lg" className={clsx({
+            [classes.lgContent]: largeScreen,
+            [classes.lgContentOpen]: largeScreen && props.expanded,
+            [classes.lgContentClosed]: largeScreen && !props.expanded
+          })}>
             <Route
               render={(route: RouteComponentProps) => {
                 return (
@@ -126,9 +172,9 @@ const App: React.FC<AppProps> = (props: AppProps) => {
                     <Route exact={true} path="/user/reset">
                       <PasswordResetRequest />
                     </Route>
-                    <Route exact={true} path="/product/add">
+                    <PrivateRoute exact={true} path="/product/add">
                       <AddProduct />
-                    </Route>
+                    </PrivateRoute>
                     <PrivateRoute exact={true} path="/product/:id/review">
                       <AddReview />
                     </PrivateRoute>
@@ -156,9 +202,12 @@ const App: React.FC<AppProps> = (props: AppProps) => {
 function mapStatetoProps(state: any, ownProps: AppProps) {
   let profile: PrivateProfile = state.user ? state.user.profile : {_id: '', email: ''};
 
+  const expanded: boolean = state.navigation ? state.navigation.display : false;
+
   return {
     ...ownProps,
-    profile: profile
+    profile,
+    expanded
   };
 }
 

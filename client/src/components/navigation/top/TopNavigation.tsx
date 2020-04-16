@@ -1,9 +1,9 @@
 /**
- * Navigation.tsx
- * Navigation menu component.
+ * TopNavigation.tsx
+ * TopNavigation menu component.
  */
 
-// Dependent modules.
+// Modules.
 import AccountCircleSharpIcon from '@material-ui/icons/AccountCircleSharp';
 import AppBar from '@material-ui/core/AppBar';
 import Button from '@material-ui/core/Button';
@@ -23,16 +23,17 @@ import { bindActionCreators, Dispatch, AnyAction } from 'redux';
 import Cookies from 'universal-cookie';
 
 // Actions.
-import { remove } from '../../store/xsrf/Actions';
-import { logout } from '../../store/user/Actions';
+import { logout } from '../../../store/user/Actions';
+import { remove } from '../../../store/xsrf/Actions';
+import { toggleSide } from '../../../store/navigation/Actions';
 
 // Components.
-import Logo from '../logo/Logo';
-import ProfileMenu from '../user/profileMenu/ProfileMenu';
+import Logo from '../../logo/Logo';
+import ProfileMenu from '../../user/profileMenu/ProfileMenu';
 
-// Dependent interfaces.
-import { NavigationProps } from './Navigation.interface';
-import { PrivateProfile } from '../user/User.interface';
+// Interfaces.
+import { TopNavigationProps } from './TopNavigation.interface';
+import { PrivateProfile } from '../../user/User.interface';
 
 // Make the app specific styles.
 const useStyles = makeStyles((theme: Theme) => createStyles({
@@ -63,7 +64,8 @@ const StyledAppBar = withStyles((theme: Theme) => ({
   root: {
     backgroundColor: theme.palette.common.white,
     boxShadow: 'none',
-    borderBottom: `2px solid ${theme.palette.primary.light}`
+    borderBottom: `2px solid ${theme.palette.primary.light}`,
+    zIndex: theme.zIndex.drawer + 1
   }
   }))(AppBar);
 
@@ -106,7 +108,7 @@ const MenuButtonContained = withStyles({
 /**
  * Component to manage the main navigation of the application.
  */
-const Navigation: React.FC<NavigationProps> = (props: NavigationProps) => {
+const TopNavigation: React.FC<TopNavigationProps> = (props: TopNavigationProps) => {
 
   // Define the component classes.
   const classes = useStyles(),
@@ -116,15 +118,32 @@ const Navigation: React.FC<NavigationProps> = (props: NavigationProps) => {
   // Match the small media query size.
   const largeScreen = useMediaQuery(theme.breakpoints.up('md'));
 
+  const toggleSideNavigation: (
+    e: React.SyntheticEvent
+  ) => void = (
+    e: React.SyntheticEvent
+  ): void => {
+    e.preventDefault();
+
+    if (typeof props.sideMenuExpanded !== 'undefined') {
+      if (props.toggleSide) {
+        props.toggleSide(!props.sideMenuExpanded);
+      }
+    }
+  }
+
   /**
    * Renders the navigation menu.
    */
   return (
     <StyledAppBar position='sticky' color='inherit'>
-      <Toolbar variant='dense'>
+      <Toolbar disableGutters={true}>
         {largeScreen ? (
           <React.Fragment>
-            <MenuIconButton>
+            <MenuIconButton
+              style={{marginLeft: 12, marginRight: 20}}
+              onClick={toggleSideNavigation}
+            >
               <MenuIcon />
             </MenuIconButton>
             <LogoButton
@@ -139,7 +158,10 @@ const Navigation: React.FC<NavigationProps> = (props: NavigationProps) => {
           </React.Fragment>
         ): (
           <React.Fragment>
-            <MenuIconButton style={{marginTop: '5px'}}>
+            <MenuIconButton
+              style={{marginTop: '5px'}}
+              onClick={toggleSideNavigation}
+            >
               <MenuIcon />
             </MenuIconButton>
             <LogoButton
@@ -177,8 +199,10 @@ const Navigation: React.FC<NavigationProps> = (props: NavigationProps) => {
  * Map the profile to the naigation menu.
  *
  */
-function mapStatetoProps(state: any, ownProps: NavigationProps) {
+function mapStatetoProps(state: any, ownProps: TopNavigationProps) {
   let profile: PrivateProfile | undefined = state.user ? state.user.profile : undefined;
+
+  const sideMenuExpanded: boolean | undefined = state.navigation ? state.navigation.display : undefined;
 
   if (profile && !profile._id) {
     profile = undefined;
@@ -186,7 +210,8 @@ function mapStatetoProps(state: any, ownProps: NavigationProps) {
 
   return {
     ...ownProps,
-    profile
+    profile,
+    sideMenuExpanded
   };
 }
 
@@ -199,7 +224,8 @@ const mapDispatchToProps = (dispatch: Dispatch<AnyAction>) =>
   bindActionCreators(
     {
       logout: logout,
-      removeXsrf: remove
+      removeXsrf: remove,
+      toggleSide: toggleSide
     },
     dispatch
   );
@@ -208,5 +234,5 @@ export default withRouter(
   connect(
     mapStatetoProps,
     mapDispatchToProps
-  )(Navigation)
+  )(TopNavigation)
 );
