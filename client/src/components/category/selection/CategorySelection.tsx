@@ -5,6 +5,7 @@
 
 // Modules.
 import Chip from '@material-ui/core/Chip';
+import clsx from 'clsx';
 import Grid from '@material-ui/core/Grid';
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
 import * as React from 'react';
@@ -27,9 +28,13 @@ const useStyles = makeStyles((theme: Theme) =>
     },
     chip: {
       margin: theme.spacing(0.5),
+      backgroundColor: 'transparent',
+      border: 'none',
+      boxShadow: `0 0 1px ${theme.palette.grey.A400}`
     },
     selectedChip: {
       backgroundColor: theme.palette.primary.main,
+      boxShadow: `0 0 1px ${theme.palette.primary.main}`,
       color: '#FFFFFF',
       '&:focus': {
         backgroundColor: theme.palette.primary.main,
@@ -104,17 +109,20 @@ const CategorySelection: React.FC<CategorySelectionProps> = (props: CategorySele
     <Grid
       container
       direction='column'
-      spacing={2}
       alignItems='stretch'
     >
-      <Grid item xs={12}>
-        <Typography variant='h3' gutterBottom>
-          Select a category
+      <Grid item xs={12} md={6} style={{marginBottom: '1.5rem', marginTop: '3rem'}}>
+        <Typography variant='h3'>
+          Select a product category  
         </Typography>
+      </Grid>
+      <Grid item xs={12} md={6}>
         {list.map((category: Category, index: number) => {
           return (
             <Chip
-              className={selectedCategoryIndex === index ? classes.selectedChip : classes.chip}
+              className={clsx(classes.chip,{
+                [classes.selectedChip]: selectedCategoryIndex === index
+              })}
               clickable={true}
               key={category.key}
               label={category.label}
@@ -124,22 +132,26 @@ const CategorySelection: React.FC<CategorySelectionProps> = (props: CategorySele
         })}  
       </Grid>
       {selectedCategoryIndex > -1 &&
-        <Grid item xs={12} key={selectedCategoryIndex}>
-          <Typography variant='h3' gutterBottom>
-            Select a sub-category
-          </Typography>
-          {subCategories.map((subCategory: Category, index: number) => {
-            return (
-              <Chip
-                className={selectedSubCategoryIndex === index ? classes.selectedChip : classes.chip}
-                clickable={true}
-                key={subCategory.key}
-                label={subCategory.label}
-                onClick={(e: React.SyntheticEvent) => selectSubCategory(index)}
-              />
-            )
-          })}  
-        </Grid>
+        <React.Fragment>
+          <Grid item xs={12} key={selectedCategoryIndex} style={{marginBottom: '1.5rem', marginTop: '3rem'}}>
+            <Typography variant='h3'>
+              Select a product sub-category
+            </Typography>
+          </Grid>
+          <Grid item xs={12} md={6}>
+            {subCategories.map((subCategory: Category, index: number) => {
+              return (
+                <Chip
+                  className={selectedSubCategoryIndex === index ? classes.selectedChip : classes.chip}
+                  clickable={true}
+                  key={subCategory.key}
+                  label={subCategory.label}
+                  onClick={(e: React.SyntheticEvent) => selectSubCategory(index)}
+                />
+              )
+            })}  
+          </Grid>
+        </React.Fragment>
       }
     </Grid>
   )

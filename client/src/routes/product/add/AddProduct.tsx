@@ -21,9 +21,7 @@ import { AddProductProps } from './AddProduct.interface';
 const AddProduct: React.FC<AddProductProps> = (props: AddProductProps) => {
 
   return (
-    <div className="block block--profile-container">
-      <ProductForm />
-    </div>
+    <ProductForm />
   );
 }
 

@@ -180,12 +180,11 @@ const SignupForm: React.FC<SignupFormProps> = (props: SignupFormProps) => {
       <Grid
         container
         direction='column'
-        spacing={2}
         alignItems='stretch'
       >
         <Grid item xs={12} md={6}>
           <Input
-            handleChange={updateForm}
+            handleBlur={updateForm}
             helperText='This is the name people will know you by on ravebox. Must only contain alphanumeric characters, hyphens and underscores.'
             name='handle'
             type='text'
@@ -195,7 +194,7 @@ const SignupForm: React.FC<SignupFormProps> = (props: SignupFormProps) => {
         </Grid>
         <Grid item xs={12} md={6}>
           <Input
-            handleChange={updateForm}
+            handleBlur={updateForm}
             name='email'
             type='email'
             title="Email" 
@@ -204,7 +203,7 @@ const SignupForm: React.FC<SignupFormProps> = (props: SignupFormProps) => {
         </Grid>
         <Grid item xs={12} md={6}>
           <Input
-            handleChange={updateForm}
+            handleBlur={updateForm}
             name='password'
             type='password'
             title="Password" 

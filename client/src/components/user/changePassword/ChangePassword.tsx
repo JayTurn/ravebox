@@ -292,7 +292,7 @@ const ChangePassword: React.FC<ChangePasswordProps> = (props: ChangePasswordProp
               </Typography>
               <Input
                 defaultValue={settings.oldPassword}
-                handleChange={updateForm}
+                handleBlur={updateForm}
                 handleFocus={handleFocus}
                 name='oldPassword'
                 type='password'
@@ -306,7 +306,7 @@ const ChangePassword: React.FC<ChangePasswordProps> = (props: ChangePasswordProp
                 </Typography>
                 <Input
                   defaultValue={settings.password}
-                  handleChange={updateForm}
+                  handleBlur={updateForm}
                   handleFocus={handleFocus}
                   name='password'
                   type='password'

@@ -41,6 +41,9 @@ const ProductSchema = new Schema({
   }
 });
 
+// Define text search fields.
+ProductSchema.path('name').index({text: true});
+
 // Define a view to be used for product responses.
 ProductSchema
   .virtual('details')

@@ -87,8 +87,8 @@ const StyledSnackbar = withStyles((theme: Theme) => ({
   }
 }))(SnackbarProvider);
 
-const lgOpenDrawerWidth: number = 240,
-      lgClosedDrawerWidth: number = 70;
+const lgOpenDrawerWidth: number = 270,
+      lgClosedDrawerWidth: number = 100;
 
 /**
  * Create styles for the shifting content.
@@ -101,11 +101,11 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
     })
   },
   lgContentOpen: {
-    width: `calc(100% - ${lgOpenDrawerWidth}px)`,
+    width: `calc(100% - ${lgOpenDrawerWidth + 30}px)`,
     marginLeft: lgOpenDrawerWidth
   },
   lgContentClosed: {
-    width: `calc(100% - ${lgClosedDrawerWidth}px)`,
+    width: `calc(100% - ${lgClosedDrawerWidth + 30}px)`,
     marginLeft: lgClosedDrawerWidth
   }
 }));
@@ -142,7 +142,7 @@ const App: React.FC<AppProps> = (props: AppProps) => {
           ) : (
             <MobileNavigation expanded={false} />
           )}
-          <Container maxWidth="lg" className={clsx({
+          <Container maxWidth="lg" disableGutters={largeScreen} className={clsx({
             [classes.lgContent]: largeScreen,
             [classes.lgContentOpen]: largeScreen && props.expanded,
             [classes.lgContentClosed]: largeScreen && !props.expanded

@@ -631,7 +631,7 @@ export default class UserController {
           }
         });
       })
-      .catch((error: Error) => {
+      .catch(() => {
 
         // Define the responseObject.
         const responseObject = Connect.setResponse({
@@ -755,7 +755,7 @@ export default class UserController {
           response.status(responseObject.status).json(responseObject.data);
         });
       })
-      .catch((error: Error) => {
+      .catch(() => {
 
         // Define the responseObject.
         const responseObject = Connect.setResponse({
@@ -779,7 +779,7 @@ export default class UserController {
    * @param {object} res
    *   The response object.
    */
-  static RequestPasswordResetLink(request: Request, response: Response) {
+  static RequestPasswordResetLink(request: Request, response: Response): void {
 
     const email: string = request.body.email;
 
@@ -793,7 +793,8 @@ export default class UserController {
         }, 403, `We couldn't retrieve your email`);
 
       // Return the response.
-      return response.status(responseObject.status).json(responseObject.data);
+      response.status(responseObject.status).json(responseObject.data);
+      return;
     }
 
     // Search for the user by the email address provided.
@@ -891,7 +892,7 @@ export default class UserController {
             upsert: false
           }
         )
-        .then((user: UserDetailsDocument) => {
+        .then(() => {
           // Set the response object.
           const responseObject = Connect.setResponse({
             data: {

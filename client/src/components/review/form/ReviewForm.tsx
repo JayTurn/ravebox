@@ -216,7 +216,7 @@ const AddReviewForm: React.FC<ReviewFormProps> = (props: ReviewFormProps) => {
           <Grid item xs={12}>
             <Typography variant='h3' gutterBottom>Add your review</Typography>
             <Input
-              handleChange={updateInputs}
+              handleBlur={updateInputs}
               name='title'
               required={true}
               type='text'

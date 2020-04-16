@@ -45,6 +45,12 @@ export default class ProductController {
 
     // Retrieves a product.
     router.get(`${path}/:id`, ProductController.RetrieveById);
+
+    // Search for products by name.
+    router.post(
+      `${path}/search/name`,
+      ProductController.SearchByName
+    );
   }
 
   /**
@@ -157,6 +163,67 @@ export default class ProductController {
 
       // Return the error response for the user.
       response.status(401).json(responseObject.data);
+    })
+  }
+
+  /**
+   * Retrieves a list of products based on the name provided.
+   *
+   * @param {object} req
+   * The request object.
+   *
+   * @param {object} res
+   * The response object.
+   */
+  static SearchByName(request: Request, response: Response, next: NextFunction): void {
+    const query: string = request.body.name;
+
+    // Exit if a value wasn't provided.
+    if (!query) {
+      // Define the responseObject.
+      const responseObject = Connect.setResponse({
+          data: {
+            errorCode: 'PRODUCT_NAME_NOT_PROVIDED',
+            title: `A product name was not provided for searching`
+          }
+        }, 404, `A product name was not provided for searching`);
+
+      // Return the response.
+      response.status(responseObject.status).json(responseObject.data);
+
+      return;
+    }
+
+    // As a poor person's search, let's just use regex for now and replace it
+    // with elastic at some point in the future.
+    const regEx = new RegExp(query.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, "\\$&"), 'gi');
+
+    Product.find({
+      name: regEx
+    })
+    .lean()
+    .then((products: Array<ProductDetails>) => {
+      // Attach the product to the response.
+      const responseObject = Connect.setResponse({
+        data: {
+          products: products
+        }
+      }, 200, 'Products search successfully');
+
+      // Return the response for the authenticated user.
+      response.status(responseObject.status).json(responseObject.data);
+    })
+    .catch(() => {
+      // Define the responseObject.
+      const responseObject = Connect.setResponse({
+          data: {
+            errorCode: 'PRODUCT_NAME_SEARCH_FAILED',
+            title: `The search couldn't be completed`
+          }
+        }, 404, `The search couldn't be completed`);
+
+      // Return the response.
+      response.status(responseObject.status).json(responseObject.data);
     })
   }
 }

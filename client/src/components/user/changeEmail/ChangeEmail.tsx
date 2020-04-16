@@ -227,7 +227,7 @@ const ChangeEmail: React.FC<ChangeEmailProps> = (props: ChangeEmailProps) => {
         {props.profile && settings._id &&
           <Input
             defaultValue={props.profile.email}
-            handleChange={updateForm}
+            handleBlur={updateForm}
             handleFocus={handleFocus}
             name='email'
             type='email'

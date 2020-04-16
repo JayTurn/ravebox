@@ -154,7 +154,7 @@ class Search extends React.Component<
                   name="search"
                   type="text"
                   title="Search for your favourite TV shows"
-                  handleChange={this.handleChange}
+                  handleBlur={this.handleChange}
                 />
               </Grid>
               <Grid item xs={12} sm={3}>

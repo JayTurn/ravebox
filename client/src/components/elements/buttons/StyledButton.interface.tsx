@@ -13,4 +13,5 @@ export interface StyledButtonProps extends ButtonProps {
   title: string;
   clickAction: () => void;
   submitting: boolean;
+  orientation?: string;
 }

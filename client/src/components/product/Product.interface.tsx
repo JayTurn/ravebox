@@ -13,6 +13,12 @@ export interface Product {
   name: string;
 }
 
+export interface ProductGroup {
+  category: CategoryItem;
+  subCategory: CategoryItem;
+  products: Array<Product>;
+}
+
 /**
  * Paramters used when retrieving a product from the api.
  */
