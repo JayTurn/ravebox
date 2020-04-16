@@ -14,6 +14,7 @@ import { bindActionCreators, Dispatch, AnyAction } from 'redux';
 // Actions.
 import {
   login,
+  logout
 } from '../../store/user/Actions';
 
 // Enumerators.
@@ -36,7 +37,8 @@ const PrivateRoute: React.FC<PrivateRouteProps> = (
   // Retrieve the user profile if we have a valid token.
   const {profileStatus} = useRetrieveProfile({
     profile: props.profile,
-    updateProfile: props.login
+    updateProfile: props.login,
+    logout: props.logout
   });
 
   return (
@@ -69,7 +71,8 @@ const PrivateRoute: React.FC<PrivateRouteProps> = (
 const mapDispatchToProps = (dispatch: Dispatch<AnyAction>) =>
   bindActionCreators(
     {
-      login: login
+      login,
+      logout
     },
     dispatch
   );
