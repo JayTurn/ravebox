@@ -5,21 +5,29 @@
 
 // Modules.
 import API from '../../../utils/api/Api.model';
-import Button from '@material-ui/core/Button';
-import Grid from '@material-ui/core/Grid';
-import Typography from '@material-ui/core/Typography';
-import * as React from 'react';
 import { connect } from 'react-redux';
+import Grid from '@material-ui/core/Grid';
+import Fade from '@material-ui/core/Fade';
+import * as React from 'react';
+import Typography from '@material-ui/core/Typography';
 import { withRouter } from 'react-router';
+import { VariantType, useSnackbar } from 'notistack';
 
 // Components.
 import CategorySelection from '../../category/selection/CategorySelection';
-import Input from '../../forms/input/Input'; 
+import ErrorMessages from '../../forms/errorMessages/ErrorMessages';
+import PaddedDivider from '../../elements/dividers/PaddedDivider';
+import ProductSelection from '../select/ProductSelection';
+import BrandSelection from '../select/BrandSelection';
+import StyledButton from '../../elements/buttons/StyledButton';
 
 // Enumerators.
 import {
   RequestType
 } from '../../../utils/api/Api.enum';
+
+// Hooks.
+import { useValidation } from '../../forms/validation/useValidation.hook';
 
 // Interfaces.
 import { CategoryItem } from '../../category/Category.interface';
@@ -29,6 +37,41 @@ import {
   ProductFormProps,
   ProductFormResponse
 } from './ProductForm.interface';
+import { ValidationSchema } from '../../forms/validation/Validation.interface';
+
+// Validation rules.
+import {
+  isEmail,
+  allowedCharacters,
+  isPassword,
+  isRequired,
+  handleAvailable,
+  minLength
+} from '../../forms/validation/ValidationRules';
+
+/**
+ * Product validation schema.
+ */
+const signupValidation: ValidationSchema = {
+  name: {
+    errorMessage: '',
+    rules: [
+      isRequired
+    ]
+  },
+  brand: {
+    errorMessage: '',
+    rules: [isRequired]
+  },
+  category: {
+    errorMessage: '',
+    rules: [isRequired]
+  },
+  'sub-category': {
+    errorMessage: '',
+    rules: [isRequired]
+  }
+};
 
 /**
  * Renders the product form component.
@@ -36,6 +79,16 @@ import {
 const ProductForm: React.FC<ProductFormProps> = (
   props: ProductFormProps
 ) => {
+  // Register the snackbar.
+  const { enqueueSnackbar } = useSnackbar();
+
+  // Form error messages to be displayed if fields haven't been validated
+  // and prevents submissions to the api.
+  const [formErrorMessages, setFormErrorMessages] = React.useState(['']);
+
+  // Set a form submission state, used to inform the user their form has been
+  // submitted and to prevent duplicate submissions.
+  const [submitting, setSubmitting] = React.useState(false);
 
   // Define the product details.
   const [product, setProduct] = React.useState({
@@ -45,6 +98,17 @@ const ProductForm: React.FC<ProductFormProps> = (
       label: ''
     }],
     name: '',
+  });
+
+  const [brandChanged, setBrandChanged] = React.useState<boolean>(false);
+
+  // Validation hook.
+  const {
+    validation,
+    validateField,
+    validateAllFields
+  } = useValidation({
+    validation: signupValidation
   });
 
   /**
@@ -58,10 +122,14 @@ const ProductForm: React.FC<ProductFormProps> = (
     selected: Array<CategoryItem>
   ): void => {
 
+    // Reset the form errors based on field input.
+    setFormErrorMessages(['']);
+
     setProduct({
       ...product,
       categories: selected
     });
+
   }
 
   /**
@@ -74,18 +142,62 @@ const ProductForm: React.FC<ProductFormProps> = (
   ) => void = (
     data: InputData
   ): void => {
+    
+    // Reset the form errors based on field input.
+    setFormErrorMessages(['']);
 
     setProduct({
       ...product,
       [data.key]: data.value
     });
+  }
 
+  /**
+   * Handle brand focus.
+   */
+  const handleBrandFocus: (
+    e: React.SyntheticEvent
+  ) => void = (
+    e: React.SyntheticEvent
+  ): void => {
+    setBrandChanged(true);
   }
 
   /**
    * Submits the product for creation.
    */
-  const submit: () => void = (): void => {
+  const submit: (
+  ) => Promise<void> = async (
+  ): Promise<void> => {
+
+    // Don't do anything if we're already submitting.
+    if (submitting) {
+      return;
+    }
+
+    // Define the selected category.
+    const category: string = product.categories.length > 0 ? product.categories[0].label : '',
+          subCategory: string = product.categories.length > 1 ? product.categories[1].label : '';
+
+    // Validate all of the fieds in the form.
+    const errors: Array<string> = await validateAllFields({
+      'name': product.name,
+      'brand': product.brand,
+      'category': category,
+      'sub-category': subCategory
+    });
+
+    // If we have any errors, set the messages on the form and prevent the
+    // submission.
+    if (errors.length > 0) {
+      setFormErrorMessages(errors);
+      setSubmitting(false)
+      return;
+    }
+
+    // Set the submission state.
+    setSubmitting(true)
+
     API.requestAPI<ProductFormResponse>('product/create', {
       method: RequestType.POST,
       headers: {
@@ -94,8 +206,19 @@ const ProductForm: React.FC<ProductFormProps> = (
       body: JSON.stringify(product)
     })
     .then((response: ProductFormResponse) => {
+
+      // Present any errors that were returned in the response.
+      if (response.errorCode) {
+        setFormErrorMessages([response.title])
+
+        setSubmitting(false);
+        return;
+      }
+
+      // Display the success message to the user.
+      enqueueSnackbar('Product added successfully', { variant: 'success' });
+
       props.history.push(`/product/${response.product._id}/review`);
-      console.log(response);
     })
     .catch((error: Error) => {
       console.error(error);
@@ -106,38 +229,38 @@ const ProductForm: React.FC<ProductFormProps> = (
     <Grid
       container
       direction='column'
+      alignItems='stretch'
+      style={{marginTop: '3rem', marginBottom: '3rem'}}
     >
-      <CategorySelection
-        update={updateCategories}
-      />
-      {product.categories.length > 1 &&
-        <Grid item xs={12}>
-          <Typography variant='h3' gutterBottom>Enter the product details</Typography>
-          <Input
-            handleChange={updateInputs}
-            name='name'
-            required={true}
-            type='text'
-            title="Name" 
-          />
-          <Input
-            handleChange={updateInputs}
-            name='brand'
-            required={true}
-            type='text'
-            title="Brand" 
-          />
-        </Grid>
-      }
       <Grid item xs={12}>
-        <Button
-          variant='contained' 
-          color='primary'
-          onClick={submit}
-        >
-          Create
-        </Button>
+        <Typography variant='h1' color='textPrimary'>
+          Post a rave
+        </Typography>
+        <PaddedDivider />
       </Grid>
+      <ProductSelection update={updateInputs} />
+      {product.name &&
+        <React.Fragment>
+          <BrandSelection update={updateInputs} visible={product.name !== ''} handleFocus={handleBrandFocus}/>
+          <CategorySelection
+            update={updateCategories}
+            visible={brandChanged}
+          />
+          <Grid item xs={12} md={6} style={{marginTop: '2rem'}}>
+            <ErrorMessages errors={formErrorMessages} />
+          </Grid>
+          <Fade in={product.categories.length > 1} timeout={300}>
+            <Grid item xs={12}>
+              <StyledButton
+                disabled={submitting}
+                title='Next'
+                clickAction={submit}
+                submitting={submitting}
+              />
+            </Grid>
+          </Fade>
+        </React.Fragment>
+      }
     </Grid>
   );
 };

@@ -18,8 +18,8 @@ const StyledDivider = withStyles((theme: Theme) => ({
   root: {
     backgroundColor: theme.palette.text.primary,
     opacity: '.45',
-    marginBottom: 40,
-    marginTop: 10
+    marginBottom: '2rem',
+    marginTop: '1rem'
   }
 }))(Divider);
 

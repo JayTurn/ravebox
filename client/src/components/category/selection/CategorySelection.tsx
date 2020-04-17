@@ -5,10 +5,13 @@
 
 // Modules.
 import Chip from '@material-ui/core/Chip';
+import Fade from '@material-ui/core/Fade';
+import clsx from 'clsx';
 import Grid from '@material-ui/core/Grid';
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
 import * as React from 'react';
 import Typography from '@material-ui/core/Typography';
+import Zoom from '@material-ui/core/Zoom';
 
 // Interfaces.
 import { Category, CategoryItem } from '../Category.interface';
@@ -27,9 +30,13 @@ const useStyles = makeStyles((theme: Theme) =>
     },
     chip: {
       margin: theme.spacing(0.5),
+      backgroundColor: 'transparent',
+      border: 'none',
+      boxShadow: `0 0 1px ${theme.palette.grey.A400}`
     },
     selectedChip: {
       backgroundColor: theme.palette.primary.main,
+      boxShadow: `0 0 1px ${theme.palette.primary.main}`,
       color: '#FFFFFF',
       '&:focus': {
         backgroundColor: theme.palette.primary.main,
@@ -101,47 +108,70 @@ const CategorySelection: React.FC<CategorySelectionProps> = (props: CategorySele
   }
 
   return (
-    <Grid
-      container
-      direction='column'
-      spacing={2}
-      alignItems='stretch'
-    >
-      <Grid item xs={12}>
-        <Typography variant='h3' gutterBottom>
-          Select a category
-        </Typography>
-        {list.map((category: Category, index: number) => {
-          return (
-            <Chip
-              className={selectedCategoryIndex === index ? classes.selectedChip : classes.chip}
-              clickable={true}
-              key={category.key}
-              label={category.label}
-              onClick={(e: React.SyntheticEvent) => selectCategory(index)}
-            />
-          )
-        })}  
-      </Grid>
-      {selectedCategoryIndex > -1 &&
-        <Grid item xs={12} key={selectedCategoryIndex}>
-          <Typography variant='h3' gutterBottom>
-            Select a sub-category
+    <Fade in={props.visible} timeout={300}>
+      <Grid
+        container
+        direction='column'
+        alignItems='stretch'
+      >
+        <Grid item xs={12} md={6} style={{marginBottom: '1.5rem', marginTop: '3rem'}}>
+          <Typography variant='h3'>
+            Select a product category  
           </Typography>
-          {subCategories.map((subCategory: Category, index: number) => {
+        </Grid>
+        <Grid item xs={12} md={6}>
+          {list.map((category: Category, index: number) => {
+            const added: boolean = true;
             return (
-              <Chip
-                className={selectedSubCategoryIndex === index ? classes.selectedChip : classes.chip}
-                clickable={true}
-                key={subCategory.key}
-                label={subCategory.label}
-                onClick={(e: React.SyntheticEvent) => selectSubCategory(index)}
-              />
+              <Zoom 
+                in={added}
+                style={{transitionDelay: added ? `${100 * index}ms`: `100ms`}}
+              >
+                <Chip
+                  className={clsx(classes.chip,{
+                    [classes.selectedChip]: selectedCategoryIndex === index
+                  })}
+                  clickable={true}
+                  key={category.key}
+                  label={category.label}
+                  onClick={(e: React.SyntheticEvent) => selectCategory(index)}
+                />
+              </Zoom>
             )
           })}  
         </Grid>
-      }
-    </Grid>
+        {selectedCategoryIndex > -1 &&
+          <Fade in={selectedCategoryIndex > -1} timeout={300}>
+            <React.Fragment>
+              <Grid item xs={12} key={selectedCategoryIndex} style={{marginBottom: '1.5rem', marginTop: '3rem'}}>
+                <Typography variant='h3'>
+                  Select a product sub-category
+                </Typography>
+              </Grid>
+              <Grid item xs={12} md={6}>
+                {subCategories.map((subCategory: Category, index: number) => {
+                  const added: boolean = true;
+                  return (
+                    <Zoom 
+                      in={added}
+                      style={{transitionDelay: added ? `${100 * index}ms`: `100ms`}}
+                    >
+                      <Chip
+                        className={selectedSubCategoryIndex === index ? classes.selectedChip : classes.chip}
+                        clickable={true}
+                        key={subCategory.key}
+                        label={subCategory.label}
+                        onClick={(e: React.SyntheticEvent) => selectSubCategory(index)}
+                      />
+                    </Zoom>
+                  )
+                })}  
+              </Grid>
+            </React.Fragment>
+          </Fade>
+        }
+      </Grid>
+    </Fade>
   )
 }
 

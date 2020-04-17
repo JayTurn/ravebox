@@ -188,7 +188,7 @@ const LoginForm: React.FC<LoginFormProps> = (props: LoginFormProps) => {
       >
         <Grid item xs={12} md={6}>
           <Input
-            handleChange={updateForm}
+            handleBlur={updateForm}
             name='email'
             type='email'
             title="Email"
@@ -197,7 +197,7 @@ const LoginForm: React.FC<LoginFormProps> = (props: LoginFormProps) => {
         </Grid>
         <Grid item xs={12} md={6}>
           <Input
-            handleChange={updateForm}
+            handleBlur={updateForm}
             name='password'
             type='password'
             title="Password" 

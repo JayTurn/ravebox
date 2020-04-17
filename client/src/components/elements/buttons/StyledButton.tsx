@@ -16,7 +16,6 @@ import { StyledButtonProps } from './StyledButton.interface';
  * Styles for the wrapping button element.
  */
 const useStyles = makeStyles((theme: Theme) => createStyles({
-    root: {},
     buttonProgress: {
       position: 'absolute',
       top: '50%',
@@ -44,7 +43,7 @@ const StyledCircularProgress = withStyles(theme => ({
 /**
  * Button styles.
  */
-const ButtonElement = withStyles(theme => ({
+const VerticalButtonElement = withStyles(theme => ({
   root: {
     fontSize: '.9rem',
     '&:disabled': {
@@ -52,6 +51,28 @@ const ButtonElement = withStyles(theme => ({
       backgroundColor: theme.palette.primary.main,
       opacity: '.45'
     }
+  }
+}))(Button);
+
+const HorizontalButtonElement = withStyles(theme => ({
+  root: {
+    color: theme.palette.primary.main,
+    fontSize: '.9rem',
+    backgroundColor: theme.palette.common.white,
+    boxShadow: `0 0 0 1px inset ${theme.palette.primary.main}`,
+    '&:hover': {
+      color: theme.palette.common.white,
+      backgroundColor: theme.palette.primary.main,
+    },
+    '&:disabled': {
+      color: theme.palette.primary.main,
+      backgroundColor: theme.palette.common.white,
+      boxShadow: `0 0 0 1px inset ${theme.palette.primary.main}`,
+      opacity: '.45'
+    }
+  },
+  label: {
+    lineHeight: 2.75
   }
 }))(Button);
 
@@ -65,23 +86,48 @@ const StyledButton: React.FC<StyledButtonProps> = (props: StyledButtonProps) => 
 
   return (
     <div className={classes.wrapper}>
-      <ButtonElement
-        color='primary'
-        disabled={props.disabled || props.submitting}
-        disableElevation
-        fullWidth={true}
-        onClick={props.clickAction}
-        variant='contained'
-      >
-        {props.title}
-      </ButtonElement>
-      {props.submitting &&
-        <StyledCircularProgress
-          className={classes.buttonProgress}
-          size='1.25rem'
-          thickness={4}
-        />
-      }
+      {props.orientation && props.orientation === 'inline' ? (
+        <React.Fragment>
+          <HorizontalButtonElement
+            color='primary'
+            disabled={props.disabled || props.submitting}
+            disableElevation
+            size='large'
+            fullWidth={true}
+            onClick={props.clickAction}
+            variant='contained'
+          >
+            {props.title}
+          </HorizontalButtonElement>
+          {props.submitting &&
+            <StyledCircularProgress
+              className={classes.buttonProgress}
+              size='1.25rem'
+              thickness={4}
+            />
+          }
+        </React.Fragment>
+      ) : (
+        <React.Fragment>
+          <VerticalButtonElement
+            color='primary'
+            disabled={props.disabled || props.submitting}
+            disableElevation
+            fullWidth={true}
+            onClick={props.clickAction}
+            variant='contained'
+          >
+            {props.title}
+          </VerticalButtonElement>
+          {props.submitting &&
+            <StyledCircularProgress
+              className={classes.buttonProgress}
+              size='1.25rem'
+              thickness={4}
+            />
+          }
+        </React.Fragment>
+      )}
     </div>
   );
 };

@@ -68,6 +68,7 @@ export function useRetrieveProfile(params: RetrieveProfileParams) {
   const {
     profile,
     updateProfile,
+    logout,
     updateXsrf
   } = {...params};
 
@@ -101,6 +102,9 @@ export function useRetrieveProfile(params: RetrieveProfileParams) {
         if (updateProfile) {
           if (response.errorCode) {
             setRetrieved(RetrievalStatus.FAILED);
+            if (logout) {
+              logout();
+            }
             return;
           }
 
@@ -113,6 +117,9 @@ export function useRetrieveProfile(params: RetrieveProfileParams) {
           }
 
         } else {
+          if (logout) {
+            logout();
+          }
           setRetrieved(RetrievalStatus.NOT_FOUND);
         }
       })

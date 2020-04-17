@@ -100,7 +100,6 @@ const ChangeProfile: React.FC<ChangeProfileProps> = (props: ChangeProfileProps) 
     }
   }, [props.profile, settings, updateSettings]);
 
-
   /**
    * Handles updates to the profile form.
    *
@@ -225,7 +224,7 @@ const ChangeProfile: React.FC<ChangeProfileProps> = (props: ChangeProfileProps) 
         {props.profile && settings._id &&
           <Input
             defaultValue={props.profile.handle}
-            handleChange={updateForm}
+            handleBlur={updateForm}
             helperText='This is the name people will know you by on ravebox. It may only contain alphanumeric characters, hyphens and underscores.'
             handleFocus={handleFocus}
             name='handle'

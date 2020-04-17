@@ -193,7 +193,7 @@ const PasswordResetForm: React.FC<PasswordResetFormProps> = (props: PasswordRese
             </Grid>
             <Grid item xs={12} md={6}>
               <Input
-                handleChange={updateForm}
+                handleBlur={updateForm}
                 name='password'
                 type='password'
                 title="New password"

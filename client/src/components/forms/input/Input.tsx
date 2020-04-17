@@ -14,15 +14,30 @@ import { InputProps } from './Input.interface';
  * Input function component for handling form field inputs.
  */
 const Input: React.FC<InputProps> = (props: InputProps) => {
+
   /**
-   * Called when updates to the input field are performed.
+   * Called for each change event.
+   * Note: Should be used sparingly as it can cause render performance issues.
+   */
+  const handleInputUpdate: (
+    fieldEvent: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => void = (
+    fieldEvent: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ): void => {
+    if (props.handleChange) {
+      props.handleChange(fieldEvent);
+    }
+  }
+
+  /**
+   * Called when focus is removed from the input field.
    */
   const updateValues: (
     fieldEvent: React.FocusEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => void = (
     fieldEvent: React.FocusEvent<HTMLInputElement | HTMLTextAreaElement>
   ): void => {
-    props.handleChange({
+    props.handleBlur({
       key: props.name,
       value: fieldEvent.target.value
     });
@@ -42,6 +57,7 @@ const Input: React.FC<InputProps> = (props: InputProps) => {
       helperText={message}
       id={props.name}
       label={props.title}
+      onChange={handleInputUpdate}
       onBlur={updateValues}
       onFocus={props.handleFocus}
       required={props.required}

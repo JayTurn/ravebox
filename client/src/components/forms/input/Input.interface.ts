@@ -16,7 +16,8 @@ import { ValidationRules } from '../validation/Validation.interface';
  */
 export interface InputProps extends BaseTextFieldProps {
   defaultValue?: string;
-  handleChange: (data: InputData) => void;
+  handleChange?: (fieldEvent: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
+  handleBlur: (data: InputData) => void;
   handleFocus?: (e: React.SyntheticEvent) => void;
   name: string;
   required?: boolean;
