@@ -32,6 +32,7 @@ const useStyles = makeStyles((theme: Theme) =>
       margin: theme.spacing(0.5),
       backgroundColor: 'transparent',
       border: 'none',
+      borderRadius: theme.shape.borderRadius,
       boxShadow: `0 0 1px ${theme.palette.grey.A400}`
     },
     selectedChip: {
