@@ -5,6 +5,7 @@
 
 // Modules.
 import * as React from 'react';
+import Fade from '@material-ui/core/Fade';
 import Grid from '@material-ui/core/Grid';
 import Typography from '@material-ui/core/Typography';
 import { useTheme } from '@material-ui/core/styles';
@@ -114,29 +115,32 @@ const BrandSelection: React.FC<BrandSelectionProps> = (props: BrandSelectionProp
     e: React.SyntheticEvent
   ): void => {
     setChanged(true);
+    props.handleFocus(e);
   }
 
   return (
-    <Grid
-      container
-      direction='column'
-    >
-      <Grid item xs={12} md={6} style={{marginBottom: '1.5rem', marginTop: '2rem'}}>
-        <Typography variant='h3'>
-          Brand name
-        </Typography>
+    <Fade in={props.visible} timeout={500}>
+      <Grid
+        container
+        direction='column'
+      >
+        <Grid item xs={12} md={6} style={{marginBottom: '1.5rem', marginTop: '2rem'}}>
+          <Typography variant='h3'>
+            Brand name
+          </Typography>
+        </Grid>
+        <Grid item xs={12} md={6}>
+          <Input
+            handleBlur={updateForm}
+            handleFocus={handleFocus}
+            name='brand'
+            type='text'
+            title="Brand name"
+            validation={validation.brand}
+          />
+        </Grid>
       </Grid>
-      <Grid item xs={12} md={6}>
-        <Input
-          handleBlur={updateForm}
-          handleFocus={handleFocus}
-          name='brand'
-          type='text'
-          title="Brand name"
-          validation={validation.brand}
-        />
-      </Grid>
-    </Grid>
+    </Fade>
   );
 }
 

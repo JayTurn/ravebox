@@ -5,10 +5,11 @@
 
 // Modules.
 import API from '../../../utils/api/Api.model';
-import Grid from '@material-ui/core/Grid';
-import Typography from '@material-ui/core/Typography';
-import * as React from 'react';
 import { connect } from 'react-redux';
+import Grid from '@material-ui/core/Grid';
+import Fade from '@material-ui/core/Fade';
+import * as React from 'react';
+import Typography from '@material-ui/core/Typography';
 import { withRouter } from 'react-router';
 import { VariantType, useSnackbar } from 'notistack';
 
@@ -99,6 +100,8 @@ const ProductForm: React.FC<ProductFormProps> = (
     name: '',
   });
 
+  const [brandChanged, setBrandChanged] = React.useState<boolean>(false);
+
   // Validation hook.
   const {
     validation,
@@ -147,7 +150,17 @@ const ProductForm: React.FC<ProductFormProps> = (
       ...product,
       [data.key]: data.value
     });
+  }
 
+  /**
+   * Handle brand focus.
+   */
+  const handleBrandFocus: (
+    e: React.SyntheticEvent
+  ) => void = (
+    e: React.SyntheticEvent
+  ): void => {
+    setBrandChanged(true);
   }
 
   /**
@@ -228,21 +241,24 @@ const ProductForm: React.FC<ProductFormProps> = (
       <ProductSelection update={updateInputs} />
       {product.name &&
         <React.Fragment>
-          <BrandSelection update={updateInputs} />
+          <BrandSelection update={updateInputs} visible={product.name !== ''} handleFocus={handleBrandFocus}/>
           <CategorySelection
             update={updateCategories}
+            visible={brandChanged}
           />
           <Grid item xs={12} md={6} style={{marginTop: '2rem'}}>
             <ErrorMessages errors={formErrorMessages} />
           </Grid>
-          <Grid item xs={12}>
-            <StyledButton
-              disabled={submitting}
-              title='Next'
-              clickAction={submit}
-              submitting={submitting}
-            />
-          </Grid>
+          <Fade in={product.categories.length > 1} timeout={300}>
+            <Grid item xs={12}>
+              <StyledButton
+                disabled={submitting}
+                title='Next'
+                clickAction={submit}
+                submitting={submitting}
+              />
+            </Grid>
+          </Fade>
         </React.Fragment>
       }
     </Grid>
