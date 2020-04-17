@@ -33,13 +33,20 @@ const useStyles = makeStyles((theme: Theme) =>
       backgroundColor: 'transparent',
       border: 'none',
       borderRadius: theme.shape.borderRadius,
-      boxShadow: `0 0 1px ${theme.palette.grey.A400}`
+      boxShadow: `0 0 0 1px ${theme.palette.grey.A200}`,
+      '&:focus, &:hover': {
+        color: theme.palette.primary.dark,
+        boxShadow: `0 0 0 1px ${theme.palette.primary.main}`,
+        backgroundColor: 'transparent'
+      }
     },
     selectedChip: {
       backgroundColor: theme.palette.primary.main,
+      borderRadius: theme.shape.borderRadius,
       boxShadow: `0 0 1px ${theme.palette.primary.main}`,
       color: '#FFFFFF',
-      '&:focus': {
+      '&:focus, &:hover': {
+        color: '#FFFFFF',
         backgroundColor: theme.palette.primary.main,
       }
     }
@@ -127,13 +134,13 @@ const CategorySelection: React.FC<CategorySelectionProps> = (props: CategorySele
               <Zoom 
                 in={added}
                 style={{transitionDelay: added ? `${100 * index}ms`: `100ms`}}
+                key={category.key}
               >
                 <Chip
                   className={clsx(classes.chip,{
                     [classes.selectedChip]: selectedCategoryIndex === index
                   })}
                   clickable={true}
-                  key={category.key}
                   label={category.label}
                   onClick={(e: React.SyntheticEvent) => selectCategory(index)}
                 />
@@ -156,11 +163,13 @@ const CategorySelection: React.FC<CategorySelectionProps> = (props: CategorySele
                     <Zoom 
                       in={added}
                       style={{transitionDelay: added ? `${100 * index}ms`: `100ms`}}
+                      key={subCategory.key}
                     >
                       <Chip
-                        className={selectedSubCategoryIndex === index ? classes.selectedChip : classes.chip}
+                        className={clsx(classes.chip,{
+                          [classes.selectedChip]: selectedSubCategoryIndex === index
+                        })}
                         clickable={true}
-                        key={subCategory.key}
                         label={subCategory.label}
                         onClick={(e: React.SyntheticEvent) => selectSubCategory(index)}
                       />

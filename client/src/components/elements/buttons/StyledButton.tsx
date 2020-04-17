@@ -84,12 +84,14 @@ const StyledButton: React.FC<StyledButtonProps> = (props: StyledButtonProps) => 
   // Use the custom styles.
   const classes = useStyles();
 
+  const buttonColor = props.color ? props.color : 'primary';
+
   return (
     <div className={classes.wrapper}>
       {props.orientation && props.orientation === 'inline' ? (
         <React.Fragment>
           <HorizontalButtonElement
-            color='primary'
+            color={buttonColor}
             disabled={props.disabled || props.submitting}
             disableElevation
             size='large'
@@ -110,7 +112,7 @@ const StyledButton: React.FC<StyledButtonProps> = (props: StyledButtonProps) => 
       ) : (
         <React.Fragment>
           <VerticalButtonElement
-            color='primary'
+            color={buttonColor}
             disabled={props.disabled || props.submitting}
             disableElevation
             fullWidth={true}

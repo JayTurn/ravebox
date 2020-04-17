@@ -256,6 +256,7 @@ const ProductForm: React.FC<ProductFormProps> = (
                 title='Next'
                 clickAction={submit}
                 submitting={submitting}
+                color='secondary'
               />
             </Grid>
           </Fade>
