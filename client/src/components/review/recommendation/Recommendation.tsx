@@ -4,8 +4,11 @@
  */
 
 // Modules.
+import Box from '@material-ui/core/Box';
 import CheckIcon from '@material-ui/icons/Check';
+import Chip from '@material-ui/core/Chip';
 import ClearIcon from '@material-ui/icons/Clear';
+import clsx from 'clsx';
 import Grid from '@material-ui/core/Grid';
 import IconButton from '@material-ui/core/IconButton';
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
@@ -20,21 +23,28 @@ import { RecommendationProps } from './Recommendation.interface';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
-    root: {
-      backgroundColor: 'transparent'
-    },
-    recommended: {
-      backgroundColor: 'green',
-      color: '#FFFFFF',
-      '&:focus': {
-        backgroundColor: 'green',
+    chip: {
+      marginRight: theme.spacing(2),
+      backgroundColor: 'transparent',
+      border: 'none',
+      borderRadius: theme.shape.borderRadius,
+      boxShadow: `0 0 0 1px ${theme.palette.grey.A200}`,
+      textTransform: 'uppercase',
+      fontSize: '.9rem',
+      '&:focus, &:hover': {
+        color: theme.palette.primary.dark,
+        boxShadow: `0 0 0 1px ${theme.palette.primary.main}`,
+        backgroundColor: 'transparent'
       }
     },
-    notRecommended: {
-      backgroundColor: 'red',
+    selectedChip: {
+      backgroundColor: theme.palette.primary.main,
+      borderRadius: theme.shape.borderRadius,
+      boxShadow: `0 0 0 1px ${theme.palette.primary.main}`,
       color: '#FFFFFF',
-      '&:focus': {
-        backgroundColor: 'red',
+      '&:focus, &:hover': {
+        color: '#FFFFFF',
+        backgroundColor: theme.palette.primary.main,
       }
     }
   }),
@@ -47,25 +57,42 @@ const Recommendation: React.FC<RecommendationProps> = (props: RecommendationProp
   const classes = useStyles();
 
   return (
-    <Grid container direction='column'>
-      <Grid item xs={12}>
-        <Typography variant='body1' gutterBottom>
+    <Grid
+      container
+      direction='column'
+    >
+      <Grid item xs={12} lg={6} style={{marginBottom: '1rem', marginTop: '1rem'}}>
+        <Typography variant='h3' style={{}}>
+          Product recommendation
+        </Typography>
+      </Grid>
+      <Grid item xs={12} lg={6} style={{marginBottom: '1rem'}}>
+        <Typography variant='subtitle1' gutterBottom>
+          At ravebox, we're all about honest reviews that get straight to the point. That's why rave's are limited to 2 minutes and we encourage you to review products you love <Box component='span' style={{fontWeight: 700}}>and</Box> one's you don't.
+        </Typography>
+      </Grid>
+      <Grid item xs={12} lg={6} style={{marginBottom: '1rem'}}>
+        <Typography variant='subtitle1' style={{}}>
           Do you recommend this product?
         </Typography>
-        <Grid container direction='row'>
-          <IconButton
-            className={props.recommended === Recommended.RECOMMENDED ? classes.recommended : classes.root}
-            onClick={(e: React.SyntheticEvent) => props.update(Recommended.RECOMMENDED)}
-          >
-            <CheckIcon />
-          </IconButton>
-          <IconButton
-            className={props.recommended === Recommended.NOT_RECOMMENDED ? classes.notRecommended : classes.root}
-            onClick={(e: React.SyntheticEvent) => props.update(Recommended.NOT_RECOMMENDED)}
-          >
-            <ClearIcon />
-          </IconButton>
-        </Grid>
+      </Grid>
+      <Grid item xs={12} lg={6} style={{marginBottom: '2rem'}}>
+        <Chip
+          className={clsx(classes.chip,{
+            [classes.selectedChip]: props.recommended === Recommended.RECOMMENDED
+          })}
+          clickable={true}
+          label={'Yes'}
+          onClick={(e: React.SyntheticEvent) => props.update(Recommended.RECOMMENDED)}
+        />
+        <Chip
+          className={clsx(classes.chip,{
+            [classes.selectedChip]: props.recommended === Recommended.NOT_RECOMMENDED
+          })}
+          clickable={true}
+          label={'No'}
+          onClick={(e: React.SyntheticEvent) => props.update(Recommended.NOT_RECOMMENDED)}
+        />
       </Grid> 
     </Grid>
   )

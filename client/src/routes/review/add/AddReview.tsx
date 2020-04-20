@@ -4,15 +4,21 @@
  */
 
 // Modules.
+import {
+  AnyAction,
+  bindActionCreators,
+  Dispatch
+} from 'redux';
+import { connect } from 'react-redux';
 import Grid from '@material-ui/core/Grid';
 import * as React from 'react';
+import Typography from '@material-ui/core/Typography';
 import { withRouter } from 'react-router';
-import { bindActionCreators, Dispatch, AnyAction } from 'redux';
-import { connect } from 'react-redux';
 
 // Components.
 import ReviewForm from '../../../components/review/form/ReviewForm';
 import ProductPreview from '../../../components/product/preview/ProductPreview';
+import PaddedDivider from '../../../components/elements/dividers/PaddedDivider';
 
 // Enumerators.
 import { RetrievalStatus } from '../../../utils/api/Api.enum';
@@ -33,13 +39,39 @@ const AddReview: React.FC<AddReviewProps> = (props: AddReviewProps) => {
     productStatus
   } = useRetrieveProductById({id: props.match.params.id});
 
+  const [displayProduct, setDisplayProduct] = React.useState<boolean>(true);
+
+  /**
+   * Toggles the display of the product details.
+   */
+  const toggleProduct: (
+    visible: boolean
+  ) => void = (
+    visible: boolean
+  ): void => {
+    setDisplayProduct(visible);
+  }
+
   return (
-    <Grid container direction='column'>
+    <Grid
+      container
+      direction='column'
+      alignItems='stretch'
+      style={{marginTop: '3rem', marginBottom: '3rem'}}
+    >
       {productStatus === RetrievalStatus.SUCCESS &&
-        <Grid item xs={12}>
-          <ProductPreview {...product} />
-          <ReviewForm productId={product._id}/>
-        </Grid>
+        <React.Fragment>
+          <Grid item xs={12}>
+            <Typography variant='h1' color='textPrimary'>
+              Post a rave
+            </Typography>
+            <PaddedDivider />
+          </Grid>
+          {displayProduct &&
+            <ProductPreview {...product} />
+          }
+          <ReviewForm productId={product._id} toggleProduct={toggleProduct}/>
+        </React.Fragment>
       }
     </Grid>
   );

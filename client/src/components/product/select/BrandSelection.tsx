@@ -124,12 +124,12 @@ const BrandSelection: React.FC<BrandSelectionProps> = (props: BrandSelectionProp
         container
         direction='column'
       >
-        <Grid item xs={12} md={6} style={{marginBottom: '1.5rem', marginTop: '2rem'}}>
+        <Grid item xs={12} lg={6} style={{marginBottom: '1.5rem', marginTop: '2rem'}}>
           <Typography variant='h3'>
             Brand name
           </Typography>
         </Grid>
-        <Grid item xs={12} md={6}>
+        <Grid item xs={12} lg={6}>
           <Input
             handleBlur={updateForm}
             handleFocus={handleFocus}

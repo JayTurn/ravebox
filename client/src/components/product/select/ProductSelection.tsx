@@ -7,6 +7,7 @@
 import * as React from 'react';
 import API from '../../../utils/api/Api.model';
 import Grid from '@material-ui/core/Grid';
+import Grow from '@material-ui/core/Grow';
 import Typography from '@material-ui/core/Typography';
 import { useTheme } from '@material-ui/core/styles';
 import debounce from 'lodash/debounce';
@@ -154,11 +155,6 @@ const ProductSelection: React.FC<ProductSelectionProps> = (props: ProductSelecti
     query: string
   ): Promise<void> => {
 
-    // Don't do anything if we're already submitting.
-    //if (submitting) {
-      //return;
-    //}
-
     // Set the submission state.
     setSubmitting(true)
 
@@ -193,6 +189,8 @@ const ProductSelection: React.FC<ProductSelectionProps> = (props: ProductSelecti
     // Set an empty list of options.
     setOptions([]);
     props.update({key: 'name', value: values.name});
+    setSelected(true);
+    setChanged(false);
   }
 
   return (
@@ -202,40 +200,38 @@ const ProductSelection: React.FC<ProductSelectionProps> = (props: ProductSelecti
         direction='column'
       >
         {!selected &&
-          <Grid item xs={12} lg={7} style={{marginBottom: '2rem'}}>
+          <Grid item xs={12} lg={6} style={{marginBottom: '2rem'}}>
             <Typography variant='subtitle1'>
               Begin by entering the official product name and we'll try to match it with known products to make the process as quick as possible
             </Typography>
           </Grid>
         }
-        <Grid
-          container
-          direction='row'
-        >
-          <Grid item xs={8} lg={6}>
-            <Input
-              handleBlur={handleBlur}
-              handleChange={handleChange}
-              handleFocus={handleFocus}
-              name='name'
-              type='text'
-              title="Product name"
-              validation={validation.name}
-            />
-          </Grid>
-          <Grid item xs={4} lg={2} style={{paddingLeft: '.5rem'}}>
-            <StyledButton
-              clickAction={updateProductName}
-              disabled={!changed}
-              orientation='inline'
-              submitting={submitting}
-              title={selected ? 'Update' : 'Add new'}
-            />
-          </Grid>
+        <Grid item xs={12} lg={6}>
+          <Input
+            handleBlur={handleBlur}
+            handleChange={handleChange}
+            handleFocus={handleFocus}
+            name='name'
+            type='text'
+            title="Product name"
+            validation={validation.name}
+          />
         </Grid>
         <Grid item xs={12} lg={6}>
           <ProductSelectList products={options} />
         </Grid>
+        {query !== '' && changed &&
+          <Grow in={query !== '' && changed}>
+            <Grid item xs={12} style={{marginTop: '.5rem'}}>
+              <StyledButton
+                clickAction={updateProductName}
+                disabled={!changed}
+                submitting={submitting}
+                title={selected ? 'Update' : 'Add new'}
+              />
+            </Grid>
+          </Grow>
+        }
       </Grid>
     </React.Fragment>
   );
