@@ -5,20 +5,34 @@
 
 // Modules.
 import API from '../../../utils/api/Api.model';
+import Box from '@material-ui/core/Box';
 import Button from '@material-ui/core/Button';
+import Cookies from 'universal-cookie';
+import {
+  createStyles,
+  makeStyles,
+  withStyles,
+  useTheme,
+  Theme
+} from '@material-ui/core/styles';
+import Fade from '@material-ui/core/Fade';
 import Grid from '@material-ui/core/Grid';
-import Typography from '@material-ui/core/Typography';
+import List from '@material-ui/core/List';
+import ListItem from '@material-ui/core/ListItem';
+import ListItemText from '@material-ui/core/ListItemText';
 import LinearProgress from '@material-ui/core/LinearProgress';
 import * as React from 'react';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router';
 import { bindActionCreators, Dispatch, AnyAction } from 'redux';
-import Cookies from 'universal-cookie';
+import Typography from '@material-ui/core/Typography';
 
 // Components.
 import Input from '../../forms/input/Input';
 import FileUpload from '../../forms/fileUpload/FileUpload';
 import Recommendation from '../recommendation/Recommendation';
+import StyledButton from '../../elements/buttons/StyledButton';
+import PaddedDivider from '../../elements/dividers/PaddedDivider';
 
 // Enumerators.
 import {
@@ -26,6 +40,9 @@ import {
 } from '../../../utils/api/Api.enum';
 import { Recommended } from '../recommendation/Recommendation.enum';
 import { FileUploadState } from '../../forms/fileUpload/FileUpload.enum';
+
+// Hooks.
+import { useValidation } from '../../forms/validation/useValidation.hook';
 
 // Interfaces.
 import { FileUploadStatus } from '../../forms/fileUpload/FileUpload.interface';
@@ -35,11 +52,55 @@ import {
   ReviewFormProps,
   ReviewMetadataResponse
 } from './ReviewForm.interface';
+import { ValidationSchema } from '../../forms/validation/Validation.interface';
+
+// Validation rules.
+import {
+  allowedCharacters,
+  handleAvailable,
+  isEmail,
+  isPassword,
+  isRequired,
+  minLength
+} from '../../forms/validation/ValidationRules';
+
+/**
+ * Styles for the wrapping button element.
+ */
+const useStyles = makeStyles((theme: Theme) => createStyles({
+  progressNumber: {
+    border: `2px solid ${theme.palette.primary.dark}`,
+    borderRadius: 50,
+    boxShadow: `0 0 0 5px #C4C8F5`,
+    color: theme.palette.primary.dark,
+    display: 'inline-block',
+    fontSize: '1.25rem',
+    fontWeight: 700,
+    height: '70px',
+    lineHeight: '70px',
+    textAlign: 'center',
+    width: '70px'
+  }
+}));
+
+/**
+ * Review validation schema.
+ */
+const reviewValidation: ValidationSchema = {
+  title: {
+    errorMessage: '',
+    rules: [
+      isRequired
+    ]
+  }
+};
 
 /**
  * Add review form component.
  */
 const AddReviewForm: React.FC<ReviewFormProps> = (props: ReviewFormProps) => {
+  const classes = useStyles(),
+        theme = useTheme();
 
   // Define the review details.
   const [review, setReview] = React.useState({
@@ -48,11 +109,28 @@ const AddReviewForm: React.FC<ReviewFormProps> = (props: ReviewFormProps) => {
     product: props.productId,
   });
 
+  // Set a form submission state, used to inform the user their form has been
+  // submitted and to prevent duplicate submissions.
+  const [submitting, setSubmitting] = React.useState(false);
+
+  // Form error messages to be displayed if fields haven't been validated
+  // and prevents submissions to the api.
+  const [formErrorMessages, setFormErrorMessages] = React.useState(['']);
+
   const [video, setVideo] = React.useState(new File([''], ''));
 
   const [uploadProgress, setUploadProgress] = React.useState({
     completion: 0,  
     state: FileUploadState.WAITING
+  });
+
+  // Validation hook.
+  const {
+    validation,
+    validateField,
+    validateAllFields
+  } = useValidation({
+    validation: reviewValidation
   });
 
   /**
@@ -137,7 +215,33 @@ const AddReviewForm: React.FC<ReviewFormProps> = (props: ReviewFormProps) => {
   /**
    * Submits the review for creation.
    */
-  const submit: () => void = (): void => {
+  const submit: (
+  ) => Promise<void> = async (
+  ): Promise<void> => {
+
+    // Don't do anything if we're already submitting.
+    if (submitting) {
+      return;
+    }
+
+    // Validate all of the fieds in the form.
+    const errors: Array<string> = await validateAllFields({
+      'title': review.title
+    });
+
+    // If we have any errors, set the messages on the form and prevent the
+    // submission.
+    if (errors.length > 0) {
+      setFormErrorMessages(errors);
+      setSubmitting(false)
+      return;
+    }
+
+    // Set the submission state.
+    setSubmitting(true)
+
+    props.toggleProduct(false);
+
     //uploadMetadata('testfile.mov')('5e7dfa55c6a4250061e39571');
     // Define the filename.
     const filename: string = video.name.split(' ').join('-').toLowerCase();
@@ -171,6 +275,8 @@ const AddReviewForm: React.FC<ReviewFormProps> = (props: ReviewFormProps) => {
             state: FileUploadState.SUBMITTED,
             completion: (e.loaded / e.total) * 100}
           );
+          // Set the submission state.
+          setSubmitting(false)
         }
       });
 
@@ -181,11 +287,13 @@ const AddReviewForm: React.FC<ReviewFormProps> = (props: ReviewFormProps) => {
 
       // Add an event listener for the upload error.
       request.upload.addEventListener('error', (e: Event) => {
-        console.log('Error uploading');
         setUploadProgress({
           ...uploadProgress,
           state: FileUploadState.WAITING
         });
+        setFormErrorMessages(['Video upload failed']);
+        // Set the submission state.
+        setSubmitting(false)
       });
 
       request.open('POST', response.presigned.url);
@@ -194,7 +302,9 @@ const AddReviewForm: React.FC<ReviewFormProps> = (props: ReviewFormProps) => {
 
     })
     .catch((error: Error) => {
-      console.log(error);
+      setFormErrorMessages(['Video upload failed']);
+      // Set the submission state.
+      setSubmitting(false)
     });
   };
 
@@ -205,75 +315,113 @@ const AddReviewForm: React.FC<ReviewFormProps> = (props: ReviewFormProps) => {
    * @return React.ReactNode
    */
   return (
-    <div style={{'minWidth': '50%'}}>
+    <Grid
+      container
+      direction='column'
+    >
       {uploadProgress.state === FileUploadState.WAITING &&
-        <Grid
-          container
-          direction='column'
-          spacing={2}
-          alignItems='stretch'
-        >
-          <Grid item xs={12}>
-            <Typography variant='h3' gutterBottom>Add your review</Typography>
-            <Input
-              handleBlur={updateInputs}
-              name='title'
-              required={true}
-              type='text'
-              title="Title"
+        <Fade in={uploadProgress.state === FileUploadState.WAITING} timeout={300}>
+          <React.Fragment>
+            <Grid item xs={12} lg={6} style={{marginBottom: '1.5rem'}}>
+              <Typography variant='h3'>
+                Add a title for your review
+              </Typography>
+            </Grid>
+            <Grid item xs={12} lg={6} style={{marginBottom: '1.5rem'}}>
+              <Input
+                handleBlur={updateInputs}
+                name='title'
+                required={true}
+                type='text'
+                title="Title"
+              />
+            </Grid>
+            <Recommendation 
+              update={updateRecommendation} 
+              recommended={review.recommended}
             />
-          </Grid>
-          <Recommendation 
-            update={updateRecommendation} 
-            recommended={review.recommended}
-          />
-            <FileUpload name='videoFile' update={updateVideo} />
-          <Grid item xs={12}>
-            <Button
-              variant='contained' 
-              color='primary'
-              onClick={submit}
-            >
-              Create
-            </Button>
-          </Grid>
-        </Grid>
+            <Grid item xs={12} lg={6} style={{marginBottom: '1.5rem'}}>
+              <Typography variant='h3'>
+                Review video
+              </Typography>
+              <List>
+                <ListItem>
+                  Videos must be less than 2 minutes in length
+                </ListItem>
+                <ListItem>
+                  File must be under 50MB
+                </ListItem>
+                <ListItem>
+                  Videos containing nudity or profanity will be removed
+                </ListItem>
+              </List>
+            </Grid>
+            <Grid item xs={12} lg={6} style={{marginBottom: '2rem'}}>
+              <FileUpload name='videoFile' update={updateVideo} filename={video.name}/>
+            </Grid>
+            <Grid item xs={12}>
+              <StyledButton
+                clickAction={submit}
+                color='secondary'
+                disabled={submitting}
+                submitting={submitting}
+                title='Submit'
+              />
+            </Grid>
+          </React.Fragment>
+        </Fade>
       }
       {uploadProgress.state === FileUploadState.SUBMITTED &&
-        <Grid
-          container
-          direction='column'
-          spacing={2}
-          alignItems='stretch'
-        >
-          <Grid item xs={12}>
-            <Typography variant='h3' gutterBottom>Uploading your review</Typography>
-            <Typography variant='body1' gutterBottom>
-              Hang tight, please don't close this window whilst we upload your review. If you close this window the upload will fail and penguins will perish. Nobody wants that.
+        <Fade in={uploadProgress.state === FileUploadState.SUBMITTED} timeout={300}>
+          <Grid item xs={12} lg={6}>
+            <Typography variant='h2' color='primary' style={{marginBottom: '2rem'}}>We're uploading your rave</Typography>
+            <Typography variant='body1' style={{marginBottom: '2rem'}}>
+              <Box component='p'>
+                Thanks for posting your rave!
+              </Box>
+              <Box component='p'>
+              Hang tight, please don't close the ravebox window whilst we upload your video. If you close this window the upload will fail and penguins will perish. Nobody wants that.
+              </Box>
             </Typography>
-            <Typography variant='h4' gutterBottom style={{textAlign: 'center'}}>
-              {Math.ceil(uploadProgress.completion)}% Complete
-            </Typography>
-            <LinearProgress variant='determinate' value={uploadProgress.completion} />
+            <Grid container direction='row' alignItems='center'>
+              <Grid item xs={9}>
+                <LinearProgress variant='determinate' color='primary' value={uploadProgress.completion} />
+              </Grid>
+              <Grid item xs={3}>
+                <Typography variant='h4' className={classes.progressNumber}>
+                  {Math.ceil(uploadProgress.completion)}%
+                </Typography>
+              </Grid>
+            </Grid>
           </Grid>
-        </Grid>
+        </Fade>
       }
-      { uploadProgress.state === FileUploadState.COMPLETE &&
-        <Grid
-          container
-          direction='column'
-          spacing={2}
-          alignItems='stretch'
-        >
-          <Grid item xs={12}>
-            <Typography variant='h3' gutterBottom>Thanks for submitting your review</Typography>
+      {uploadProgress.state === FileUploadState.COMPLETE &&
+        <Fade in={uploadProgress.state === FileUploadState.COMPLETE} timeout={300}>
+          <Grid item xs={12} lg={12}>
+            <Typography variant='h2' color='primary' style={{marginBottom: '2rem'}}>Upload successful</Typography>
             <Typography variant='body1' gutterBottom>
-              Great news, we've sucessfully uploaded your review! We need to review your video before it goes live but rest assured, we'll notify you as soon as it is live.
+              <Box component='p'>
+                Great news, we've sucessfully uploaded your rave!
+              </Box>
+              <Box component='p'>
+                We need to review your video before it goes live but rest assured, we'll notify you as soon as it is live.
+              </Box>
             </Typography>
+            <Grid container direction='row' alignItems='center'>
+              <Grid item xs={9}>
+                <LinearProgress variant='determinate' color='primary' value={uploadProgress.completion} />
+              </Grid>
+              <Grid item xs={3}>
+                <Typography variant='h4' className={classes.progressNumber}>
+                  {Math.ceil(uploadProgress.completion)}%
+                </Typography>
+              </Grid>
+            </Grid>
           </Grid>
-        </Grid>
+        </Fade>
       }
-    </div>
+    </Grid>
   );
 }
 

@@ -52,7 +52,7 @@ import {
 /**
  * Product validation schema.
  */
-const signupValidation: ValidationSchema = {
+const productValidation: ValidationSchema = {
   name: {
     errorMessage: '',
     rules: [
@@ -108,7 +108,7 @@ const ProductForm: React.FC<ProductFormProps> = (
     validateField,
     validateAllFields
   } = useValidation({
-    validation: signupValidation
+    validation: productValidation
   });
 
   /**
@@ -252,11 +252,11 @@ const ProductForm: React.FC<ProductFormProps> = (
           <Fade in={product.categories.length > 1} timeout={300}>
             <Grid item xs={12}>
               <StyledButton
-                disabled={submitting}
-                title='Next'
                 clickAction={submit}
-                submitting={submitting}
                 color='secondary'
+                disabled={submitting}
+                submitting={submitting}
+                title='Next'
               />
             </Grid>
           </Fade>

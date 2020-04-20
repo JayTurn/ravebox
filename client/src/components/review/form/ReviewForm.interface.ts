@@ -18,6 +18,7 @@ import { Review } from '../Review.interface';
  */
 export interface ReviewFormProps extends RouteComponentProps {
   productId: string | undefined;
+  toggleProduct: (visible: boolean) => void;
   xsrf?: string;
 }
 

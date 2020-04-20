@@ -8,6 +8,7 @@ import { FileUploadState } from './FileUpload.enum';
 
 export interface FileUploadProps {
   name: string;
+  filename: string;
   update: (data: File) => void;
 }
 
