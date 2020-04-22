@@ -382,7 +382,7 @@ export default class ReviewController {
     // Perform the lookup for reviews owned by the authenticated user.
     Review.find({
       user: request.auth._id,
-      published: { $not: Workflow.REMOVED }
+      published: { $ne: Workflow.REMOVED }
     })
     .then((reviews: Array<ReviewDocument>) => {
       // Fitler the results for each review to the details object only.

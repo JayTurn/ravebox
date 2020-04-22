@@ -20,6 +20,7 @@ import {
   createStyles,
   makeStyles,
   Theme,
+  ThemeProvider,
   useTheme,
   withStyles
 } from '@material-ui/core/styles';
@@ -30,27 +31,27 @@ import {
   login,
 } from '../store/user/Actions';
 import {
-  add,
+  add
 } from '../store/xsrf/Actions';
 
 // Components.
-import { ThemeProvider } from '@material-ui/core/styles';
+import Account from './user/account/Account';
 import AddProduct from './product/add/AddProduct';
 import AddReview from './review/add/AddReview';
-import ViewReview from './review/view/ViewReview';
 import Home from './home/Home';
 import Login from './user/login/Login';
+import MobileNavigation from '../components/navigation/mobile/MobileNavigation';
+import MyReviews from './user/reviews/MyReviews';
 import PageNotFound from './page-not-found/PageNotFound';
 import PasswordReset from './user/reset/PasswordReset';
 import PasswordResetRequest from './user/reset/PasswordResetRequest';
 import PrivateRoute from './privateRoute/PrivateRoute';
-import Account from './user/account/Account';
 import ScrollToTop from '../utils/scroll/ScrollToTop';
 import SideNavigation from '../components/navigation/side/SideNavigation';
-import MobileNavigation from '../components/navigation/mobile/MobileNavigation';
 import Signup from './user/signup/Signup';
 import TopNavigation from '../components/navigation/top/TopNavigation';
 import Verify from './user/verify/Verify';
+import ViewReview from './review/view/ViewReview';
 
 // Hooks.
 import { useRetrieveProfile } from '../components/user/profile/useRetrieveProfile.hook';
@@ -162,6 +163,9 @@ const App: React.FC<AppProps> = (props: AppProps) => {
                     </Route>
                     <Route exact={true} path="/user/signup">
                       <Signup />
+                    </Route>
+                    <Route exact={true} path="/user/reviews">
+                      <MyReviews />
                     </Route>
                     <Route exact={true} path="/user/verify/:token">
                       <Verify />

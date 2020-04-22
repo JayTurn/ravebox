@@ -14,7 +14,7 @@ import { VerificationStatus } from '../../routes/user/verify/Verify.enum';
 
 // Interfaces.
 import { PrivateProfile } from '../../components/user/User.interface';
-import { Review } from '../../components/review/Review.interface';
+import { PrivateReview } from '../../components/review/Review.interface';
 
 /**
  * Redux user action type.
@@ -31,7 +31,7 @@ export type ShowPromptAction = ActionType<typeof actions>;
  */
 export interface UserStore {
   profile: PrivateProfile;
-  raves: Array<Review>;
+  reviews: Array<PrivateReview>;
   reset: ResetTokenStatus;
   showLogin: boolean;
   verified: VerificationStatus;

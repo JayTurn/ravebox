@@ -13,7 +13,7 @@ import { VerificationStatus } from '../../routes/user/verify/Verify.enum';
 
 // Dependent interfaces.
 import { PrivateProfile } from '../../components/user/User.interface';
-import { Review } from '../../components/review/Review.interface';
+import { PrivateReview } from '../../components/review/Review.interface';
 import {
   UserStore,
   UserAction,
@@ -49,17 +49,17 @@ export default combineReducers<UserStore, UserAction>({
   },
 
   /**
-   * Define the user raves redux reducer.
+   * Define the user reviews redux reducer.
    *
-   * @param { Array<Review> } state - the current user raves.
+   * @param { Array<PrivateReview> } state - the current user reviews.
    * @param { UserAction } action - the filters action.
    *
    * @return APIImageConfig
    */
-  raves: (state: Array<Review> = [], action: UserAction) => {
+  reviews: (state: Array<PrivateReview> = [], action: UserAction) => {
     // Update the configuration based on the redux action triggered.
     switch (action.type) {
-      case UserVerb.SET_RAVES:
+      case UserVerb.SET_REVIEWS:
         // Update the raves with the provided values.
         return action.payload;
       default:
