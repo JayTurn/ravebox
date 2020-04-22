@@ -31,6 +31,13 @@ export interface ReviewResponse {
 }
 
 /**
+ * Response from the api when requesting a list of reviews.
+ */
+export interface ReviewsResponse {
+  reviews: Array<Review>;
+}
+
+/**
  * Paramters used when retrieving a review from the api.
  */
 export interface RetrieveReviewByIdParams {

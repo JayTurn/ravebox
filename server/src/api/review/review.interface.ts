@@ -32,6 +32,7 @@ export interface ReviewDocument extends Mongoose.Document {
   title: string;
   user: UserDetailsDocument;
   details: ReviewDetails;
+  privateDetails: PrivateReviewDetails;
   url: string;
   videoPaths: VideoPaths;
   thumbnails: Array<string>;
@@ -41,12 +42,20 @@ export interface ReviewDocument extends Mongoose.Document {
  * Review interface.
  */
 export interface ReviewDetails {
+  created: Date;
   _id: string;
   product: ProductDetails;
   recommended: Recommended;
   title: string;
   videoURL: string;
   thumbnail: string;
+}
+
+/**
+ * Private review interface.
+ */
+export interface PrivateReviewDetails extends ReviewDetails {
+  published: Workflow;
 }
 
 /**

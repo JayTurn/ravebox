@@ -92,7 +92,7 @@ ReviewSchema
 
   });
 
-// Define a view to be used for product responses.
+// Define a structure to be used for public responses.
 ReviewSchema
   .virtual('details')
   .get(function() {
@@ -106,7 +106,33 @@ ReviewSchema
     }
 
     return {
+      'created': this.created,
       '_id': this._id,
+      'product': this.product,
+      'recommended': this.recommended,
+      'title': this.title,
+      'user': this.user,
+      'videoURL': videoURL
+    };
+  });
+
+// Define a structure to be used for private reviews.
+ReviewSchema
+  .virtual('privateDetails')
+  .get(function() {
+
+    let videoURL = '';
+
+    if (this.videoPaths && this.videoPaths.mp4Urls) {
+      if (this.videoPaths.mp4Urls.length > 1) {
+        videoURL = this.videoPaths.mp4Urls[1];
+      }
+    }
+
+    return {
+      'created': this.created,
+      '_id': this._id,
+      'published': this.published,
       'product': this.product,
       'recommended': this.recommended,
       'title': this.title,
