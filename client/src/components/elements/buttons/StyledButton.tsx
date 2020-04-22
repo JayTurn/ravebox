@@ -45,7 +45,7 @@ const StyledCircularProgress = withStyles(theme => ({
  */
 const VerticalButtonElement = withStyles(theme => ({
   root: {
-    fontSize: '.9rem',
+    fontWeight: 600,
     '&:disabled': {
       color: theme.palette.primary.contrastText,
       backgroundColor: theme.palette.primary.main,
@@ -117,6 +117,7 @@ const StyledButton: React.FC<StyledButtonProps> = (props: StyledButtonProps) => 
             disableElevation
             fullWidth={true}
             onClick={props.clickAction}
+            size={props.size}
             variant='contained'
           >
             {props.title}

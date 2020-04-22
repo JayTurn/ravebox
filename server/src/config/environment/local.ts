@@ -44,7 +44,7 @@ const config: Partial<EnvironmentProperties> = {
     csrfSecret: 'xYDtwrgYpk1SarMBZULYjnYjJTmNaEJgoyQEWenM'
   },
   s3: {
-    video: "ravebox-dev-media"
+    video: "ravebox-videos"
   }
 };
 

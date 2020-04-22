@@ -12,6 +12,6 @@ import { ButtonProps } from '@material-ui/core/Button';
 export interface StyledButtonProps extends ButtonProps {
   title: string;
   clickAction: () => void;
-  submitting: boolean;
+  submitting?: boolean;
   orientation?: string;
 }

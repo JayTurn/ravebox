@@ -48,10 +48,10 @@ import { useValidation } from '../../forms/validation/useValidation.hook';
 import { FileUploadStatus } from '../../forms/fileUpload/FileUpload.interface';
 import { InputData } from '../../forms/input/Input.interface';
 import {
-  ReviewFormResponse, 
-  ReviewFormProps,
-  ReviewMetadataResponse
-} from './ReviewForm.interface';
+  AddReviewFormResponse, 
+  AddReviewFormProps,
+  AddReviewMetadataResponse
+} from './AddReviewForm.interface';
 import { ValidationSchema } from '../../forms/validation/Validation.interface';
 
 // Validation rules.
@@ -84,9 +84,9 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
 }));
 
 /**
- * Review validation schema.
+ * AddReview validation schema.
  */
-const reviewValidation: ValidationSchema = {
+const addReviewValidation: ValidationSchema = {
   title: {
     errorMessage: '',
     rules: [
@@ -98,7 +98,7 @@ const reviewValidation: ValidationSchema = {
 /**
  * Add review form component.
  */
-const AddReviewForm: React.FC<ReviewFormProps> = (props: ReviewFormProps) => {
+const AddReviewForm: React.FC<AddReviewFormProps> = (props: AddReviewFormProps) => {
   const classes = useStyles(),
         theme = useTheme();
 
@@ -130,8 +130,21 @@ const AddReviewForm: React.FC<ReviewFormProps> = (props: ReviewFormProps) => {
     validateField,
     validateAllFields
   } = useValidation({
-    validation: reviewValidation
+    validation: addReviewValidation
   });
+
+  /**
+   * Updates the review form with previously saved data.
+   */
+  React.useEffect(() => {
+    if (!review.title && props.review) {
+      setReview({
+        ...review,
+        title: props.review.title,
+        recommended: props.review.recommended
+      });
+    }
+  }, [props.review]);
 
   /**
    * Handles updates to the review form field.
@@ -191,7 +204,7 @@ const AddReviewForm: React.FC<ReviewFormProps> = (props: ReviewFormProps) => {
     reviewId: string
   ): void => {
     // Perform the api request using the video file name.
-    API.requestAPI<ReviewMetadataResponse>('review/metadata', {
+    API.requestAPI<AddReviewMetadataResponse>('review/metadata', {
       headers: {
         'x-xsrf-token': props.xsrf || ''
       },
@@ -201,7 +214,7 @@ const AddReviewForm: React.FC<ReviewFormProps> = (props: ReviewFormProps) => {
         videoTitle: filename
       })
     })
-    .then((response: ReviewMetadataResponse) => {
+    .then((response: AddReviewMetadataResponse) => {
       setUploadProgress({
         completion: 100,
         state: FileUploadState.COMPLETE
@@ -246,7 +259,7 @@ const AddReviewForm: React.FC<ReviewFormProps> = (props: ReviewFormProps) => {
     // Define the filename.
     const filename: string = video.name.split(' ').join('-').toLowerCase();
 
-    API.requestAPI<ReviewFormResponse>('review/create', {
+    API.requestAPI<AddReviewFormResponse>('review/create', {
       headers: {
         'x-xsrf-token': props.xsrf || ''
       },
@@ -258,7 +271,7 @@ const AddReviewForm: React.FC<ReviewFormProps> = (props: ReviewFormProps) => {
         videoType: video.type
       })
     })
-    .then((response: ReviewFormResponse) => {
+    .then((response: AddReviewFormResponse) => {
       const data: FormData = new FormData();
       const request: XMLHttpRequest = new XMLHttpRequest();
 
@@ -336,6 +349,16 @@ const AddReviewForm: React.FC<ReviewFormProps> = (props: ReviewFormProps) => {
                 title="Title"
               />
             </Grid>
+            <Grid item xs={12} lg={6} style={{marginBottom: '1rem', marginTop: '1rem'}}>
+              <Typography variant='h3' style={{}}>
+                Product recommendation
+              </Typography>
+            </Grid>
+            <Grid item xs={12} lg={6} style={{marginBottom: '1rem'}}>
+              <Typography variant='subtitle1' gutterBottom>
+                At ravebox, we're all about honest reviews that get straight to the point. That's why rave's are limited to 2 minutes and we encourage you to review products you love <Box component='span' style={{fontWeight: 700}}>and</Box> one's you don't.
+              </Typography>
+            </Grid>
             <Recommendation 
               update={updateRecommendation} 
               recommended={review.recommended}
@@ -347,9 +370,6 @@ const AddReviewForm: React.FC<ReviewFormProps> = (props: ReviewFormProps) => {
               <List>
                 <ListItem>
                   Videos must be less than 2 minutes in length
-                </ListItem>
-                <ListItem>
-                  File must be under 50MB
                 </ListItem>
                 <ListItem>
                   Videos containing nudity or profanity will be removed
@@ -364,6 +384,7 @@ const AddReviewForm: React.FC<ReviewFormProps> = (props: ReviewFormProps) => {
                 clickAction={submit}
                 color='secondary'
                 disabled={submitting}
+                size='large'
                 submitting={submitting}
                 title='Submit'
               />
@@ -374,13 +395,10 @@ const AddReviewForm: React.FC<ReviewFormProps> = (props: ReviewFormProps) => {
       {uploadProgress.state === FileUploadState.SUBMITTED &&
         <Fade in={uploadProgress.state === FileUploadState.SUBMITTED} timeout={300}>
           <Grid item xs={12} lg={6}>
-            <Typography variant='h2' color='primary' style={{marginBottom: '2rem'}}>We're uploading your rave</Typography>
+            <Typography variant='h2' color='primary' style={{marginBottom: '2rem'}}>We're uploading your rave video</Typography>
             <Typography variant='body1' style={{marginBottom: '2rem'}}>
               <Box component='p'>
-                Thanks for posting your rave!
-              </Box>
-              <Box component='p'>
-              Hang tight, please don't close the ravebox window whilst we upload your video. If you close this window the upload will fail and penguins will perish. Nobody wants that.
+                Hang tight, please don't close the ravebox window whilst we upload your new video. If you close this window the upload will fail and penguins will perish. Nobody wants that.
               </Box>
             </Typography>
             <Grid container direction='row' alignItems='center'>
@@ -402,7 +420,7 @@ const AddReviewForm: React.FC<ReviewFormProps> = (props: ReviewFormProps) => {
             <Typography variant='h2' color='primary' style={{marginBottom: '2rem'}}>Upload successful</Typography>
             <Typography variant='body1' gutterBottom>
               <Box component='p'>
-                Great news, we've sucessfully uploaded your rave!
+                Great news, we've sucessfully uploaded your new rave video!
               </Box>
               <Box component='p'>
                 We need to review your video before it goes live but rest assured, we'll notify you as soon as it is live.
@@ -439,7 +457,7 @@ const mapDispatchToProps = (dispatch: Dispatch<AnyAction>) =>
 /**
  * Maps the redux store properties to the review form component.
  */
-const mapStatetoProps = (state: any, ownProps: ReviewFormProps): ReviewFormProps => {
+const mapStatetoProps = (state: any, ownProps: AddReviewFormProps): AddReviewFormProps => {
   // Retrieve the xsrf token to be submitted with the request.
   const xsrfToken: string = state.xsrf ? state.xsrf.token : undefined;
 

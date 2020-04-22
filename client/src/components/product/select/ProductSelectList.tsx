@@ -51,6 +51,11 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
   listBox: {
     flexDirection: 'column'
   },
+  productBrand: {
+    fontSize: '.7rem',
+    fontWeight: 500,
+    textTransform: 'uppercase'
+  },
   productName: {
     fontSize: '1.15rem',
     fontWeight: 500
@@ -101,6 +106,9 @@ const ProductSelectList: React.FC<ProductSelectListProps> = (props: ProductSelec
                     onClick={() => selectProduct(product._id)}
                   >
                     <Box component='div'>
+                      <Typography variant='body2' className={classes.productBrand}>
+                        {product.brand}
+                      </Typography>
                       <Typography variant='body1' className={classes.productName}>
                         {product.name}
                       </Typography>
