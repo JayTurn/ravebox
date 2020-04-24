@@ -110,6 +110,7 @@ const EditReviewForm: React.FC<EditReviewFormProps> = (props: EditReviewFormProp
 
   // Define the review details.
   const [review, setReview] = React.useState<Review>(props.review ? props.review : {
+    created: new Date(),
     _id: '',
     title: '',
     recommended: Recommended.RECOMMENDED,

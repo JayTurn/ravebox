@@ -115,6 +115,7 @@ ReviewSchema
       'recommended': this.recommended,
       'thumbnailURL': thumbnailURL,
       'title': this.title,
+      'url': this.url,
       'user': this.user,
       'videoURL': videoURL
     };
@@ -144,6 +145,7 @@ ReviewSchema
       'recommended': this.recommended,
       'thumbnailURL': thumbnailURL,
       'title': this.title,
+      'url': this.url,
       'user': this.user,
       'videoURL': videoURL
     };

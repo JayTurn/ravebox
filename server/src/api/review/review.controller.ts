@@ -202,6 +202,7 @@ export default class ReviewController {
     const metadata: VideoUploadMetadata = {
       archiveSource: true,
       destBucket: EnvConfig.s3.video,
+      environment: process.env.ENVIRONMENT,
       frameCapture: true,
       reviewId: request.body.reviewId,
       srcBucket: 'ravebox-media-source',
@@ -396,6 +397,14 @@ export default class ReviewController {
     Review.find({
       user: request.auth._id,
       published: { $ne: Workflow.REMOVED }
+    })
+    .populate({
+      path: 'product',
+      model: 'Product',
+    })
+    .populate({
+      path: 'user',
+      model: 'User'
     })
     .then((reviews: Array<ReviewDocument>) => {
       // Fitler the results for each review to the details object only.

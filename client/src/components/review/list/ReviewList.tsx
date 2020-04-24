@@ -56,7 +56,7 @@ const ReviewList: React.FC<ReviewListProps> = (props: ReviewListProps) => {
                 <Grid container direction='row' spacing={3}>
                   {(props.reviews as Array<PrivateReview>).map((review: PrivateReview) => {
                     return (
-                      <Grid item xs={12} lg={4} key={review._id}>
+                      <Grid item xs={12} sm={6} md={4} lg={3} key={review._id}>
                         <PrivateReviewCard {...review} />
                       </Grid>
                     );
@@ -66,7 +66,7 @@ const ReviewList: React.FC<ReviewListProps> = (props: ReviewListProps) => {
                 <Grid container direction='row' spacing={3}>
                   {(props.reviews as Array<Review>).map((review: Review) => {
                     return (
-                      <Grid item xs={12} lg={4} key={review._id}>
+                      <Grid item xs={12} sm={6} md={4} lg={3} key={review._id}>
                         <ReviewCard {...review} />
                       </Grid>
                     );

@@ -121,4 +121,35 @@ export default class ReviewCommon {
         console.log(error);
       });
   }
+
+  /**
+   * Captures all of the expected thumbnail images.
+   *
+   * @param { Array<string> } thumbnails - the list of thumbnail images.
+   */
+  /*
+  static captureThumbnails(thumbnails: Array<string>): Array<string> {
+    if (!thumbnails || thumbnails.length === 0) {
+      return thumbnails;
+    }
+
+    const latest: string = thumbnails[0],
+          items: Array<string> = [];
+
+    // Get the thumbnail pattern.
+    const compartments: Array<string> = latest.split('.'),
+          filename: string = latest.substr(0, latest.lastIndexOf('.') - 1),
+          imageNumberText = compartments[compartments.length - 2],
+          characterCount = imageNumberText.length;
+
+    const imageNumber = +imageNumberText;
+
+    let i = 0;
+
+    do {
+      items.push(`${filename}.`);
+      i++;
+    } while { i < imageNumber }
+  }
+  */
 }
