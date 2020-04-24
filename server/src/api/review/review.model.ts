@@ -50,8 +50,19 @@ const ReviewSchema = new Schema<ReviewDocument>({
     type: Schema.Types.ObjectId, 
     ref: 'User'
   },
-  videoPaths: {
-    type: Object
+  video: {
+    mp4Outputs: {
+      type: Array
+    },
+    mp4Urls: {
+      type: Array
+    },
+    hlsPlaylist: {
+      type: String
+    },
+    hlsUrl: {
+      type: String
+    }
   },
   thumbnails: {
     type: Array
@@ -99,9 +110,9 @@ ReviewSchema
 
     let videoURL = '';
 
-    if (this.videoPaths && this.videoPaths.mp4Urls) {
-      if (this.videoPaths.mp4Urls.length > 1) {
-        videoURL = this.videoPaths.mp4Urls[1];
+    if (this.video && this.video.mp4Urls) {
+      if (this.video.mp4Urls.length > 1) {
+        videoURL = this.video.mp4Urls[1];
       }
     }
 
