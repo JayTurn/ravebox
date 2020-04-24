@@ -48,8 +48,8 @@ export default class ReviewCommon {
         // Perform the review update.
         reviewDocument.updateOne({
           published: Workflow.PUBLISHED,
-          videoPaths: publishMessage.videoPaths,
-          thumbnails: publishMessage.thumbnailUrls
+          video: publishMessage,
+          thumbnails: publishMessage.thumbNailUrl
         })
         .lean()
         .then(() => {

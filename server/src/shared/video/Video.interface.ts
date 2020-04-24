@@ -22,9 +22,21 @@ export interface UploadStream {
 }
 
 /**
- * Video path formats.
+ * Endpoints for the playlist files.
  */
-export interface VideoPaths {
+export interface PlaylistEndpoints {
+  HLS: string;
+  MSS: string;
+  DASH: string;
+  CMAF: string;
+}
+
+/**
+ * Format paths for video formats.
+ */
+export interface VideoFormatPaths {
+  mp4Outputs: Array<string>;
   mp4Urls: Array<string>;
+  hlsPlaylist: string;
   hlsUrl: string;
 }

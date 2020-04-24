@@ -9,9 +9,10 @@ import {
   bindActionCreators,
   Dispatch
 } from 'redux';
-import Grid from '@material-ui/core/Grid';
-import * as React from 'react';
 import { connect } from 'react-redux';
+import Grid from '@material-ui/core/Grid';
+import Typography from '@material-ui/core/Typography';
+import * as React from 'react';
 import { withRouter } from 'react-router';
 
 // Actions.
@@ -19,6 +20,7 @@ import { setReviews } from '../../../store/user/Actions';
 
 // Components.
 import PrivateReviews from '../../../components/user/privateReviews/PrivateReviews';
+import PageTitle from '../../../components/elements/pageTitle/PageTitle';
 
 // Enumerators.
 import { RetrievalStatus } from '../../../utils/api/Api.enum';
@@ -45,9 +47,8 @@ const MyReviews: React.FC<MyReviewsProps> = (props: MyReviewsProps) => {
 
   return (
     <Grid container direction='column'>
-      {reviewsStatus === RetrievalStatus.SUCCESS &&
-        <PrivateReviews reviews={[...props.reviews || []]} />
-      }
+      <PageTitle title='My raves' />
+      <PrivateReviews reviews={[...props.reviews || []]} retrievalStatus={reviewsStatus} />
     </Grid>
   );
 }

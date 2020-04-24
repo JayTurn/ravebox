@@ -63,8 +63,8 @@ export function useRetrievePrivateReviews(params: RetrievePrivateReviewsParams) 
             return;
           }
 
-          setRetrieved(RetrievalStatus.SUCCESS);
           setReviews(response.reviews);
+          setRetrieved(RetrievalStatus.SUCCESS);
 
         } else {
           setRetrieved(RetrievalStatus.NOT_FOUND);

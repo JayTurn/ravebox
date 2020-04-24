@@ -50,7 +50,7 @@ const ReviewSchema = new Schema<ReviewDocument>({
     type: Schema.Types.ObjectId, 
     ref: 'User'
   },
-  videoPaths: {
+  video: {
     type: Object
   },
   thumbnails: {
@@ -97,12 +97,15 @@ ReviewSchema
   .virtual('details')
   .get(function() {
 
-    let videoURL = '';
+    let videoURL = '',
+        thumbnailURL = '';
 
-    if (this.videoPaths && this.videoPaths.mp4Urls) {
-      if (this.videoPaths.mp4Urls.length > 1) {
-        videoURL = this.videoPaths.mp4Urls[1];
-      }
+    if (this.video && this.video.egressEndpoints) {
+      videoURL = this.video.egressEndpoints.DASH;
+    }
+
+    if (this.thumbnails && this.thumbnails.length > 0) {
+      thumbnailURL = this.thumbnails[0];
     }
 
     return {
@@ -110,6 +113,7 @@ ReviewSchema
       '_id': this._id,
       'product': this.product,
       'recommended': this.recommended,
+      'thumbnailURL': thumbnailURL,
       'title': this.title,
       'user': this.user,
       'videoURL': videoURL
@@ -121,12 +125,15 @@ ReviewSchema
   .virtual('privateDetails')
   .get(function() {
 
-    let videoURL = '';
+    let videoURL = '',
+        thumbnailURL = '';
 
-    if (this.videoPaths && this.videoPaths.mp4Urls) {
-      if (this.videoPaths.mp4Urls.length > 1) {
-        videoURL = this.videoPaths.mp4Urls[1];
-      }
+    if (this.video && this.video.egressEndpoints) {
+      videoURL = this.video.egressEndpoints.DASH;
+    }
+
+    if (this.thumbnails && this.thumbnails.length > 0) {
+      thumbnailURL = this.thumbnails[0];
     }
 
     return {
@@ -135,6 +142,7 @@ ReviewSchema
       'published': this.published,
       'product': this.product,
       'recommended': this.recommended,
+      'thumbnailURL': thumbnailURL,
       'title': this.title,
       'user': this.user,
       'videoURL': videoURL

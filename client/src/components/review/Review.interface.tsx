@@ -21,6 +21,7 @@ export interface Review {
   user?: PublicProfile;
   title: string;
   recommended: Recommended;
+  thumbnailURL?: string;
   videoURL?: string;
   url: string;
 }

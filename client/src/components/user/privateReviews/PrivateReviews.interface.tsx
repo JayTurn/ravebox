@@ -3,6 +3,12 @@
  * Component to display a list of reviews owned by the authenticated user.
  */
 
+// Modules.
+import { RouteComponentProps } from 'react-router';
+
+// Enumerators.
+import { RetrievalStatus } from '../../../utils/api/Api.enum';
+
 // Interfaces.
 import { APIResponse } from '../../../utils/api/Api.interface';
 import { PrivateReview } from '../../review/Review.interface';
@@ -11,8 +17,9 @@ import { PrivateProfile } from '../User.interface';
 /**
  * Private reviews properties.
  */
-export interface PrivateReviewsProps {
+export interface PrivateReviewsProps extends RouteComponentProps {
   reviews: Array<PrivateReview>;
+  retrievalStatus: RetrievalStatus;
 }
 
 /**
