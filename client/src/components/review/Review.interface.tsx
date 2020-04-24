@@ -52,6 +52,7 @@ export interface ReviewsResponse {
  */
 export interface RetrieveReviewByIdParams {
   id: string;
+  xsrf?: string;
 }
 
 /**

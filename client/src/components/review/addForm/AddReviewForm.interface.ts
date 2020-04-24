@@ -16,8 +16,9 @@ import { Review } from '../Review.interface';
 /**
  * Add review form properties.
  */
-export interface ReviewFormProps extends RouteComponentProps {
+export interface AddReviewFormProps extends RouteComponentProps {
   productId: string | undefined;
+  review?: Review;
   toggleProduct: (visible: boolean) => void;
   xsrf?: string;
 }
@@ -25,7 +26,7 @@ export interface ReviewFormProps extends RouteComponentProps {
 /**
  * Add review form response.
  */
-export interface ReviewFormResponse extends APIResponse {
+export interface AddReviewFormResponse extends APIResponse {
   review: Review;
   presigned: {
     url: string;
@@ -36,7 +37,7 @@ export interface ReviewFormResponse extends APIResponse {
 /**
  * Review form request.
  */
-export interface ReviewFormRequest {
+export interface AddReviewFormRequest {
   _id: string;
   product: string;
   title: string;
@@ -47,6 +48,6 @@ export interface ReviewFormRequest {
 /**
  * Metadata file upload response.
  */
-export interface ReviewMetadataResponse {
+export interface AddReviewMetadataResponse {
   message: string;
 }

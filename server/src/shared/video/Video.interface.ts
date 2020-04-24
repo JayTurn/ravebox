@@ -8,12 +8,13 @@ import * as Stream from 'stream';
 import * as S3 from 'aws-sdk/clients/s3';
 
 export interface VideoUploadMetadata {
-  srcVideo: string;
   archiveSource: boolean;
-  frameCapture: boolean;
-  srcBucket: string;
   destBucket: string;
+  environment: string;
+  frameCapture: boolean;
   reviewId: string;
+  srcBucket: string;
+  srcVideo: string;
 }
 
 export interface UploadStream {

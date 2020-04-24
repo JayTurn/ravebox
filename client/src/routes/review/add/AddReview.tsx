@@ -16,7 +16,7 @@ import Typography from '@material-ui/core/Typography';
 import { withRouter } from 'react-router';
 
 // Components.
-import ReviewForm from '../../../components/review/form/ReviewForm';
+import AddReviewForm from '../../../components/review/addForm/AddReviewForm';
 import ProductPreview from '../../../components/product/preview/ProductPreview';
 import PageTitle from '../../../components/elements/pageTitle/PageTitle';
 
@@ -65,7 +65,7 @@ const AddReview: React.FC<AddReviewProps> = (props: AddReviewProps) => {
           {displayProduct &&
             <ProductPreview {...product} />
           }
-          <ReviewForm productId={product._id} toggleProduct={toggleProduct}/>
+          <AddReviewForm productId={product._id} toggleProduct={toggleProduct}/>
         </React.Fragment>
       }
     </Grid>

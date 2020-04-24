@@ -99,6 +99,20 @@ export default class ReviewController {
       `${path}/published`,
       ReviewController.Published
     );
+
+    // Retrieve a review for editing.
+    router.get(
+      `${path}/edit/:id`,
+      Authenticate.isAuthenticated,
+      ReviewController.RetrieveForEditing
+    );
+
+    // Edit an existing review.
+    router.patch(
+      `${path}/edit/:id`,
+      Authenticate.isAuthenticated,
+      ReviewController.Update
+    );
   }
 
   /**
@@ -186,12 +200,12 @@ export default class ReviewController {
     const videoTitle = `reviews/${request.body.reviewId}/${request.body.videoTitle}`;
 
     const metadata: VideoUploadMetadata = {
-      srcVideo: videoTitle,
       archiveSource: true,
-      frameCapture: true,
-      srcBucket: 'ravebox-media-source',
       destBucket: EnvConfig.s3.video,
-      reviewId: request.body.reviewId
+      frameCapture: true,
+      reviewId: request.body.reviewId,
+      srcBucket: 'ravebox-media-source',
+      srcVideo: videoTitle
     };
 
     Video.CreateMetadataFile(metadata).promise()
@@ -368,7 +382,6 @@ export default class ReviewController {
       response.status(401).json(responseObject.data);
     });
   }
-
   /**
    * Retrieves a list of reviews owned by the currently logged in user.
    *
@@ -410,7 +423,6 @@ export default class ReviewController {
 
       // Return the response for the authenticated user.
       response.status(responseObject.status).json(responseObject.data);
-
     })
     .catch(() => {
       // Return an error indicating the review wasn't created.
@@ -420,6 +432,73 @@ export default class ReviewController {
           message: `We experienced an issue attempting to retrieve your reviews`
         }
       }, 404, `We experienced an issue attempting to retrieve your reviews`);
+
+      // Return the error response for the user.
+      response.status(401).json(responseObject.data);
+    });
+  }
+
+  /**
+   * Retrieves a rave for editing by it's owner.
+   *
+   * @param {object} req
+   * The request object.
+   *
+   * @param {object} res
+   * The response object.
+   */
+  static RetrieveForEditing(request: AuthenticatedUserRequest, response: Response): void {
+    const id = request.params.id,
+          userId = request.auth._id;
+
+    Review.findOne({
+      _id: id,
+      user: userId
+    })
+    .populate({
+      path: 'product',
+      model: 'Product',
+    })
+    .then((reviewDocument: ReviewDocument) => {
+      return {
+        ...reviewDocument.details,
+        product: reviewDocument.product.details
+      };
+    })
+    .then((review: ReviewDetails) => {
+      let responseObject: ResponseObject;
+
+      if (!review) {
+
+        // Set the response object.
+        responseObject = Connect.setResponse({
+          data: {
+            errorCode: 'EDIT_REVIEW_NOT_FOUND',
+            message: 'There was a problem retrieving this review for editing'
+          }
+        }, 400, `The review could not be found for editing`);
+
+      } else {
+
+        // Set the response object.
+        responseObject = Connect.setResponse({
+          data: {
+            review: review
+          }
+        }, 201, 'Review returned successfully');
+      }
+
+      // Return the response for the authenticated user.
+      response.status(responseObject.status).json(responseObject.data);
+    })
+    .catch(() => {
+      // Return an error indicating the review wasn't created.
+      const responseObject = Connect.setResponse({
+        data: {
+          errorCode: 'EDIT_REVIEW_RETRIEVAL_ERROR',
+          message: 'There was a problem retrieving this review for editing'
+        }
+      }, 401, 'There was a problem retrieving the review for editing');
 
       // Return the error response for the user.
       response.status(401).json(responseObject.data);
@@ -489,7 +568,6 @@ export default class ReviewController {
 
       // Return the response for the authenticated user.
       response.status(responseObject.status).json(responseObject.data);
-
     })
     .catch(() => {
 
@@ -503,7 +581,103 @@ export default class ReviewController {
 
       // Return the error response for the user.
       response.status(responseObject.status).json(responseObject.data);
+    });
+  }
 
+  /**
+   * Updates a review.
+   *
+   * @param {object} req
+   * The request object.
+   *
+   * @param {object} res
+   * The response object.
+   */
+  static Update(request: AuthenticatedUserRequest, response: Response): void {
+    const id = request.params.id,
+          userId = request.auth._id,
+          title = request.body.title,
+          recommended = request.body.recommended,
+          videoSize = request.body.videoSize,
+          videoTitle = request.body.videoTitle,
+          videoType = request.body.videoType;
+
+    Review.findOneAndUpdate({
+      _id: id,
+      user: userId
+    }, {
+      title: title,
+      recommended: recommended
+    }, {
+      new: true,
+      upsert: false
+    })
+    .then((review: ReviewDocument) => {
+
+      // Declare the response object.
+      let responseObject: ResponseObject;
+
+      // If we haven't submitted a new video with the request, return a success
+      // response.
+      if (!videoTitle) {
+
+        // Set the response object.
+        responseObject = Connect.setResponse({
+          data: {
+            review: review
+          }
+        }, 200, 'Review updated successfully');
+        
+        // Return the response for the successful update.
+        response.status(responseObject.status).json(responseObject.data);
+        return;
+      }  
+
+      // Create a presigned request for the new video file.
+      Video.CreatePresignedVideoRequest(
+        videoTitle,
+        videoSize,
+        videoType,
+        `reviews/${review._id}`
+      ).then((requestData: S3.PresignedPost) => {
+
+        // Set the response object.
+        const responseObject: ResponseObject = Connect.setResponse({
+          data: {
+            review: review.details,
+            presigned: requestData
+          }
+        }, 200, 'Review updated successfully');
+
+        // Return the response for the authenticated user.
+        response.status(responseObject.status).json(responseObject.data);
+
+      })
+      .catch(() => {
+        // Return an error indicating the review wasn't created.
+        const responseObject = Connect.setResponse({
+          data: {
+            errorCode: 'REVIEW_NOT_UPDATED',
+            message: 'There was a problem updating your review'
+          }
+        }, 401, 'There was a problem updating your review');
+
+        // Return the error response for the user.
+        response.status(responseObject.status).json(responseObject.data);
+      });
+    })
+    .catch(() => {
+
+      // Return an error indicating the review wasn't created.
+      const responseObject = Connect.setResponse({
+        data: {
+          errorCode: 'EDIT_REVIEW_FAILED',
+          message: 'There was a problem updating your review'
+        }
+      }, 403, 'There was a problem updating your review');
+
+      // Return the error response for the user.
+      response.status(401).json(responseObject.data);
     });
   }
 }

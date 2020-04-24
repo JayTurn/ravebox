@@ -61,16 +61,6 @@ const Recommendation: React.FC<RecommendationProps> = (props: RecommendationProp
       container
       direction='column'
     >
-      <Grid item xs={12} lg={6} style={{marginBottom: '1rem', marginTop: '1rem'}}>
-        <Typography variant='h3' style={{}}>
-          Product recommendation
-        </Typography>
-      </Grid>
-      <Grid item xs={12} lg={6} style={{marginBottom: '1rem'}}>
-        <Typography variant='subtitle1' gutterBottom>
-          At ravebox, we're all about honest reviews that get straight to the point. That's why rave's are limited to 2 minutes and we encourage you to review products you love <Box component='span' style={{fontWeight: 700}}>and</Box> one's you don't.
-        </Typography>
-      </Grid>
       <Grid item xs={12} lg={6} style={{marginBottom: '1rem'}}>
         <Typography variant='subtitle1' style={{}}>
           Do you recommend this product?

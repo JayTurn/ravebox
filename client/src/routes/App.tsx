@@ -38,6 +38,7 @@ import {
 import Account from './user/account/Account';
 import AddProduct from './product/add/AddProduct';
 import AddReview from './review/add/AddReview';
+import EditReview from './review/edit/EditReview';
 import Home from './home/Home';
 import Login from './user/login/Login';
 import MobileNavigation from '../components/navigation/mobile/MobileNavigation';
@@ -181,6 +182,9 @@ const App: React.FC<AppProps> = (props: AppProps) => {
                     </PrivateRoute>
                     <PrivateRoute exact={true} path="/product/:id/review">
                       <AddReview />
+                    </PrivateRoute>
+                    <PrivateRoute exact={true} path="/review/edit/:id">
+                      <EditReview />
                     </PrivateRoute>
                     <Route exact={true} path="/review/:brand/:productName/:reviewTitle">
                       <ViewReview />
