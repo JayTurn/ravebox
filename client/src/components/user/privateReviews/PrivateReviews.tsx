@@ -50,6 +50,12 @@ const PrivateReviews: React.FC<PrivateReviewsProps> = (props: PrivateReviewsProp
   // Define the style classes.
   const classes = useStyles();
 
+  let foundReviews: boolean = false;
+
+  if (props.retrievalStatus === RetrievalStatus.SUCCESS && props.reviews.length > 0) {
+    foundReviews = true;
+  }
+
   /**
    * Navigates to the post a review screen.
    */
