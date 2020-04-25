@@ -57,7 +57,7 @@ const AddReview: React.FC<AddReviewProps> = (props: AddReviewProps) => {
       container
       direction='column'
       alignItems='stretch'
-      style={{marginTop: '3rem', marginBottom: '3rem'}}
+      style={{marginBottom: '3rem'}}
     >
       {productStatus === RetrievalStatus.SUCCESS &&
         <React.Fragment>
