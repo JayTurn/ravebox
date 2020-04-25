@@ -50,7 +50,7 @@ services:
   react_client:
     build: client/
     command: yarn start:${BUILD}
-    image: jayturn/react:1.2.1
+    image: jayturn/react:1.2.2
     depends_on:
       - mongodb
       - node_server

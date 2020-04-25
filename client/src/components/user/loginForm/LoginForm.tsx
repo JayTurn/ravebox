@@ -10,7 +10,13 @@ import Button from '@material-ui/core/Button';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import Grid from '@material-ui/core/Grid';
 import Typography from '@material-ui/core/Typography';
-import { createStyles, makeStyles, withStyles, Theme } from '@material-ui/core/styles';
+import {
+  createStyles,
+  makeStyles,
+  Theme,
+  useTheme,
+  withStyles
+} from '@material-ui/core/styles';
 import * as React from 'react';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router';
@@ -62,6 +68,9 @@ const loginValidation: ValidationSchema = {
  * Login form component.
  */
 const LoginForm: React.FC<LoginFormProps> = (props: LoginFormProps) => {
+
+  // Define the theme for consistent styling.
+  const theme = useTheme();
 
   // Define the base state for the signup form.
   const [values, setValues] = React.useState({
