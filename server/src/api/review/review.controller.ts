@@ -113,6 +113,13 @@ export default class ReviewController {
       Authenticate.isAuthenticated,
       ReviewController.Update
     );
+
+    // Delete an existing review.
+    router.delete(
+      `${path}/remove/:id`,
+      Authenticate.isAuthenticated,
+      ReviewController.Remove
+    );
   }
 
   /**
@@ -684,6 +691,55 @@ export default class ReviewController {
           message: 'There was a problem updating your review'
         }
       }, 403, 'There was a problem updating your review');
+
+      // Return the error response for the user.
+      response.status(401).json(responseObject.data);
+    });
+  }
+
+  /**
+   * Deletes a review.
+   *
+   * @param {object} req
+   * The request object.
+   *
+   * @param {object} res
+   * The response object.
+   */
+  static Remove(request: AuthenticatedUserRequest, response: Response): void {
+    const id = request.params.id,
+          userId = request.auth._id;
+
+    Review.findOneAndUpdate({
+      _id: id,
+      user: userId
+    }, {
+      published: Workflow.REMOVED
+    }, {
+      new: true,
+      upsert: false
+    })
+    .then((review: ReviewDocument) => {
+
+      // Set the response object.
+      const responseObject = Connect.setResponse({
+        data: {
+          message: 'Review removed successfully'
+        }
+      }, 200, 'Review removed successfully');
+        
+      // Return the response for the successful update.
+      response.status(responseObject.status).json(responseObject.data);
+    })
+    .catch(() => {
+
+      // Return an error indicating the review wasn't created.
+      const responseObject = Connect.setResponse({
+        data: {
+          errorCode: 'REMOVE_REVIEW_FAILED',
+          message: 'There was a problem removing your review'
+        }
+      }, 403, 'There was a problem removing your review');
 
       // Return the error response for the user.
       response.status(401).json(responseObject.data);
