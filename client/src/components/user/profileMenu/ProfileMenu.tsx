@@ -113,6 +113,18 @@ const ProfileMenu: React.FC<ProfileMenuProps> = (props: ProfileMenuProps) => {
   }
 
   /**
+   * Handles the navigation to the user's reviews.
+   */
+  const reviews: () => void = (): void => {
+
+    // Close the menu.
+    handleClose();
+
+    // Redirect to the home screen.
+    props.history.push('/user/reviews');
+  }
+
+  /**
    * Handles the navigation to the different locations.
    */
   const settings: () => void = (): void => {
@@ -134,6 +146,11 @@ const ProfileMenu: React.FC<ProfileMenuProps> = (props: ProfileMenuProps) => {
         open={Boolean(anchorEl)}
         onClose={handleClose}
       >
+        <MenuItem onClick={reviews}>
+          <Typography color='textPrimary' variant="inherit">
+            My raves
+          </Typography>
+        </MenuItem>
         <MenuItem onClick={settings}>
           <Typography color='textPrimary' variant="inherit">
             Settings

@@ -19,6 +19,7 @@ import {
 
 const emptyReview: Review = {
   _id: '',
+  created: new Date(),
   title: '',
   recommended: Recommended.RECOMMENDED,
   url: ''

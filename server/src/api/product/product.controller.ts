@@ -175,7 +175,7 @@ export default class ProductController {
    * @param {object} res
    * The response object.
    */
-  static SearchByName(request: Request, response: Response, next: NextFunction): void {
+  static SearchByName(request: Request, response: Response): void {
     const query: string = request.body.name;
 
     // Exit if a value wasn't provided.

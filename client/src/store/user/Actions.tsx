@@ -13,6 +13,7 @@ import { ResetTokenStatus } from '../../routes/user/reset/PasswordReset.enum';
 
 // Dependent interfaces.
 import { PrivateProfile } from '../../components/user/User.interface';
+import { PrivateReview } from '../../components/review/Review.interface';
 
 /**
  * Adds a user to the redux store.
@@ -57,6 +58,14 @@ export const update = (profile: PrivateProfile) => action(
  */
 export const verify = (verified: VerificationStatus) => action(
   UserVerb.VERIFY, verified);
+
+/**
+ * Updates the active list of user reviews.
+ *
+ * @param { Array<Review> } reviews - the list of user reviews.
+ */
+export const setReviews = (reviews: Array<PrivateReview>) => action(
+  UserVerb.SET_REVIEWS, reviews);
 
 /**
  * Updates a password reset state in the redux store.

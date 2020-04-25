@@ -18,7 +18,10 @@ import {
 import {
   UserDetailsDocument
 } from '../user/user.interface';
-import { VideoPaths } from '../../shared/video/Video.interface';
+import {
+  PlaylistEndpoints,
+  VideoFormatPaths
+} from '../../shared/video/Video.interface';
 
 /**
  * Review document interface.
@@ -32,8 +35,9 @@ export interface ReviewDocument extends Mongoose.Document {
   title: string;
   user: UserDetailsDocument;
   details: ReviewDetails;
+  privateDetails: PrivateReviewDetails;
   url: string;
-  videoPaths: VideoPaths;
+  video: AWSVideo;
   thumbnails: Array<string>;
 }
 
@@ -41,12 +45,20 @@ export interface ReviewDocument extends Mongoose.Document {
  * Review interface.
  */
 export interface ReviewDetails {
+  created: Date;
   _id: string;
   product: ProductDetails;
   recommended: Recommended;
   title: string;
   videoURL: string;
-  thumbnail: string;
+  thumbnailURL: string;
+}
+
+/**
+ * Private review interface.
+ */
+export interface PrivateReviewDetails extends ReviewDetails {
+  published: Workflow;
 }
 
 /**
@@ -64,10 +76,42 @@ export interface ReviewRequestBody {
 /**
  * SNS Notification message.
  */
-export interface ReviewPublishedSNS {
-  workflowStatus: string;
-  reviewId: string;
-  videoPaths: VideoPaths;
-  thumbnailUrls: Array<string>;
+export interface ReviewPublishedSNS extends AWSVideo {
   errorCode?: string;
+}
+
+/**
+ * AWS video interface.
+ */
+export interface AWSVideo {
+  archiveSource: boolean;
+  cloudFront: string;
+  destBucket: string;
+  egressEndpoints: PlaylistEndpoints;
+  enableMediaPackage: boolean;
+  encodeJobId: string;
+  encodingProfile: number;
+  endTime: string;
+  environment: string;
+  frameCapture: boolean;
+  frameCaptureHeight: number;
+  frameCaptureWidth: string;
+  guid: string;
+  inputRotate: string;
+  isCustomTemplate: boolean;
+  jobTemplate: string;
+  reviewId: string;
+  srcBucket: string;
+  srcHeight: number;
+  srcMediaDuration: number;
+  srcMetadataFile: string;
+  srcVideo: string;
+  srcWidth: number;
+  startTime: string;
+  thumbnail: Array<string>;
+  thumbNailUrl: Array<string>;
+  videoPaths: VideoFormatPaths;
+  workflowName: string;
+  workflowStatus: string;
+  workflowTrigger: string;
 }

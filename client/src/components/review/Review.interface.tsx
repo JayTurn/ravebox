@@ -5,6 +5,7 @@
 
 // Enumerators.
 import { Recommended } from './recommendation/Recommendation.enum';
+import { Workflow } from './Review.enum';
 
 // Interfaces.
 import { Product } from '../product/Product.interface';
@@ -14,13 +15,22 @@ import { PublicProfile } from '../user/User.interface';
  * Review interface.
  */
 export interface Review {
+  created: Date;
   _id: string;
   product?: Product;
   user?: PublicProfile;
   title: string;
   recommended: Recommended;
+  thumbnailURL?: string;
   videoURL?: string;
   url: string;
+}
+
+/**
+ * Private review interface.
+ */
+export interface PrivateReview extends Review {
+  published: Workflow;
 }
 
 /**
@@ -28,6 +38,13 @@ export interface Review {
  */
 export interface ReviewResponse {
   review: Review;
+}
+
+/**
+ * Response from the api when requesting a list of reviews.
+ */
+export interface ReviewsResponse {
+  reviews: Array<Review>;
 }
 
 /**

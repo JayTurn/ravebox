@@ -47,5 +47,5 @@ function mapStatetoProps(state: {}, ownProps: AccountProps) {
 }
 
 export default withRouter(connect(
-    mapStatetoProps
-  )(Account));
+  mapStatetoProps
+)(Account));

@@ -13,6 +13,7 @@ import { VerificationStatus } from '../../routes/user/verify/Verify.enum';
 
 // Dependent interfaces.
 import { PrivateProfile } from '../../components/user/User.interface';
+import { PrivateReview } from '../../components/review/Review.interface';
 import {
   UserStore,
   UserAction,
@@ -42,6 +43,25 @@ export default combineReducers<UserStore, UserAction>({
       case UserVerb.LOGOUT:
         // Remove the payload item from the list of watched items.
         return {_id: '', email: '', emailVerified: false, handle: ''};
+      default:
+        return state;
+    }
+  },
+
+  /**
+   * Define the user reviews redux reducer.
+   *
+   * @param { Array<PrivateReview> } state - the current user reviews.
+   * @param { UserAction } action - the filters action.
+   *
+   * @return APIImageConfig
+   */
+  reviews: (state: Array<PrivateReview> = [], action: UserAction) => {
+    // Update the configuration based on the redux action triggered.
+    switch (action.type) {
+      case UserVerb.SET_REVIEWS:
+        // Update the raves with the provided values.
+        return action.payload;
       default:
         return state;
     }

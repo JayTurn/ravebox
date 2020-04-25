@@ -841,7 +841,7 @@ export default class UserController {
    * @param {object} res
    *   The response object.
    */
-  static SetNewPassword(request: Request, response: Response) {
+  static SetNewPassword(request: Request, response: Response): void {
     const password: string = request.body.password,
           token: string = request.body.token;
 
@@ -862,7 +862,9 @@ export default class UserController {
         }, 403, `We couldn't update your password with the token provided`);
 
       // Return the response.
-      return response.status(responseObject.status).json(responseObject.data);
+      response.status(responseObject.status).json(responseObject.data);
+
+      return;
     }
 
     const email: string = decoded.payload.email as string, 

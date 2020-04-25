@@ -18,7 +18,7 @@ import { withRouter } from 'react-router';
 // Components.
 import AddReviewForm from '../../../components/review/addForm/AddReviewForm';
 import ProductPreview from '../../../components/product/preview/ProductPreview';
-import PaddedDivider from '../../../components/elements/dividers/PaddedDivider';
+import PageTitle from '../../../components/elements/pageTitle/PageTitle';
 
 // Enumerators.
 import { RetrievalStatus } from '../../../utils/api/Api.enum';
@@ -57,16 +57,11 @@ const AddReview: React.FC<AddReviewProps> = (props: AddReviewProps) => {
       container
       direction='column'
       alignItems='stretch'
-      style={{marginTop: '3rem', marginBottom: '3rem'}}
+      style={{marginBottom: '3rem'}}
     >
       {productStatus === RetrievalStatus.SUCCESS &&
         <React.Fragment>
-          <Grid item xs={12}>
-            <Typography variant='h1' color='textPrimary'>
-              Post a rave
-            </Typography>
-            <PaddedDivider />
-          </Grid>
+          <PageTitle title='Post a rave' />
           {displayProduct &&
             <ProductPreview {...product} />
           }

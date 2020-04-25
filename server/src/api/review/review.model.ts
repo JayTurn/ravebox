@@ -51,18 +51,7 @@ const ReviewSchema = new Schema<ReviewDocument>({
     ref: 'User'
   },
   video: {
-    mp4Outputs: {
-      type: Array
-    },
-    mp4Urls: {
-      type: Array
-    },
-    hlsPlaylist: {
-      type: String
-    },
-    hlsUrl: {
-      type: String
-    }
+    type: Object
   },
   thumbnails: {
     type: Array
@@ -103,24 +92,60 @@ ReviewSchema
 
   });
 
-// Define a view to be used for product responses.
+// Define a structure to be used for public responses.
 ReviewSchema
   .virtual('details')
   .get(function() {
 
-    let videoURL = '';
+    let videoURL = '',
+        thumbnailURL = '';
 
-    if (this.video && this.video.mp4Urls) {
-      if (this.video.mp4Urls.length > 1) {
-        videoURL = this.video.mp4Urls[1];
-      }
+    if (this.video && this.video.egressEndpoints) {
+      videoURL = this.video.egressEndpoints.DASH;
+    }
+
+    if (this.thumbnails && this.thumbnails.length > 0) {
+      thumbnailURL = this.thumbnails[0];
     }
 
     return {
+      'created': this.created,
       '_id': this._id,
       'product': this.product,
       'recommended': this.recommended,
+      'thumbnailURL': thumbnailURL,
       'title': this.title,
+      'url': this.url,
+      'user': this.user,
+      'videoURL': videoURL
+    };
+  });
+
+// Define a structure to be used for private reviews.
+ReviewSchema
+  .virtual('privateDetails')
+  .get(function() {
+
+    let videoURL = '',
+        thumbnailURL = '';
+
+    if (this.video && this.video.egressEndpoints) {
+      videoURL = this.video.egressEndpoints.DASH;
+    }
+
+    if (this.thumbnails && this.thumbnails.length > 0) {
+      thumbnailURL = this.thumbnails[0];
+    }
+
+    return {
+      'created': this.created,
+      '_id': this._id,
+      'published': this.published,
+      'product': this.product,
+      'recommended': this.recommended,
+      'thumbnailURL': thumbnailURL,
+      'title': this.title,
+      'url': this.url,
       'user': this.user,
       'videoURL': videoURL
     };

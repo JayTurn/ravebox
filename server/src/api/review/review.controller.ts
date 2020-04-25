@@ -12,6 +12,7 @@ import * as https from 'https';
 import * as S3 from 'aws-sdk/clients/s3';
 import Review from './review.model';
 import ReviewCommon from './review.common';
+import User from '../user/user.model';
 import Video from '../../shared/video/Video.model';
 
 // Enumerators.
@@ -23,6 +24,7 @@ import {
   AuthenticatedUserRequest
 } from '../../models/authentication/authentication.interface';
 import {
+  PrivateReviewDetails,
   ReviewDetails,
   ReviewDocument,
   ReviewPublishedSNS,
@@ -33,6 +35,7 @@ import {
   SNSConfirmation,
   SNSNotification
 } from '../../shared/sns/sns.interface';
+import { UserDetailsDocument } from '../user/user.interface';
 import { VideoUploadMetadata } from '../../shared/video/Video.interface';
 
 // Import the SNS validator module to confirm the authenticity of SNS messages.
@@ -76,6 +79,19 @@ export default class ReviewController {
     router.get(
       `${path}/view/:brand/:productName/:reviewTitle`,
       ReviewController.RetrieveByURL
+    );
+
+    // Retrieve a list of reviews owned by the current logged in user.
+    router.get(
+      `${path}/list/user`,
+      Authenticate.isAuthenticated,
+      ReviewController.RetrieveListByOwner
+    );
+
+    // Retrieve a review by it's path.
+    router.get(
+      `${path}/list/user/:handle`,
+      ReviewController.RetrieveListByHandle
     );
 
     // Review published successfully.
@@ -301,7 +317,7 @@ export default class ReviewController {
    * @param {object} res
    * The response object.
    */
-  static RetrieveByURL(request: AuthenticatedUserRequest, response: Response): void {
+  static RetrieveByURL(request: Request, response: Response): void {
     const brand = request.params.brand,
           productName = request.params.productName,
           reviewTitle = request.params.reviewTitle;
@@ -362,6 +378,69 @@ export default class ReviewController {
           message: 'There was a problem retrieving this review'
         }
       }, 401, 'There was a problem retrieving the review');
+
+      // Return the error response for the user.
+      response.status(401).json(responseObject.data);
+    });
+  }
+  /**
+   * Retrieves a list of reviews owned by the currently logged in user.
+   *
+   * @param {object} req
+   * The request object.
+   *
+   * @param {object} res
+   * The response object.
+   */
+  static RetrieveListByOwner(request: AuthenticatedUserRequest, response: Response): void {
+    // Perform the lookup for reviews owned by the authenticated user.
+    Review.find({
+      user: request.auth._id,
+      published: { $ne: Workflow.REMOVED }
+    })
+    .populate({
+      path: 'product',
+      model: 'Product',
+    })
+    .populate({
+      path: 'user',
+      model: 'User'
+    })
+    .then((reviews: Array<ReviewDocument>) => {
+      // Fitler the results for each review to the details object only.
+      const reviewList: Array<PrivateReviewDetails> = [];
+
+      let i = 0;
+
+      // Create the list of reviews using the details virtual property.
+      do {
+        const current: ReviewDocument = reviews[i];
+
+        if (current) {
+          reviewList.push({...current.privateDetails});
+        }
+
+        i++
+      } while (i < reviews.length);
+
+      // Set the response object.
+      const responseObject: ResponseObject = Connect.setResponse({
+        data: {
+          reviews: reviewList
+        }
+      }, 200, 'Reviews found');
+
+      // Return the response for the authenticated user.
+      response.status(responseObject.status).json(responseObject.data);
+    })
+    .catch(() => {
+      // Return an error indicating the review wasn't created.
+      const responseObject = Connect.setResponse({
+        data: {
+          errorCode: 'OWN_REVIEWS_NOT_FOUND',
+          message: `We experienced an issue attempting to retrieve your reviews`
+        }
+      }, 404, `We experienced an issue attempting to retrieve your reviews`);
 
       // Return the error response for the user.
       response.status(401).json(responseObject.data);
@@ -432,6 +511,85 @@ export default class ReviewController {
 
       // Return the error response for the user.
       response.status(401).json(responseObject.data);
+    });
+  }
+
+  /**
+   * Retrieves a list of reviews based on the user's name.
+   *
+   * @param {object} req
+   * The request object.
+   *
+   * @param {object} res
+   * The response object.
+   */
+  static RetrieveListByHandle(request: Request, response: Response): void {
+    const handle: string = request.params.handle;
+
+    if (!handle) {
+      // Define the responseObject.
+      const responseObject = Connect.setResponse({
+          data: {
+            errorCode: 'USER_NOT_FOUND_FOR_REVIEWS',
+            title: `We couldn't find reviews for the user you requested`
+          }
+        }, 403, `We couldn't find reviews for the user you requested`);
+
+      // Return the response.
+      response.status(responseObject.status).json(responseObject.data);
+
+      return;
+    }
+
+    User.findOne({
+      handle: handle,
+      published: Workflow.PUBLISHED
+    })
+    .then((user: UserDetailsDocument) => {
+      return Review.find({
+        user: user._id,
+        published: Workflow.PUBLISHED
+      });
+    })
+    .then((reviews: Array<ReviewDocument>) => {
+      // Fitler the results for each review to the details object only.
+      const reviewList: Array<ReviewDetails> = [];
+
+      let i = 0;
+
+      // Create the list of reviews using the details virtual property.
+      do {
+        const current: ReviewDocument = reviews[i];
+
+        if (current) {
+          reviewList.push({...current.details});
+        }
+
+        i++
+      } while (i < reviews.length);
+
+      // Set the response object.
+      const responseObject: ResponseObject = Connect.setResponse({
+        data: {
+          reviews: reviewList
+        }
+      }, 200, 'Reviews found');
+
+      // Return the response for the authenticated user.
+      response.status(responseObject.status).json(responseObject.data);
+    })
+    .catch(() => {
+
+      // Return an error indicating the review wasn't created.
+      const responseObject = Connect.setResponse({
+        data: {
+          errorCode: 'USER_REVIEWS_NOT_FOUND',
+          message: `We experienced an issue retrieving reviews for the user`
+        }
+      }, 404, `We experienced an issue retrieving reviews for the user`);
+
+      // Return the error response for the user.
+      response.status(responseObject.status).json(responseObject.data);
     });
   }
 
@@ -516,7 +674,6 @@ export default class ReviewController {
         // Return the error response for the user.
         response.status(responseObject.status).json(responseObject.data);
       });
-
     })
     .catch(() => {
 

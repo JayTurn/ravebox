@@ -38,7 +38,7 @@ services:
   ngrok_routing:
     container_name: ngrok_routing
     image: nginx
-    command: /ngrok/ngrok http node_server:9000 --config=/ngrok/ngrok.conf
+    command: /ngrok/ngrok start --config=/ngrok/ngrok.conf ravebox
     depends_on:
       - node_server
     networks:
@@ -46,7 +46,7 @@ services:
     ports: 
       - 4040:4040
     volumes:
-      - ./ngrok:/ngrok/
+      - ./ngrok:/ngrok
   react_client:
     build: client/
     command: yarn start:${BUILD}

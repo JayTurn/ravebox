@@ -45,6 +45,7 @@ const StyledCircularProgress = withStyles(theme => ({
  */
 const VerticalButtonElement = withStyles(theme => ({
   root: {
+    cursor: 'pointer',
     fontWeight: 600,
     '&:disabled': {
       color: theme.palette.primary.contrastText,
@@ -57,6 +58,7 @@ const VerticalButtonElement = withStyles(theme => ({
 const HorizontalButtonElement = withStyles(theme => ({
   root: {
     color: theme.palette.primary.main,
+    cursor: 'pointer',
     fontSize: '.9rem',
     backgroundColor: theme.palette.common.white,
     boxShadow: `0 0 0 1px inset ${theme.palette.primary.main}`,
@@ -97,7 +99,7 @@ const StyledButton: React.FC<StyledButtonProps> = (props: StyledButtonProps) => 
             size='large'
             fullWidth={true}
             onClick={props.clickAction}
-            variant='contained'
+            variant={props.variant ? props.variant : 'contained'}
           >
             {props.title}
           </HorizontalButtonElement>
@@ -118,7 +120,7 @@ const StyledButton: React.FC<StyledButtonProps> = (props: StyledButtonProps) => 
             fullWidth={true}
             onClick={props.clickAction}
             size={props.size}
-            variant='contained'
+            variant={props.variant ? props.variant : 'contained'}
           >
             {props.title}
           </VerticalButtonElement>
