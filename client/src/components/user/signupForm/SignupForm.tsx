@@ -11,6 +11,7 @@ import { withRouter } from 'react-router';
 import { bindActionCreators, Dispatch, AnyAction } from 'redux';
 import Cookies from 'universal-cookie';
 import Typography from '@material-ui/core/Typography';
+import { useTheme } from '@material-ui/core/styles';
 
 // Actions.
 import {
@@ -70,6 +71,9 @@ const signupValidation: ValidationSchema = {
  * Signup form for new accounts.
  */
 const SignupForm: React.FC<SignupFormProps> = (props: SignupFormProps) => {
+  // Define the theme for style handling.
+  const theme = useTheme();
+
   // Define the base state for the signup form.
   const [values, setValues] = React.useState({
     handle: '',
@@ -181,6 +185,7 @@ const SignupForm: React.FC<SignupFormProps> = (props: SignupFormProps) => {
         container
         direction='column'
         alignItems='stretch'
+        spacing={2}
       >
         <Grid item xs={12} md={6}>
           <Input
