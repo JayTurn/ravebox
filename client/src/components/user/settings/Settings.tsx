@@ -5,6 +5,13 @@
 
 // Modules.
 import Box from '@material-ui/core/Box';
+import clsx from 'clsx';
+import {
+  createStyles,
+  makeStyles,
+  Theme,
+  useTheme
+} from '@material-ui/core/styles';
 import Divider from '@material-ui/core/Divider';
 import Grid from '@material-ui/core/Grid';
 import Typography from '@material-ui/core/Typography';
@@ -24,6 +31,7 @@ import ChangePassword from '../changePassword/ChangePassword';
 import Input from '../../forms/input/Input'; 
 import PaddedDivider from '../../elements/dividers/PaddedDivider';
 import StyledButton from '../../elements/buttons/StyledButton';
+import useMediaQuery from '@material-ui/core/useMediaQuery';
 
 // Enumerators.
 import { RetrievalStatus } from '../../../utils/api/Api.enum';
@@ -68,6 +76,10 @@ const settingsValidation: ValidationSchema = {
  */
 const Settings: React.FC<SettingsProps> = (props: SettingsProps) => {
 
+  // Match the large media query size.
+  const theme = useTheme(),
+        mobile = useMediaQuery(theme.breakpoints.down('sm'));
+
   // Retrieve the user profile and define the settings to be updated.
   const {
     profileStatus,
@@ -81,7 +93,7 @@ const Settings: React.FC<SettingsProps> = (props: SettingsProps) => {
       {profileStatus === RetrievalStatus.SUCCESS &&
         <form noValidate autoComplete="off">
           {props.profile && props.update &&
-            <Grid container direction='column'>
+            <Grid container direction='column' style={{padding: mobile ? theme.spacing(0, 1) : theme.spacing(0)}}>
               <ChangeProfile />
               <ChangeEmail />
               <ChangePassword />

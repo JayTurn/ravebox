@@ -6,6 +6,19 @@
 // Modules.
 import * as React from 'react';
 import AccountCircleSharpIcon from '@material-ui/icons/AccountCircleSharp';
+import {
+  AnyAction,
+  bindActionCreators,
+  Dispatch
+} from 'redux';
+import { connect } from 'react-redux';
+import Cookies from 'universal-cookie';
+import {
+  createStyles,
+  makeStyles,
+  Theme,
+  withStyles
+} from '@material-ui/core/styles';
 import Divider from '@material-ui/core/Divider';
 import ExitToAppIcon from '@material-ui/icons/ExitToApp';
 import IconButton from '@material-ui/core/IconButton';
@@ -14,11 +27,9 @@ import ListItemIcon from '@material-ui/core/ListItemIcon';
 import Menu, { MenuProps } from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 import Typography from '@material-ui/core/Typography';
-import { createStyles, makeStyles, withStyles, Theme } from '@material-ui/core/styles';
-import { connect } from 'react-redux';
+import useMediaQuery from '@material-ui/core/useMediaQuery';
+import { useTheme } from '@material-ui/core/styles';
 import { withRouter } from 'react-router';
-import { bindActionCreators, Dispatch, AnyAction } from 'redux';
-import Cookies from 'universal-cookie';
 
 // Actions.
 import { remove } from '../../../store/xsrf/Actions';
@@ -29,10 +40,23 @@ import { PrivateProfile } from '../User.interface';
 import { ProfileMenuProps } from './ProfileMenu.interface';
 
 /**
- * Circular progress spinner.
+ * Profile icon button.
  */
 const ProfileIconButton = withStyles((theme: Theme) => ({
   root: {
+    '&:hover': {
+      backgroundColor: 'rgba(203,205,255, 0.2)' 
+    }
+  },
+}))(IconButton);
+
+/**
+ * Mobile profile icon button.
+ */
+const MobileProfileIconButton = withStyles((theme: Theme) => ({
+  root: {
+    padding: '6px',
+    marginRight: '6px',
     '&:hover': {
       backgroundColor: 'rgba(203,205,255, 0.2)' 
     }
@@ -66,6 +90,11 @@ const StyledMenu = withStyles({
 const ProfileMenu: React.FC<ProfileMenuProps> = (props: ProfileMenuProps) => {
   // Define the menu anchor.
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
+
+  const theme = useTheme();
+
+  // Match the large media query size.
+  const largeScreen = useMediaQuery(theme.breakpoints.up('md'));
 
   /**
    * Handles the opening of the profile menu.
@@ -138,9 +167,15 @@ const ProfileMenu: React.FC<ProfileMenuProps> = (props: ProfileMenuProps) => {
   
   return (
     <React.Fragment>
-      <ProfileIconButton onClick={handleClick}>
-        <AccountCircleSharpIcon color='primary' fontSize='large'/>
-      </ProfileIconButton>
+      {largeScreen ? (
+        <ProfileIconButton onClick={handleClick}>
+          <AccountCircleSharpIcon color='primary' fontSize='large'/>
+        </ProfileIconButton>
+      ) : (
+        <MobileProfileIconButton onClick={handleClick}>
+          <AccountCircleSharpIcon color='primary' style={{fontSize: '1.7rem', marginTop: '4px'}}/>
+        </MobileProfileIconButton>
+      )}
       <StyledMenu
         anchorEl={anchorEl}
         open={Boolean(anchorEl)}

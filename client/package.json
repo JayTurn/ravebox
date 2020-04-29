@@ -48,7 +48,8 @@
     "rxjs-compat": "6.5.4",
     "serialize-javascript": "3.0.0",
     "typesafe-actions": "5.1.0",
-    "universal-cookie": "4.0.3"
+    "universal-cookie": "4.0.3",
+    "use-resize-observer": "6.1.0-alpha.3"
   },
   "jest": {
     "snapshotSerializers": [

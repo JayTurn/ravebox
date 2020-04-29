@@ -4,9 +4,16 @@
  */
 
 // Modules.
+import {
+  AnyAction,
+  bindActionCreators,
+  Dispatch
+} from 'redux';
 import API from '../../../utils/api/Api.model';
 import Box from '@material-ui/core/Box';
 import Button from '@material-ui/core/Button';
+import clsx from 'clsx';
+import { connect } from 'react-redux';
 import Cookies from 'universal-cookie';
 import {
   createStyles,
@@ -22,10 +29,9 @@ import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
 import LinearProgress from '@material-ui/core/LinearProgress';
 import * as React from 'react';
-import { connect } from 'react-redux';
-import { withRouter } from 'react-router';
-import { bindActionCreators, Dispatch, AnyAction } from 'redux';
 import Typography from '@material-ui/core/Typography';
+import useMediaQuery from '@material-ui/core/useMediaQuery';
+import { withRouter } from 'react-router';
 
 // Components.
 import Input from '../../forms/input/Input';
@@ -80,6 +86,10 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
     lineHeight: '70px',
     textAlign: 'center',
     width: '70px'
+  },
+  mobilePadding: {
+    paddingLeft: theme.spacing(1),
+    paddingRight: theme.spacing(1)
   }
 }));
 
@@ -100,7 +110,8 @@ const addReviewValidation: ValidationSchema = {
  */
 const AddReviewForm: React.FC<AddReviewFormProps> = (props: AddReviewFormProps) => {
   const classes = useStyles(),
-        theme = useTheme();
+        theme = useTheme(),
+        mobile = useMediaQuery(theme.breakpoints.down('sm'));
 
   // Define the review details.
   const [review, setReview] = React.useState({
@@ -331,6 +342,9 @@ const AddReviewForm: React.FC<AddReviewFormProps> = (props: AddReviewFormProps) 
     <Grid
       container
       direction='column'
+      className={clsx({
+        [classes.mobilePadding]: mobile
+      })}
     >
       {uploadProgress.state === FileUploadState.WAITING &&
         <Fade in={uploadProgress.state === FileUploadState.WAITING} timeout={300}>

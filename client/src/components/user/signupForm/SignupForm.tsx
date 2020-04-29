@@ -4,14 +4,26 @@
  */
 
 // Modules.
+import {
+  AnyAction,
+  bindActionCreators,
+  Dispatch
+} from 'redux';
+import clsx from 'clsx';
+import Cookies from 'universal-cookie';
+import { connect } from 'react-redux';
+import {
+  createStyles,
+  makeStyles,
+  Theme,
+  useTheme,
+  withStyles
+} from '@material-ui/core/styles';
 import Grid from '@material-ui/core/Grid';
 import * as React from 'react';
-import { connect } from 'react-redux';
-import { withRouter } from 'react-router';
-import { bindActionCreators, Dispatch, AnyAction } from 'redux';
-import Cookies from 'universal-cookie';
 import Typography from '@material-ui/core/Typography';
-import { useTheme } from '@material-ui/core/styles';
+import useMediaQuery from '@material-ui/core/useMediaQuery';
+import { withRouter } from 'react-router';
 
 // Actions.
 import {
@@ -45,6 +57,18 @@ import {
 } from '../../forms/validation/ValidationRules';
 
 /**
+ * Create styles for the login form.
+ */
+const useStyles = makeStyles((theme: Theme) => createStyles({
+  fieldPadding: {
+    padding: theme.spacing(1)
+  },
+  desktopFieldPadding: {
+    padding: theme.spacing(1, 0)
+  }
+}));
+
+/**
  * Signup form validation schema.
  */
 const signupValidation: ValidationSchema = {
@@ -71,8 +95,10 @@ const signupValidation: ValidationSchema = {
  * Signup form for new accounts.
  */
 const SignupForm: React.FC<SignupFormProps> = (props: SignupFormProps) => {
-  // Define the theme for style handling.
-  const theme = useTheme();
+  // Define the theme for consistent styling.
+  const classes = useStyles(),
+        theme = useTheme(),
+        desktop = useMediaQuery(theme.breakpoints.up('sm'));
 
   // Define the base state for the signup form.
   const [values, setValues] = React.useState({
@@ -185,9 +211,11 @@ const SignupForm: React.FC<SignupFormProps> = (props: SignupFormProps) => {
         container
         direction='column'
         alignItems='stretch'
-        spacing={2}
       >
-        <Grid item xs={12} md={6}>
+        <Grid item xs={12} md={6} className={clsx(classes.fieldPadding, {
+            [classes.desktopFieldPadding]: desktop
+          })}
+        >
           <Input
             handleBlur={updateForm}
             helperText='This is the name people will know you by on ravebox. Must only contain alphanumeric characters, hyphens and underscores.'
@@ -197,7 +225,10 @@ const SignupForm: React.FC<SignupFormProps> = (props: SignupFormProps) => {
             validation={validation.handle}
           />
         </Grid>
-        <Grid item xs={12} md={6}>
+        <Grid item xs={12} md={6} className={clsx(classes.fieldPadding, {
+            [classes.desktopFieldPadding]: desktop
+          })}
+        >
           <Input
             handleBlur={updateForm}
             name='email'
@@ -206,7 +237,10 @@ const SignupForm: React.FC<SignupFormProps> = (props: SignupFormProps) => {
             validation={validation.email}
           />
         </Grid>
-        <Grid item xs={12} md={6}>
+        <Grid item xs={12} md={6} className={clsx(classes.fieldPadding, {
+            [classes.desktopFieldPadding]: desktop
+          })}
+        >
           <Input
             handleBlur={updateForm}
             name='password'
@@ -216,15 +250,24 @@ const SignupForm: React.FC<SignupFormProps> = (props: SignupFormProps) => {
             validation={validation.password}
           />
         </Grid>
-        <Grid item xs={12} md={6}>
+        <Grid item xs={12} md={6} className={clsx(classes.fieldPadding, {
+            [classes.desktopFieldPadding]: desktop
+          })}
+        >
           <Typography variant='subtitle1'>
             By clicking Sign Up, you are indicating that you have read and acknowledge the Terms of Service and Privacy Notice.
           </Typography>
         </Grid>
-        <Grid item xs={12} md={6}>
+        <Grid item xs={12} md={6} className={clsx(classes.fieldPadding, {
+            [classes.desktopFieldPadding]: desktop
+          })}
+        >
           <ErrorMessages errors={formErrorMessages} />
         </Grid>
-        <Grid item xs={12} sm={9} md={3}>
+        <Grid item xs={12} md={6} className={clsx(classes.fieldPadding, {
+            [classes.desktopFieldPadding]: desktop
+          })}
+        >
           <StyledButton
             title='Sign up'
             clickAction={submit}

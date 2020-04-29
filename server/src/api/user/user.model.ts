@@ -93,13 +93,7 @@ UserSchema
   .get(function() {
     return {
       '_id': this._id,
-      'email': this.email
-      //'name': this.name,
-      //'phone': this.phone,
-      //'address': this.address,
-      // @todo: avatar
-      //'searchPreferences': this.searchPreferences,
-      //'settings': this.settings,
+      'handle': this.handle
     };
   });
 

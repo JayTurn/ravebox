@@ -5,6 +5,7 @@
 
 // Modules.
 import Box from '@material-ui/core/Box';
+import Chip from '@material-ui/core/Chip';
 import {
   createStyles,
   makeStyles,
@@ -23,39 +24,42 @@ import { ProductPreviewProps } from './ProductPreview.interface';
  * Search product list.
  */
 const useStyles = makeStyles((theme: Theme) => createStyles({
-  cateogryName: {
-    fontWeight: 400
+  categoryChip: {
+    borderRadius: theme.shape.borderRadius,
+    fontWeight: 600,
+    margin: theme.spacing(.5),
+    '&:first-child': {
+      marginLeft: 0
+    },
+    '&:last-child': {
+      marginRight: 0
+    }
   },
   container: {
-    backgroundColor: theme.palette.common.white,
-    borderRadius: theme.shape.borderRadius,
-    boxShadow: `0 1px 1px rgba(100,106,240, 0.25)`,
-    padding: '1rem'
+    padding: theme.spacing(1)
   },
   productName: {
-    fontSize: '1.2rem',
-    fontWeight: 500,
-    marginBottom: '.75rem'
+    fontSize: '1rem',
+    fontWeight: 600,
+    marginBottom: theme.spacing(1)
   },
   productBrand: {
-    fontSize: '.7rem',
-    fontWeight: 500,
-    textTransform: 'uppercase'
+    fontSize: '.8rem',
+    fontWeight: 600
   },
   title: {
     color: '#3E42A3',
     marginBottom: '1rem'
   },
   wrapper: {
-    backgroundColor: 'rgba(100, 106, 240, 0.1)',
-    borderRadius: theme.shape.borderRadius,
-    marginBottom: '2rem',
-    padding: '1rem'
+    marginBottom: theme.spacing(2),
+    padding: theme.spacing(0, 1, 1.5),
+    borderBottom: `2px solid ${theme.palette.secondary.light}`
   }
 }));
 
 /**
- * Renders the product preview component.
+ * Renders the product preview card component.
  */
 const ProductPreview: React.FC<ProductPreviewProps> = (
   props: ProductPreviewProps
@@ -68,49 +72,30 @@ const ProductPreview: React.FC<ProductPreviewProps> = (
     <Grid
       container
       direction='column'
+      className={classes.wrapper}
     >
-      <Grid item xs={12} lg={6} className={classes.wrapper}>
-        <Typography variant='h3' className={classes.title}>
-          Product 
+      <Grid item xs={12} lg={6}>
+        <Typography variant='body2' className={classes.productBrand}>
+          {props.brand}
         </Typography>
-        <Box component='div' className={classes.container}>
-          <Typography variant='body2' className={classes.productBrand}>
-            {props.brand}
-          </Typography>
-          <Typography variant='body1' className={classes.productName}>
-            {props.name}
-          </Typography>
-          <Typography variant='subtitle2' className={classes.cateogryName}>
-            {props.categories[0].label} > {props.categories[1].label}
-          </Typography>
-        </Box>
+        <Typography variant='body1' className={classes.productName}>
+          {props.name} review
+        </Typography>
+      </Grid>
+      <Grid item xs={12} lg={6}>
+        {props.categories.map((category: CategoryItem) => {
+          return (
+            <Chip
+              className={classes.categoryChip}
+              key={category.key}
+              label={category.label}
+              size='small'
+            />
+          )
+        })}
       </Grid>
     </Grid>
   );
 }
-
-/*
-<Typography variant='h4'>
-  {props.name}
-</Typography>
-<Typography variant='body1'>
-  Brand: {props.brand}
-</Typography>
-<Typography variant='body1'>
-  Category:&nbsp;
-  {props.categories.map((category: CategoryItem, index: number) => {
-    return (
-      <React.Fragment key={category.key}>
-        <span>
-          {category.label}
-        </span>
-        {index < props.categories.length - 1 &&
-          <span> > </span>
-        }
-      </React.Fragment>
-    )
-  })}
-</Typography>
-*/
 
 export default ProductPreview;

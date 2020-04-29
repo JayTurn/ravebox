@@ -16,11 +16,13 @@ import { RaveVideoProps } from './RaveVideo.interface';
  */
 const RaveVideo: React.FC<RaveVideoProps> = (props: RaveVideoProps) => {
   const config = {
-    url: props.url,
     controls: true,
     file: {
       forceDASH: true
-    }
+    },
+    height: 'auto',
+    url: props.url,
+    width: '100%'
   };
   return (
     <Grid container direction='column'>

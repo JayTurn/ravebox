@@ -28,11 +28,10 @@ import SignupForm from '../../../components/user/signupForm/SignupForm';
 const Signup: React.FC<SignupProps> = (props: SignupProps) => {
 
   return (
-    <div style={{flexGrow: 1, marginTop: '3rem'}}>
+    <div style={{flexGrow: 1}}>
       <Grid
         container
         direction='column'
-        justify='flex-start'
       >
         <AccessType selected={AccessOptions.SIGNUP} />
         <SignupForm />

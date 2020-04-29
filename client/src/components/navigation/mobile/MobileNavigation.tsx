@@ -160,7 +160,7 @@ const MobileNavigation: React.FC<MobileNavigationProps> = (props: MobileNavigati
       <Box className={clsx(classes.listBox)}>
         <List>
           <ListItem button className={clsx(classes.listButton, classes.listButtonOpen)}>
-            <NavLink to='/' className={clsx(classes.linkStyle, classes.linkStyleOpen)}>
+            <NavLink to='/' className={clsx(classes.linkStyle, classes.linkStyleOpen)} onClick={toggleDrawer}>
               <ListItemIcon className={clsx(
                 classes.listButtonIconOpen,
                 {[classes.listButtonIconActive]: activePath === '/'}
@@ -178,7 +178,7 @@ const MobileNavigation: React.FC<MobileNavigationProps> = (props: MobileNavigati
             </NavLink>
           </ListItem>
           <ListItem button className={clsx(classes.listButton, classes.listButtonOpen)}>
-            <NavLink to='/' className={clsx(classes.linkStyle, classes.linkStyleOpen)}>
+            <NavLink to='/product/add' className={clsx(classes.linkStyle, classes.linkStyleOpen)} onClick={toggleDrawer}>
               <ListItemIcon className={clsx(
                 classes.listButtonIconOpen,
                 {[classes.listButtonIconActive]: activePath === '/product/add'}

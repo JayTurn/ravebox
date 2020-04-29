@@ -5,22 +5,35 @@
 
 // Modules.
 import AccountCircleSharpIcon from '@material-ui/icons/AccountCircleSharp';
+import {
+  AnyAction,
+  bindActionCreators,
+  Dispatch
+} from 'redux';
 import AppBar from '@material-ui/core/AppBar';
 import Button from '@material-ui/core/Button';
+import clsx from 'clsx';
+import { connect } from 'react-redux';
+import Cookies from 'universal-cookie';
+import {
+  createStyles,
+  makeStyles,
+  styled,
+  Theme,
+  useTheme,
+  withStyles
+} from '@material-ui/core/styles';
 import IconButton from '@material-ui/core/IconButton';
-import MenuIcon from '@material-ui/icons/Menu';
 import Menu from '@material-ui/core/Menu';
+import MenuIcon from '@material-ui/icons/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
+import { NavLink } from 'react-router-dom';
+import * as React from 'react';
+import Slide from '@material-ui/core/Slide';
 import Toolbar from '@material-ui/core/Toolbar';
 import useMediaQuery from '@material-ui/core/useMediaQuery';
-import { useTheme } from '@material-ui/core/styles';
-import { createStyles, styled, makeStyles, withStyles, Theme } from '@material-ui/core/styles';
-import * as React from 'react';
-import { connect } from 'react-redux';
+import useScrollTrigger from '@material-ui/core/useScrollTrigger';
 import { withRouter } from 'react-router';
-import { NavLink } from 'react-router-dom';
-import { bindActionCreators, Dispatch, AnyAction } from 'redux';
-import Cookies from 'universal-cookie';
 
 // Actions.
 import { logout } from '../../../store/user/Actions';
@@ -32,14 +45,28 @@ import Logo from '../../logo/Logo';
 import ProfileMenu from '../../user/profileMenu/ProfileMenu';
 
 // Interfaces.
-import { TopNavigationProps } from './TopNavigation.interface';
+import {
+  NavigationScrollProps,
+  TopNavigationProps
+} from './TopNavigation.interface';
 import { PrivateProfile } from '../../user/User.interface';
 
 // Make the app specific styles.
 const useStyles = makeStyles((theme: Theme) => createStyles({
   root: { },
-  linksNoHover: {
-    textDecoration: 'none'
+  lastButton: {
+    marginRight: theme.spacing(1)
+  },
+  linkButton: {
+    fontSize: '0.75rem',
+    paddingBottom: '5px',
+    paddingLeft: theme.spacing(1),
+    paddingRight: theme.spacing(1),
+    paddingTop: '5px'
+  },
+  linkButtonLarge: {
+    fontSize: '0.9rem',
+    padding: theme.spacing(1, 2)
   },
   links: {
     textDecoration: 'none',
@@ -50,6 +77,9 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
     '&:hover': {
       color: theme.palette.primary.main
     }
+  },
+  linksNoHover: {
+    textDecoration: 'none'
   },
   linksInverse: {
     textDecoration: 'none',
@@ -69,6 +99,16 @@ const StyledAppBar = withStyles((theme: Theme) => ({
   }
   }))(AppBar);
 
+const StyledMobileAppBar = withStyles((theme: Theme) => ({
+  root: {
+    backgroundColor: theme.palette.common.white,
+    boxShadow: 'none',
+    borderBottom: `2px solid ${theme.palette.primary.light}`,
+    zIndex: theme.zIndex.drawer + 1,
+    top: 0
+  }
+  }))(AppBar);
+
 const MenuIconButton = withStyles((theme: Theme) => ({
   root: {
     color: theme.palette.text.secondary,
@@ -83,27 +123,39 @@ const LogoButton = withStyles((theme: Theme) => ({
   root: {
     fontSize: '.9rem',
     '&:hover': {
-      backgroundColor: 'transparent' 
+      backgroundColor: 'transparent'
     },
     marginRight: 10
   }
 }))(Button);
 
+/**
+ * Menu button icon.
+ */
 const MenuButton = withStyles((theme: Theme) => ({
   root: {
-    fontSize: '.9rem',
     '&:hover': {
-      backgroundColor: 'rgba(203,205,255, 0.2)' 
+      backgroundColor: 'rgba(203,205,255, 0.2)'
     },
     marginRight: 10
   }
 }))(Button);
 
-const MenuButtonContained = withStyles({
-  root: {
-    fontSize: '.9rem'
-  }
-})(Button);
+/**
+ * Hides the navigation menu on scroll.
+ */
+const HideOnScroll: React.FC<NavigationScrollProps> = (props: NavigationScrollProps) => {
+  // Capture the scroll trigger.
+  const { children } = props;
+  const trigger = useScrollTrigger();
+
+  // Slide the display of the child elements based on the scroll trigger.
+  return (
+    <Slide appear={false} direction="down" in={!trigger}>
+      {children}
+    </Slide>
+  );
+}
 
 /**
  * Component to manage the main navigation of the application.
@@ -136,10 +188,10 @@ const TopNavigation: React.FC<TopNavigationProps> = (props: TopNavigationProps) 
    * Renders the navigation menu.
    */
   return (
-    <StyledAppBar position='sticky' color='inherit'>
-      <Toolbar disableGutters={true}>
-        {largeScreen ? (
-          <React.Fragment>
+    <React.Fragment>
+      {largeScreen ? (
+        <StyledAppBar position='sticky' color='inherit'>
+          <Toolbar disableGutters={true}>
             <MenuIconButton
               style={{marginLeft: 12, marginRight: 20}}
               onClick={toggleSideNavigation}
@@ -155,43 +207,79 @@ const TopNavigation: React.FC<TopNavigationProps> = (props: TopNavigationProps) 
                 <Logo iconOnly={false} fullWidth='130px'/>
               </NavLink>
             </LogoButton>
-          </React.Fragment>
-        ): (
-          <React.Fragment>
-            <MenuIconButton
-              style={{marginTop: '5px'}}
-              onClick={toggleSideNavigation}
-            >
-              <MenuIcon />
-            </MenuIconButton>
-            <LogoButton
-              color='inherit'
-              disableElevation={true}
-            >
-              <NavLink to="/" exact activeClassName='active'>
-                <Logo iconOnly={true} fullWidth='44px'/>
-              </NavLink>
-            </LogoButton>
-          </React.Fragment>
-        )}
-        {props.profile ? (
-          <React.Fragment>
-            <div style={{flexGrow: 1}} />
-            <ProfileMenu />  
-          </React.Fragment>
-        ) : (
-          <React.Fragment>
-            <div style={{flexGrow: 1}} />
-            <MenuButton color="inherit">
-              <NavLink to="/user/login" activeClassName="active" className={classes.links}>Log in</NavLink>
-            </MenuButton>
-            <MenuButtonContained color="primary" variant='contained' disableElevation>
-              <NavLink to="/user/signup" activeClassName="active" className={classes.linksInverse}>Sign up</NavLink>
-            </MenuButtonContained>
-          </React.Fragment>
-        )}
-      </Toolbar>
-    </StyledAppBar>
+            {props.profile ? (
+              <React.Fragment>
+                <div style={{flexGrow: 1}} />
+                <ProfileMenu />
+              </React.Fragment>
+            ) : (
+              <React.Fragment>
+                <div style={{flexGrow: 1}} />
+                <MenuButton
+                  className={clsx(classes.linkButtonLarge)}
+                  color="inherit"
+                >
+                  <NavLink to="/user/login" activeClassName="active" className={classes.links}>Log in</NavLink>
+                </MenuButton>
+                <Button
+                  className={clsx(classes.linkButtonLarge, classes.lastButton)}
+                  color="primary"
+                  disableElevation
+                  variant='contained'
+                >
+                  <NavLink to="/user/signup" activeClassName="active" className={classes.linksInverse}>Sign up</NavLink>
+                </Button>
+              </React.Fragment>
+            )}
+          </Toolbar>
+        </StyledAppBar>
+      ) : (
+        <HideOnScroll>
+          <StyledMobileAppBar position='sticky' color='inherit'>
+            <Toolbar disableGutters={true} style={{minHeight: '50px'}}>
+              <MenuIconButton
+                style={{marginLeft: '6px', marginTop: '4px', padding: '6px 6px 6px'}}
+                onClick={toggleSideNavigation}
+              >
+                <MenuIcon />
+              </MenuIconButton>
+              <LogoButton
+                color='inherit'
+                disableElevation={true}
+              >
+                <NavLink to="/" exact activeClassName='active'>
+                  <Logo iconOnly={true} fullWidth='30px'/>
+                </NavLink>
+              </LogoButton>
+              {props.profile ? (
+                <React.Fragment>
+                  <div style={{flexGrow: 1}} />
+                  <ProfileMenu />
+                </React.Fragment>
+              ) : (
+                <React.Fragment>
+                  <div style={{flexGrow: 1}} />
+                  <MenuButton
+                    color="inherit"
+                    className={clsx(classes.linkButton)}
+                  >
+                    <NavLink to="/user/login" activeClassName="active" className={classes.links}>Log in</NavLink>
+                  </MenuButton>
+                  <Button
+                    className={clsx(classes.linkButton, classes.lastButton)}
+                    color="primary"
+                    disableElevation
+                    variant='contained'
+                  >
+                    <NavLink to="/user/signup" activeClassName="active" className={classes.linksInverse}>Sign up</NavLink>
+                  </Button>
+                </React.Fragment>
+              )}
+            </Toolbar>
+          </StyledMobileAppBar>
+        </HideOnScroll>
+      )}
+    </React.Fragment>
   );
 }
 

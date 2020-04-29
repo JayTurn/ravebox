@@ -4,7 +4,7 @@
  */
 
 // Modules.
-import { createMuiTheme } from '@material-ui/core/styles';
+import { createMuiTheme, Theme } from '@material-ui/core/styles';
 import { CSSProperties } from '@material-ui/styles/withStyles';
 
 // Fonts.
@@ -23,7 +23,7 @@ const muli: CSSProperties = {
     'U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF',
 };
 
-export default createMuiTheme({
+export const sharedTheme = {
   overrides: {
     MuiCssBaseline: {
       '@global': {
@@ -57,19 +57,40 @@ export default createMuiTheme({
       hint: '#6d6d6d'
     }
   },
+}
+
+const theme = createMuiTheme({
+  ...sharedTheme,
   typography: {
+    body1: {
+      color: sharedTheme.palette.text.primary
+    },
+    body2: {
+      color: sharedTheme.palette.text.primary
+    },
     fontFamily: 'Muli, Arial, sans-serif',
     h1: {
-      fontSize: '3rem',
+      color: sharedTheme.palette.text.primary,
+      fontSize: '2rem',
       marginBottom: '0.5rem'
     },
     h2: {
-      fontSize: '1.875rem',
+      color: sharedTheme.palette.text.primary,
+      fontSize: '1.5rem',
       fontWeight: 400,
       marginBottom: '0.5rem'
     },
     h3: {
-      fontSize: '1.171rem'
-    }
+      color: sharedTheme.palette.text.primary,
+      fontSize: '1.25rem'
+    },
+    subtitle1: {
+      color: sharedTheme.palette.text.primary
+    },
+    subtitle2: {
+      color: sharedTheme.palette.text.primary
+    },
   }
 });
+
+export default theme;

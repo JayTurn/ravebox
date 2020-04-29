@@ -57,9 +57,8 @@ const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     brandText: {
       display: 'block',
-      fontSize: '.7rem',
-      fontWeight: 500,
-      textTransform: 'uppercase'
+      fontSize: '.9rem',
+      fontWeight: 500
     },
     cardContainer: {
       borderRadius: 0,
@@ -69,6 +68,9 @@ const useStyles = makeStyles((theme: Theme) =>
       marginBottom: theme.spacing(1),
       maxWidth: '100%',
       padding: 0
+    },
+    cardHeaderContentMobile: {
+      padding: theme.spacing(0, 1)
     },
     divider: {
       marginBottom: theme.spacing(1),
@@ -97,6 +99,9 @@ const useStyles = makeStyles((theme: Theme) =>
     productNameText: {
       fontSize: '1.02rem',
       fontWeight: 500,
+      overflow: 'hidden',
+      textOverflow: 'ellipsis',
+      whiteSpace: 'nowrap'
     },
     reviewLinkButton: {
       border: `1px solid ${theme.palette.secondary.light}`,
@@ -118,6 +123,9 @@ const useStyles = makeStyles((theme: Theme) =>
         paddingBottom: theme.spacing(1),
       }
     },
+    textContentMobile: {
+      paddingRight: theme.spacing(1)
+    },
     title: {
       fontSize: '1rem',
       overflow: 'hidden',
@@ -134,12 +142,15 @@ const PrivateReviewCard: React.FC<PrivateReviewCardProps> = (props: PrivateRevie
 
   // Define the style classes.
   const classes = useStyles(),
-        theme = useTheme();
+        theme = useTheme(),
+        largeScreen = useMediaQuery(theme.breakpoints.up('md'));
 
   return (
     <Card className={classes.cardContainer}>
       <StyledCardHeader
-        className={classes.cardHeaderContent}
+        className={clsx(classes.cardHeaderContent, {
+          [classes.cardHeaderContentMobile]: !largeScreen
+        })}
         style={{maxWidth: '100%'}}
         title={
           <Grid container direction='row' style={{flexWrap: 'nowrap', maxWidth: '100%'}}>
@@ -171,10 +182,13 @@ const PrivateReviewCard: React.FC<PrivateReviewCardProps> = (props: PrivateRevie
           title={`${props.product ? props.product.name : ''} review`}
         />
       </CardActionArea>
-      <CardContent className={classes.textContent}>
-        <Grid container direction='row'>
+      <CardContent className={clsx(classes.textContent, {
+          [classes.textContentMobile]: !largeScreen
+        })}
+      >
+        <Grid container direction='row' style={{flexWrap: 'nowrap', maxWidth: '100%'}}>
           {props.product &&
-            <Grid item style={{flexGrow: 1, whiteSpace: 'nowrap'}}>
+            <Grid item style={{flexGrow: 1, minWidth: 0}}>
               <NavLink to={`/review/${props.url}`} className={classes.linkText}>
                 <Typography variant='body2' className={classes.productNameText}>
                   <Box component='span' className={classes.brandText}>{props.product.brand}</Box> {props.product.name}
@@ -182,7 +196,7 @@ const PrivateReviewCard: React.FC<PrivateReviewCardProps> = (props: PrivateRevie
               </NavLink>
             </Grid>
           }
-          <Grid item style={{flexGrow: 0}}>
+          <Grid item style={{flexGrow: 0, marginLeft: theme.spacing(1)}}>
             <NavLink to={`/review/${props.url}`} className={classes.linkText}>
               <IconButton className={classes.reviewLinkButton}>
                 <PlayArrowRoundedIcon color='secondary' className={classes.reviewLinkIcon} />

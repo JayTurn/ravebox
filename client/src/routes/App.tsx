@@ -73,6 +73,7 @@ import {
 
 // Theme.
 import RaveboxTheme from '../theme/RaveboxTheme';
+import DesktopRaveboxTheme from '../theme/DesktopRaveboxTheme';
 
 // Dependent styles.
 import './App.css';
@@ -119,6 +120,7 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
 const App: React.FC<AppProps> = (props: AppProps) => {
   // Match the large media query size.
   const theme = useTheme(),
+        mediumScreen = useMediaQuery(theme.breakpoints.only('sm')),
         largeScreen = useMediaQuery(theme.breakpoints.up('md')),
         classes = useStyles();
 
@@ -133,7 +135,7 @@ const App: React.FC<AppProps> = (props: AppProps) => {
    * Renders the application.
    */
   return (
-    <ThemeProvider theme={RaveboxTheme}>
+    <ThemeProvider theme={largeScreen ? DesktopRaveboxTheme : RaveboxTheme}>
       <StyledSnackbar>
         <div className={`app`}>
           <Helmet title="Ravebox" defaultTitle="Ravebox" />
@@ -144,7 +146,7 @@ const App: React.FC<AppProps> = (props: AppProps) => {
           ) : (
             <MobileNavigation expanded={false} />
           )}
-          <Container maxWidth="lg" disableGutters={largeScreen} className={clsx({
+          <Container maxWidth="lg" disableGutters={!mediumScreen} className={clsx({
             [classes.lgContent]: largeScreen,
             [classes.lgContentOpen]: largeScreen && props.expanded,
             [classes.lgContentClosed]: largeScreen && !props.expanded

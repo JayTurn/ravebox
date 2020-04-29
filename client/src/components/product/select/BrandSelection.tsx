@@ -103,7 +103,8 @@ const BrandSelection: React.FC<BrandSelectionProps> = (props: BrandSelectionProp
       ...values,
       [data.key]: data.value
     });
-    props.update({key: 'brand', value: values.brand});
+
+    props.update({key: 'brand', value: data.value});
   }
 
   /**
