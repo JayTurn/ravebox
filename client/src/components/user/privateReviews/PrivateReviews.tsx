@@ -9,11 +9,13 @@ import { connect } from 'react-redux';
 import {
   createStyles,
   makeStyles,
-  Theme
+  Theme,
+  useTheme
 } from '@material-ui/core/styles';
 import Grid from '@material-ui/core/Grid';
 import * as React from 'react';
 import Typography from '@material-ui/core/Typography';
+import useMediaQuery from '@material-ui/core/useMediaQuery';
 import { withRouter } from 'react-router';
 
 // Components.
@@ -35,10 +37,13 @@ const useStyles = makeStyles((theme: Theme) =>
       marginTop: theme.spacing(3)
     },
     ctaWrapper: {
-      marginBottom: theme.spacing(4),
-      marginTop: theme.spacing(4),
-      padding: theme.spacing(6, 2),
+      marginBottom: theme.spacing(2),
+      marginTop: theme.spacing(2),
+      padding: theme.spacing(0, 1),
       textAlign: 'center'
+    },
+    ctaWrapperDesktop: {
+      padding: theme.spacing(6, 2),
     }
   }),
 );
@@ -48,7 +53,10 @@ const useStyles = makeStyles((theme: Theme) =>
  */
 const PrivateReviews: React.FC<PrivateReviewsProps> = (props: PrivateReviewsProps) => {
   // Define the style classes.
-  const classes = useStyles();
+  const classes = useStyles(),
+        theme = useTheme(),
+        largeScreen = useMediaQuery(theme.breakpoints.up('sm'));
+
 
   let foundReviews: boolean = false;
 
@@ -67,8 +75,13 @@ const PrivateReviews: React.FC<PrivateReviewsProps> = (props: PrivateReviewsProp
 
   return (
     <React.Fragment>
-      {props.retrievalStatus === RetrievalStatus.NOT_FOUND || props.retrievalStatus === RetrievalStatus.FAILED ? (
-        <Grid container direction='column' className={classes.ctaWrapper}>
+      {props.retrievalStatus === RetrievalStatus.SUCCESS && props.reviews.length > 0 ? (
+        <ReviewList reviews={props.reviews} retrievalStatus={props.retrievalStatus}/>
+      ) : (
+        <Grid container direction='column' className={clsx(classes.ctaWrapper, { 
+            [classes.ctaWrapperDesktop]: largeScreen
+          })}
+        >
           <Grid item xs={12}>
             <Typography variant='h2'>
               Get started with your first rave
@@ -90,8 +103,6 @@ const PrivateReviews: React.FC<PrivateReviewsProps> = (props: PrivateReviewsProp
             </Grid>
           </Grid>
         </Grid>
-      ) : (
-        <ReviewList reviews={props.reviews} retrievalStatus={props.retrievalStatus}/>
       )}
     </React.Fragment>
   );

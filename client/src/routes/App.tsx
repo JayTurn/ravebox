@@ -9,6 +9,7 @@ import { bindActionCreators, Dispatch, AnyAction } from 'redux';
 import clsx from 'clsx';
 import { connect } from 'react-redux';
 import Container from '@material-ui/core/Container';
+import CssBaseline from '@material-ui/core/CssBaseline';
 import { frontloadConnect } from 'react-frontload';
 import { Helmet } from 'react-helmet';
 import { SnackbarProvider } from 'notistack';
@@ -73,6 +74,7 @@ import {
 
 // Theme.
 import RaveboxTheme from '../theme/RaveboxTheme';
+import DesktopRaveboxTheme from '../theme/DesktopRaveboxTheme';
 
 // Dependent styles.
 import './App.css';
@@ -89,8 +91,8 @@ const StyledSnackbar = withStyles((theme: Theme) => ({
   }
 }))(SnackbarProvider);
 
-const lgOpenDrawerWidth: number = 270,
-      lgClosedDrawerWidth: number = 100;
+const lgOpenDrawerWidth: number = 240,
+      lgClosedDrawerWidth: number = 70;
 
 /**
  * Create styles for the shifting content.
@@ -103,11 +105,11 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
     })
   },
   lgContentOpen: {
-    width: `calc(100% - ${lgOpenDrawerWidth + 30}px)`,
+    width: `calc(100% - ${lgOpenDrawerWidth}px)`,
     marginLeft: lgOpenDrawerWidth
   },
   lgContentClosed: {
-    width: `calc(100% - ${lgClosedDrawerWidth + 30}px)`,
+    width: `calc(100% - ${lgClosedDrawerWidth}px)`,
     marginLeft: lgClosedDrawerWidth
   }
 }));
@@ -119,6 +121,7 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
 const App: React.FC<AppProps> = (props: AppProps) => {
   // Match the large media query size.
   const theme = useTheme(),
+        mediumScreen = useMediaQuery(theme.breakpoints.only('sm')),
         largeScreen = useMediaQuery(theme.breakpoints.up('md')),
         classes = useStyles();
 
@@ -133,7 +136,8 @@ const App: React.FC<AppProps> = (props: AppProps) => {
    * Renders the application.
    */
   return (
-    <ThemeProvider theme={RaveboxTheme}>
+    <ThemeProvider theme={largeScreen ? DesktopRaveboxTheme : RaveboxTheme}>
+      <CssBaseline />
       <StyledSnackbar>
         <div className={`app`}>
           <Helmet title="Ravebox" defaultTitle="Ravebox" />
@@ -144,7 +148,7 @@ const App: React.FC<AppProps> = (props: AppProps) => {
           ) : (
             <MobileNavigation expanded={false} />
           )}
-          <Container maxWidth="lg" disableGutters={largeScreen} className={clsx({
+          <Container maxWidth="lg" disableGutters={true} className={clsx({
             [classes.lgContent]: largeScreen,
             [classes.lgContentOpen]: largeScreen && props.expanded,
             [classes.lgContentClosed]: largeScreen && !props.expanded

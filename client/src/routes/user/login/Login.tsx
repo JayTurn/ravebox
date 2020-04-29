@@ -28,11 +28,10 @@ import LoginForm from '../../../components/user/loginForm/LoginForm';
 const Login: React.FC<LoginProps> = (props: LoginProps) => {
 
   return (
-    <div style={{flexGrow: 1, marginTop: '3rem' }}>
+    <div style={{flexGrow: 1}}>
       <Grid
         container
         direction='column'
-        justify='flex-start'
       >
         <AccessType selected={AccessOptions.LOGIN} />
         <LoginForm />

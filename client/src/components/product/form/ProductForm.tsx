@@ -5,13 +5,22 @@
 
 // Modules.
 import API from '../../../utils/api/Api.model';
+import Box from '@material-ui/core/Box';
+import clsx from 'clsx';
 import { connect } from 'react-redux';
+import {
+  createStyles,
+  makeStyles,
+  Theme,
+  useTheme
+} from '@material-ui/core/styles';
 import Grid from '@material-ui/core/Grid';
 import Fade from '@material-ui/core/Fade';
 import * as React from 'react';
 import Typography from '@material-ui/core/Typography';
-import { withRouter } from 'react-router';
+import useMediaQuery from '@material-ui/core/useMediaQuery';
 import { VariantType, useSnackbar } from 'notistack';
+import { withRouter } from 'react-router';
 
 // Components.
 import CategorySelection from '../../category/selection/CategorySelection';
@@ -50,6 +59,16 @@ import {
 } from '../../forms/validation/ValidationRules';
 
 /**
+ * Create styles for the page title.
+ */
+const useStyles = makeStyles((theme: Theme) => createStyles({
+  mobilePadding: {
+    paddingLeft: theme.spacing(1),
+    paddingRight: theme.spacing(1)
+  }
+}));
+
+/**
  * Product validation schema.
  */
 const productValidation: ValidationSchema = {
@@ -79,6 +98,12 @@ const productValidation: ValidationSchema = {
 const ProductForm: React.FC<ProductFormProps> = (
   props: ProductFormProps
 ) => {
+
+  // Match the mobile media query size.
+  const classes = useStyles(),
+        theme = useTheme(),
+        mobile = useMediaQuery(theme.breakpoints.down('sm'));
+
   // Register the snackbar.
   const { enqueueSnackbar } = useSnackbar();
 
@@ -101,6 +126,9 @@ const ProductForm: React.FC<ProductFormProps> = (
   });
 
   const [brandChanged, setBrandChanged] = React.useState<boolean>(false);
+
+  React.useEffect(() => {
+  }, [product]);
 
   // Validation hook.
   const {
@@ -229,39 +257,32 @@ const ProductForm: React.FC<ProductFormProps> = (
     <Grid
       container
       direction='column'
-      alignItems='stretch'
-      style={{marginTop: '3rem', marginBottom: '3rem'}}
     >
-      <Grid item xs={12}>
-        <Typography variant='h1' color='textPrimary'>
-          Post a rave
-        </Typography>
-        <PaddedDivider />
-      </Grid>
-      <ProductSelection update={updateInputs} />
-      {product.name &&
-        <React.Fragment>
-          <BrandSelection update={updateInputs} visible={product.name !== ''} handleFocus={handleBrandFocus}/>
-          <CategorySelection
-            update={updateCategories}
-            visible={brandChanged}
-          />
-          <Grid item xs={12} md={6} style={{marginTop: '2rem'}}>
-            <ErrorMessages errors={formErrorMessages} />
+      <Box className={clsx({
+          [classes.mobilePadding]: mobile
+        })}
+      >
+        <ProductSelection update={updateInputs} />
+        <BrandSelection update={updateInputs} visible={product.name !== ''} handleFocus={handleBrandFocus}/>
+        <CategorySelection
+          update={updateCategories}
+          visible={brandChanged}
+        />
+        <Grid item xs={12} md={6} style={{marginTop: '2rem'}}>
+          <ErrorMessages errors={formErrorMessages} />
+        </Grid>
+        <Fade in={product.categories.length > 1} timeout={300}>
+          <Grid item xs={12}>
+            <StyledButton
+              clickAction={submit}
+              color='secondary'
+              disabled={submitting}
+              submitting={submitting}
+              title='Next'
+            />
           </Grid>
-          <Fade in={product.categories.length > 1} timeout={300}>
-            <Grid item xs={12}>
-              <StyledButton
-                clickAction={submit}
-                color='secondary'
-                disabled={submitting}
-                submitting={submitting}
-                title='Next'
-              />
-            </Grid>
-          </Fade>
-        </React.Fragment>
-      }
+        </Fade>
+      </Box>
     </Grid>
   );
 };

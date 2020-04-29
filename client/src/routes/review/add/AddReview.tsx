@@ -17,7 +17,7 @@ import { withRouter } from 'react-router';
 
 // Components.
 import AddReviewForm from '../../../components/review/addForm/AddReviewForm';
-import ProductPreview from '../../../components/product/preview/ProductPreview';
+import ProductPreviewCard from '../../../components/product/previewCard/ProductPreviewCard';
 import PageTitle from '../../../components/elements/pageTitle/PageTitle';
 
 // Enumerators.
@@ -63,7 +63,7 @@ const AddReview: React.FC<AddReviewProps> = (props: AddReviewProps) => {
         <React.Fragment>
           <PageTitle title='Post a rave' />
           {displayProduct &&
-            <ProductPreview {...product} />
+            <ProductPreviewCard {...product} />
           }
           <AddReviewForm productId={product._id} toggleProduct={toggleProduct}/>
         </React.Fragment>

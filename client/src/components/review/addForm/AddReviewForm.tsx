@@ -4,9 +4,16 @@
  */
 
 // Modules.
+import {
+  AnyAction,
+  bindActionCreators,
+  Dispatch
+} from 'redux';
 import API from '../../../utils/api/Api.model';
 import Box from '@material-ui/core/Box';
 import Button from '@material-ui/core/Button';
+import clsx from 'clsx';
+import { connect } from 'react-redux';
 import Cookies from 'universal-cookie';
 import {
   createStyles,
@@ -22,10 +29,9 @@ import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
 import LinearProgress from '@material-ui/core/LinearProgress';
 import * as React from 'react';
-import { connect } from 'react-redux';
-import { withRouter } from 'react-router';
-import { bindActionCreators, Dispatch, AnyAction } from 'redux';
 import Typography from '@material-ui/core/Typography';
+import useMediaQuery from '@material-ui/core/useMediaQuery';
+import { withRouter } from 'react-router';
 
 // Components.
 import Input from '../../forms/input/Input';
@@ -80,6 +86,10 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
     lineHeight: '70px',
     textAlign: 'center',
     width: '70px'
+  },
+  mobilePadding: {
+    paddingLeft: theme.spacing(1),
+    paddingRight: theme.spacing(1)
   }
 }));
 
@@ -100,7 +110,8 @@ const addReviewValidation: ValidationSchema = {
  */
 const AddReviewForm: React.FC<AddReviewFormProps> = (props: AddReviewFormProps) => {
   const classes = useStyles(),
-        theme = useTheme();
+        theme = useTheme(),
+        mobile = useMediaQuery(theme.breakpoints.down('sm'));
 
   // Define the review details.
   const [review, setReview] = React.useState({
@@ -283,11 +294,17 @@ const AddReviewForm: React.FC<AddReviewFormProps> = (props: AddReviewFormProps) 
 
       // Add an event listener for the upload progress.
       request.upload.addEventListener('progress', (e: ProgressEvent) => {
+        let progress: number = (e.loaded / e.total) * 100;
+
+        if (progress === 100) {
+          progress = 99;
+        }
+
         if (e.loaded) {
           setUploadProgress({
             state: FileUploadState.SUBMITTED,
-            completion: (e.loaded / e.total) * 100}
-          );
+            completion: progress
+          });
           // Set the submission state.
           setSubmitting(false)
         }
@@ -331,6 +348,9 @@ const AddReviewForm: React.FC<AddReviewFormProps> = (props: AddReviewFormProps) 
     <Grid
       container
       direction='column'
+      className={clsx({
+        [classes.mobilePadding]: mobile
+      })}
     >
       {uploadProgress.state === FileUploadState.WAITING &&
         <Fade in={uploadProgress.state === FileUploadState.WAITING} timeout={300}>
@@ -395,7 +415,7 @@ const AddReviewForm: React.FC<AddReviewFormProps> = (props: AddReviewFormProps) 
       {uploadProgress.state === FileUploadState.SUBMITTED &&
         <Fade in={uploadProgress.state === FileUploadState.SUBMITTED} timeout={300}>
           <Grid item xs={12} lg={6}>
-            <Typography variant='h2' color='primary' style={{marginBottom: '2rem'}}>We're uploading your rave video</Typography>
+            <Typography variant='h2' color='primary' style={{marginBottom: '2rem'}}>We're uploading your rave</Typography>
             <Typography variant='body1' style={{marginBottom: '2rem'}}>
               <Box component='p'>
                 Hang tight, please don't close the ravebox window whilst we upload your new video. If you close this window the upload will fail and penguins will perish. Nobody wants that.
@@ -420,7 +440,7 @@ const AddReviewForm: React.FC<AddReviewFormProps> = (props: AddReviewFormProps) 
             <Typography variant='h2' color='primary' style={{marginBottom: '2rem'}}>Upload successful</Typography>
             <Typography variant='body1' gutterBottom>
               <Box component='p'>
-                Great news, we've sucessfully uploaded your new rave video!
+                Great news, we've sucessfully uploaded your new rave!
               </Box>
               <Box component='p'>
                 We need to review your video before it goes live but rest assured, we'll notify you as soon as it is live.

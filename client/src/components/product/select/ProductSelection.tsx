@@ -66,6 +66,8 @@ const ProductSelection: React.FC<ProductSelectionProps> = (props: ProductSelecti
   // Define the product selection state.
   const [selected, setSelected] = React.useState<boolean>(false);
 
+  const [showButton, setShowButton] = React.useState<boolean>(false);
+
   // Form error messages to be displayed if fields haven't been validated
   // and prevents submissions to the api.
   const [formErrorMessages, setFormErrorMessages] = React.useState(['']);
@@ -81,6 +83,12 @@ const ProductSelection: React.FC<ProductSelectionProps> = (props: ProductSelecti
 
   // Define the debounce function for search queries.
   const delayedQuery = React.useCallback(debounce((q: string) => searchProducts(q), 300), []);
+
+  React.useEffect(() => {
+    if (changed && query !== '') {
+      setShowButton(true);
+    }
+  }, [changed, query]);
 
   // Validation hook.
   const {
@@ -220,17 +228,15 @@ const ProductSelection: React.FC<ProductSelectionProps> = (props: ProductSelecti
         <Grid item xs={12} lg={6}>
           <ProductSelectList products={options} />
         </Grid>
-        {query !== '' && changed &&
-          <Grow in={query !== '' && changed}>
-            <Grid item xs={12} style={{marginTop: '.5rem'}}>
-              <StyledButton
-                clickAction={updateProductName}
-                disabled={!changed}
-                submitting={submitting}
-                title={selected ? 'Update' : 'Add new'}
-              />
-            </Grid>
-          </Grow>
+        {showButton &&
+          <Grid item xs={12} style={{marginTop: '.5rem'}}>
+            <StyledButton
+              clickAction={updateProductName}
+              disabled={!changed}
+              submitting={submitting}
+              title={selected ? 'Update' : 'Add new'}
+            />
+          </Grid>
         }
       </Grid>
     </React.Fragment>

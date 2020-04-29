@@ -4,19 +4,22 @@
  */
 
 // Modules.
-import Grid from '@material-ui/core/Grid';
+import clsx from 'clsx';
+import { connect } from 'react-redux';
 import {
-  styled,
+  createStyles,
   makeStyles,
+  styled,
+  Theme,
   useTheme,
   withStyles
 } from '@material-ui/core/styles';
-import Tabs from '@material-ui/core/Tabs';
+import Grid from '@material-ui/core/Grid';
+import * as React from 'react';
 import Tab from '@material-ui/core/Tab';
+import Tabs from '@material-ui/core/Tabs';
 import Typography from '@material-ui/core/Typography';
 import useMediaQuery from '@material-ui/core/useMediaQuery';
-import * as React from 'react';
-import { connect } from 'react-redux';
 import { withRouter } from 'react-router';
 
 // Enumerators.
@@ -32,11 +35,29 @@ const AccessTabs = withStyles(theme => ({
 }))(Tabs);
 
 /**
+ * Create styles for the page title.
+ */
+const useStyles = makeStyles((theme: Theme) => createStyles({
+  container: {
+    padding: theme.spacing(0, 1),
+    marginBottom: theme.spacing(2)
+  },
+  desktopContainer: {
+    padding: 0,
+    marginBottom: theme.spacing(3)
+  },
+  titleContainer: {
+    margin: theme.spacing(3, 0, 2)
+  }
+}));
+
+/**
  * Access type component.
  */
 const AccessType: React.FC<AccessTypeProps> = (props: AccessTypeProps) => {
 
-  const theme = useTheme();
+  const theme = useTheme(),
+        classes = useStyles();
 
   /**
    * Redirects the user to the selected path.
@@ -62,17 +83,17 @@ const AccessType: React.FC<AccessTypeProps> = (props: AccessTypeProps) => {
   }
 
   // Match the small media query size.
-  const largeScreen = useMediaQuery(theme.breakpoints.up('md'));
+  const desktop = useMediaQuery(theme.breakpoints.up('sm'));
 
   return (
     <Grid
       container
       direction='column'
-      spacing={2}
-      alignItems='stretch'
-      style={{marginBottom: '1.75rem'}}
+      className={clsx(classes.container, {
+        [classes.desktopContainer]: desktop
+      })}
     >
-      <Grid item xs={12} md={6} style={{marginBottom: '1rem'}}>
+      <Grid item xs={12} md={6} className={classes.titleContainer}>
         {props.selected === AccessOptions.SIGNUP ? (
           <Typography variant='h1' color='textPrimary'>
             Sign up to ravebox
@@ -86,7 +107,7 @@ const AccessType: React.FC<AccessTypeProps> = (props: AccessTypeProps) => {
       <Grid item xs={12} md={6}>
         <AccessTabs
           value={props.selected}
-          variant={largeScreen ? 'standard' : 'fullWidth'}
+          variant={desktop ? 'standard' : 'fullWidth'}
         >
           <Tab
             disableRipple

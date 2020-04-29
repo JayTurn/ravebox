@@ -3,6 +3,9 @@
  * Interfaces for the top navigation properties and state.
  */
 
+// Modules.
+import * as React from 'react';
+
 // Dependent interfaces.
 import { PrivateProfile } from '../../user/User.interface';
 
@@ -17,4 +20,11 @@ export interface TopNavigationProps  extends RouteComponentProps {
   profile?: PrivateProfile;
   sideMenuExpanded?: boolean;
   toggleSide?: (show: boolean) => void;
+}
+
+/**
+ * Navigation scroll properties.
+ */
+export interface NavigationScrollProps {
+  children: React.ReactElement;
 }

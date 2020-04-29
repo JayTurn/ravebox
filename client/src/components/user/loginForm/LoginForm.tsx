@@ -4,12 +4,18 @@
  */
 
 // Modules.
+import {
+  AnyAction,
+  bindActionCreators,
+  Dispatch,
+} from 'redux';
 import API from '../../../utils/api/Api.model';
 import Box from '@material-ui/core/Box';
 import Button from '@material-ui/core/Button';
 import CircularProgress from '@material-ui/core/CircularProgress';
-import Grid from '@material-ui/core/Grid';
-import Typography from '@material-ui/core/Typography';
+import clsx from 'clsx';
+import { connect } from 'react-redux';
+import Cookies from 'universal-cookie';
 import {
   createStyles,
   makeStyles,
@@ -17,11 +23,11 @@ import {
   useTheme,
   withStyles
 } from '@material-ui/core/styles';
+import Grid from '@material-ui/core/Grid';
 import * as React from 'react';
-import { connect } from 'react-redux';
+import Typography from '@material-ui/core/Typography';
 import { withRouter } from 'react-router';
-import { bindActionCreators, Dispatch, AnyAction } from 'redux';
-import Cookies from 'universal-cookie';
+import useMediaQuery from '@material-ui/core/useMediaQuery';
 
 // Actions.
 import {
@@ -51,6 +57,18 @@ import { ValidationSchema } from '../../forms/validation/Validation.interface';
 import { isRequired, isEmail } from '../../forms/validation/ValidationRules';
 
 /**
+ * Create styles for the login form.
+ */
+const useStyles = makeStyles((theme: Theme) => createStyles({
+  fieldPadding: {
+    padding: theme.spacing(1)
+  },
+  desktopFieldPadding: {
+    padding: theme.spacing(1, 0)
+  }
+}));
+
+/**
  * Login form validation schema.
  */
 const loginValidation: ValidationSchema = {
@@ -70,7 +88,9 @@ const loginValidation: ValidationSchema = {
 const LoginForm: React.FC<LoginFormProps> = (props: LoginFormProps) => {
 
   // Define the theme for consistent styling.
-  const theme = useTheme();
+  const classes = useStyles(),
+        theme = useTheme(),
+        desktop = useMediaQuery(theme.breakpoints.up('sm'));
 
   // Define the base state for the signup form.
   const [values, setValues] = React.useState({
@@ -192,10 +212,12 @@ const LoginForm: React.FC<LoginFormProps> = (props: LoginFormProps) => {
       <Grid
         container
         direction='column'
-        spacing={2}
         alignItems='stretch'
       >
-        <Grid item xs={12} md={6}>
+        <Grid item xs={12} md={6} className={clsx(classes.fieldPadding, {
+            [classes.desktopFieldPadding]: desktop
+          })}
+        >
           <Input
             handleBlur={updateForm}
             name='email'
@@ -204,7 +226,10 @@ const LoginForm: React.FC<LoginFormProps> = (props: LoginFormProps) => {
             validation={validation.email}
           />
         </Grid>
-        <Grid item xs={12} md={6}>
+        <Grid item xs={12} md={6} className={clsx(classes.fieldPadding, {
+            [classes.desktopFieldPadding]: desktop
+          })}
+        >
           <Input
             handleBlur={updateForm}
             name='password'
@@ -221,10 +246,16 @@ const LoginForm: React.FC<LoginFormProps> = (props: LoginFormProps) => {
             />
           </Box>
         </Grid>
-        <Grid item xs={12} md={6}>
+        <Grid item xs={12} md={6} className={clsx(classes.fieldPadding, {
+            [classes.desktopFieldPadding]: desktop
+          })}
+        >
           <ErrorMessages errors={formErrorMessages} />
         </Grid>
-        <Grid item xs={12} md={6}>
+        <Grid item xs={12} md={6} className={clsx(classes.fieldPadding, {
+            [classes.desktopFieldPadding]: desktop
+          })}
+        >
           <StyledButton
             title='Log in'
             clickAction={authenticate}
