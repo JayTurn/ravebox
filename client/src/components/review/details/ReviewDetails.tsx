@@ -20,6 +20,8 @@ import {
 } from '@material-ui/core/styles';
 import Grid from '@material-ui/core/Grid';
 import * as React from 'react';
+import ThumbUpRoundedIcon from '@material-ui/icons/ThumbUpRounded';
+import ThumbDownRoundedIcon from '@material-ui/icons/ThumbDownRounded';
 import Typography from '@material-ui/core/Typography';
 import useMediaQuery from '@material-ui/core/useMediaQuery';
 
@@ -28,6 +30,7 @@ import { updateActive } from '../../../store/review/Actions';
 
 // Components.
 import ProductPreview from '../../product/preview/ProductPreview';
+import PublicProfilePreview from '../../user/publicProfilePreview/PublicProfilePreview';
 import RaveVideo from '../../raveVideo/RaveVideo';
 
 // Interfaces.
@@ -43,37 +46,26 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
   fixedVideo: {
   },
   fixedContainer: {
+    width: '100%'
   },
-  mobilePadding: {
+  contentPadding: {
     paddingLeft: theme.spacing(1),
     paddingRight: theme.spacing(1)
   }, 
-  recommendationContainer: {
-    margin: theme.spacing(1, 0),
-    paddingLeft: theme.spacing(1),
-    paddingBottom: '1px'
+  productPreviewContainer: {
+    borderBottom: `1px solid rgba(0,0,0,0.15)`
   },
-  recommendedContainer: {
-    borderLeft: `8px solid ${theme.palette.secondary.main}`,
-  },
-  notRecommendedContainer: {
-    borderLeft: `8px solid ${theme.palette.grey.A400}`,
-  },
-  recommendationText: {
-    display: 'block',
-    fontSize: '.8rem',
-    fontWeight: 600
-  },
-  recommendedText: {
-    color: theme.palette.secondary.dark
-  },
-  notRecommendedText: {
-    color: theme.palette.grey.A400
+  publicProfileContainer: {
+    backgroundColor: `rgba(0,0,0,.03)`
   },
   reviewTitle: {
-    fontSize: '1rem',
+    fontSize: '1.1rem',
     fontWeight: 500,
-    margin: theme.spacing(1, 0, 1)
+    margin: theme.spacing(1, 0, 3)
+  },
+  reviewTitleLarge: {
+    fontSize: '1.25rem',
+    fontWeight: 400
   },
   userHandle: {
     fontSize: '.8rem',
@@ -88,7 +80,7 @@ const ReviewDetails: React.FC<ReviewDetailsProps> = (props: ReviewDetailsProps) 
   // Match the large media query size.
   const classes = useStyles(),
         theme = useTheme(),
-        largeScreen = useMediaQuery(theme.breakpoints.up('sm'));
+        largeScreen = useMediaQuery(theme.breakpoints.up('md'));
 
   // Retrieve the product details from the props.
   const product: Product | undefined = props.review ? props.review.product : undefined;
@@ -101,30 +93,32 @@ const ReviewDetails: React.FC<ReviewDetailsProps> = (props: ReviewDetailsProps) 
       {props.review &&
         <React.Fragment>
           { largeScreen ? (
-            <React.Fragment>
-              <Box style={{maxWidth: '66%'}}>
-                  {props.review.videoURL &&
-                    <RaveVideo url={props.review.videoURL} />
-                  }
-              </Box>
-              <Grid container direction='column'>
-                <Grid item xs={12}>
-                  {product &&
-                    <ProductPreview {...product} />
-                  }
-                </Grid>
-                <Grid item xs={12}>
-                  <Typography variant='h1'>
-                    { props.review.title }
-                  </Typography>
-                  {user &&
-                    <Typography variant='body1'>
-                      {user.handle}
+            <Grid container direction='row'>
+              <Grid item xs={8}>
+                <Grid container direction='column'>
+                  <Grid item>
+                    {props.review.videoURL &&
+                      <RaveVideo url={props.review.videoURL} />
+                    }
+                  </Grid>
+                  <Grid item className={classes.contentPadding}>
+                    <Typography variant='h1' className={clsx(
+                      classes.reviewTitle, classes.reviewTitleLarge
+                    )}>
+                      { props.review.title }
                     </Typography>
+                  </Grid>
+                  {product &&
+                    <Grid item xs={12}>
+                      <ProductPreview {...product} />
+                    </Grid>
                   }
                 </Grid>
               </Grid>
-            </React.Fragment>
+              <Grid item xs={4}>
+                Recommendations
+              </Grid>
+            </Grid>
           ) : (
             <Box className={classes.fixedContainer}>
               <Box className={classes.fixedVideo}>
@@ -133,41 +127,27 @@ const ReviewDetails: React.FC<ReviewDetailsProps> = (props: ReviewDetailsProps) 
                 }
               </Box>
               <Grid container direction='column'>
-                <Grid item xs={12} className={classes.mobilePadding}>
+                <Grid item xs={12} className={classes.contentPadding}>
                   <Typography variant='h1' className={classes.reviewTitle}>
                     { props.review.title }
                   </Typography>
                 </Grid>
-                {props.review && user &&
+                {product &&
                   <Grid item xs={12} className={clsx(
-                      classes.recommendationContainer, {
-                        [classes.recommendedContainer]: props.review.recommended,
-                        [classes.notRecommendedContainer]: !props.review.recommended
-                      }
+                      classes.productPreviewContainer
                     )}
                   >
-                    {props.review.recommended ? (
-                      <Typography variant='body1' className={clsx(
-                          classes.recommendationText,
-                          classes.recommendedText
-                        )}
-                      >
-                        {user.handle} recommends this product
-                      </Typography>
-                    ) : (
-                      <Typography variant='body1' className={clsx(
-                        classes.recommendationText,
-                        classes.notRecommendedText
-                        )}
-                      >
-                        {user.handle} doesn't recommend this product
-                      </Typography>
-                    )}
+                    {user &&
+                      <ProductPreview {...product} recommendation={{handle: user.handle, recommended: props.review.recommended}}/>
+                    }
                   </Grid>
                 }
-                {product &&
-                  <Grid item xs={12}>
-                    <ProductPreview {...product} />
+                {user &&
+                  <Grid item xs={12} className={clsx(
+                      classes.publicProfileContainer
+                    )}
+                  >
+                    <PublicProfilePreview {...user} />
                   </Grid>
                 }
               </Grid>

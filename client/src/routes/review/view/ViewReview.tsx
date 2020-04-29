@@ -63,7 +63,7 @@ const frontloadReviewDetails = async (props: ViewReviewProps) => {
 const ViewReview: React.FC<ViewReviewProps> = (props: ViewReviewProps) => {
 
   return (
-    <Grid container direction='column'>
+    <Grid container direction='column' alignItems='flex-start'>
       <ReviewDetails />
     </Grid>
   );
