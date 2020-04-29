@@ -24,6 +24,7 @@ import ThumbUpRoundedIcon from '@material-ui/icons/ThumbUpRounded';
 import ThumbDownRoundedIcon from '@material-ui/icons/ThumbDownRounded';
 import Typography from '@material-ui/core/Typography';
 import useMediaQuery from '@material-ui/core/useMediaQuery';
+import { withRouter } from 'react-router';
 
 // Actions.
 import { updateActive } from '../../../store/review/Actions';
@@ -49,9 +50,12 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
     width: '100%'
   },
   contentPadding: {
-    paddingLeft: theme.spacing(1),
-    paddingRight: theme.spacing(1)
-  }, 
+    paddingLeft: theme.spacing(2),
+    paddingRight: theme.spacing(2)
+  },
+  columnLarge: {
+    width: '100%'
+  },
   productPreviewContainer: {
     borderBottom: `1px solid rgba(0,0,0,0.15)`
   },
@@ -95,22 +99,39 @@ const ReviewDetails: React.FC<ReviewDetailsProps> = (props: ReviewDetailsProps) 
           { largeScreen ? (
             <Grid container direction='row'>
               <Grid item xs={8}>
-                <Grid container direction='column'>
-                  <Grid item>
+                <Grid container direction='column' alignItems='flex-start'>
+                  <Grid item className={classes.columnLarge}>
                     {props.review.videoURL &&
                       <RaveVideo url={props.review.videoURL} />
                     }
                   </Grid>
-                  <Grid item className={classes.contentPadding}>
-                    <Typography variant='h1' className={clsx(
-                      classes.reviewTitle, classes.reviewTitleLarge
-                    )}>
+                  <Grid item xs={12} className={clsx(
+                      classes.contentPadding,
+                      classes.columnLarge
+                    )}
+                  >
+                    <Typography variant='h1' className={classes.reviewTitle}>
                       { props.review.title }
                     </Typography>
                   </Grid>
                   {product &&
-                    <Grid item xs={12}>
-                      <ProductPreview {...product} />
+                    <Grid item xs={12} className={clsx(
+                        classes.columnLarge,
+                        classes.productPreviewContainer
+                      )}
+                    >
+                      {user &&
+                        <ProductPreview {...product} recommendation={{handle: user.handle, recommended: props.review.recommended}}/>
+                      }
+                    </Grid>
+                  }
+                  {user &&
+                    <Grid item xs={12} className={clsx(
+                        classes.columnLarge,
+                        classes.publicProfileContainer
+                      )}
+                    >
+                      <PublicProfilePreview {...user} />
                     </Grid>
                   }
                 </Grid>
@@ -172,4 +193,6 @@ const mapStateToProps = (state: any, ownProps: ReviewDetailsProps) => {
   };
 };
 
-export default connect(mapStateToProps)(ReviewDetails);
+export default withRouter(connect(
+  mapStateToProps
+)(ReviewDetails));

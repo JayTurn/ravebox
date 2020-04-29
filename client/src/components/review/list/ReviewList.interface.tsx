@@ -3,6 +3,9 @@
  * Interfaces for lists of raves.
  */
 
+// Modules.
+import { RouteComponentProps } from 'react-router';
+
 // Enumerators.
 import { RetrievalStatus } from '../../../utils/api/Api.enum';
 
@@ -15,7 +18,7 @@ import {
 /**
  * Review list properties.
  */
-export interface ReviewListProps {
+export interface ReviewListProps extends RouteComponentProps {
   retrievalStatus: RetrievalStatus;
   reviews: Array<PrivateReview> | Array<Review>;
 }

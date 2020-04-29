@@ -27,11 +27,12 @@ import { PageTitleProps } from './PageTitle.interface';
  */
 const useStyles = makeStyles((theme: Theme) => createStyles({
   desktop: {
-    marginTop: theme.spacing(4)
+    marginTop: theme.spacing(4),
+    padding: theme.spacing(0, 2)
   },
   mobile: {
     margin: theme.spacing(2, 0),
-    padding: theme.spacing(0, 1)
+    padding: theme.spacing(0, 2)
   }
 }));
 

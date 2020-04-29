@@ -32,10 +32,10 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
     width: theme.spacing(5)
   },
   container: {
-    padding: theme.spacing(3, 1)
+    padding: theme.spacing(3, 2)
   },
   handleContainer: {
-    marginLeft: theme.spacing(1)
+    marginLeft: theme.spacing(2)
   },
   raveCount: {
     fontSize: '.7rem',

@@ -30,11 +30,11 @@ import { ProductPreviewProps } from './ProductPreview.interface';
  */
 const useStyles = makeStyles((theme: Theme) => createStyles({
   container: {
-    padding: theme.spacing(1.5, 1)
+    padding: theme.spacing(1.5, 2)
   },
   contentPadding: {
-    paddingLeft: theme.spacing(1),
-    paddingRight: theme.spacing(1)
+    paddingLeft: theme.spacing(2),
+    paddingRight: theme.spacing(2)
   },
   productName: {
     fontSize: '1rem',
@@ -80,7 +80,6 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
     color: '#3E42A3'
   },
   titleContainer: {
-    paddingTop: theme.spacing(1)
   }
 }));
 

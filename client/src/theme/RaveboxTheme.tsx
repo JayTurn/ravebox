@@ -7,30 +7,7 @@
 import { createMuiTheme, Theme } from '@material-ui/core/styles';
 import { CSSProperties } from '@material-ui/styles/withStyles';
 
-// Fonts.
-import Muli from '../fonts/muli/Muli-VariableFont_wght.ttf';
-
-const muli: CSSProperties = {
-  fontFamily: 'Muli',
-  fontStyle: 'normal',
-  fontDisplay: 'swap',
-  fontWeight: 500,
-  src: `
-    local('Muli'),
-    url(${Muli}) format('ttf')
-  `,
-  unicodeRange:
-    'U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF',
-};
-
 export const sharedTheme = {
-  overrides: {
-    MuiCssBaseline: {
-      '@global': {
-        '@font-face': [muli],
-      },
-    }
-  },
   palette: {
     error: {
       light: '#F67135',
@@ -62,13 +39,13 @@ export const sharedTheme = {
 const theme = createMuiTheme({
   ...sharedTheme,
   typography: {
+    fontFamily: '"Muli", sans-serif',
     body1: {
       color: sharedTheme.palette.text.primary
     },
     body2: {
       color: sharedTheme.palette.text.primary
     },
-    fontFamily: 'Muli, Arial, sans-serif',
     h1: {
       color: sharedTheme.palette.text.primary,
       fontSize: '2rem',

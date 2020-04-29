@@ -294,11 +294,17 @@ const AddReviewForm: React.FC<AddReviewFormProps> = (props: AddReviewFormProps) 
 
       // Add an event listener for the upload progress.
       request.upload.addEventListener('progress', (e: ProgressEvent) => {
+        let progress: number = (e.loaded / e.total) * 100;
+
+        if (progress === 100) {
+          progress = 99;
+        }
+
         if (e.loaded) {
           setUploadProgress({
             state: FileUploadState.SUBMITTED,
-            completion: (e.loaded / e.total) * 100}
-          );
+            completion: progress
+          });
           // Set the submission state.
           setSubmitting(false)
         }
@@ -409,7 +415,7 @@ const AddReviewForm: React.FC<AddReviewFormProps> = (props: AddReviewFormProps) 
       {uploadProgress.state === FileUploadState.SUBMITTED &&
         <Fade in={uploadProgress.state === FileUploadState.SUBMITTED} timeout={300}>
           <Grid item xs={12} lg={6}>
-            <Typography variant='h2' color='primary' style={{marginBottom: '2rem'}}>We're uploading your rave video</Typography>
+            <Typography variant='h2' color='primary' style={{marginBottom: '2rem'}}>We're uploading your rave</Typography>
             <Typography variant='body1' style={{marginBottom: '2rem'}}>
               <Box component='p'>
                 Hang tight, please don't close the ravebox window whilst we upload your new video. If you close this window the upload will fail and penguins will perish. Nobody wants that.
@@ -434,7 +440,7 @@ const AddReviewForm: React.FC<AddReviewFormProps> = (props: AddReviewFormProps) 
             <Typography variant='h2' color='primary' style={{marginBottom: '2rem'}}>Upload successful</Typography>
             <Typography variant='body1' gutterBottom>
               <Box component='p'>
-                Great news, we've sucessfully uploaded your new rave video!
+                Great news, we've sucessfully uploaded your new rave!
               </Box>
               <Box component='p'>
                 We need to review your video before it goes live but rest assured, we'll notify you as soon as it is live.

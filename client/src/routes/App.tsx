@@ -9,6 +9,7 @@ import { bindActionCreators, Dispatch, AnyAction } from 'redux';
 import clsx from 'clsx';
 import { connect } from 'react-redux';
 import Container from '@material-ui/core/Container';
+import CssBaseline from '@material-ui/core/CssBaseline';
 import { frontloadConnect } from 'react-frontload';
 import { Helmet } from 'react-helmet';
 import { SnackbarProvider } from 'notistack';
@@ -136,6 +137,7 @@ const App: React.FC<AppProps> = (props: AppProps) => {
    */
   return (
     <ThemeProvider theme={largeScreen ? DesktopRaveboxTheme : RaveboxTheme}>
+      <CssBaseline />
       <StyledSnackbar>
         <div className={`app`}>
           <Helmet title="Ravebox" defaultTitle="Ravebox" />

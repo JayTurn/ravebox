@@ -67,10 +67,10 @@ const useStyles = makeStyles((theme: Theme) =>
     cardHeaderContent: {
       marginBottom: theme.spacing(1),
       maxWidth: '100%',
-      padding: 0
+      padding: theme.spacing(0, 2)
     },
-    cardHeaderContentMobile: {
-      padding: theme.spacing(0, 1)
+    cardHeaderContentLarge: {
+      padding: 0
     },
     divider: {
       marginBottom: theme.spacing(1),
@@ -115,16 +115,13 @@ const useStyles = makeStyles((theme: Theme) =>
     },
     textContent: {
       //borderLeft: `3px solid ${theme.palette.secondary.main}`,
-      paddingBottom: theme.spacing(1),
-      paddingLeft: theme.spacing(1),
-      paddingRight: 0,
-      paddingTop: theme.spacing(1),
+      padding: theme.spacing(2),
       '&:last-child': {
         paddingBottom: theme.spacing(1),
       }
     },
-    textContentMobile: {
-      paddingRight: theme.spacing(1)
+    textContentLarge: {
+      padding: theme.spacing(2, 0)
     },
     title: {
       fontSize: '1rem',
@@ -143,13 +140,13 @@ const PrivateReviewCard: React.FC<PrivateReviewCardProps> = (props: PrivateRevie
   // Define the style classes.
   const classes = useStyles(),
         theme = useTheme(),
-        largeScreen = useMediaQuery(theme.breakpoints.up('md'));
+        largeScreen = useMediaQuery(theme.breakpoints.up('sm'));
 
   return (
     <Card className={classes.cardContainer}>
       <StyledCardHeader
         className={clsx(classes.cardHeaderContent, {
-          [classes.cardHeaderContentMobile]: !largeScreen
+          [classes.cardHeaderContentLarge]: largeScreen
         })}
         style={{maxWidth: '100%'}}
         title={
@@ -183,7 +180,7 @@ const PrivateReviewCard: React.FC<PrivateReviewCardProps> = (props: PrivateRevie
         />
       </CardActionArea>
       <CardContent className={clsx(classes.textContent, {
-          [classes.textContentMobile]: !largeScreen
+          [classes.textContentLarge]: largeScreen
         })}
       >
         <Grid container direction='row' style={{flexWrap: 'nowrap', maxWidth: '100%'}}>

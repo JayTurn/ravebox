@@ -13,13 +13,16 @@ import {
   withStyles
 } from '@material-ui/core/styles';
 import Grid from '@material-ui/core/Grid';
+import Typography from '@material-ui/core/Typography';
 import * as React from 'react';
 import useMediaQuery from '@material-ui/core/useMediaQuery';
+import { withRouter } from 'react-router';
 
 // Components.
 import LoadingReviewList from '../../elements/loadingReviewList/LoadingReviewList';
 import PrivateReviewCard from '../privateReviewCard/PrivateReviewCard';
 import ReviewCard from '../reviewCard/ReviewCard';
+import StyledButton from '../../elements/buttons/StyledButton';
 
 // Enumerators.
 import { RetrievalStatus } from '../../../utils/api/Api.enum';
@@ -51,7 +54,25 @@ const isPrivate: (
  * Create styles for the review lists.
  */
 const useStyles = makeStyles((theme: Theme) => createStyles({
-  mobileListElement: {
+  ctaButton: {
+    marginTop: theme.spacing(3)
+  },
+  ctaWrapper: {
+    marginBottom: theme.spacing(2),
+    marginTop: theme.spacing(2),
+    padding: theme.spacing(0, 1),
+    textAlign: 'center'
+  },
+  ctaWrapperLarge: {
+    padding: theme.spacing(6, 2),
+  },
+  listContainer: {
+    padding: theme.spacing(0)
+  },
+  listContainerLarge: {
+    padding: theme.spacing(0, 2)
+  },
+  listElementSmall: {
     borderBottom: `2px solid ${theme.palette.divider}`,
     margin: theme.spacing(0, 0, 2),
     padding: theme.spacing(0, 0, 2)
@@ -68,7 +89,16 @@ const ReviewList: React.FC<ReviewListProps> = (props: ReviewListProps) => {
   const isPrivateList: boolean = props.reviews.length > 0 && isPrivate(props.reviews[0]);
   const classes = useStyles(),
         theme = useTheme(),
-        mobile = useMediaQuery(theme.breakpoints.only('xs'));
+        largeScreen = useMediaQuery(theme.breakpoints.up('sm'));
+
+  /**
+   * Navigates to the post a review screen.
+   */
+  const postReview: (
+  ) => void = (
+  ): void => {
+    props.history.push('/product/add');
+  }
 
   return (
     <React.Fragment>
@@ -77,26 +107,54 @@ const ReviewList: React.FC<ReviewListProps> = (props: ReviewListProps) => {
           {props.reviews.length > 0 ? (
             <React.Fragment>
               {isPrivateList ? (
-                <Grid container direction='row' spacing={mobile ? 0 : 3}>
-                  {(props.reviews as Array<PrivateReview>).map((review: PrivateReview) => {
-                    return (
-                      <Grid item xs={12} sm={6} md={4} lg={3} key={review._id}
-                        className={clsx({
-                          [classes.mobileListElement]: mobile
-                        })}
-                      >
-                        <PrivateReviewCard {...review} />
+                <React.Fragment>
+                  <Grid container direction='row' spacing={largeScreen ? 3 : 0} className={clsx(
+                    classes.listContainer, {
+                      [classes.listContainerLarge]: largeScreen
+                    })}
+                  >
+                    {(props.reviews as Array<PrivateReview>).map((review: PrivateReview) => {
+                      return (
+                        <Grid item xs={12} sm={6} md={4} lg={3} key={review._id}
+                          className={clsx({
+                            [classes.listElementSmall]: !largeScreen
+                          })}
+                        >
+                          <PrivateReviewCard {...review} />
+                        </Grid>
+                      );
+                    })}
+                  </Grid>
+                  <Grid container direction='column' className={clsx(classes.ctaWrapper, { 
+                      [classes.ctaWrapperLarge]: largeScreen
+                    })}
+                  >
+                    <Grid item xs={12}>
+                      <Typography variant='h2'>
+                        Have something else to rave about?
+                      </Typography>
+                    </Grid>
+                    <Grid item xs={12}>
+                      <Grid container direction='column' alignItems='center' className={classes.ctaButton}>
+                        <Grid item xs={12}>
+                          <StyledButton
+                            color='secondary'
+                            clickAction={postReview}
+                            submitting={false}
+                            title='Post a rave'
+                          />
+                        </Grid>
                       </Grid>
-                    );
-                  })}
-                </Grid>
+                    </Grid>
+                  </Grid>
+                </React.Fragment>
               ) : (
                 <Grid container direction='row' spacing={3}>
                   {(props.reviews as Array<Review>).map((review: Review) => {
                     return (
                       <Grid item xs={12} sm={6} md={4} lg={3} key={review._id}
                         className={clsx({
-                          [classes.mobileListElement]: mobile
+                          [classes.listElementSmall]: !largeScreen
                         })}
                       >
                         <ReviewCard {...review} />
@@ -119,4 +177,4 @@ const ReviewList: React.FC<ReviewListProps> = (props: ReviewListProps) => {
   );
 }
 
-export default ReviewList;
+export default withRouter(ReviewList);
