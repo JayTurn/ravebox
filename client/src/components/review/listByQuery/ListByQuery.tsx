@@ -96,6 +96,40 @@ const frontloadReviewDetails = async (props: ListByQueryProps) => {
 };
 
 /**
+ * Removes the currrent review from the list if it's present.
+ *
+ * @param { Review } active - the currently active review.
+ * @param { Array<Review> } reviews - the list of reviews.
+ *
+ * @param Array<Review>
+ */
+const removeActiveReview: (
+  active: Review
+) => (
+  reviews: Array<Review>
+) => Array<Review> = (
+  active: Review
+) => (
+  reviews: Array<Review>
+): Array<Review> => {
+  const list: Array<Review> = []; 
+
+  let i: number = 0;
+
+  do {
+    const current: Review = {...reviews[i]};
+
+    if (current._id !== active._id) {
+      list.push({...current});
+    }
+
+    i++;
+  } while (i < reviews.length);
+
+  return list;
+}
+
+/**
  * Returns the list of reviews to the appropriate list.
  *
  * @param { ListByQueryProps } props - the query properties.
@@ -106,7 +140,11 @@ const ListByQuery: React.FC<ListByQueryProps> = (props: ListByQueryProps) => {
   switch (props.listType) {
     case ReviewListType.PRODUCT:
       if (props.listByProduct && props.listByProduct.length > 0) {
-        reviews = [...props.listByProduct];
+        if (props.activeReview) {
+          reviews = removeActiveReview(props.activeReview)(props.listByProduct);
+        } else {
+          reviews = [...props.listByProduct];
+        }
       }
       break;
     default:
@@ -158,11 +196,13 @@ const mapDispatchToProps = (dispatch: Dispatch<AnyAction>) =>
  */
 const mapStateToProps = (state: any, ownProps: ListByQueryProps) => {
   // Retrieve the review from the active properties.
-  const listByProduct: Array<Review> = state.review ? state.review.listByProduct : [];
+  const listByProduct: Array<Review> = state.review ? state.review.listByProduct : [],
+        activeReview: Review = state.review ? state.review.active : undefined;
 
   return {
     ...ownProps,
-    listByProduct 
+    listByProduct,
+    activeReview
   };
 };
 

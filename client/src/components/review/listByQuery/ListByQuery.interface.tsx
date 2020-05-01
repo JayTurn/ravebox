@@ -18,6 +18,7 @@ import { Review } from '../Review.interface';
  * Properties for the list of reviews by query request.
  */
 export interface ListByQueryProps {
+  activeReview?: Review;
   listByProduct?: Array<Review>;
   listType: ReviewListType;
   query: string;
