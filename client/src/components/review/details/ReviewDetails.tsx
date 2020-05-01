@@ -30,9 +30,13 @@ import { withRouter } from 'react-router';
 import { updateActive } from '../../../store/review/Actions';
 
 // Components.
+import ListByQuery from '../listByQuery/ListByQuery';
 import ProductPreview from '../../product/preview/ProductPreview';
 import PublicProfilePreview from '../../user/publicProfilePreview/PublicProfilePreview';
 import RaveVideo from '../../raveVideo/RaveVideo';
+
+// Enumerators.
+import { ReviewListType } from '../listByQuery/ListByQuery.enum';
 
 // Interfaces.
 import { Product } from '../../product/Product.interface';
@@ -56,8 +60,28 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
   columnLarge: {
     width: '100%'
   },
+  moreReviewsTitle: {
+    margin: theme.spacing(2),
+    fontSize: '.8rem',
+    fontWeight: 700,
+    textTransform: 'uppercase'
+  },
+  productBrand: {
+    fontSize: '.9rem',
+    fontWeight: 600
+  },
+  productListTitleContainer: {
+    padding: theme.spacing(0, 2),
+    margin: theme.spacing(2, 0)
+  },
+  productName: {
+    fontSize: '1.1rem',
+    fontWeight: 600
+  },
   productPreviewContainer: {
-    borderBottom: `1px solid rgba(0,0,0,0.15)`
+    borderBottom: `1px solid rgba(0,0,0,0.15)`,
+    paddingLeft: theme.spacing(2),
+    paddingRight: theme.spacing(2)
   },
   publicProfileContainer: {
     backgroundColor: `rgba(0,0,0,.03)`
@@ -70,6 +94,36 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
   reviewTitleLarge: {
     fontSize: '1.25rem',
     fontWeight: 400
+  },
+  sidebarContainer: {
+    //backgroundColor: theme.palette.common.white,
+    //padding: theme.spacing(2)
+  },
+  sidebarMidLine: {
+    backgroundColor: theme.palette.secondary.main,
+    height: 1,
+    position: 'absolute',
+    top: '50%',
+    width: '100%',
+    zIndex: 0
+  },
+  sidebarMoreContainer: {
+    margin: theme.spacing(0, 0, 2),
+    position: 'relative',
+    width: '100%',
+    zIndex: 1
+  },
+  sidebarMoreText: {
+    display: 'block',
+    position: 'relative',
+    textAlign: 'center',
+    zIndex: 1,
+  },
+  sidebarMoreTextSpan: {
+    backgroundColor: theme.palette.background.default,
+    color: theme.palette.secondary.dark,
+    paddingLeft: theme.spacing(1),
+    paddingRight: theme.spacing(1)
   },
   userHandle: {
     fontSize: '.8rem',
@@ -86,11 +140,30 @@ const ReviewDetails: React.FC<ReviewDetailsProps> = (props: ReviewDetailsProps) 
         theme = useTheme(),
         largeScreen = useMediaQuery(theme.breakpoints.up('md'));
 
+  const [review, setReview] = React.useState<Review>({
+    _id: '',
+    created: new Date(),
+    title: '',
+    recommended: 0,
+    url: '',
+    videoURL: ''
+  });
+
+  React.useEffect(() => {
+    if (props.review) {
+      if (props.review._id !== review._id) {
+        setReview({...props.review});
+      }
+    }
+  }, [review, props.review]);
+
+  /*
   // Retrieve the product details from the props.
   const product: Product | undefined = props.review ? props.review.product : undefined;
 
   // Retrieve the user details from the props.
   const user: PublicProfile | undefined = props.review ? props.review.user : undefined;
+  */
 
   return (
     <React.Fragment>
@@ -101,8 +174,8 @@ const ReviewDetails: React.FC<ReviewDetailsProps> = (props: ReviewDetailsProps) 
               <Grid item xs={8}>
                 <Grid container direction='column' alignItems='flex-start'>
                   <Grid item className={classes.columnLarge}>
-                    {props.review.videoURL &&
-                      <RaveVideo url={props.review.videoURL} />
+                    {review.videoURL &&
+                      <RaveVideo url={review.videoURL} />
                     }
                   </Grid>
                   <Grid item xs={12} className={clsx(
@@ -111,40 +184,63 @@ const ReviewDetails: React.FC<ReviewDetailsProps> = (props: ReviewDetailsProps) 
                     )}
                   >
                     <Typography variant='h1' className={classes.reviewTitle}>
-                      { props.review.title }
+                      { review.title }
                     </Typography>
                   </Grid>
-                  {product &&
+                  {review.product &&
                     <Grid item xs={12} className={clsx(
                         classes.columnLarge,
                         classes.productPreviewContainer
                       )}
                     >
-                      {user &&
-                        <ProductPreview {...product} recommendation={{handle: user.handle, recommended: props.review.recommended}}/>
+                      {review.user &&
+                        <ProductPreview {...review.product} recommendation={{handle: review.user.handle, recommended: review.recommended}}/>
                       }
                     </Grid>
                   }
-                  {user &&
+                  {review.user &&
                     <Grid item xs={12} className={clsx(
                         classes.columnLarge,
                         classes.publicProfileContainer
                       )}
                     >
-                      <PublicProfilePreview {...user} />
+                      <PublicProfilePreview {...review.user} />
                     </Grid>
                   }
                 </Grid>
               </Grid>
-              <Grid item xs={4}>
-                Recommendations
+              <Grid item xs={4} className={classes.sidebarContainer}>
+                {review.product &&
+                  <ListByQuery
+                    listType={ReviewListType.PRODUCT}
+                    query={review.product._id} 
+                    sidebar={true}
+                    title={
+                      <Grid
+                        container
+                        direction='column'
+                        alignItems='flex-start'
+                        className={classes.productListTitleContainer}
+                      >
+                        <Grid item xs={12}>
+                          <Typography variant='body2' className={clsx(classes.productBrand)}>
+                            {review.product.brand}
+                          </Typography>
+                          <Typography variant='body1' className={clsx(classes.productName)}>
+                            {review.product.name} reviews
+                          </Typography>
+                        </Grid>
+                      </Grid>
+                    }
+                  />
+                }
               </Grid>
             </Grid>
           ) : (
             <Box className={classes.fixedContainer}>
               <Box className={classes.fixedVideo}>
                 {props.review.videoURL &&
-                  <RaveVideo url={props.review.videoURL} />
+                  <RaveVideo url={review.videoURL || ''} />
                 }
               </Box>
               <Grid container direction='column'>
@@ -153,22 +249,29 @@ const ReviewDetails: React.FC<ReviewDetailsProps> = (props: ReviewDetailsProps) 
                     { props.review.title }
                   </Typography>
                 </Grid>
-                {product &&
+                {review.product &&
                   <Grid item xs={12} className={clsx(
                       classes.productPreviewContainer
                     )}
                   >
-                    {user &&
-                      <ProductPreview {...product} recommendation={{handle: user.handle, recommended: props.review.recommended}}/>
+                    {review.user &&
+                      <ProductPreview {...review.product} recommendation={{handle: review.user.handle, recommended: props.review.recommended}}/>
                     }
                   </Grid>
                 }
-                {user &&
+                {review.user &&
                   <Grid item xs={12} className={clsx(
                       classes.publicProfileContainer
                     )}
                   >
-                    <PublicProfilePreview {...user} />
+                    <PublicProfilePreview {...review.user} />
+                  </Grid>
+                }
+                {review.product &&
+                  <Grid item xs={12}>
+                    <Typography variant='body1' className={classes.moreReviewsTitle}>
+                      More {review.product.name} reviews
+                    </Typography>
                   </Grid>
                 }
               </Grid>

@@ -61,8 +61,10 @@ const useStyles = makeStyles((theme: Theme) =>
       fontWeight: 500
     },
     cardContainer: {
+      backgroundColor: 'transparent',
       borderRadius: 0,
-      boxShadow: 'none'
+      boxShadow: 'none',
+      padding: theme.spacing(2, 0)
     },
     cardHeaderContent: {
       marginBottom: theme.spacing(1),

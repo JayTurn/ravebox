@@ -21,5 +21,5 @@ export type ReviewAction = ActionType<typeof actions>;
  */
 export interface ReviewStore {
   active: Review;
-  list: Array<Review>;
+  listByProduct: Array<Review>;
 }

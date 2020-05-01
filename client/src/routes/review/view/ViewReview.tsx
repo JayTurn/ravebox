@@ -4,13 +4,17 @@
  */
 
 // Modules.
+import {
+  AnyAction,
+  bindActionCreators,
+  Dispatch
+} from 'redux';
 import API from '../../../utils/api/Api.model';
 import Grid from '@material-ui/core/Grid';
 import * as React from 'react';
 import { frontloadConnect } from 'react-frontload';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router';
-import { bindActionCreators, Dispatch, AnyAction } from 'redux';
 
 // Actions.
 import { updateActive } from '../../../store/review/Actions';
@@ -23,6 +27,9 @@ import {
   RequestType,
   RetrievalStatus
 } from '../../../utils/api/Api.enum';
+
+// Hooks.
+import { useRetrieveReviewByURL } from '../../../components/review/useRetrieveReviewByURL.hook';
 
 // Interfaces.
 import { ViewReviewProps } from './ViewReview.interface';
@@ -41,8 +48,8 @@ const frontloadReviewDetails = async (props: ViewReviewProps) => {
   const { brand, productName, reviewTitle } = {...props.match.params};
 
   // If we don't have a review title, redirect.
-
   const path: string = `${brand}/${productName}/${reviewTitle}`;
+
   await API.requestAPI<ReviewResponse>(`review/view/${path}`, {
     method: RequestType.GET
   })
@@ -61,10 +68,18 @@ const frontloadReviewDetails = async (props: ViewReviewProps) => {
  * Route to retrieve a review and present the display components.
  */
 const ViewReview: React.FC<ViewReviewProps> = (props: ViewReviewProps) => {
+  const {review, reviewStatus} = useRetrieveReviewByURL({
+    existing: props.review ? props.review.url : '',
+    review: props.review,
+    setReview: props.updateActive,
+    requested: props.match.params
+  })
 
   return (
     <Grid container direction='column' alignItems='flex-start'>
-      <ReviewDetails />
+      {props.review &&
+        <ReviewDetails key={props.review._id}/>
+      }
     </Grid>
   );
 }
@@ -102,7 +117,7 @@ export default withRouter(connect(
   frontloadReviewDetails,
   {
     noServerRender: false,     
-    onMount: true,
+    onMount: false,
     onUpdate: false
   })(ViewReview)
 ));

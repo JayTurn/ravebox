@@ -94,6 +94,12 @@ export default class ReviewController {
       ReviewController.RetrieveListByHandle
     );
 
+    // Retrieve a list of reviews from the same product.
+    router.get(
+      `${path}/list/product/:id`,
+      ReviewController.RetrieveListByProductId
+    );
+
     // Review published successfully.
     router.post(
       `${path}/published`,
@@ -390,6 +396,7 @@ export default class ReviewController {
       response.status(401).json(responseObject.data);
     });
   }
+
   /**
    * Retrieves a list of reviews owned by the currently logged in user.
    *
@@ -594,6 +601,83 @@ export default class ReviewController {
           message: `We experienced an issue retrieving reviews for the user`
         }
       }, 404, `We experienced an issue retrieving reviews for the user`);
+
+      // Return the error response for the user.
+      response.status(responseObject.status).json(responseObject.data);
+    });
+  }
+
+  /**
+   * Retrieves a list of reviews based on the product id.
+   *
+   * @param {object} req
+   * The request object.
+   *
+   * @param {object} res
+   * The response object.
+   */
+  static RetrieveListByProductId(request: Request, response: Response): void {
+    const id: string = request.params.id;
+
+    if (!id) {
+      // Define the responseObject.
+      const responseObject = Connect.setResponse({
+          data: {
+            errorCode: 'PRODUCT_ID_PROVIDED_FOR_REVIEWS',
+            title: `The product id is missing from the request`
+          }
+        }, 404, `The product id is missing from the request`);
+
+      // Return the response.
+      response.status(responseObject.status).json(responseObject.data);
+
+      return;
+    }
+
+    Review.find({
+      product: id,
+      published: Workflow.PUBLISHED
+    })
+    .populate({
+      path: 'product',
+      model: 'Product',
+    })
+    .populate({
+      path: 'user',
+      model: 'User'
+    })
+    .then((reviews: Array<ReviewDocument>) => {
+
+      // Sort the results randomly.
+      const sortedReviews: Array<ReviewDetails> = [],
+            tempReviews: Array<ReviewDocument> = [...reviews];
+
+      for (let i = reviews.length - 1; i >= 0; i--) {
+        const j = Math.floor(Math.random() * i);
+        const temp: ReviewDocument = tempReviews[i];
+        sortedReviews[i] = tempReviews[j].details;
+        tempReviews[j] = temp;
+      }
+
+      // Set the response object.
+      const responseObject: ResponseObject = Connect.setResponse({
+        data: {
+          reviews: sortedReviews
+        }
+      }, 200, 'Reviews found');
+
+      // Return the response for the authenticated user.
+      response.status(responseObject.status).json(responseObject.data);
+    })
+    .catch(() => {
+
+      // Return an error indicating the list of reviews weren't found.
+      const responseObject = Connect.setResponse({
+        data: {
+          errorCode: 'PRODUCT_REVIEWS_NOT_FOUND',
+          message: `We experienced an issue retrieving reviews for the requested product`
+        }
+      }, 404, `We experienced an issue retrieving reviews for the requested product`);
 
       // Return the error response for the user.
       response.status(responseObject.status).json(responseObject.data);

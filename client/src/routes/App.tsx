@@ -106,9 +106,19 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
   },
   lgContentOpen: {
     width: `calc(100% - ${lgOpenDrawerWidth}px)`,
-    marginLeft: lgOpenDrawerWidth
+    marginLeft: lgOpenDrawerWidth,
+    maxWidth: `calc(100% - ${lgOpenDrawerWidth}px)`,
   },
   lgContentClosed: {
+    width: `calc(100% - ${lgClosedDrawerWidth}px)`,
+    marginLeft: lgClosedDrawerWidth,
+    maxWidth: `calc(100% - ${lgClosedDrawerWidth}px)`,
+  },
+  xLgContentOpen: {
+    width: `calc(100% - ${lgOpenDrawerWidth}px)`,
+    marginLeft: lgOpenDrawerWidth,
+  },
+  xLgContentClosed: {
     width: `calc(100% - ${lgClosedDrawerWidth}px)`,
     marginLeft: lgClosedDrawerWidth
   }
@@ -123,6 +133,7 @@ const App: React.FC<AppProps> = (props: AppProps) => {
   const theme = useTheme(),
         mediumScreen = useMediaQuery(theme.breakpoints.only('sm')),
         largeScreen = useMediaQuery(theme.breakpoints.up('md')),
+        extraLargeScreen = useMediaQuery(theme.breakpoints.up('xl')),
         classes = useStyles();
 
   // Retrieve the user profile if we have a valid token.

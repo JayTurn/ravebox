@@ -30,11 +30,7 @@ import { ProductPreviewProps } from './ProductPreview.interface';
  */
 const useStyles = makeStyles((theme: Theme) => createStyles({
   container: {
-    padding: theme.spacing(1.5, 2)
-  },
-  contentPadding: {
-    paddingLeft: theme.spacing(2),
-    paddingRight: theme.spacing(2)
+    padding: theme.spacing(1.5, 0)
   },
   productName: {
     fontSize: '1rem',

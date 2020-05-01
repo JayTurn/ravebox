@@ -45,7 +45,7 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
     })
   },
   drawerClosed: {
-    borderRight: '1px solid #E9EAFF',
+    boxShadow: '1px 0 0 #E9EAFF',
     border: 'none',
     width: 70,
     transition: theme.transitions.create('width', {

@@ -59,7 +59,7 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
   },
   ctaWrapper: {
     marginBottom: theme.spacing(2),
-    marginTop: theme.spacing(2),
+    marginTop: theme.spacing(4),
     padding: theme.spacing(0, 1),
     textAlign: 'center'
   },
@@ -73,9 +73,8 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
     padding: theme.spacing(0, 2)
   },
   listElementSmall: {
-    borderBottom: `2px solid ${theme.palette.divider}`,
-    margin: theme.spacing(0, 0, 2),
-    padding: theme.spacing(0, 0, 2)
+    borderBottom: `6px solid rgba(0,0,0,0.05)`,
+    boxShadow: `inset 0 -1px 0 rgba(0,0,0,0.1)`
   }
 }));
 
