@@ -19,10 +19,12 @@ import { updateListByProduct } from '../../../store/review/Actions';
 
 // Components.
 import ReviewList from '../list/ReviewList';
+import ScrollableReviewList from '../scrollableReviewList/ScrollableReviewList';
 import SidebarReviewList from '../sidebarReviewList/SidebarReviewList';
 
 // Enumerators.
 import {
+  PresentationType,
   QueryPath,
   ReviewListType
 } from './ListByQuery.enum';
@@ -112,19 +114,28 @@ const ListByQuery: React.FC<ListByQueryProps> = (props: ListByQueryProps) => {
 
   return (
     <React.Fragment>
-      {props.sidebar ? (
+      {props.presentationType === PresentationType.SCROLLABLE &&
+        <ScrollableReviewList
+          listType={props.listType}
+          reviews={reviews}
+          retrievalStatus={RetrievalStatus.SUCCESS}
+          title={props.title}
+        />
+      }
+      {props.presentationType === PresentationType.SIDEBAR &&
         <SidebarReviewList
           listType={props.listType}
           reviews={reviews}
           retrievalStatus={RetrievalStatus.SUCCESS}
           title={props.title}
         />
-      ) : (
+      }
+      {props.presentationType === PresentationType.GRID &&
         <ReviewList
           reviews={reviews}
           retrievalStatus={RetrievalStatus.SUCCESS}
         />
-      )}
+      }
     </React.Fragment>
   );
 }

@@ -29,9 +29,7 @@ import { ProductPreviewProps } from './ProductPreview.interface';
  * Search product list.
  */
 const useStyles = makeStyles((theme: Theme) => createStyles({
-  container: {
-    padding: theme.spacing(1.5, 0)
-  },
+  container: { },
   productName: {
     fontSize: '1rem',
     fontWeight: 600
@@ -70,7 +68,7 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
   },
   recommendedText: {
     color: theme.palette.secondary.dark,
-    marginBottom: '2px'
+    marginBottom: '6px'
   },
   title: {
     color: '#3E42A3'

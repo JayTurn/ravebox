@@ -16,3 +16,12 @@ export enum QueryPath {
 export enum ReviewListType {
   PRODUCT = 'product'
 }
+
+/**
+ * Presentation display for the list type.
+ */
+export enum PresentationType {
+  GRID = 'grid',
+  SCROLLABLE = 'scrollable',
+  SIDEBAR = 'sidebar'
+}

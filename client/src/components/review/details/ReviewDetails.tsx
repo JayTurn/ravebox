@@ -36,7 +36,10 @@ import PublicProfilePreview from '../../user/publicProfilePreview/PublicProfileP
 import RaveVideo from '../../raveVideo/RaveVideo';
 
 // Enumerators.
-import { ReviewListType } from '../listByQuery/ListByQuery.enum';
+import {
+  PresentationType,
+  ReviewListType
+} from '../listByQuery/ListByQuery.enum';
 
 // Interfaces.
 import { Product } from '../../product/Product.interface';
@@ -54,8 +57,7 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
     width: '100%'
   },
   contentPadding: {
-    paddingLeft: theme.spacing(2),
-    paddingRight: theme.spacing(2)
+    padding: theme.spacing(0, 2)
   },
   columnLarge: {
     width: '100%'
@@ -80,8 +82,7 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
   },
   productPreviewContainer: {
     borderBottom: `1px solid rgba(0,0,0,0.15)`,
-    paddingLeft: theme.spacing(2),
-    paddingRight: theme.spacing(2)
+    padding: theme.spacing(1, 2, 2)
   },
   publicProfileContainer: {
     backgroundColor: `rgba(0,0,0,.03)`
@@ -89,11 +90,14 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
   reviewTitle: {
     fontSize: '1.1rem',
     fontWeight: 500,
-    margin: theme.spacing(1, 0, 3)
+    margin: 0
   },
   reviewTitleLarge: {
     fontSize: '1.25rem',
     fontWeight: 400
+  },
+  reviewTitleSection: {
+    marginTop: theme.spacing(2)
   },
   sidebarContainer: {
     //backgroundColor: theme.palette.common.white,
@@ -180,7 +184,8 @@ const ReviewDetails: React.FC<ReviewDetailsProps> = (props: ReviewDetailsProps) 
                   </Grid>
                   <Grid item xs={12} className={clsx(
                       classes.contentPadding,
-                      classes.columnLarge
+                      classes.columnLarge,
+                      classes.reviewTitleSection
                     )}
                   >
                     <Typography variant='h1' className={classes.reviewTitle}>
@@ -214,7 +219,7 @@ const ReviewDetails: React.FC<ReviewDetailsProps> = (props: ReviewDetailsProps) 
                   <ListByQuery
                     listType={ReviewListType.PRODUCT}
                     query={review.product._id} 
-                    sidebar={true}
+                    presentationType={PresentationType.SIDEBAR}
                     title={
                       <Grid
                         container
@@ -244,14 +249,18 @@ const ReviewDetails: React.FC<ReviewDetailsProps> = (props: ReviewDetailsProps) 
                 }
               </Box>
               <Grid container direction='column'>
-                <Grid item xs={12} className={classes.contentPadding}>
+                <Grid item xs={12} className={clsx(
+                  classes.contentPadding,
+                  classes.reviewTitleSection
+                )}>
                   <Typography variant='h1' className={classes.reviewTitle}>
                     { props.review.title }
                   </Typography>
                 </Grid>
                 {review.product &&
                   <Grid item xs={12} className={clsx(
-                      classes.productPreviewContainer
+                      classes.productPreviewContainer,
+                      classes.contentPadding
                     )}
                   >
                     {review.user &&
@@ -269,9 +278,16 @@ const ReviewDetails: React.FC<ReviewDetailsProps> = (props: ReviewDetailsProps) 
                 }
                 {review.product &&
                   <Grid item xs={12}>
-                    <Typography variant='body1' className={classes.moreReviewsTitle}>
-                      More {review.product.name} reviews
-                    </Typography>
+                    <ListByQuery
+                      listType={ReviewListType.PRODUCT}
+                      query={review.product._id} 
+                      presentationType={PresentationType.SCROLLABLE}
+                      title={
+                        <Typography variant='body1' className={classes.moreReviewsTitle}>
+                          More reviews for this product
+                        </Typography>
+                      }
+                    />
                   </Grid>
                 }
               </Grid>

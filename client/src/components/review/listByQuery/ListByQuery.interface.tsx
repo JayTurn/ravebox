@@ -5,6 +5,7 @@
 
 // Enumerators.
 import {
+  PresentationType,
   QueryPath,
   ReviewListType
 } from './ListByQuery.enum';
@@ -20,7 +21,7 @@ export interface ListByQueryProps {
   listByProduct?: Array<Review>;
   listType: ReviewListType;
   query: string;
-  sidebar?: boolean;
+  presentationType?: PresentationType;
   title?: React.ReactElement;
   updateListByProduct?: (reviews: Array<Review>) => void;
 }
