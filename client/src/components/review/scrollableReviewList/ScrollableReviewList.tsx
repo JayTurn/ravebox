@@ -95,6 +95,7 @@ const ScrollableReviewList: React.FC<ScrollableReviewListProps> = (props: Scroll
                   />
                 )})
               }
+              inertiaScrolling={true}
               itemClass={classes.listElement}
               onSelect={navigate}
             />
