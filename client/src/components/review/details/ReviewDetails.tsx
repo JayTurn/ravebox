@@ -31,6 +31,7 @@ import { updateActive } from '../../../store/review/Actions';
 
 // Components.
 import ListByQuery from '../listByQuery/ListByQuery';
+import ListTitle from '../../elements/listTitle/ListTitle';
 import ProductPreview from '../../product/preview/ProductPreview';
 import PublicProfilePreview from '../../user/publicProfilePreview/PublicProfilePreview';
 import RaveVideo from '../../raveVideo/RaveVideo';
@@ -175,7 +176,7 @@ const ReviewDetails: React.FC<ReviewDetailsProps> = (props: ReviewDetailsProps) 
         <React.Fragment>
           { largeScreen ? (
             <Grid container direction='row'>
-              <Grid item xs={8}>
+              <Grid item xs={7} lg={8}>
                 <Grid container direction='column' alignItems='flex-start'>
                   <Grid item className={classes.columnLarge}>
                     {review.videoURL &&
@@ -214,28 +215,14 @@ const ReviewDetails: React.FC<ReviewDetailsProps> = (props: ReviewDetailsProps) 
                   }
                 </Grid>
               </Grid>
-              <Grid item xs={4} className={classes.sidebarContainer}>
+              <Grid item xs={5} lg={4} className={classes.sidebarContainer}>
                 {review.product &&
                   <ListByQuery
                     listType={ReviewListType.PRODUCT}
                     query={review.product._id} 
                     presentationType={PresentationType.SIDEBAR}
                     title={
-                      <Grid
-                        container
-                        direction='column'
-                        alignItems='flex-start'
-                        className={classes.productListTitleContainer}
-                      >
-                        <Grid item xs={12}>
-                          <Typography variant='body2' className={clsx(classes.productBrand)}>
-                            {review.product.brand}
-                          </Typography>
-                          <Typography variant='body1' className={clsx(classes.productName)}>
-                            {review.product.name} reviews
-                          </Typography>
-                        </Grid>
-                      </Grid>
+                      <ListTitle title={`More reviews for this product`} />
                     }
                   />
                 }
@@ -283,9 +270,7 @@ const ReviewDetails: React.FC<ReviewDetailsProps> = (props: ReviewDetailsProps) 
                       query={review.product._id} 
                       presentationType={PresentationType.SCROLLABLE}
                       title={
-                        <Typography variant='body1' className={classes.moreReviewsTitle}>
-                          More reviews for this product
-                        </Typography>
+                        <ListTitle title={`More reviews for this product`} />
                       }
                     />
                   </Grid>

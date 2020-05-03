@@ -81,8 +81,8 @@ const useStyles = makeStyles((theme: Theme) =>
     },
     mediaContainer: {
       width: `100%`,
-      maxWidth: 185,
-      minWidth: 185,
+      maxWidth: 170,
+      minWidth: 170,
       height: 'calc(100% * 0.56)',
       overflow: 'hidden'
     },
@@ -92,7 +92,7 @@ const useStyles = makeStyles((theme: Theme) =>
     },
     handleText: {
       display: 'block',
-      fontSize: '.9rem',
+      fontSize: '.8rem',
       fontWeight: 500,
       marginTop: theme.spacing(1)
     },
@@ -129,7 +129,7 @@ const useStyles = makeStyles((theme: Theme) =>
       padding: theme.spacing(2, 0)
     },
     titleText: {
-      fontSize: '.95rem',
+      fontSize: '.9rem',
       lineHeight: '1rem',
       fontWeight: 700,
       display: `-webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2`,

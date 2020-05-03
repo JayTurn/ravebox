@@ -41,6 +41,7 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
   },
   listElement: {
     cursor: 'pointer',
+    marginBottom: theme.spacing(2),
     padding: theme.spacing(0, 1),
     '&:focus': {
       outline: 'none'

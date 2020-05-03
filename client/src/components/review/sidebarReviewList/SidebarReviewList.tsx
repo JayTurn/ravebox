@@ -11,6 +11,7 @@ import {
   Theme,
   withStyles
 } from '@material-ui/core/styles';
+import Divider from '@material-ui/core/Divider';
 import Grid from '@material-ui/core/Grid';
 import Typography from '@material-ui/core/Typography';
 import * as React from 'react';
@@ -32,8 +33,11 @@ import { SidebarReviewListProps } from './SidebarReviewList.interface';
  * Create styles for the review lists.
  */
 const useStyles = makeStyles((theme: Theme) => createStyles({
+  divider: {
+    margin: theme.spacing(2)
+  },
   listContainer: {
-    padding: theme.spacing(0)
+    padding: theme.spacing(0),
   },
   listElement: {
     //margin: theme.spacing(0, 0, 2)
@@ -72,6 +76,7 @@ const SidebarReviewList: React.FC<SidebarReviewListProps> = (props: SidebarRevie
                   </Grid>
                 );
               })}
+              <Divider className={classes.divider}/>
             </Grid>
           ) : (
             <React.Fragment>
