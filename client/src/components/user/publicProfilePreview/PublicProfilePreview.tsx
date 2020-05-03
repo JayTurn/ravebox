@@ -37,6 +37,9 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
   handleContainer: {
     marginLeft: theme.spacing(2)
   },
+  handleText: {
+    fontWeight: 600
+  },
   raveCount: {
     fontSize: '.7rem',
     textTransform: 'uppercase'
@@ -56,7 +59,7 @@ const PublicProfilePreview: React.FC<PublicProfilePreviewProps> = (props: Public
         <Avatar alt={props.handle} className={classes.avatarIcon}>j</Avatar>
       </Grid>
       <Grid item className={classes.handleContainer}>
-        <Typography variant='body1'>{props.handle}</Typography>
+        <Typography variant='body1' className={classes.handleText}>{props.handle}</Typography>
         <Typography variant='body1' className={classes.raveCount}>5 raves | 100 subscribers</Typography>
       </Grid>
     </Grid>

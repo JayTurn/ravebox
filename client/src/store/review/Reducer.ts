@@ -49,17 +49,17 @@ export default combineReducers<ReviewStore, ReviewAction>({
   },
 
   /**
-   * Define the review list reducer.
+   * Define the review list by product reducer.
    *
    * @param { Array<Review> } reviews - the current list of reviews state.
    * @param {  } action - the filters action.
    *
    * @return Array<Review>
    */
-  list: (review: Array<Review> = [emptyReview], action: ReviewAction) => {
+  listByProduct: (review: Array<Review> = [emptyReview], action: ReviewAction) => {
     // Update the configuration based on the redux action triggered.
     switch (action.type) {
-      case ReviewVerb.UPDATE_LIST:
+      case ReviewVerb.UPDATE_LIST_BY_PRODUCT:
         // Append the new value to the list of watched items.
         return action.payload;
       default:

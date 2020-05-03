@@ -11,3 +11,10 @@ export enum Workflow {
   PUBLISHED = 1,
   DRAFT = 2
 }
+
+/**
+ * Emphasis enumerator to be used for setting hierarchy.
+ */
+export enum ListDisplayType {
+  PRODUCT = 'product'
+}

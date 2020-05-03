@@ -19,6 +19,7 @@ import {
  * Review list properties.
  */
 export interface ReviewListProps extends RouteComponentProps {
+  singleColumn?: boolean;
   retrievalStatus: RetrievalStatus;
   reviews: Array<PrivateReview> | Array<Review>;
 }

@@ -63,3 +63,13 @@ export interface RetrieveReviewByURLParams {
   productName: string;
   reviewTitle: string;
 }
+
+/**
+ * Review url path params.
+ */
+export interface RetrieveReviewParams {
+  existing: string;
+  requested: RetrieveReviewByURLParams;
+  review?: Review;
+  setReview?: (review: Review) => void;
+}

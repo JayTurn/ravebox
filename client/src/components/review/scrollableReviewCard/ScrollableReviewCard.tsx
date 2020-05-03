@@ -1,6 +1,6 @@
 /**
- * PrivateReviewCard.tsx
- * Card display of the private review.
+ * ScrollableReviewCard.tsx
+ * Card display of the review positioned in the sidebar.
  */
 
 // Modules.
@@ -22,33 +22,23 @@ import {
 import Divider from '@material-ui/core/Divider';
 import Grid from '@material-ui/core/Grid';
 import IconButton from '@material-ui/core/IconButton';
+import Link from '@material-ui/core/Link';
 import MoreVertIcon from '@material-ui/icons/MoreVert';
 import { NavLink } from 'react-router-dom';
 import PlayArrowRoundedIcon from '@material-ui/icons/PlayArrowRounded';
+import ThumbUpRoundedIcon from '@material-ui/icons/ThumbUpRounded';
+import ThumbDownRoundedIcon from '@material-ui/icons/ThumbDownRounded';
 import Typography from '@material-ui/core/Typography';
 import useMediaQuery from '@material-ui/core/useMediaQuery';
 
 // Components.
 import LinkElement from '../../elements/link/Link';
-import PrivateReviewMenu from '../privateReviewMenu/PrivateReviewMenu';
+
+// Enumerators.
+import { ReviewListType } from '../listByQuery/ListByQuery.enum';
 
 // Interfaces.
-import { PrivateReviewCardProps } from './PrivateReviewCard.interface';
-
-/**
- * Card header styles.
- */
-const StyledCardHeader = withStyles(theme => ({
-  root: {
-    maxWidth: '100%'
-  },
-  content: {
-    maxWidth: '100%'
-  },
-  title: {
-    maxWidth: '100%'
-  }
-}))(CardHeader);
+import { ScrollableReviewCardProps } from './ScrollableReviewCard.interface';
 
 /**
  * Create the theme styles to be used for the display.
@@ -61,15 +51,15 @@ const useStyles = makeStyles((theme: Theme) =>
       fontWeight: 500
     },
     cardContainer: {
-      backgroundColor: 'transparent',
-      borderRadius: 0,
-      boxShadow: 'none',
-      padding: theme.spacing(2, 0)
+      borderBottom: `1px solid rgba(0,0,0,0.2)`,
+      borderRadius: 4,
+      boxShadow: `0 1px 2px rgba(0,0,0,0.15)`,
+      maxWidth: 320,
+      width: `calc(100vw * 0.85)`
     },
     cardHeaderContent: {
-      marginBottom: theme.spacing(1),
       maxWidth: '100%',
-      padding: theme.spacing(0, 2)
+      padding: theme.spacing(1, 2)
     },
     cardHeaderContentLarge: {
       padding: 0
@@ -116,14 +106,10 @@ const useStyles = makeStyles((theme: Theme) =>
       fontSize: 30
     },
     textContent: {
-      //borderLeft: `3px solid ${theme.palette.secondary.main}`,
-      padding: theme.spacing(2),
+      padding: theme.spacing(1, 2),
       '&:last-child': {
         paddingBottom: theme.spacing(1),
       }
-    },
-    textContentLarge: {
-      padding: theme.spacing(2, 0)
     },
     title: {
       fontSize: '1rem',
@@ -135,72 +121,66 @@ const useStyles = makeStyles((theme: Theme) =>
 );
 
 /**
- * Private review card with editable options.
+ * Card header styles.
  */
-const PrivateReviewCard: React.FC<PrivateReviewCardProps> = (props: PrivateReviewCardProps) => {
+const StyledCardHeader = withStyles(theme => ({
+  root: {
+    maxWidth: '100%'
+  },
+  content: {
+    maxWidth: '100%'
+  },
+  title: {
+    maxWidth: '100%'
+  }
+}))(CardHeader);
 
+/**
+ * Review card for public display.
+ */
+const ScrollableReviewCard: React.FC<ScrollableReviewCardProps> = (props: ScrollableReviewCardProps) => {
   // Define the style classes.
   const classes = useStyles(),
-        theme = useTheme(),
-        largeScreen = useMediaQuery(theme.breakpoints.up('sm'));
+        theme = useTheme();
 
   return (
     <Card className={classes.cardContainer}>
       <StyledCardHeader
-        className={clsx(classes.cardHeaderContent, {
-          [classes.cardHeaderContentLarge]: largeScreen
-        })}
+        className={clsx(classes.cardHeaderContent)}
         style={{maxWidth: '100%'}}
         title={
           <Grid container direction='row' style={{flexWrap: 'nowrap', maxWidth: '100%'}}>
             <Grid item style={{flexGrow: 1, minWidth: 0}}>
-              <NavLink to={`/review/${props.url}`} className={classes.linkText}>
-                {props.user &&
-                  <Typography variant='body2' className={classes.title}>
-                    <Box component='span' className={classes.handleText}>{props.user.handle}</Box> {props.title} 
-                  </Typography>
-                }
-              </NavLink>
+              {props.user &&
+                <Typography variant='body2' className={classes.title}>
+                  <Box component='span' className={classes.handleText}>{props.user.handle}</Box> {props.title} 
+                </Typography>
+              }
             </Grid>
             <Grid item style={{flexGrow: 0}}>
-              <PrivateReviewMenu
-                paths={{
-                  edit: `/review/edit/${props._id}`
-                }}
-                productTitle={props.product ? props.product.name : ''}
-                reviewId={props._id}
-              />
             </Grid>
           </Grid>
         }
       />
-      <CardActionArea style={{height: 'calc(100% * 0.56)', overflow: 'hidden'}}>
-        <CardMedia
-          component='img'
-          src={props.thumbnailURL}
-          title={`${props.product ? props.product.name : ''} review`}
-        />
-      </CardActionArea>
-      <CardContent className={clsx(classes.textContent, {
-          [classes.textContentLarge]: largeScreen
-        })}
+      <CardMedia
+        component='img'
+        src={props.thumbnailURL}
+        title={`${props.product ? props.product.name : ''} review`}
+      />
+      <CardContent className={clsx(classes.textContent)}
       >
         <Grid container direction='row' style={{flexWrap: 'nowrap', maxWidth: '100%'}}>
           {props.product &&
             <Grid item style={{flexGrow: 1, minWidth: 0}}>
-              <NavLink to={`/review/${props.url}`} className={classes.linkText}>
-                <Typography variant='body2' className={classes.productNameText}>
-                  <Box component='span' className={classes.brandText}>{props.product.brand}</Box> {props.product.name}
-                </Typography>
-              </NavLink>
+              <Typography variant='body2' className={classes.productNameText}>
+                <Box component='span' className={classes.brandText}>{props.product.brand}</Box> {props.product.name}
+              </Typography>
             </Grid>
           }
           <Grid item style={{flexGrow: 0, marginLeft: theme.spacing(1)}}>
-            <NavLink to={`/review/${props.url}`} className={classes.linkText}>
-              <IconButton className={classes.reviewLinkButton}>
-                <PlayArrowRoundedIcon color='secondary' className={classes.reviewLinkIcon} />
-              </IconButton>
-            </NavLink>
+            <IconButton className={classes.reviewLinkButton}>
+              <PlayArrowRoundedIcon color='secondary' className={classes.reviewLinkIcon} />
+            </IconButton>
           </Grid>
         </Grid>
       </CardContent>
@@ -208,4 +188,4 @@ const PrivateReviewCard: React.FC<PrivateReviewCardProps> = (props: PrivateRevie
   );
 }
 
-export default PrivateReviewCard;
+export default ScrollableReviewCard;

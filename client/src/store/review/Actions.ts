@@ -21,9 +21,9 @@ export const updateActive = (review: Review) => action(
   ReviewVerb.UPDATE_ACTIVE, review);
 
 /**
- * Updates a list of reviews in the redux store.
+ * Updates a list of reviews by product in the redux store.
  *
  * @param { Array<Review> } reviews - the list of reviews to be made active.
  */
-export const updateList = (reviews: Array<Review>) => action(
-  ReviewVerb.UPDATE_LIST, reviews);
+export const updateListByProduct = (reviews: Array<Review>) => action(
+  ReviewVerb.UPDATE_LIST_BY_PRODUCT, reviews);
