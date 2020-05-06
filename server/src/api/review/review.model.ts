@@ -154,5 +154,5 @@ ReviewSchema
 // Declare the review mongoose model.
 const Review: Mongoose.Model<ReviewDocument> = Mongoose.model('Review', ReviewSchema);
 
-// Declare the User mongoose model.
+// Declare the review mongoose model.
 export default Review;

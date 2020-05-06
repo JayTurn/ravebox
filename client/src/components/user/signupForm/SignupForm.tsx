@@ -61,11 +61,8 @@ import {
  */
 const useStyles = makeStyles((theme: Theme) => createStyles({
   fieldPadding: {
-    padding: theme.spacing(1)
+    padding: theme.spacing(1, 2)
   },
-  desktopFieldPadding: {
-    padding: theme.spacing(1, 0)
-  }
 }));
 
 /**
@@ -212,9 +209,7 @@ const SignupForm: React.FC<SignupFormProps> = (props: SignupFormProps) => {
         direction='column'
         alignItems='stretch'
       >
-        <Grid item xs={12} md={6} className={clsx(classes.fieldPadding, {
-            [classes.desktopFieldPadding]: desktop
-          })}
+        <Grid item xs={12} md={6} lg={5} className={clsx(classes.fieldPadding)}
         >
           <Input
             handleBlur={updateForm}
@@ -225,9 +220,7 @@ const SignupForm: React.FC<SignupFormProps> = (props: SignupFormProps) => {
             validation={validation.handle}
           />
         </Grid>
-        <Grid item xs={12} md={6} className={clsx(classes.fieldPadding, {
-            [classes.desktopFieldPadding]: desktop
-          })}
+        <Grid item xs={12} md={6} lg={5} className={clsx(classes.fieldPadding)}
         >
           <Input
             handleBlur={updateForm}
@@ -237,9 +230,7 @@ const SignupForm: React.FC<SignupFormProps> = (props: SignupFormProps) => {
             validation={validation.email}
           />
         </Grid>
-        <Grid item xs={12} md={6} className={clsx(classes.fieldPadding, {
-            [classes.desktopFieldPadding]: desktop
-          })}
+        <Grid item xs={12} md={6} lg={5} className={clsx(classes.fieldPadding)}
         >
           <Input
             handleBlur={updateForm}
@@ -250,23 +241,17 @@ const SignupForm: React.FC<SignupFormProps> = (props: SignupFormProps) => {
             validation={validation.password}
           />
         </Grid>
-        <Grid item xs={12} md={6} className={clsx(classes.fieldPadding, {
-            [classes.desktopFieldPadding]: desktop
-          })}
+        <Grid item xs={12} md={6} lg={5} className={clsx(classes.fieldPadding)}
         >
           <Typography variant='subtitle1'>
             By clicking Sign Up, you are indicating that you have read and acknowledge the Terms of Service and Privacy Notice.
           </Typography>
         </Grid>
-        <Grid item xs={12} md={6} className={clsx(classes.fieldPadding, {
-            [classes.desktopFieldPadding]: desktop
-          })}
+        <Grid item xs={12} md={6} lg={5} className={clsx(classes.fieldPadding)}
         >
           <ErrorMessages errors={formErrorMessages} />
         </Grid>
-        <Grid item xs={12} md={6} className={clsx(classes.fieldPadding, {
-            [classes.desktopFieldPadding]: desktop
-          })}
+        <Grid item xs={12} md={6} lg={5} className={clsx(classes.fieldPadding)}
         >
           <StyledButton
             title='Sign up'

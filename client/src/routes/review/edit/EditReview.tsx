@@ -22,8 +22,8 @@ import { updateActive } from '../../../store/review/Actions';
 
 // Components.
 import EditReviewForm from '../../../components/review/editForm/EditReviewForm';
+import PageTitle from '../../../components/elements/pageTitle/PageTitle';
 import ProductPreview from '../../../components/product/preview/ProductPreview';
-import PaddedDivider from '../../../components/elements/dividers/PaddedDivider';
 
 // Enumerators.
 import {
@@ -69,16 +69,11 @@ const EditReview: React.FC<EditReviewProps> = (props: EditReviewProps) => {
       container
       direction='column'
       alignItems='stretch'
-      style={{marginTop: '3rem', marginBottom: '3rem'}}
+      style={{marginBottom: '3rem'}}
     >
       {reviewStatus === RetrievalStatus.SUCCESS &&
         <React.Fragment>
-          <Grid item xs={12}>
-            <Typography variant='h1' color='textPrimary'>
-              Edit your rave
-            </Typography>
-            <PaddedDivider />
-          </Grid>
+          <PageTitle title='Edit your rave' />
           {review && review.product &&
             <EditReviewForm
               review={review}

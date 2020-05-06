@@ -38,6 +38,9 @@ import {
   ReviewResponse
 } from '../../../components/review/Review.interface';
 
+// Utilities.
+import { CommaSeparatedNumber } from '../../../utils/display/numeric/Numeric';
+
 /**
  * Loads the review from the api before rendering the component the first time.
  * 
@@ -77,7 +80,7 @@ const ViewReview: React.FC<ViewReviewProps> = (props: ViewReviewProps) => {
 
   return (
     <Grid container direction='column' alignItems='flex-start'>
-      {props.review &&
+      {props.review && props.review._id &&
         <ReviewDetails key={props.review._id}/>
       }
     </Grid>
@@ -117,7 +120,7 @@ export default withRouter(connect(
   frontloadReviewDetails,
   {
     noServerRender: false,     
-    onMount: false,
+    onMount: true,
     onUpdate: false
   })(ViewReview)
 ));

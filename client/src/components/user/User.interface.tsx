@@ -17,5 +17,6 @@ export interface PrivateProfile {
  * Public profile for a user's public facing display.
  */
 export interface PublicProfile {
+  _id: string;
   handle: string;
 }

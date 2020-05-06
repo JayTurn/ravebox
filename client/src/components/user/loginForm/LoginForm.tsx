@@ -61,10 +61,10 @@ import { isRequired, isEmail } from '../../forms/validation/ValidationRules';
  */
 const useStyles = makeStyles((theme: Theme) => createStyles({
   fieldPadding: {
-    padding: theme.spacing(1)
+    padding: theme.spacing(1, 2)
   },
   desktopFieldPadding: {
-    padding: theme.spacing(1, 0)
+    padding: theme.spacing(1, 2)
   }
 }));
 
@@ -214,7 +214,7 @@ const LoginForm: React.FC<LoginFormProps> = (props: LoginFormProps) => {
         direction='column'
         alignItems='stretch'
       >
-        <Grid item xs={12} md={6} className={clsx(classes.fieldPadding, {
+        <Grid item xs={12} md={6} lg={5} className={clsx(classes.fieldPadding, {
             [classes.desktopFieldPadding]: desktop
           })}
         >
@@ -226,7 +226,7 @@ const LoginForm: React.FC<LoginFormProps> = (props: LoginFormProps) => {
             validation={validation.email}
           />
         </Grid>
-        <Grid item xs={12} md={6} className={clsx(classes.fieldPadding, {
+        <Grid item xs={12} md={6} lg={5} className={clsx(classes.fieldPadding, {
             [classes.desktopFieldPadding]: desktop
           })}
         >
@@ -246,13 +246,13 @@ const LoginForm: React.FC<LoginFormProps> = (props: LoginFormProps) => {
             />
           </Box>
         </Grid>
-        <Grid item xs={12} md={6} className={clsx(classes.fieldPadding, {
+        <Grid item xs={12} md={6} lg={5} className={clsx(classes.fieldPadding, {
             [classes.desktopFieldPadding]: desktop
           })}
         >
           <ErrorMessages errors={formErrorMessages} />
         </Grid>
-        <Grid item xs={12} md={6} className={clsx(classes.fieldPadding, {
+        <Grid item xs={12} md={6} lg={5} className={clsx(classes.fieldPadding, {
             [classes.desktopFieldPadding]: desktop
           })}
         >

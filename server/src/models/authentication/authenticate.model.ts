@@ -88,6 +88,29 @@ const ValidateJwt: ExpressJwt.RequestHandler = ExpressJwt({
   }
 });
 
+// Perform an authentication check but allow unauthenticated users to access.
+const isAuthenticatedJWT: ExpressJwt.RequestHandler = ExpressJwt({
+  credentialsRequired: false,
+  secret: (EnvConfig.database) ? EnvConfig.database.secret : '',
+  requestProperty: 'auth',
+  getToken: function fromHeaderOrQueryString (req) {
+
+    // Define the token.
+    let token = '';
+
+    // If the token doesn't exist, return an undefined token.
+    if (_.isUndefined(req.cookies[JWT])) {
+      return token;
+    }
+
+    // Validates the token and returns it or a null value.
+    token = validateCSRF(req.cookies[JWT], req);
+
+    // Return the token.
+    return token;
+  }
+});
+
 /**
  * Defines the Authenticate Class.
  */
@@ -221,6 +244,23 @@ export default class Authenticate {
 
     // Validate the authorization header in the request.
     ValidateJwt(request, response, next);
+  }
+
+  /**
+   * Checks if the user is authenticated and attaches them to the request.
+   *
+   * @param { Request } request - the request object.
+   * @param { Response } response - the response object.
+   * @param { NextFunction } next - the function to progress to the next step.
+   */
+  static AddUserToRequest(request: Request, response: Response, next: NextFunction): void {
+    // Retrieve the token passed by the client.
+    if (_.isUndefined(request.cookies[JWT])) {
+      next();
+    }
+
+    // Validate the authorization header in the request.
+    isAuthenticatedJWT(request, response, next);
   }
 
   /**

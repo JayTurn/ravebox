@@ -12,6 +12,7 @@ import * as https from 'https';
 import * as S3 from 'aws-sdk/clients/s3';
 import Review from './review.model';
 import ReviewCommon from './review.common';
+import ReviewStatistics from '../reviewStatistics/reviewStatistics.model';
 import User from '../user/user.model';
 import Video from '../../shared/video/Video.model';
 
@@ -31,6 +32,7 @@ import {
   ReviewRequestBody
 } from './review.interface';
 import { ResponseObject } from '../../models/database/connect.interface';
+import { ReviewStatisticsDocument } from '../reviewStatistics/reviewStatistics.interface'; 
 import {
   SNSConfirmation,
   SNSNotification
@@ -369,7 +371,19 @@ export default class ReviewController {
           }
         }, 400, `The review could not be found`);
 
-      } else {
+        // Return the response for the authenticated user.
+        response.status(responseObject.status).json(responseObject.data);
+        
+        return;
+      }
+
+      ReviewStatistics.findOne({
+        review: review._id
+      })
+      .then((statistics: ReviewStatisticsDocument) => {
+        if (statistics) {
+          review.statistics = statistics.details;
+        }
 
         // Set the response object.
         responseObject = Connect.setResponse({
@@ -377,11 +391,23 @@ export default class ReviewController {
             review: review
           }
         }, 201, 'Review returned successfully');
-      }
 
-      // Return the response for the authenticated user.
-      response.status(responseObject.status).json(responseObject.data);
+        // Return the response for the authenticated user.
+        response.status(responseObject.status).json(responseObject.data);
 
+      })
+      .catch(() => {
+        // Set the response object.
+        responseObject = Connect.setResponse({
+          data: {
+            review: review
+          }
+        }, 201, 'Review returned successfully');
+
+        // Return the response for the authenticated user.
+        response.status(responseObject.status).json(responseObject.data);
+
+      });
     })
     .catch(() => {
       // Return an error indicating the review wasn't created.
@@ -803,7 +829,7 @@ export default class ReviewController {
       new: true,
       upsert: false
     })
-    .then((review: ReviewDocument) => {
+    .then(() => {
 
       // Set the response object.
       const responseObject = Connect.setResponse({

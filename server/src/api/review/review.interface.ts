@@ -15,6 +15,7 @@ import {
   ProductDetails,
   ProductDetailsDocument
 } from '../product/product.interface';
+import { ReviewStatistics } from '../reviewStatistics/reviewStatistics.interface';
 import {
   UserDetailsDocument
 } from '../user/user.interface';
@@ -49,6 +50,7 @@ export interface ReviewDetails {
   _id: string;
   product: ProductDetails;
   recommended: Recommended;
+  statistics?: ReviewStatistics;
   title: string;
   videoURL: string;
   thumbnailURL: string;

@@ -11,10 +11,10 @@ import EnvConfig from '../../config/environment/environmentBaseConfig';
 import { Request, Response, Router } from 'express';
 import * as Jwt from 'jsonwebtoken';
 //import * as Mongoose from 'mongoose';
+import Review from '../review/review.model';
 import User from './user.model';
 import UserCommon from './user.common';
 //import UserNotifications from './userNotifications.model';
-//import Mailchimp from 'mailchimp-api-v3';
 import LocalController from './authenticate/local.strategy';
 import Notifications from '../../shared/notifications/Notifications.model';
 
@@ -35,6 +35,7 @@ import {
   SignupDetails,
   UserDetailsDocument
 } from './user.interface';
+import { ProfileStatistics } from '../userStatistics/userStatistics.interface';
 
 /**
  * Defines the UserController Class.
@@ -81,46 +82,10 @@ export default class UserController {
 
     // Validate the existing of a user handle.
     router.get(`${path}/handle/:id`, UserController.HandleAvailability);
+
+    // Retrieves a user's publicly accessible statistics.
+    router.get(`${path}/statistics/profile/:id`, UserController.RetrievePublicProfileStatistics);
   }
-
-  /**
-   * Lists the registered users.
-   *
-   * @param {object} req
-   *   The request object.
-   * @param {object} res
-   *   The response object.
-   */
-  /*
-  static List(req, res) {
-    // Set the response object.
-    let responseObject;
-    // Retrieve all users from the database.
-    User.findAsync({})
-      .then(users => {
-        // Attach the users data to the response.
-        responseObject = Connect.setResponse({
-          data: {
-            users: users
-          }
-        }, 200, 'Users returned successfully');
-
-        // Return the response for the list of users.
-        res.status(responseObject.status).json(responseObject.data);
-      })
-      .catch(() => {
-        responseObject = Connect.setResponse({
-          data: {
-            errorCode: 'USERS_NOT_RETRIEVED',
-            message: 'No users have been retrieved'
-          }
-        }, 404, 'We can\'t find any users');
-
-        // Return the error response for the list of users.
-        res.status(responseObject.status).json(responseObject.data);
-      });
-  }
-  */
 
   /**
    * Get current user handler.
@@ -921,6 +886,68 @@ export default class UserController {
 
       // Return the response.
       return response.status(responseObject.status).json(responseObject.data);
+    });
+  }
+
+  /**
+   * Retrieves a user's public profile statistics.
+   *
+   * @param {object} req
+   *   The request object.
+   * @param {object} res
+   *   The response object.
+   */
+  public static RetrievePublicProfileStatistics(request: Request, response: Response): void {
+    const userId: string = request.params.id;
+
+    if (!userId) {
+      // Define the responseObject.
+      const responseObject: ResponseObject = Connect.setResponse({
+          data: {
+            errorCode: 'USER_ID_MISSING_FROM_PROFILE_STATISTICS_REQUEST',
+            title: `We couldn't find results for the requested user`
+          }
+        }, 404, `We couldn't find results for the requested user`);
+
+      // Return the response.
+      response.status(responseObject.status).json(responseObject.data);
+      return;
+    }
+
+    // Create a user statistics object to be returned.
+    const userStatistics: ProfileStatistics = {
+      ravesCount: 0
+    };
+
+    Review.countDocuments({
+      user: userId
+    })
+    .then((count: number) => {
+      userStatistics.ravesCount = count;
+
+      // Set the response object.
+      const responseObject: ResponseObject = Connect.setResponse({
+        data: {
+          statistics: userStatistics
+        }
+      }, 200, 'User profile statistics returned successfully');
+
+      // Return the response.
+      response.status(responseObject.status).json(responseObject.data);
+
+    })
+    .catch((error: Error) => {
+      console.log(error);
+      // Define the responseObject.
+      const responseObject: ResponseObject = Connect.setResponse({
+          data: {
+            errorCode: 'REVIEW_COUNT_FAILED_FOR_USER',
+            title: `We couldn't find results for the requested user`
+          }
+        }, 404, `We couldn't find results for the requested user`);
+
+      // Return the response.
+      response.status(responseObject.status).json(responseObject.data);
     })
   }
 

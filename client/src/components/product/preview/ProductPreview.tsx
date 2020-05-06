@@ -5,7 +5,6 @@
 
 // Modules.
 import Box from '@material-ui/core/Box';
-import Chip from '@material-ui/core/Chip';
 import clsx from 'clsx';
 import {
   createStyles,
@@ -16,8 +15,6 @@ import {
 } from '@material-ui/core/styles';
 import Grid from '@material-ui/core/Grid';
 import * as React from 'react';
-import ThumbUpRoundedIcon from '@material-ui/icons/ThumbUpRounded';
-import ThumbDownRoundedIcon from '@material-ui/icons/ThumbDownRounded';
 import Typography from '@material-ui/core/Typography';
 import useMediaQuery from '@material-ui/core/useMediaQuery';
 
@@ -43,32 +40,6 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
   },
   productBrandLarge: {
     fontSize: '.9rem'
-  },
-  notRecommendedIcon: {
-    color: theme.palette.grey.A700
-  },
-  notRecommendedText: {
-    color: theme.palette.grey.A400,
-    marginBottom: '8px'
-  },
-  recommendationConatiner: {
-    padding: theme.spacing(.5, 0, 0)
-  },
-  recommendationIcon: {
-    fontSize: '1.15rem',
-  },
-  recommendationText: {
-    display: 'block',
-    fontSize: '.85rem',
-    fontWeight: 600,
-    paddingLeft: theme.spacing(1)
-  },
-  recommendedIcon: {
-    color: theme.palette.secondary.main,
-  },
-  recommendedText: {
-    color: theme.palette.secondary.dark,
-    marginBottom: '6px'
   },
   title: {
     color: '#3E42A3'
@@ -111,48 +82,6 @@ const ProductPreview: React.FC<ProductPreviewProps> = (
           {props.name}
         </Typography>
       </Grid>
-      {props.recommendation &&
-        <Grid item xs={12}>
-          <Grid container direction='row' alignItems='center' className={classes.recommendationConatiner}>
-            <Grid item>
-              <Box>
-                {props.recommendation.recommended ? (
-                  <ThumbUpRoundedIcon className={clsx(
-                      classes.recommendationIcon,
-                      classes.recommendedIcon
-                    )}
-                  />
-                ) : (
-                  <ThumbDownRoundedIcon className={clsx(
-                      classes.recommendationIcon,
-                      classes.notRecommendedIcon
-                    )}
-                  />
-                )}
-              </Box>
-            </Grid>
-            <Grid item>
-              {props.recommendation.recommended ? (
-                <Typography variant='body1' className={clsx(
-                    classes.recommendationText,
-                    classes.recommendedText
-                  )}
-                >
-                  {props.recommendation.handle} recommends this product
-                </Typography>
-              ) : (
-                <Typography variant='body1' className={clsx(
-                    classes.recommendationText,
-                    classes.notRecommendedText
-                  )}
-                >
-                  {props.recommendation.handle} doesn't recommend this product
-                </Typography>
-              )}
-            </Grid>
-          </Grid>
-        </Grid>
-      }
     </Grid>
   );
 }
