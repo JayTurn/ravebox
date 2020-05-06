@@ -34,17 +34,17 @@ const syncLoadAssets = () => {
 syncLoadAssets();
 
 const serverRender = async (url: string, context: any) => {
-  const markup: string = await frontloadServerRender(() =>
-      renderToString(
-        <Provider store={store}>
-          <StaticRouter location={url} context={context}>
-            <Frontload>
-              <AppContainer />
-            </Frontload>
-          </StaticRouter>
-        </Provider>
-      )
-  );
+  const markup: string = await frontloadServerRender(() => {
+    return renderToString(
+      <Provider store={store}>
+        <StaticRouter location={url} context={context}>
+          <Frontload>
+            <AppContainer />
+          </Frontload>
+        </StaticRouter>
+      </Provider>
+    )
+  });
 
   return markup;
 }
@@ -57,7 +57,6 @@ const server = express()
   .use(express.static(process.env.RAZZLE_PUBLIC_DIR!))
   .get('/*', async (req: express.Request, res: express.Response) => {
     const context = {};
-
     const markup = await serverRender(req.url, context);
     // Load the application as a static route using the request url and create
     // a string to be returned in the response.

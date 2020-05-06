@@ -9,11 +9,19 @@ import {
   bindActionCreators,
   Dispatch
 } from 'redux';
+import clsx from 'clsx';
 import { connect } from 'react-redux';
+import {
+  createStyles,
+  makeStyles,
+  Theme,
+  useTheme
+} from '@material-ui/core/styles';
 import Grid from '@material-ui/core/Grid';
 import * as React from 'react';
 import Typography from '@material-ui/core/Typography';
 import { withRouter } from 'react-router';
+import useMediaQuery from '@material-ui/core/useMediaQuery';
 
 // Components.
 import AddReviewForm from '../../../components/review/addForm/AddReviewForm';
@@ -30,9 +38,23 @@ import { AddReviewProps } from './AddReview.interface';
 import { useRetrieveProductById } from '../../../components/product/useRetrieveProduct.hook';
 
 /**
+ * Create styles for the review screen.
+ */
+const useStyles = makeStyles((theme: Theme) => createStyles({
+  padding: {
+    paddingLeft: theme.spacing(2),
+    paddingRight: theme.spacing(2)
+  }
+}));
+
+/**
  * AddReview component.
  */
 const AddReview: React.FC<AddReviewProps> = (props: AddReviewProps) => {
+  // Match the large media query size.
+  const classes = useStyles(),
+        theme = useTheme(),
+        largeScreen = useMediaQuery(theme.breakpoints.up('md'));
 
   const {
     product,
@@ -62,9 +84,16 @@ const AddReview: React.FC<AddReviewProps> = (props: AddReviewProps) => {
       {productStatus === RetrievalStatus.SUCCESS &&
         <React.Fragment>
           <PageTitle title='Post a rave' />
-          {displayProduct &&
-            <ProductPreviewCard {...product} />
-          }
+          <Grid item className={clsx(
+            {
+              [classes.padding]: largeScreen
+            }
+            )}
+          >
+            {displayProduct &&
+              <ProductPreviewCard {...product} />
+            }
+          </Grid>
           <AddReviewForm productId={product._id} toggleProduct={toggleProduct}/>
         </React.Fragment>
       }

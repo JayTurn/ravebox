@@ -7,3 +7,9 @@
 export enum UserRole {
   USER = 'user'
 }
+
+// User types.
+export enum UserType {
+  ANONYMOUS = 'anonymous',
+  AUTHENTICATED = 'authenticated'
+}

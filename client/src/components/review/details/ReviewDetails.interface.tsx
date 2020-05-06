@@ -14,4 +14,5 @@ import { Review } from '../Review.interface';
  */
 export interface ReviewDetailsProps extends RouteComponentProps {
   review?: Review;
+  xsrf?: string;
 }

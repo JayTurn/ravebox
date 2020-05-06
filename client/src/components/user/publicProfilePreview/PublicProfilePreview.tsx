@@ -17,6 +17,9 @@ import Grid from '@material-ui/core/Grid';
 import * as React from 'react';
 import Typography from '@material-ui/core/Typography';
 
+// Hooks.
+import { useRetrievePublicProfileStatistics } from './useRetrievePublicStatistics';
+
 // Interfaces.
 import { PublicProfilePreviewProps } from './PublicProfilePreview.interface';
 
@@ -32,7 +35,7 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
     width: theme.spacing(5)
   },
   container: {
-    padding: theme.spacing(3, 2)
+    padding: theme.spacing(0, 2)
   },
   handleContainer: {
     marginLeft: theme.spacing(2)
@@ -53,6 +56,12 @@ const PublicProfilePreview: React.FC<PublicProfilePreviewProps> = (props: Public
   // Use the custom styles.
   const classes = useStyles();
 
+  // Use the public profile statistics hook.
+  const {
+    profileStatistics,
+    retrievalStatus
+  } = useRetrievePublicProfileStatistics({ id: props._id });
+
   return (
     <Grid container direction='row' className={classes.container} alignItems='center'>
       <Grid item>
@@ -60,7 +69,9 @@ const PublicProfilePreview: React.FC<PublicProfilePreviewProps> = (props: Public
       </Grid>
       <Grid item className={classes.handleContainer}>
         <Typography variant='body1' className={classes.handleText}>{props.handle}</Typography>
-        <Typography variant='body1' className={classes.raveCount}>5 raves | 100 subscribers</Typography>
+        {profileStatistics.ravesCount &&
+          <Typography variant='body1' className={classes.raveCount}>5 raves</Typography>
+        }
       </Grid>
     </Grid>
   );

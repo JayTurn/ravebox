@@ -21,6 +21,7 @@ export interface Review {
   user?: PublicProfile;
   title: string;
   recommended: Recommended;
+  statistics?: ReviewStatistics;
   thumbnailURL?: string;
   videoURL?: string;
   url: string;
@@ -45,6 +46,17 @@ export interface ReviewResponse {
  */
 export interface ReviewsResponse {
   reviews: Array<Review>;
+}
+
+/**
+ * Review statisctics.
+ */
+export interface ReviewStatistics {
+  ratings: {
+    up: number;
+    down: number;
+  };
+  views: number;
 }
 
 /**

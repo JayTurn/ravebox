@@ -39,11 +39,10 @@ const AccessTabs = withStyles(theme => ({
  */
 const useStyles = makeStyles((theme: Theme) => createStyles({
   container: {
-    padding: theme.spacing(0, 1),
+    padding: theme.spacing(0, 2),
     marginBottom: theme.spacing(2)
   },
   desktopContainer: {
-    padding: 0,
     marginBottom: theme.spacing(3)
   },
   titleContainer: {

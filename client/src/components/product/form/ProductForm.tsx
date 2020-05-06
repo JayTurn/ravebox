@@ -62,9 +62,9 @@ import {
  * Create styles for the page title.
  */
 const useStyles = makeStyles((theme: Theme) => createStyles({
-  mobilePadding: {
-    paddingLeft: theme.spacing(1),
-    paddingRight: theme.spacing(1)
+  padding: {
+    paddingLeft: theme.spacing(2),
+    paddingRight: theme.spacing(2)
   }
 }));
 
@@ -102,7 +102,7 @@ const ProductForm: React.FC<ProductFormProps> = (
   // Match the mobile media query size.
   const classes = useStyles(),
         theme = useTheme(),
-        mobile = useMediaQuery(theme.breakpoints.down('sm'));
+        largeScreen = useMediaQuery(theme.breakpoints.up('md'));
 
   // Register the snackbar.
   const { enqueueSnackbar } = useSnackbar();
@@ -258,9 +258,7 @@ const ProductForm: React.FC<ProductFormProps> = (
       container
       direction='column'
     >
-      <Box className={clsx({
-          [classes.mobilePadding]: mobile
-        })}
+      <Box className={clsx(classes.padding)}
       >
         <ProductSelection update={updateInputs} />
         <BrandSelection update={updateInputs} visible={product.name !== ''} handleFocus={handleBrandFocus}/>

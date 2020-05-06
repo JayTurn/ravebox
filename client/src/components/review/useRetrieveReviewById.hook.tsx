@@ -78,7 +78,7 @@ export function useRetrieveReviewById(params: RetrieveReviewByIdParams) {
       // Update the retrieval status to avoid subsequent requests.
       setRetrieved(RetrievalStatus.WAITING);
 
-      // Perform the API request to get the user's profile.
+      // Perform the API request to get the user's review.
       API.requestAPI<ReviewResponse>(`review/edit/${id}`, {
         headers: {
           'x-xsrf-token': xsrf || ''

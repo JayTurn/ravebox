@@ -72,6 +72,10 @@ import {
  * Styles for the wrapping button element.
  */
 const useStyles = makeStyles((theme: Theme) => createStyles({
+  padding: {
+    paddingLeft: theme.spacing(2),
+    paddingRight: theme.spacing(2)
+  },
   progressNumber: {
     border: `2px solid ${theme.palette.primary.dark}`,
     borderRadius: 50,
@@ -361,6 +365,7 @@ const EditReviewForm: React.FC<EditReviewFormProps> = (props: EditReviewFormProp
     <Grid
       container
       direction='column'
+      className={classes.padding}
     >
       {uploadProgress.state === FileUploadState.WAITING &&
         <Fade in={uploadProgress.state === FileUploadState.WAITING} timeout={300}>
@@ -416,7 +421,7 @@ const EditReviewForm: React.FC<EditReviewFormProps> = (props: EditReviewFormProp
             ) : (
               <React.Fragment>
                 <Grid item xs={12} lg={6} style={{marginBottom: '1.5rem'}}>
-                  <RaveVideo url={review.videoURL} />
+                  <RaveVideo url={review.videoURL} reviewId={review._id} />
                 </Grid>
                 <Grid item xs={12} lg={6} style={{marginBottom: '3rem'}}>
                   <StyledButton

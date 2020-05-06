@@ -87,9 +87,9 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
     textAlign: 'center',
     width: '70px'
   },
-  mobilePadding: {
-    paddingLeft: theme.spacing(1),
-    paddingRight: theme.spacing(1)
+  padding: {
+    paddingLeft: theme.spacing(2),
+    paddingRight: theme.spacing(2)
   }
 }));
 
@@ -111,7 +111,7 @@ const addReviewValidation: ValidationSchema = {
 const AddReviewForm: React.FC<AddReviewFormProps> = (props: AddReviewFormProps) => {
   const classes = useStyles(),
         theme = useTheme(),
-        mobile = useMediaQuery(theme.breakpoints.down('sm'));
+        largeScreen = useMediaQuery(theme.breakpoints.up('md'));
 
   // Define the review details.
   const [review, setReview] = React.useState({
@@ -348,9 +348,7 @@ const AddReviewForm: React.FC<AddReviewFormProps> = (props: AddReviewFormProps) 
     <Grid
       container
       direction='column'
-      className={clsx({
-        [classes.mobilePadding]: mobile
-      })}
+      className={clsx(classes.padding)}
     >
       {uploadProgress.state === FileUploadState.WAITING &&
         <Fade in={uploadProgress.state === FileUploadState.WAITING} timeout={300}>
