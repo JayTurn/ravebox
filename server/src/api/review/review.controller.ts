@@ -151,15 +151,23 @@ export default class ReviewController {
     // Define the provided review details.
     const reviewDetails: ReviewRequestBody = request.body;
 
+    // Create a review stastics document to be cross-referenced with the
+    // review document.
+    const newReviewStatistics: ReviewStatisticsDocument = new ReviewStatistics();
+
     // Create a new review from the request data.
     const newReview: ReviewDocument = new Review({
       product: reviewDetails.product,
       recommended: reviewDetails.recommended,
       published: Workflow.PUBLISHED,
+      statistics: newReviewStatistics._id,
       title: reviewDetails.title,
       user: request.auth._id
     });
 
+    // Update the review statistics with the new review id.
+    newReviewStatistics.review = newReview._id;
+    newReviewStatistics.save();
 
     Video.CreatePresignedVideoRequest(
       reviewDetails.videoTitle,

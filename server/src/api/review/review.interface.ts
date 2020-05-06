@@ -15,7 +15,10 @@ import {
   ProductDetails,
   ProductDetailsDocument
 } from '../product/product.interface';
-import { ReviewStatistics } from '../reviewStatistics/reviewStatistics.interface';
+import {
+  ReviewStatistics,
+  ReviewStatisticsDocument
+} from '../reviewStatistics/reviewStatistics.interface';
 import {
   UserDetailsDocument
 } from '../user/user.interface';
@@ -30,16 +33,17 @@ import {
 export interface ReviewDocument extends Mongoose.Document {
   _id: string;
   created: Date;
+  details: ReviewDetails;
+  privateDetails: PrivateReviewDetails;
   product: ProductDetailsDocument;
   published: Workflow;
   recommended: Recommended;
-  title: string;
-  user: UserDetailsDocument;
-  details: ReviewDetails;
-  privateDetails: PrivateReviewDetails;
-  url: string;
-  video: AWSVideo;
+  statistics: ReviewStatisticsDocument;
   thumbnails: Array<string>;
+  title: string;
+  url: string;
+  user: UserDetailsDocument;
+  video: AWSVideo;
 }
 
 /**
