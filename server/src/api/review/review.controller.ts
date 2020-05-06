@@ -32,7 +32,7 @@ import {
   ReviewRequestBody
 } from './review.interface';
 import { ResponseObject } from '../../models/database/connect.interface';
-import { ReviewStatisticsDocument } from '../reviewStatistics/reviewStatistics.interface'; 
+import { ReviewStatisticsDocument } from '../reviewStatistics/reviewStatistics.interface';
 import {
   SNSConfirmation,
   SNSNotification
@@ -359,12 +359,22 @@ export default class ReviewController {
       path: 'user',
       model: 'User'
     })
+    .populate({
+      path: 'statistics',
+      model: 'ReviewStatistic'
+    })
     .then((reviewDocument: ReviewDocument) => {
-      return {
+      const details: ReviewDetails = {
         ...reviewDocument.details,
         product: reviewDocument.product.details,
-        user: reviewDocument.user.publicProfile
-      };
+        user: reviewDocument.user.publicProfile,
+      }
+
+      if (reviewDocument.statistics) {
+        details.statistics = reviewDocument.statistics.details;
+      }
+
+      return details;
     })
     .then((review: ReviewDetails) => {
       let responseObject: ResponseObject;
@@ -385,37 +395,15 @@ export default class ReviewController {
         return;
       }
 
-      ReviewStatistics.findOne({
-        review: review._id
-      })
-      .then((statistics: ReviewStatisticsDocument) => {
-        if (statistics) {
-          review.statistics = statistics.details;
+      // Set the response object.
+      responseObject = Connect.setResponse({
+        data: {
+          review: review
         }
+      }, 201, 'Review returned successfully');
 
-        // Set the response object.
-        responseObject = Connect.setResponse({
-          data: {
-            review: review
-          }
-        }, 201, 'Review returned successfully');
-
-        // Return the response for the authenticated user.
-        response.status(responseObject.status).json(responseObject.data);
-
-      })
-      .catch(() => {
-        // Set the response object.
-        responseObject = Connect.setResponse({
-          data: {
-            review: review
-          }
-        }, 201, 'Review returned successfully');
-
-        // Return the response for the authenticated user.
-        response.status(responseObject.status).json(responseObject.data);
-
-      });
+      // Return the response for the authenticated user.
+      response.status(responseObject.status).json(responseObject.data);
     })
     .catch(() => {
       // Return an error indicating the review wasn't created.

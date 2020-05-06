@@ -93,7 +93,7 @@ const Settings: React.FC<SettingsProps> = (props: SettingsProps) => {
       {profileStatus === RetrievalStatus.SUCCESS &&
         <form noValidate autoComplete="off">
           {props.profile && props.update &&
-            <Grid container direction='column' style={{padding: mobile ? theme.spacing(0, 1) : theme.spacing(0)}}>
+            <Grid container direction='column' style={{padding: theme.spacing(0, 2)}}>
               <ChangeProfile />
               <ChangeEmail />
               <ChangePassword />

@@ -9,6 +9,7 @@ import { connectRouter } from 'connected-react-router';
 import * as H from 'history';
 
 // Dependent models.
+import ChannelReducer from './channel/Reducer';
 import NavigationReducer from './navigation/Reducer';
 import ReviewReducer from './review/Reducer';
 import UserReducer from './user/Reducer';
@@ -19,6 +20,7 @@ import XsrfReducer from './xsrf/Reducer';
 const RootReducer = (history: H.History) =>
   combineReducers({
     router: connectRouter(history),
+    channel: ChannelReducer,
     navigation: NavigationReducer,
     review: ReviewReducer,
     user: UserReducer,

@@ -78,21 +78,22 @@ const AddReview: React.FC<AddReviewProps> = (props: AddReviewProps) => {
     <Grid
       container
       direction='column'
-      alignItems='stretch'
       style={{marginBottom: '3rem'}}
     >
       {productStatus === RetrievalStatus.SUCCESS &&
         <React.Fragment>
           <PageTitle title='Post a rave' />
-          <Grid item className={clsx(
-            {
-              [classes.padding]: largeScreen
-            }
-            )}
-          >
-            {displayProduct &&
-              <ProductPreviewCard {...product} />
-            }
+          <Grid container direction='row'>
+            <Grid item xs={12} className={clsx(
+              {
+                [classes.padding]: largeScreen
+              }
+              )}
+            >
+              {displayProduct &&
+                <ProductPreviewCard {...product} />
+              }
+            </Grid>
           </Grid>
           <AddReviewForm productId={product._id} toggleProduct={toggleProduct}/>
         </React.Fragment>

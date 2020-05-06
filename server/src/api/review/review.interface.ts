@@ -20,6 +20,7 @@ import {
   ReviewStatisticsDocument
 } from '../reviewStatistics/reviewStatistics.interface';
 import {
+  PublicUserDetails,
   UserDetailsDocument
 } from '../user/user.interface';
 import {
@@ -56,6 +57,7 @@ export interface ReviewDetails {
   recommended: Recommended;
   statistics?: ReviewStatistics;
   title: string;
+  user: PublicUserDetails;
   videoURL: string;
   thumbnailURL: string;
 }

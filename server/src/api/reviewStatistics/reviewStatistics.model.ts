@@ -21,7 +21,11 @@ const ReviewStatisticsSchema = new Schema<ReviewStatisticsDocument>({
     default: 0
   },
   ratings: {
-    type: Object
+    type: Object,
+    default: {
+      up: 0,
+      down: 0
+    }
   },
   review: {
     type: Schema.Types.ObjectId,
@@ -37,8 +41,8 @@ ReviewStatisticsSchema
   .get(function() {
     return {
       'ratings': {
-        'down': this.ratings.down,
-        'up': this.ratings.up
+        'down': this.ratings ? this.ratings.down : 0,
+        'up': this.ratings ? this.ratings.up : 0
       },
       'views': this.views
     };
