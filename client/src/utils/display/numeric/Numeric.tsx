@@ -66,3 +66,37 @@ export const CommaSeparatedNumber: (
   return value.toString().replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ",");
 }
 
+/**
+ * Returns a value and identifier based on the count.
+ *
+ * @param { number } value - the number provided.
+ * @param { string } identifier - the count identifier.
+ *
+ * @return string
+ */
+export const CountIdentifier: (
+  value: number
+) => (
+  identifier: string
+) => string = (
+  value: number
+) => (
+  identifier: string
+): string => {
+  let countIdentifier: string = '';
+
+  if (value === 0) {
+    return countIdentifier;;
+  }
+
+  if (value < 2) {
+    countIdentifier = `${value} ${identifier}`;
+  }
+
+  if (value >= 2) {
+    countIdentifier = `${value} ${identifier}s`;
+  }
+
+  return countIdentifier;
+}
+

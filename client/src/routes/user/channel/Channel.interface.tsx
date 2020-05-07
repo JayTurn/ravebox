@@ -23,7 +23,11 @@ export interface ChannelProps extends RouteComponentProps<ChannelParams> {
  * Interface for the channel details.
  */
 export interface ChannelDetails {
-  profile?: PublicProfile;
+  profile?: {
+    _id: string;
+    handle: string;
+    ravesCount: string;
+  };
   reviews?: Array<Review>;
 }
 
@@ -33,6 +37,23 @@ export interface ChannelDetails {
 export interface ChannelParams {
   handle: string;
 }
+
+/**
+ * The channel profile interface.
+ */
+export interface ChannelProfile extends PublicProfile {
+  ravesCount?: string;
+}
+
+/**
+ * Parameters used for retrieving a user's channel.
+ */
+export interface RetrieveChannelParams {
+  handle: string;
+  channel?: ChannelDetails;
+  updateActive?: (details: ChannelDetails) => void;
+}
+
 
 /**
  * Response interface for a channel request.

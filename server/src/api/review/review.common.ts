@@ -15,8 +15,11 @@ import {
 import { Workflow } from '../../shared/enumerators/workflow.enum';
 
 // Interfaces.
+import { Category } from '../product/product.interface';
 import {
+  ReviewDetails,
   ReviewDocument,
+  ReviewGroup,
   ReviewPublishedSNS
 } from './review.interface';
 
@@ -120,6 +123,56 @@ export default class ReviewCommon {
       .catch((error: Error) => {
         console.log(error);
       });
+  }
+
+  /**
+   * Formats an array of reviews into groups based on query keys.
+   *
+   * @param { Array<string> } queries - the list of queries provided.
+   * @param { Array<ReviewDocument> } reviews - the list of reviews.
+   *
+   * @return ReviewGroup
+   */
+  static GroupReviewsByCategoryQueries(
+    queries: Array<string>,
+    reviews: Array<ReviewDocument>
+  ): ReviewGroup {
+    const reviewGroup: ReviewGroup = {};
+
+    let i = 0;
+
+    do {
+      // Capture the public details for the review and the categories.
+      const currentReview: ReviewDetails = {...reviews[i].details},
+            categories: Array<string> = currentReview.product.categories.map(
+              (category: Category) => category.key);
+
+      // Loop through the reviews and appened it to the relevant group. 
+      let j = 0;
+      
+      do {
+        const currentQuery: string = queries[j];
+
+        const index: number = categories.indexOf(currentQuery); 
+
+        // If we have found a match for the category, add it to the review group.
+        if (index >= 0 ) {
+          if (reviewGroup[currentQuery]) {
+            reviewGroup[currentQuery].push({...currentReview});
+          } else {
+            reviewGroup[currentQuery] = [{...currentReview}];
+          }
+
+          break;
+        }
+
+        j++;
+      } while (j < queries.length);
+
+      i++;
+    } while (i < reviews.length);
+
+    return reviewGroup;
   }
 
   /**

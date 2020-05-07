@@ -1025,6 +1025,10 @@ export default class UserController {
         published: Workflow.PUBLISHED
       })
       .populate({
+        path: 'product',
+        model: 'Product',
+      })
+      .populate({
         path: 'statistics',
         model: 'ReviewStatistic'
       });
@@ -1054,7 +1058,10 @@ export default class UserController {
       do {
         // Curate the reviews with reduced details and statistics.
         const current: ReviewDocument = reviews[i];
-        const reviewDetails: ReviewDetails = {...current.details};
+        const reviewDetails: ReviewDetails = {
+          ...current.details,
+          user: channel.profile
+        };
 
         if (current.statistics) {
           reviewDetails.statistics = {...current.statistics.details};

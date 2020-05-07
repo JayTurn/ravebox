@@ -35,6 +35,21 @@ import LinkElement from '../../elements/link/Link';
 import { ReviewCardProps } from './ReviewCard.interface';
 
 /**
+ * Card header styles.
+ */
+const StyledCardHeader = withStyles(theme => ({
+  root: {
+    maxWidth: '100%'
+  },
+  content: {
+    maxWidth: '100%'
+  },
+  title: {
+    maxWidth: '100%'
+  }
+}))(CardHeader);
+
+/**
  * Create the theme styles to be used for the display.
  */
 const useStyles = makeStyles((theme: Theme) =>
@@ -45,8 +60,10 @@ const useStyles = makeStyles((theme: Theme) =>
       fontWeight: 500
     },
     cardContainer: {
+      backgroundColor: 'transparent',
       borderRadius: 0,
-      boxShadow: 'none'
+      boxShadow: 'none',
+      padding: theme.spacing(2, 0)
     },
     cardHeaderContent: {
       marginBottom: theme.spacing(1),
@@ -115,21 +132,6 @@ const useStyles = makeStyles((theme: Theme) =>
     }
   }),
 );
-
-/**
- * Card header styles.
- */
-const StyledCardHeader = withStyles(theme => ({
-  root: {
-    maxWidth: '100%'
-  },
-  content: {
-    maxWidth: '100%'
-  },
-  title: {
-    maxWidth: '100%'
-  }
-}))(CardHeader);
 
 /**
  * Review card for public display.

@@ -14,8 +14,10 @@ import {
   withStyles
 } from '@material-ui/core/styles';
 import Grid from '@material-ui/core/Grid';
+import { NavLink } from 'react-router-dom';
 import * as React from 'react';
 import Typography from '@material-ui/core/Typography';
+import { withRouter } from 'react-router';
 
 // Hooks.
 import { useRetrievePublicProfileStatistics } from './useRetrievePublicStatistics';
@@ -33,6 +35,12 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
     fontWeight: 600,
     height: theme.spacing(5),
     width: theme.spacing(5)
+  },
+  channelLink: {
+    textDecoration: 'none',
+    '&:hover': {
+      textDecoration: 'none'
+    }
   },
   container: {
     padding: theme.spacing(0, 2)
@@ -65,16 +73,28 @@ const PublicProfilePreview: React.FC<PublicProfilePreviewProps> = (props: Public
   return (
     <Grid container direction='row' className={classes.container} alignItems='center'>
       <Grid item>
-        <Avatar alt={props.handle} className={classes.avatarIcon}>j</Avatar>
+        <NavLink 
+          className={clsx(classes.channelLink)}
+          title={`View ${props.handle}'s channel`}
+          to={`/user/channel/${props.handle}`}
+        >
+          <Avatar alt={props.handle} className={classes.avatarIcon}>j</Avatar>
+        </NavLink>
       </Grid>
       <Grid item className={classes.handleContainer}>
-        <Typography variant='body1' className={classes.handleText}>{props.handle}</Typography>
-        {profileStatistics.ravesCount &&
-          <Typography variant='body1' className={classes.raveCount}>5 raves</Typography>
-        }
+        <NavLink 
+          className={clsx(classes.channelLink)}
+          title={`View ${props.handle}'s channel`}
+          to={`/user/channel/${props.handle}`}
+        >
+          <Typography variant='body1' className={classes.handleText}>{props.handle}</Typography>
+          {profileStatistics.ravesCount &&
+            <Typography variant='body1' className={classes.raveCount}>{profileStatistics.ravesCount}</Typography>
+          }
+        </NavLink>
       </Grid>
     </Grid>
   );
 }
 
-export default PublicProfilePreview;
+export default withRouter(PublicProfilePreview);

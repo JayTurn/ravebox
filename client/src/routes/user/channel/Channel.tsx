@@ -10,14 +10,27 @@ import {
   Dispatch
 } from 'redux';
 import API from '../../../utils/api/Api.model';
+import clsx from 'clsx';
 import { connect } from 'react-redux';
+import {
+  createStyles,
+  makeStyles,
+  Theme,
+  useTheme,
+  withStyles
+} from '@material-ui/core/styles';
 import { frontloadConnect } from 'react-frontload';
 import Grid from '@material-ui/core/Grid';
-import { withRouter } from 'react-router';
 import * as React from 'react';
+import useMediaQuery from '@material-ui/core/useMediaQuery';
+import { withRouter } from 'react-router';
 
 // Actions.
 import { updateActive } from '../../../store/channel/Actions';
+
+// Components.
+import ChannelTitle from '../../../components/channel/title/ChannelTitle';
+import ReviewList from '../../../components/review/list/ReviewList';
 
 // Enumerators.
 import {
@@ -25,12 +38,33 @@ import {
   RetrievalStatus
 } from '../../../utils/api/Api.enum';
 
+// Hooks.
+import { useRetrieveChannel } from './useRetrieveChannel';
+
 // Interfaces.
 import {
   ChannelDetails,
   ChannelProps,
+  ChannelProfile,
   ChannelResponse
 } from './Channel.interface';
+
+// Utilities.
+import { CountIdentifier } from '../../../utils/display/numeric/Numeric';
+
+/**
+ * Create the theme styles to be used for the display.
+ */
+const useStyles = makeStyles((theme: Theme) =>
+  createStyles({
+    listContainer: {
+      padding: 0
+    },
+    listContainerLarge: {
+      padding: theme.spacing(0, 2)
+    }
+  })
+);
 
 /**
  * Loads the channel from the api before rendering the component the first time.
@@ -46,8 +80,20 @@ const frontloadReviewDetails = async (props: ChannelProps) => {
     method: RequestType.GET
   })
   .then((response: ChannelResponse) => {
-    if (props.updateActive) {
-      props.updateActive({...response.channel});
+    if (response.channel && props.updateActive) {
+
+      if (response.channel.profile) {
+        const channelDetails = {
+          profile: {
+            _id: response.channel.profile._id,
+            handle: response.channel.profile.handle,
+            ravesCount: CountIdentifier(response.channel.reviews ? response.channel.reviews.length : 0)('rave')
+          },
+          reviews: response.channel.reviews
+        };
+
+        props.updateActive(channelDetails);
+      }
     }
   })
   .catch((error: Error) => {
@@ -60,15 +106,50 @@ const frontloadReviewDetails = async (props: ChannelProps) => {
  * Channel component.
  */
 const Channel: React.FC<ChannelProps> = (props: ChannelProps) => {
+  // Define the component classes.
+  const classes = useStyles(),
+        theme = useTheme(),
+        largeScreen = useMediaQuery(theme.breakpoints.up('sm'));
+
+  // Retrieve the user's handle from the url path.
+  const { handle } = {...props.match.params};
+
+  // Register the hook for subsequent channel retrieval.
+  const { retrievalStatus } = useRetrieveChannel({
+    handle: handle,
+    channel: props.channel,
+    updateActive: props.updateActive
+  });
 
   return (
-    <Grid container direction='column'>
-      <Grid item>
-        {props.channel &&
-          <h1>{}</h1>
-        }
-      </Grid>
-    </Grid>
+    <React.Fragment>
+      {retrievalStatus === RetrievalStatus.SUCCESS &&
+        <React.Fragment>
+          {props.channel && 
+            <Grid container direction='column'>
+              {props.channel.profile &&
+                <Grid item xs={12}>
+                    <ChannelTitle
+                      handle={props.channel.profile.handle}
+                      ravesCount={props.channel.profile.ravesCount || ''} />
+                </Grid>
+              }
+              {props.channel.reviews && props.channel.reviews.length > 0 &&
+                <Grid item xs={12} className={clsx(
+                    classes.listContainer,
+                    {
+                      [classes.listContainerLarge]: largeScreen
+                    }
+                  )}
+                >
+                  <ReviewList reviews={props.channel.reviews} retrievalStatus={RetrievalStatus.SUCCESS} />
+                </Grid>
+              }
+            </Grid>
+          }
+        </React.Fragment>
+      }
+    </React.Fragment>
   );
 }
 
@@ -104,7 +185,7 @@ export default withRouter(connect(
   frontloadReviewDetails,
   {
     noServerRender: false,     
-    onMount: true,
+    onMount: false,
     onUpdate: false
   })(Channel)
 ));

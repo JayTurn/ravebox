@@ -2,16 +2,14 @@
  * Home.interface
  * Interfaces for the Home component.
  */
-'use strict';
+
+// Interfaces.
+import { ReviewGroup } from '../../components/review/Review.interface';
 
 /**
  * Home properties.
  */
 export interface HomeProps {
-  showLogin?: Function;
+  categoryGroup?: ReviewGroup;
+  updateListByCategory?: (reviews: ReviewGroup) => void;
 }
-
-/**
- * Home state.
- */
-export interface HomeState { }

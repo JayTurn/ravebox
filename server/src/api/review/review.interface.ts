@@ -63,6 +63,11 @@ export interface ReviewDetails {
 }
 
 /**
+ * Review group.
+ */
+export type ReviewGroup = Record<string, Array<ReviewDetails>>;
+
+/**
  * Private review interface.
  */
 export interface PrivateReviewDetails extends ReviewDetails {

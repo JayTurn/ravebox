@@ -319,6 +319,7 @@ const ReviewDetails: React.FC<ReviewDetailsProps> = (props: ReviewDetailsProps) 
           <Grid item xs={12} md={5} lg={4} className={classes.sidebarContainer}>
             {review.product &&
               <ListByQuery
+                listPosition={0}
                 listType={ReviewListType.PRODUCT}
                 query={review.product._id} 
                 presentationType={largeScreen ? PresentationType.SIDEBAR : PresentationType.SCROLLABLE}
