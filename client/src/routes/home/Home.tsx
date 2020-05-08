@@ -93,7 +93,7 @@ const Home: React.FC<HomeProps> = (props: HomeProps) => {
   const {
     retrievalStatus
   } = useRetrieveListByQuery({
-    queries: ['computers', 'kitchen_and_dining'],
+    queries: ['computers', 'beauty'],
     listType: ReviewListType.CATEGORY,
     update: props.updateListByCategory
   });
@@ -157,7 +157,7 @@ const Home: React.FC<HomeProps> = (props: HomeProps) => {
           <ListByQuery
             listType={ReviewListType.CATEGORY}
             presentationType={largeScreen ? PresentationType.GRID : PresentationType.SCROLLABLE}
-            reviews={props.categoryGroup['kitchen_and_dining']}
+            reviews={props.categoryGroup['beauty']}
             title={
               <ListTitle
                 title={`Health & Beauty raves`}
