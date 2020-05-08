@@ -27,7 +27,10 @@ import useMediaQuery from '@material-ui/core/useMediaQuery';
 import { withRouter } from 'react-router';
 
 // Actions.
-import { updateActive } from '../../../store/review/Actions';
+import {
+  updateActive,
+  updateListByProduct
+} from '../../../store/review/Actions';
 
 // Components.
 import ListByQuery from '../listByQuery/ListByQuery';
@@ -44,14 +47,19 @@ import {
   PresentationType,
   ReviewListType
 } from '../listByQuery/ListByQuery.enum';
+import { RetrievalStatus } from '../../../utils/api/Api.enum';
 
 // Hooks.
 import { useGenerateRatingToken } from '../rate/useGenerateRatingToken.hook';
+import {
+  useRetrieveListByQuery
+} from '../listByQuery/useRetrieveListsByQuery.hook';
 
 // Interfaces.
 import { Product } from '../../product/Product.interface';
 import {
   Review,
+  ReviewGroup,
   ReviewStatistics
 } from '../Review.interface';
 import { ReviewDetailsProps } from './ReviewDetails.interface';
@@ -192,6 +200,16 @@ const ReviewDetails: React.FC<ReviewDetailsProps> = (props: ReviewDetailsProps) 
     videoURL: ''
   });
 
+  const productId: string = (review && review.product) ? review.product._id : '';
+
+  const {
+    retrievalStatus
+  } = useRetrieveListByQuery({
+    queries: [productId],
+    listType: ReviewListType.PRODUCT,
+    update: props.updateListByProduct
+  });
+
   const [reviewStatistics, setReviewStatistics] = React.useState({
     views: ''
   });
@@ -202,6 +220,8 @@ const ReviewDetails: React.FC<ReviewDetailsProps> = (props: ReviewDetailsProps) 
   // Define a property to support the rating of content after an allowable
   // duration has passed.
   const [ratingAllowed, setRatingAllowed] = React.useState<boolean>(false);
+
+  // Perform the request to retrieve product reviews.
 
   React.useEffect(() => {
     if (props.review) {
@@ -317,12 +337,11 @@ const ReviewDetails: React.FC<ReviewDetailsProps> = (props: ReviewDetailsProps) 
             </Grid>
           </Grid>
           <Grid item xs={12} md={5} lg={4} className={classes.sidebarContainer}>
-            {review.product &&
+            {props.productGroup && props.productGroup[productId] &&
               <ListByQuery
-                listPosition={0}
                 listType={ReviewListType.PRODUCT}
-                query={review.product._id} 
                 presentationType={largeScreen ? PresentationType.SIDEBAR : PresentationType.SCROLLABLE}
+                reviews={props.productGroup[productId]}
                 title={
                   <ListTitle title={`More reviews for this product`} />
                 }
@@ -336,22 +355,38 @@ const ReviewDetails: React.FC<ReviewDetailsProps> = (props: ReviewDetailsProps) 
 };
 
 /**
+ * Map dispatch actions to the home route.
+ *
+ * @param { Dispatch<AnyAction> } dispatch - the dispatch function to be mapped.
+ */
+const mapDispatchToProps = (dispatch: Dispatch<AnyAction>) =>
+  bindActionCreators(
+    {
+      updateListByProduct
+    },
+    dispatch
+  );
+
+/**
  * Mapping the state updates to the properties from redux.
  */
 const mapStateToProps = (state: any, ownProps: ReviewDetailsProps) => {
   // Retrieve the review from the active properties.
-  const review: Review = state.review ? state.review.active : undefined;
+  const review: Review = state.review ? state.review.active : undefined,
+        productGroup: ReviewGroup | undefined = state.review ? state.review.listByProduct : undefined;
 
   // Retrieve the xsrf token to be submitted with the request.
   const xsrf: string = state.xsrf ? state.xsrf.token : undefined;
 
   return {
     ...ownProps,
+    productGroup,
     review,
     xsrf
   };
 };
 
 export default withRouter(connect(
-  mapStateToProps
+  mapStateToProps,
+  mapDispatchToProps
 )(ReviewDetails));

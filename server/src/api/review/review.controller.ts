@@ -96,9 +96,9 @@ export default class ReviewController {
     );
 
     // Retrieve a list of reviews from the same product.
-    router.get(
-      `${path}/list/product/:id`,
-      ReviewController.RetrieveListByProductId
+    router.post(
+      `${path}/list/product`,
+      ReviewController.RetrieveListByProductIds
     );
 
     // Retrieve a list of reviews owned by the current logged in user.
@@ -650,10 +650,10 @@ export default class ReviewController {
    * @param {object} res
    * The response object.
    */
-  static RetrieveListByProductId(request: Request, response: Response): void {
-    const id: string = request.params.id;
+  static RetrieveListByProductIds(request: Request, response: Response): void {
+    const queries: Array<string> = request.body.queries;
 
-    if (!id) {
+    if (!queries || queries.length === 0) {
       // Define the responseObject.
       const responseObject = Connect.setResponse({
           data: {
@@ -669,7 +669,9 @@ export default class ReviewController {
     }
 
     Review.find({
-      product: id,
+      product: {
+        $in: queries
+      },
       published: Workflow.PUBLISHED
     })
     .populate({
@@ -687,20 +689,28 @@ export default class ReviewController {
     .then((reviews: Array<ReviewDocument>) => {
 
       // Sort the results randomly.
-      const sortedReviews: Array<ReviewDetails> = [],
+      const sortedDocuments: Array<ReviewDocument> = [],
             tempReviews: Array<ReviewDocument> = [...reviews];
 
       for (let i = reviews.length - 1; i >= 0; i--) {
         const j = Math.floor(Math.random() * i);
         const temp: ReviewDocument = tempReviews[i];
-        sortedReviews[i] = tempReviews[j].details;
+        sortedDocuments[i] = tempReviews[j];
         tempReviews[j] = temp;
+      }
+
+      // Declare a reviews list to be returned with the response.
+      let reviewGroups: ReviewGroup;
+
+      if (sortedDocuments.length > 0) {
+        reviewGroups = ReviewCommon.GroupReviewsByProductIds(
+          sortedDocuments);
       }
 
       // Set the response object.
       const responseObject: ResponseObject = Connect.setResponse({
         data: {
-          reviews: sortedReviews
+          reviews: reviewGroups
         }
       }, 200, 'Reviews found');
 

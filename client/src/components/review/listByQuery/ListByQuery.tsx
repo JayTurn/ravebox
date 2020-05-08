@@ -116,45 +116,51 @@ const removeActiveReview: (
 const ListByQuery: React.FC<ListByQueryProps> = (props: ListByQueryProps) => {
   let reviews: Array<Review> = [];
 
-  switch (props.listType) {
-    case ReviewListType.PRODUCT:
-      if (props.activeReview) {
-        reviews = removeActiveReview(props.activeReview)([...props.reviews]);
-      } else {
-        reviews = [...props.reviews];
-      }
-      break;
-    case ReviewListType.CATEGORY:
-        reviews = [...props.reviews];
-      break;
-    default:
+  if (props.reviews && props.reviews.length > 0) {
+    switch (props.listType) {
+      case ReviewListType.PRODUCT:
+        if (props.activeReview && props.reviews && props.reviews.length > 0) {
+          reviews = removeActiveReview(props.activeReview)([...props.reviews]);
+        } else {
+          reviews = [...props.reviews];
+        }
+        break;
+      case ReviewListType.CATEGORY:
+          reviews = [...props.reviews];
+        break;
+      default:
+    }
   }
 
   return (
     <React.Fragment>
-      {props.presentationType === PresentationType.SCROLLABLE &&
-        <ScrollableReviewList
-          listType={props.listType}
-          reviews={reviews}
-          retrievalStatus={RetrievalStatus.SUCCESS}
-          title={props.title}
-        />
-      }
-      {props.presentationType === PresentationType.SIDEBAR &&
-        <SidebarReviewList
-          listType={props.listType}
-          reviews={reviews}
-          retrievalStatus={RetrievalStatus.SUCCESS}
-          title={props.title}
-        />
-      }
-      {props.presentationType === PresentationType.GRID &&
-        <GridReviewList
-          listType={props.listType}
-          reviews={reviews}
-          retrievalStatus={RetrievalStatus.SUCCESS}
-          title={props.title}
-        />
+      {reviews.length > 0 &&
+        <React.Fragment>
+          {props.presentationType === PresentationType.SCROLLABLE &&
+            <ScrollableReviewList
+              listType={props.listType}
+              reviews={reviews}
+              retrievalStatus={RetrievalStatus.SUCCESS}
+              title={props.title}
+            />
+          }
+          {props.presentationType === PresentationType.SIDEBAR &&
+            <SidebarReviewList
+              listType={props.listType}
+              reviews={reviews}
+              retrievalStatus={RetrievalStatus.SUCCESS}
+              title={props.title}
+            />
+          }
+          {props.presentationType === PresentationType.GRID &&
+            <GridReviewList
+              listType={props.listType}
+              reviews={reviews}
+              retrievalStatus={RetrievalStatus.SUCCESS}
+              title={props.title}
+            />
+          }
+        </React.Fragment>
       }
     </React.Fragment>
   );

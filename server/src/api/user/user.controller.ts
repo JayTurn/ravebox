@@ -630,8 +630,7 @@ export default class UserController {
 
         // Return the response.
         response.status(responseObject.status).json(responseObject.data);
-
-      })
+      });
   }
 
   /**

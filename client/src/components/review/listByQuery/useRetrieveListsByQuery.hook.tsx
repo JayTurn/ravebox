@@ -108,7 +108,7 @@ export function useRetrieveListByQuery(params: RetrieveListByQueryParams) {
    */
   React.useEffect(() => {
     // If we haven't performed a request continue.
-    if (retrieved === RetrievalStatus.REQUESTED) {
+    if (retrieved === RetrievalStatus.REQUESTED && queries[0]) {
       // Update the retrieval status to avoid subsequent requests.
       setRetrieved(RetrievalStatus.WAITING);
 

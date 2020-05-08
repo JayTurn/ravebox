@@ -176,6 +176,39 @@ export default class ReviewCommon {
   }
 
   /**
+   * Formats an array of reviews into groups based on product ids.
+   *
+   * @param { Array<string> } ids - the list of ids provided.
+   * @param { Array<ReviewDocument> } reviews - the list of reviews.
+   *
+   * @return ReviewGroup
+   */
+  static GroupReviewsByProductIds(
+    reviews: Array<ReviewDocument>
+  ): ReviewGroup {
+    const reviewGroup: ReviewGroup = {};
+
+    let i = 0;
+
+    do {
+
+      // Capture the public details for the review and the categories.
+      const currentReview: ReviewDetails = {...reviews[i].details};
+
+      if (reviewGroup[currentReview.product._id]) {
+        reviewGroup[currentReview.product._id].push({...currentReview});
+      } else {
+        reviewGroup[currentReview.product._id] = [{...currentReview}];
+      }
+
+      i++;
+
+    } while (i < reviews.length);
+
+    return reviewGroup;
+  }
+
+  /**
    * Captures all of the expected thumbnail images.
    *
    * @param { Array<string> } thumbnails - the list of thumbnail images.
