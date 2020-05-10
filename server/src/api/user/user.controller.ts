@@ -79,7 +79,7 @@ export default class UserController {
     router.get(`${path}/password/:token`, UserController.VerifyPasswordToken);
 
     // Retrieve the user's profile.
-    //router.get(`${path}/profile`, Authenticate.isAuthenticated, UserController.Profile);
+    router.get(`${path}/profile`, Authenticate.isAuthenticated, UserController.Profile);
 
     // Attempt to sign up a user based on the form data.
     router.post(`${path}/signup`, UserController.SignUp);

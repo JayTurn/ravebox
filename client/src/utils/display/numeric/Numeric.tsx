@@ -63,7 +63,7 @@ export const CommaSeparatedNumber: (
   value: number
 ): string => {
   // Regular expression separating every third lookback number with a comma.
-  return value.toString().replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ",");
+  return value.toLocaleString('en');
 }
 
 /**
