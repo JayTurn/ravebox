@@ -28,6 +28,11 @@ export interface Review {
 }
 
 /**
+ * Interface for groups of review lists.
+ */
+export type ReviewGroup = Record<string, Array<Review>>;
+
+/**
  * Private review interface.
  */
 export interface PrivateReview extends Review {

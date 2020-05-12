@@ -7,6 +7,7 @@
  * Query paths.
  */
 export enum QueryPath {
+  CATEGORY = 'review/list/category',
   PRODUCT = 'review/list/product'
 }
 
@@ -14,6 +15,7 @@ export enum QueryPath {
  * List type used for setting lists in redux.
  */
 export enum ReviewListType {
+  CATEGORY = 'category',
   PRODUCT = 'product'
 }
 

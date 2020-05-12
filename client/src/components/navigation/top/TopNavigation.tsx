@@ -55,7 +55,7 @@ import { PrivateProfile } from '../../user/User.interface';
 const useStyles = makeStyles((theme: Theme) => createStyles({
   root: { },
   lastButton: {
-    marginRight: theme.spacing(1)
+    marginRight: theme.spacing(2)
   },
   linkButton: {
     fontSize: '0.75rem',
@@ -65,12 +65,13 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
     paddingTop: '5px'
   },
   linkButtonLarge: {
-    fontSize: '0.9rem',
-    padding: theme.spacing(1, 2)
+    fontSize: '0.8rem',
+    padding: theme.spacing(.5, 1)
   },
   links: {
-    textDecoration: 'none',
     color: theme.palette.grey.A700,
+    fontWeight: 700,
+    textDecoration: 'none',
     '&.active': {
       color: theme.palette.primary.dark
     },
@@ -82,8 +83,8 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
     textDecoration: 'none'
   },
   linksInverse: {
-    textDecoration: 'none',
     color: theme.palette.primary.contrastText,
+    textDecoration: 'none',
     '&.active': {
       color: theme.palette.primary.contrastText,
     }

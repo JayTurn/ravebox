@@ -14,6 +14,7 @@ import * as Jwt from 'jsonwebtoken';
 import Review from '../review/review.model';
 import User from './user.model';
 import UserCommon from './user.common';
+import UserStatistics from '../userStatistics/userStatistics.model'
 //import UserNotifications from './userNotifications.model';
 import LocalController from './authenticate/local.strategy';
 import Notifications from '../../shared/notifications/Notifications.model';
@@ -24,6 +25,7 @@ import {
   EmailTemplate,
   ContactList
 } from '../../shared/notifications/Notifications.enum';
+import { Workflow } from '../../shared/enumerators/workflow.enum';
 
 // Interfaces.
 import {
@@ -33,9 +35,17 @@ import { ResponseObject } from '../../models/database/connect.interface';
 import {
   ProfileSettings,
   SignupDetails,
+  UserChannel,
   UserDetailsDocument
 } from './user.interface';
-import { ProfileStatistics } from '../userStatistics/userStatistics.interface';
+import {
+  ProfileStatistics,
+  UserStatisticsDocument
+} from '../userStatistics/userStatistics.interface'
+import {
+  ReviewDetails,
+  ReviewDocument
+} from '../review/review.interface';
 
 /**
  * Defines the UserController Class.
@@ -50,23 +60,17 @@ export default class UserController {
     // Set the local authentication strategy.
     LocalController.setup(router, path);
 
-    // Attempt to sign up a user based on the form data.
-    router.post(`${path}/signup`, UserController.SignUp);
+    // Retrieves a user's channel.
+    router.get(`${path}/channel/:handle`, UserController.RetrieveChannel);
 
-    // Attempt to retrieve the user.
-    router.get(`${path}/profile`, Authenticate.isAuthenticated, UserController.Profile);
+    // Validate the existing of a user handle.
+    router.get(`${path}/handle/:id`, UserController.HandleAvailability);
 
-    // Attempt to retrieve the user.
-    router.patch(`${path}/update/profile`, Authenticate.isAuthenticated, UserController.UpdateProfile);
+    // Attempt to reset the user's password.
+    router.patch(`${path}/password/new`, UserController.SetNewPassword);
 
-    // Attempt to change the email address.
-    router.patch(`${path}/update/email`, Authenticate.isAuthenticated, UserController.UpdateEmail);
-
-    // Attempt to change the user's password.
-    router.patch(`${path}/update/password`, Authenticate.isAuthenticated, UserController.UpdatePassword);
-
-    // Verify the email address.
-    router.get(`${path}/verify/:token`, UserController.VerifyEmail);
+    // Attempt to reset the user's password.
+    router.patch(`${path}/password/reset`, UserController.RequestPasswordResetLink);
 
     // Attempt to verify the user's password.
     router.patch(`${path}/password/verify`, Authenticate.isAuthenticated, UserController.VerifyPassword);
@@ -74,17 +78,27 @@ export default class UserController {
     // Attempt to verify a password token for reset.
     router.get(`${path}/password/:token`, UserController.VerifyPasswordToken);
 
-    // Attempt to reset the user's password.
-    router.patch(`${path}/password/reset`, UserController.RequestPasswordResetLink);
+    // Retrieve the user's profile.
+    router.get(`${path}/profile`, Authenticate.isAuthenticated, UserController.Profile);
 
-    // Attempt to reset the user's password.
-    router.patch(`${path}/password/new`, UserController.SetNewPassword);
-
-    // Validate the existing of a user handle.
-    router.get(`${path}/handle/:id`, UserController.HandleAvailability);
+    // Attempt to sign up a user based on the form data.
+    router.post(`${path}/signup`, UserController.SignUp);
 
     // Retrieves a user's publicly accessible statistics.
     router.get(`${path}/statistics/profile/:id`, UserController.RetrievePublicProfileStatistics);
+
+    // Attempt to change the email address.
+    router.patch(`${path}/update/email`, Authenticate.isAuthenticated, UserController.UpdateEmail);
+
+    // Attempt to change the user's password.
+    router.patch(`${path}/update/password`, Authenticate.isAuthenticated, UserController.UpdatePassword);
+
+    // Attempt to retrieve the user.
+    router.patch(`${path}/update/profile`, Authenticate.isAuthenticated, UserController.UpdateProfile);
+
+    // Verify the email address.
+    router.get(`${path}/verify/:token`, UserController.VerifyEmail);
+
   }
 
   /**
@@ -156,9 +170,17 @@ export default class UserController {
     const userDetails: SignupDetails = request.body;
 
     // Create a new user from the request data.
-    const newUser: UserDetailsDocument = new User(userDetails);
+    const newUserStatistics: UserStatisticsDocument = new UserStatistics(),
+          newUser: UserDetailsDocument = new User({
+            ...userDetails,
+            statistics: newUserStatistics._id
+          });
         //leadConversion = false;
         //mailchimp = new Mailchimp(EnvConfig.mailchimp.apiKey);
+
+    // Update the new user statistics with the user id.
+    newUserStatistics.user = newUser._id;
+    newUserStatistics.save();
 
     // Set the provider type.
     newUser.provider = EnvConfig.providers[0];
@@ -561,7 +583,7 @@ export default class UserController {
               User.findByIdAndUpdate(
                 user._id,
                 { password: hash, salt: salt },
-                { 
+                {
                   new: true,
                   upsert: false
                 }
@@ -608,8 +630,7 @@ export default class UserController {
 
         // Return the response.
         response.status(responseObject.status).json(responseObject.data);
-
-      })
+      });
   }
 
   /**
@@ -832,7 +853,7 @@ export default class UserController {
       return;
     }
 
-    const email: string = decoded.payload.email as string, 
+    const email: string = decoded.payload.email as string,
           _id: string = decoded.payload.userId as string;
 
     // Encrypt the password and store it with the user.
@@ -854,7 +875,7 @@ export default class UserController {
         User.findByIdAndUpdate(
           user._id,
           { password: hash, salt: salt },
-          { 
+          {
             new: true,
             upsert: false
           }
@@ -949,6 +970,133 @@ export default class UserController {
       // Return the response.
       response.status(responseObject.status).json(responseObject.data);
     })
+  }
+
+  /**
+   * Retrieves the data that forms a user's channel.
+   *
+   * @param {object} req
+   *   The request object.
+   * @param {object} res
+   *   The response object.
+   */
+  public static RetrieveChannel(request: Request, response: Response): void {
+    // Define the user's handle.
+    const handle: string = request.params.handle;
+
+    // If we don't have a handle, return an error.
+    if (!handle) {
+      // Define the responseObject.
+      const responseObject: ResponseObject = Connect.setResponse({
+          data: {
+            errorCode: 'USER_HANDLE_MISSING_FROM_CHANNEL_REQUEST',
+            title: `We couldn't find a channel for the handle requested`
+          }
+        }, 404, `We couldn't find a channel for the handle requested`);
+
+      // Return the response.
+      response.status(responseObject.status).json(responseObject.data);
+      return;
+    }
+
+    // Define the channel object to be built upon.
+    const channel: UserChannel = {
+      reviews: []
+    };
+
+    // Perform the request to retrieve the user.
+    User.findOne({
+      handle: handle
+    })
+    .populate({
+      path: 'statistics',
+      model: 'UserStatistic'
+    })
+    .then((userDetails: UserDetailsDocument) => {
+      // Add the public user details to the channel object.
+      if (userDetails) {
+        channel.profile = {...userDetails.publicProfile};
+      }
+
+      // Perform a request to retrieve the reviews the user has recored.
+      return Review.find({
+        user: userDetails._id,
+        published: Workflow.PUBLISHED
+      })
+      .populate({
+        path: 'product',
+        model: 'Product',
+      })
+      .populate({
+        path: 'statistics',
+        model: 'ReviewStatistic'
+      });
+    })
+    .then((reviews: Array<ReviewDocument>) => {
+      let responseObject: ResponseObject;
+
+      // Return the channel without reviews if none exist.
+      if (!reviews || reviews.length <= 0) {
+        // Set the response object.
+        responseObject = Connect.setResponse({
+          data: {
+            channel: channel
+          }
+        }, 200, 'Channel returned successfully without reviews');
+
+        // Return the response.
+        response.status(responseObject.status).json(responseObject.data);
+
+        return;
+      }
+
+      // If we have a list of reviews, loop through and populate the channel
+      // reviews.
+      let i = 0;
+
+      do {
+        // Curate the reviews with reduced details and statistics.
+        const current: ReviewDocument = reviews[i];
+        const reviewDetails: ReviewDetails = {
+          ...current.details,
+          user: channel.profile
+        };
+
+        if (current.statistics) {
+          reviewDetails.statistics = {...current.statistics.details};
+        }
+
+        channel.reviews.push({...reviewDetails});
+
+        i++;
+
+      } while (i < reviews.length);
+      
+      // Set the response object.
+      responseObject = Connect.setResponse({
+        data: {
+          channel: channel
+        }
+      }, 200, 'Channel returned successfully with reviews');
+
+      // Return the response.
+      response.status(responseObject.status).json(responseObject.data);
+
+    })
+    .catch((error: Error) => {
+      console.log(error);
+
+      // Define the responseObject.
+      const responseObject: ResponseObject = Connect.setResponse({
+          data: {
+            errorCode: 'ERROR_LOADING_CHANNEL',
+            title: `We couldn't load the channel for the handle requested`
+          }
+        }, 404, `We couldn't load the channel for the handle requested`);
+
+      // Return the response.
+      response.status(responseObject.status).json(responseObject.data);
+    });
   }
 
   /**

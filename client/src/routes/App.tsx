@@ -48,6 +48,7 @@ import PageNotFound from './page-not-found/PageNotFound';
 import PasswordReset from './user/reset/PasswordReset';
 import PasswordResetRequest from './user/reset/PasswordResetRequest';
 import PrivateRoute from './privateRoute/PrivateRoute';
+import Channel from './user/channel/Channel';
 import ScrollToTop from '../utils/scroll/ScrollToTop';
 import SideNavigation from '../components/navigation/side/SideNavigation';
 import Signup from './user/signup/Signup';
@@ -182,6 +183,9 @@ const App: React.FC<AppProps> = (props: AppProps) => {
                     </Route>
                     <Route exact={true} path="/user/reviews">
                       <MyReviews />
+                    </Route>
+                    <Route exact={true} path="/user/channel/:handle">
+                      <Channel />
                     </Route>
                     <Route exact={true} path="/user/verify/:token">
                       <Verify />

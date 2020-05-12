@@ -15,10 +15,13 @@ import { frontloadConnect } from 'react-frontload';
 import * as React from 'react';
 
 // Actions.
-import { updateListByProduct } from '../../../store/review/Actions';
+import {
+  updateListByCategory,
+  updateListByProduct
+} from '../../../store/review/Actions';
 
 // Components.
-import ReviewList from '../list/ReviewList';
+import GridReviewList from '../gridReviewList/GridReviewList';
 import ScrollableReviewList from '../scrollableReviewList/ScrollableReviewList';
 import SidebarReviewList from '../sidebarReviewList/SidebarReviewList';
 
@@ -36,9 +39,12 @@ import {
 // Interfaces.
 import {
   ListByQueryProps,
-  ListByQueryResponse
+  RetrieveListByQueryResponse
 } from './ListByQuery.interface';
-import { Review } from '../Review.interface';
+import {
+  Review,
+  ReviewGroup
+} from '../Review.interface';
 
 /**
  * Builds the query based on the list type requested.
@@ -60,40 +66,13 @@ const setQueryListPath: (
     case ReviewListType.PRODUCT:
       path = `${QueryPath.PRODUCT}/${query}`;
       break;
+    case ReviewListType.CATEGORY:
+      path = `${QueryPath.CATEGORY}/${query}`;
     default:  
   }
 
   return path;
 }
-
-/**
- * Loads the list of reviews from the api before rendering the component.
- * 
- * @param { ListByQueryProps } props - the review details properties.
- */
-const frontloadReviewDetails = async (props: ListByQueryProps) => {
-
-  // Define the query to be used for the quest.
-  const path: string = setQueryListPath(props.listType)(props.query);
-
-  await API.requestAPI<ListByQueryResponse>(path, {
-    method: RequestType.GET
-  })
-  .then((response: ListByQueryResponse) => {
-    // Perform the redux store update based on the list type specified.
-    switch (props.listType) {
-      case ReviewListType.PRODUCT:
-        if (props.updateListByProduct) {
-          props.updateListByProduct([...response.reviews]);
-        }
-        break;
-      default:
-    }
-  })
-  .catch((error: Error) => {
-    console.log(error);
-  });
-};
 
 /**
  * Removes the currrent review from the list if it's present.
@@ -137,83 +116,67 @@ const removeActiveReview: (
 const ListByQuery: React.FC<ListByQueryProps> = (props: ListByQueryProps) => {
   let reviews: Array<Review> = [];
 
-  switch (props.listType) {
-    case ReviewListType.PRODUCT:
-      if (props.listByProduct && props.listByProduct.length > 0) {
-        if (props.activeReview) {
-          reviews = removeActiveReview(props.activeReview)(props.listByProduct);
+  if (props.reviews && props.reviews.length > 0) {
+    switch (props.listType) {
+      case ReviewListType.PRODUCT:
+        if (props.activeReview && props.reviews && props.reviews.length > 0) {
+          reviews = removeActiveReview(props.activeReview)([...props.reviews]);
         } else {
-          reviews = [...props.listByProduct];
+          reviews = [...props.reviews];
         }
-      }
-      break;
-    default:
+        break;
+      case ReviewListType.CATEGORY:
+          reviews = [...props.reviews];
+        break;
+      default:
+    }
   }
 
   return (
     <React.Fragment>
-      {props.presentationType === PresentationType.SCROLLABLE &&
-        <ScrollableReviewList
-          listType={props.listType}
-          reviews={reviews}
-          retrievalStatus={RetrievalStatus.SUCCESS}
-          title={props.title}
-        />
-      }
-      {props.presentationType === PresentationType.SIDEBAR &&
-        <SidebarReviewList
-          listType={props.listType}
-          reviews={reviews}
-          retrievalStatus={RetrievalStatus.SUCCESS}
-          title={props.title}
-        />
-      }
-      {props.presentationType === PresentationType.GRID &&
-        <ReviewList
-          reviews={reviews}
-          retrievalStatus={RetrievalStatus.SUCCESS}
-        />
+      {reviews.length > 0 &&
+        <React.Fragment>
+          {props.presentationType === PresentationType.SCROLLABLE &&
+            <ScrollableReviewList
+              listType={props.listType}
+              reviews={reviews}
+              retrievalStatus={RetrievalStatus.SUCCESS}
+              title={props.title}
+            />
+          }
+          {props.presentationType === PresentationType.SIDEBAR &&
+            <SidebarReviewList
+              listType={props.listType}
+              reviews={reviews}
+              retrievalStatus={RetrievalStatus.SUCCESS}
+              title={props.title}
+            />
+          }
+          {props.presentationType === PresentationType.GRID &&
+            <GridReviewList
+              listType={props.listType}
+              reviews={reviews}
+              retrievalStatus={RetrievalStatus.SUCCESS}
+              title={props.title}
+            />
+          }
+        </React.Fragment>
       }
     </React.Fragment>
   );
 }
 
 /**
- * Map dispatch actions to properties on the query list.
- *
- * @param { Dispatch<AnyAction> } dispatch - the dispatch function to be mapped.
- */
-const mapDispatchToProps = (dispatch: Dispatch<AnyAction>) =>
-  bindActionCreators(
-    {
-      updateListByProduct
-    },
-    dispatch
-  );
-
-/**
  * Mapping the state updates to the properties from redux.
  */
 const mapStateToProps = (state: any, ownProps: ListByQueryProps) => {
   // Retrieve the review from the active properties.
-  const listByProduct: Array<Review> = state.review ? state.review.listByProduct : [],
-        activeReview: Review = state.review ? state.review.active : undefined;
+  const activeReview: Review = state.review ? state.review.active : undefined;
 
   return {
     ...ownProps,
-    listByProduct,
     activeReview
   };
 };
 
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(frontloadConnect(
-  frontloadReviewDetails,
-  {
-    noServerRender: false,     
-    onMount: true,
-    onUpdate: false
-  })(ListByQuery)
-);
+export default connect(mapStateToProps)(ListByQuery);

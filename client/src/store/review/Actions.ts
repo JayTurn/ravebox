@@ -10,7 +10,10 @@ import { action } from 'typesafe-actions';
 import { ReviewVerb } from './Actions.enum';
 
 // Dependent interfaces.
-import { Review } from '../../components/review/Review.interface';
+import {
+  Review,
+  ReviewGroup
+} from '../../components/review/Review.interface';
 
 /**
  * Updates the active review in the redux store.
@@ -23,7 +26,15 @@ export const updateActive = (review: Review) => action(
 /**
  * Updates a list of reviews by product in the redux store.
  *
- * @param { Array<Review> } reviews - the list of reviews to be made active.
+ * @param { ReviewGroup } reviews - the list of reviews to be made active.
  */
-export const updateListByProduct = (reviews: Array<Review>) => action(
+export const updateListByProduct = (reviews: ReviewGroup) => action(
   ReviewVerb.UPDATE_LIST_BY_PRODUCT, reviews);
+
+/**
+ * Updates a list of reviews by category in the redux store.
+ *
+ * @param { ReviewGroup } reviews - the list of reviews to be made active.
+ */
+export const updateListByCategory = (reviews: ReviewGroup) => action(
+  ReviewVerb.UPDATE_LIST_BY_CATEGORY, reviews);

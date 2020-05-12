@@ -3,13 +3,17 @@
  * Interfaces for the user's public profile preview.
  */
 
+// Modules.
+import { RouteComponentProps } from 'react-router';
+
 // Interfaces.
 import { PublicProfile } from '../User.interface';
 
 /**
  * Properties for the public profile preview component.
  */
-export interface PublicProfilePreviewProps extends PublicProfile {
+export interface PublicProfilePreviewProps extends RouteComponentProps, PublicProfile {
+  ravesCount?: string;
 }
 
 /**

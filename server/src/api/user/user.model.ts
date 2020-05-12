@@ -35,18 +35,6 @@ const UserSchema = new Schema({
   handle: {
     type: String
   },
-  //name: {
-    //type: Name,
-    //es_indexed: false
-  //},
-  //phone: {
-    //type: String,
-    //es_indexed: false
-  //},
-  //address: {
-    //type: Location,
-    //es_indexed: false
-  //},
   oldEmail: {
     type: String,
     lowercase: true,
@@ -63,6 +51,10 @@ const UserSchema = new Schema({
   },
   salt: {
     type: String,
+  },
+  statistics: {
+    type: Schema.Types.ObjectId, 
+    ref: 'UserStatistic'
   }
 });
 

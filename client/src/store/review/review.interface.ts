@@ -9,7 +9,10 @@ import { ActionType } from 'typesafe-actions';
 import * as actions from './Actions';
 
 // Interfaces.
-import { Review } from '../../components/review/Review.interface';
+import {
+  Review,
+  ReviewGroup
+} from '../../components/review/Review.interface';
 
 /**
  * Redux review action type.
@@ -21,5 +24,6 @@ export type ReviewAction = ActionType<typeof actions>;
  */
 export interface ReviewStore {
   active: Review;
-  listByProduct: Array<Review>;
+  listByProduct: ReviewGroup;
+  listByCategory: ReviewGroup;
 }

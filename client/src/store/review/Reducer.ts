@@ -11,7 +11,10 @@ import { Recommended } from '../../components/review/recommendation/Recommendati
 import { ReviewVerb } from './Actions.enum';
 
 // Interfaces.
-import { Review } from '../../components/review/Review.interface';
+import {
+  Review,
+  ReviewGroup
+} from '../../components/review/Review.interface';
 import {
   ReviewStore,
   ReviewAction
@@ -25,6 +28,10 @@ const emptyReview: Review = {
   url: ''
 }
 
+const emptyReviewList: ReviewGroup = {
+  'default': [JSON.parse(JSON.stringify(emptyReview))],
+};
+
 /**
  * Combines the user reducers to be loaded with the store.
  */
@@ -37,7 +44,7 @@ export default combineReducers<ReviewStore, ReviewAction>({
    *
    * @return Review
    */
-  active: (review: Review = emptyReview, action: ReviewAction) => {
+  active: (review: Review = JSON.parse(JSON.stringify(emptyReview)), action: ReviewAction) => {
     // Update the configuration based on the redux action triggered.
     switch (action.type) {
       case ReviewVerb.UPDATE_ACTIVE:
@@ -52,14 +59,39 @@ export default combineReducers<ReviewStore, ReviewAction>({
    * Define the review list by product reducer.
    *
    * @param { Array<Review> } reviews - the current list of reviews state.
-   * @param {  } action - the filters action.
+   * @param { ReviewAction } action - the filters action.
    *
    * @return Array<Review>
    */
-  listByProduct: (review: Array<Review> = [emptyReview], action: ReviewAction) => {
+  listByProduct: (
+    review: ReviewGroup = JSON.parse(JSON.stringify(emptyReviewList)),
+    action: ReviewAction
+  ) => {
     // Update the configuration based on the redux action triggered.
     switch (action.type) {
       case ReviewVerb.UPDATE_LIST_BY_PRODUCT:
+        // Append the new value to the list of watched items.
+        return action.payload;
+      default:
+        return review;
+    }
+  },
+
+  /**
+   * Define the review list by category reducer.
+   *
+   * @param { Array<Review> } reviews - the current list of reviews state.
+   * @param { ReviewAction } action - the filters action.
+   *
+   * @return Array<Review>
+   */
+  listByCategory: (
+    review: ReviewGroup = JSON.parse(JSON.stringify(emptyReviewList)),
+    action: ReviewAction
+  ) => {
+    // Update the configuration based on the redux action triggered.
+    switch (action.type) {
+      case ReviewVerb.UPDATE_LIST_BY_CATEGORY:
         // Append the new value to the list of watched items.
         return action.payload;
       default:

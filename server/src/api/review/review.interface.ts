@@ -15,8 +15,12 @@ import {
   ProductDetails,
   ProductDetailsDocument
 } from '../product/product.interface';
-import { ReviewStatistics } from '../reviewStatistics/reviewStatistics.interface';
 import {
+  ReviewStatistics,
+  ReviewStatisticsDocument
+} from '../reviewStatistics/reviewStatistics.interface';
+import {
+  PublicUserDetails,
   UserDetailsDocument
 } from '../user/user.interface';
 import {
@@ -30,16 +34,17 @@ import {
 export interface ReviewDocument extends Mongoose.Document {
   _id: string;
   created: Date;
+  details: ReviewDetails;
+  privateDetails: PrivateReviewDetails;
   product: ProductDetailsDocument;
   published: Workflow;
   recommended: Recommended;
-  title: string;
-  user: UserDetailsDocument;
-  details: ReviewDetails;
-  privateDetails: PrivateReviewDetails;
-  url: string;
-  video: AWSVideo;
+  statistics: ReviewStatisticsDocument;
   thumbnails: Array<string>;
+  title: string;
+  url: string;
+  user: UserDetailsDocument;
+  video: AWSVideo;
 }
 
 /**
@@ -52,9 +57,15 @@ export interface ReviewDetails {
   recommended: Recommended;
   statistics?: ReviewStatistics;
   title: string;
+  user: PublicUserDetails;
   videoURL: string;
   thumbnailURL: string;
 }
+
+/**
+ * Review group.
+ */
+export type ReviewGroup = Record<string, Array<ReviewDetails>>;
 
 /**
  * Private review interface.

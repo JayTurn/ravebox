@@ -9,10 +9,11 @@ import Connect from '../../models/database/connect.model';
 import EnvConfig from '../../config/environment/environmentBaseConfig';
 import * as http from 'http';
 import * as https from 'https';
-import * as S3 from 'aws-sdk/clients/s3';
+import Product from '../product/product.model';
 import Review from './review.model';
 import ReviewCommon from './review.common';
 import ReviewStatistics from '../reviewStatistics/reviewStatistics.model';
+import * as S3 from 'aws-sdk/clients/s3';
 import User from '../user/user.model';
 import Video from '../../shared/video/Video.model';
 
@@ -25,14 +26,18 @@ import {
   AuthenticatedUserRequest
 } from '../../models/authentication/authentication.interface';
 import {
+  ProductDetailsDocument
+} from '../product/product.interface';
+import {
   PrivateReviewDetails,
   ReviewDetails,
   ReviewDocument,
+  ReviewGroup,
   ReviewPublishedSNS,
   ReviewRequestBody
 } from './review.interface';
 import { ResponseObject } from '../../models/database/connect.interface';
-import { ReviewStatisticsDocument } from '../reviewStatistics/reviewStatistics.interface'; 
+import { ReviewStatisticsDocument } from '../reviewStatistics/reviewStatistics.interface';
 import {
   SNSConfirmation,
   SNSNotification
@@ -70,17 +75,30 @@ export default class ReviewController {
       ReviewController.Create
     );
 
-    // Create a metadata file for a review an upload to S3.
-    router.post(
-      `${path}/metadata`,
+    // Retrieve a review for editing.
+    router.get(
+      `${path}/edit/:id`,
       Authenticate.isAuthenticated,
-      ReviewController.CreateVideoMetadata
+      ReviewController.RetrieveForEditing
     );
 
-    // Retrieve a review by it's path.
-    router.get(
-      `${path}/view/:brand/:productName/:reviewTitle`,
-      ReviewController.RetrieveByURL
+    // Edit an existing review.
+    router.patch(
+      `${path}/edit/:id`,
+      Authenticate.isAuthenticated,
+      ReviewController.Update
+    );
+
+    // Retrieve a list of reviews from the same product.
+    router.post(
+      `${path}/list/category`,
+      ReviewController.RetrieveListsByCategories
+    );
+
+    // Retrieve a list of reviews from the same product.
+    router.post(
+      `${path}/list/product`,
+      ReviewController.RetrieveListByProductIds
     );
 
     // Retrieve a list of reviews owned by the current logged in user.
@@ -96,10 +114,12 @@ export default class ReviewController {
       ReviewController.RetrieveListByHandle
     );
 
-    // Retrieve a list of reviews from the same product.
-    router.get(
-      `${path}/list/product/:id`,
-      ReviewController.RetrieveListByProductId
+
+    // Create a metadata file for a review an upload to S3.
+    router.post(
+      `${path}/metadata`,
+      Authenticate.isAuthenticated,
+      ReviewController.CreateVideoMetadata
     );
 
     // Review published successfully.
@@ -108,25 +128,17 @@ export default class ReviewController {
       ReviewController.Published
     );
 
-    // Retrieve a review for editing.
-    router.get(
-      `${path}/edit/:id`,
-      Authenticate.isAuthenticated,
-      ReviewController.RetrieveForEditing
-    );
-
-    // Edit an existing review.
-    router.patch(
-      `${path}/edit/:id`,
-      Authenticate.isAuthenticated,
-      ReviewController.Update
-    );
-
     // Delete an existing review.
     router.delete(
       `${path}/remove/:id`,
       Authenticate.isAuthenticated,
       ReviewController.Remove
+    );
+
+    // Retrieve a review by it's path.
+    router.get(
+      `${path}/view/:brand/:productName/:reviewTitle`,
+      ReviewController.RetrieveByURL
     );
   }
 
@@ -151,15 +163,23 @@ export default class ReviewController {
     // Define the provided review details.
     const reviewDetails: ReviewRequestBody = request.body;
 
+    // Create a review stastics document to be cross-referenced with the
+    // review document.
+    const newReviewStatistics: ReviewStatisticsDocument = new ReviewStatistics();
+
     // Create a new review from the request data.
     const newReview: ReviewDocument = new Review({
       product: reviewDetails.product,
       recommended: reviewDetails.recommended,
       published: Workflow.PUBLISHED,
+      statistics: newReviewStatistics._id,
       title: reviewDetails.title,
       user: request.auth._id
     });
 
+    // Update the review statistics with the new review id.
+    newReviewStatistics.review = newReview._id;
+    newReviewStatistics.save();
 
     Video.CreatePresignedVideoRequest(
       reviewDetails.videoTitle,
@@ -348,15 +368,25 @@ export default class ReviewController {
       model: 'Product',
     })
     .populate({
+      path: 'statistics',
+      model: 'ReviewStatistic'
+    })
+    .populate({
       path: 'user',
       model: 'User'
     })
     .then((reviewDocument: ReviewDocument) => {
-      return {
+      const details: ReviewDetails = {
         ...reviewDocument.details,
         product: reviewDocument.product.details,
-        user: reviewDocument.user.publicProfile
-      };
+        user: reviewDocument.user.publicProfile,
+      }
+
+      if (reviewDocument.statistics) {
+        details.statistics = reviewDocument.statistics.details;
+      }
+
+      return details;
     })
     .then((review: ReviewDetails) => {
       let responseObject: ResponseObject;
@@ -377,37 +407,15 @@ export default class ReviewController {
         return;
       }
 
-      ReviewStatistics.findOne({
-        review: review._id
-      })
-      .then((statistics: ReviewStatisticsDocument) => {
-        if (statistics) {
-          review.statistics = statistics.details;
+      // Set the response object.
+      responseObject = Connect.setResponse({
+        data: {
+          review: review
         }
+      }, 201, 'Review returned successfully');
 
-        // Set the response object.
-        responseObject = Connect.setResponse({
-          data: {
-            review: review
-          }
-        }, 201, 'Review returned successfully');
-
-        // Return the response for the authenticated user.
-        response.status(responseObject.status).json(responseObject.data);
-
-      })
-      .catch(() => {
-        // Set the response object.
-        responseObject = Connect.setResponse({
-          data: {
-            review: review
-          }
-        }, 201, 'Review returned successfully');
-
-        // Return the response for the authenticated user.
-        response.status(responseObject.status).json(responseObject.data);
-
-      });
+      // Return the response for the authenticated user.
+      response.status(responseObject.status).json(responseObject.data);
     })
     .catch(() => {
       // Return an error indicating the review wasn't created.
@@ -642,14 +650,14 @@ export default class ReviewController {
    * @param {object} res
    * The response object.
    */
-  static RetrieveListByProductId(request: Request, response: Response): void {
-    const id: string = request.params.id;
+  static RetrieveListByProductIds(request: Request, response: Response): void {
+    const queries: Array<string> = request.body.queries;
 
-    if (!id) {
+    if (!queries || queries.length === 0) {
       // Define the responseObject.
       const responseObject = Connect.setResponse({
           data: {
-            errorCode: 'PRODUCT_ID_PROVIDED_FOR_REVIEWS',
+            errorCode: 'PRODUCT_ID_NOT_PROVIDED_FOR_REVIEWS',
             title: `The product id is missing from the request`
           }
         }, 404, `The product id is missing from the request`);
@@ -661,12 +669,18 @@ export default class ReviewController {
     }
 
     Review.find({
-      product: id,
+      product: {
+        $in: queries
+      },
       published: Workflow.PUBLISHED
     })
     .populate({
       path: 'product',
       model: 'Product',
+    })
+    .populate({
+      path: 'statistics',
+      model: 'ReviewStatistic'
     })
     .populate({
       path: 'user',
@@ -675,20 +689,28 @@ export default class ReviewController {
     .then((reviews: Array<ReviewDocument>) => {
 
       // Sort the results randomly.
-      const sortedReviews: Array<ReviewDetails> = [],
+      const sortedDocuments: Array<ReviewDocument> = [],
             tempReviews: Array<ReviewDocument> = [...reviews];
 
       for (let i = reviews.length - 1; i >= 0; i--) {
         const j = Math.floor(Math.random() * i);
         const temp: ReviewDocument = tempReviews[i];
-        sortedReviews[i] = tempReviews[j].details;
+        sortedDocuments[i] = tempReviews[j];
         tempReviews[j] = temp;
+      }
+
+      // Declare a reviews list to be returned with the response.
+      let reviewGroups: ReviewGroup;
+
+      if (sortedDocuments.length > 0) {
+        reviewGroups = ReviewCommon.GroupReviewsByProductIds(
+          sortedDocuments);
       }
 
       // Set the response object.
       const responseObject: ResponseObject = Connect.setResponse({
         data: {
-          reviews: sortedReviews
+          reviews: reviewGroups
         }
       }, 200, 'Reviews found');
 
@@ -708,6 +730,100 @@ export default class ReviewController {
       // Return the error response for the user.
       response.status(responseObject.status).json(responseObject.data);
     });
+  }
+
+  /**
+   * Retrieves a list of reviews based on the category label.
+   *
+   * @param {object} req
+   * The request object.
+   *
+   * @param {object} res
+   * The response object.
+   */
+  static RetrieveListsByCategories(request: Request, response: Response): void {
+    const queries: Array<string> = request.body.queries;
+
+    if (!queries || queries.length === 0) {
+      // Define the responseObject.
+      const responseObject = Connect.setResponse({
+          data: {
+            errorCode: 'CATEGORY_LABELS_NOT_PROVIDED_FOR_REVIEWS',
+            title: `The category labels are missing from the request`
+          }
+        }, 404, `The category labels are missing from the request`);
+
+      // Return the response.
+      response.status(responseObject.status).json(responseObject.data);
+
+      return;
+    }
+
+    Product.find({
+      'categories.key': {
+        $in: queries
+      }
+    })
+    .then((products: Array<ProductDetailsDocument>) => {
+
+      // Collect all of the product id's matching the category.
+      const productIdList: Array<string> = products.map((item: ProductDetailsDocument) => item._id);
+
+      Review.find({
+        product: {
+          $in: productIdList,
+        },
+        published: Workflow.PUBLISHED
+      })
+      .sort('created')
+      .limit(8)
+      .populate({
+        path: 'product',
+        model: 'Product',
+      })
+      .populate({
+        path: 'statistics',
+        model: 'ReviewStatistic'
+      })
+      .populate({
+        path: 'user',
+        model: 'User'
+      })
+      .then((reviewDocuments: Array<ReviewDocument>) => {
+
+        // Declare a reviews list to be returned with the response.
+        let reviewGroups: ReviewGroup;
+
+        if (reviewDocuments.length > 0) {
+          reviewGroups = ReviewCommon.GroupReviewsByCategoryQueries(
+            queries, reviewDocuments);
+        }
+
+        // Set the response object.
+        const responseObject: ResponseObject = Connect.setResponse({
+          data: {
+            reviews: reviewGroups
+          }
+        }, 200, 'Reviews found');
+
+        // Return the response for the authenticated user.
+        response.status(responseObject.status).json(responseObject.data);
+      })
+      .catch(() => {
+
+        // Return an error indicating the list of reviews weren't found.
+        const responseObject = Connect.setResponse({
+          data: {
+            errorCode: 'REVIEWS_FOR_CATEGORY_NOT_FOUND',
+            message: `We experienced an issue retrieving reviews for the requested category`
+          }
+        }, 404, `We experienced an issue retrieving reviews for the requested category`);
+
+        // Return the error response for the user.
+        response.status(responseObject.status).json(responseObject.data);
+      });
+    })
+
   }
 
   /**
