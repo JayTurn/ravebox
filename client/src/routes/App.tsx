@@ -13,7 +13,7 @@ import CssBaseline from '@material-ui/core/CssBaseline';
 import { frontloadConnect } from 'react-frontload';
 import { Helmet } from 'react-helmet';
 import { SnackbarProvider } from 'notistack';
-import { Route, Switch } from 'react-router-dom';
+import { Redirect, Route, Switch } from 'react-router-dom';
 import { RouteComponentProps } from 'react-router';
 import { TransitionGroup, CSSTransition } from 'react-transition-group';
 import { withRouter } from 'react-router';
@@ -36,6 +36,7 @@ import {
 } from '../store/xsrf/Actions';
 
 // Components.
+import About from './about/About';
 import Account from './user/account/Account';
 import AddProduct from './product/add/AddProduct';
 import AddReview from './review/add/AddReview';
@@ -169,8 +170,8 @@ const App: React.FC<AppProps> = (props: AppProps) => {
               render={(route: RouteComponentProps) => {
                 return (
                   <Switch location={route.location}>
-                    <Route path="/page-not-found" exact={true}>
-                      <PageNotFound />
+                    <Route path="/about" exact={true}>
+                      <About />
                     </Route>
                     <PrivateRoute exact={true} path="/account">
                       <Account />
@@ -211,6 +212,10 @@ const App: React.FC<AppProps> = (props: AppProps) => {
                     <Route exact={true} path="/">
                       <Home />
                     </Route>
+                    <Route path="/page-not-found" exact={true}>
+                      <PageNotFound />
+                    </Route>
+                    <Redirect from='*' to='/page-not-found' />
                   </Switch>
                 );
               }}
