@@ -93,12 +93,7 @@ export default class SearchController {
 
     // Begin by searching for product types, categories and brands.
     Product.find({
-      $or: [{
-        name: regEx
-      },
-      {
-        brand: regEx
-      }]
+      namePartials: regEx,
     })
     .lean()
     .then((products: Array<ProductDetails>) => {

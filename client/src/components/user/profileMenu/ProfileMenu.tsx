@@ -44,6 +44,7 @@ import { ProfileMenuProps } from './ProfileMenu.interface';
  */
 const ProfileIconButton = withStyles((theme: Theme) => ({
   root: {
+    padding: `10px 12px`,
     '&:hover': {
       backgroundColor: 'rgba(203,205,255, 0.2)' 
     }

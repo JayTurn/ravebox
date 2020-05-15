@@ -19,6 +19,7 @@ export enum RequestType {
 export enum RetrievalStatus {
   FAILED = 'failed',
   NOT_FOUND = 'not_found',
+  NOT_REQUESTED = 'not_requested',
   REQUESTED = 'requested',
   SUCCESS = 'success',
   WAITING = 'waiting'

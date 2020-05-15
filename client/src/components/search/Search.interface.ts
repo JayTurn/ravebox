@@ -1,20 +1,6 @@
 /**
  * Search.interface.tsx
- * Properties and state for the search component.
+ * Interfaces for search.
  */
 
-// Dependent interfaces.
-import { TVSearch } from '../television/Television.interface';
-
-/**
- * Search properties.
- */
-export interface SearchProps { }
-
-/**
- * Search state.
- */
-export interface SearchState {
-  query: string;
-  results?: TVSearch;
-}
+export interface SearchProps {}

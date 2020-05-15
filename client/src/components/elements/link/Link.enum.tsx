@@ -7,6 +7,7 @@
  * The style of link to be displayed.
  */
 export enum StyleType {
+  SEARCH_RESULT_ITEM = 'search_result_item',
   STANDARD_PRIMARY = 'standard_primary',
   BUTTON_PRIMARY = 'button_primary',
   BUTTON_PRIMARY_INVERSE = 'button_primary_inverse',

@@ -102,6 +102,16 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
       backgroundColor: `rgba(224,255,251,1)`
     }
   },
+  searchResultItem: {
+    color: `rgba(33,36,104, 0.8)`,
+    display: 'block',
+    fontWeight: 600,
+    padding: theme.spacing(1),
+    width: '100%',
+    '&:hover': {
+      backgroundColor: `rgba(67,74,217, 0.05)`
+    }
+  },
   standardPrimary: {
   }
 }));
@@ -125,7 +135,8 @@ const LinkElement: React.FC<LinkProps> = (props: LinkProps) => {
         [classes.buttonPrimary]: styleType === StyleType.BUTTON_PRIMARY,
         [classes.buttonPrimaryInverse]: styleType === StyleType.BUTTON_PRIMARY_INVERSE,
         [classes.buttonSecondary]: styleType === StyleType.BUTTON_SECONDARY,
-        [classes.buttonSecondaryInverse]: styleType === StyleType.BUTTON_SECONDARY_INVERSE
+        [classes.buttonSecondaryInverse]: styleType === StyleType.BUTTON_SECONDARY_INVERSE,
+        [classes.searchResultItem]: styleType === StyleType.SEARCH_RESULT_ITEM
       })}
       color={props.color}
       component={({className, children}) => {
