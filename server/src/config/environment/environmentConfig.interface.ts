@@ -10,6 +10,7 @@ export interface EnvironmentProperties {
   authenticationTimeout: string;
   aws: AWSProperties;
   database?: DatabaseProperties;
+  elasticsearch: ElasticsearchProperties;
   env: string;
   ip: string;
   notifications: NotificationProperties;
@@ -34,6 +35,10 @@ export interface DatabaseProperties {
   secret: string;
   name: string;
   uri: string;
+}
+
+export interface ElasticsearchProperties {
+  url: string;
 }
 
 export interface SecurityProperties {

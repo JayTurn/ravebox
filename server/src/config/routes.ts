@@ -7,6 +7,7 @@ import { Router } from 'express';
 import ReviewController from '../api/review/review.controller';
 import ReviewStatisticsController from '../api/reviewStatistics/reviewStatistics.controller';
 import ProductController from '../api/product/product.controller';
+import SearchController from '../api/search/search.controller';
 import UserController from '../api/user/user.controller';
 //import EvaluationController from '../api/execution/evaluation.controller';
 //import HealthController from '../api/health/health.controller';
@@ -39,6 +40,8 @@ export default class RoutesController {
     ReviewController.createRoutes(this.router, this.apiPath);
     // Register the review statistics routes.
     ReviewStatisticsController.createRoutes(this.router, this.apiPath);
+    // Register the search routes.
+    SearchController.createRoutes(this.router, this.apiPath);
     // Register the user routes.
     UserController.createRoutes(this.router, this.apiPath);
     // Register the healthy status routes.

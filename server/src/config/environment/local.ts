@@ -24,6 +24,9 @@ const config: Partial<EnvironmentProperties> = {
     region: 'ap-southeast-2',
     signatureVersion: "v4"
   },
+  elasticsearch: {
+    url: 'http://127.0.0.1:9200'
+  },
   database: {
     name: dbname,
     uri: uri,

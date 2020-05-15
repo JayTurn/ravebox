@@ -18,7 +18,7 @@ const Schema = Mongoose.Schema;
 // Create the product schema to be the base for the product model.
 const ProductSchema = new Schema({
   brand: {
-    type: String
+    type: String,
   },
   categories: {
     type: Array,
@@ -29,20 +29,22 @@ const ProductSchema = new Schema({
     default: Date.now
   },
   name: {
-    type: String
+    type: String,
+  },
+  namePartials: {
+    type: Array,
+    default: [],
+    index: true
   },
   creator:  { 
     type: Schema.Types.ObjectId, 
-    ref: 'User'
+    ref: 'User',
   },
   url: {
     type: String,
-    index: true
+    index: true,
   }
 });
-
-// Define text search fields.
-ProductSchema.path('name').index({text: true});
 
 // Define a view to be used for product responses.
 ProductSchema

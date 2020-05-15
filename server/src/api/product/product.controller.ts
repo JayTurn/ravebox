@@ -7,6 +7,7 @@ import Authenticate from '../../models/authentication/authenticate.model';
 import Connect from '../../models/database/connect.model';
 import { Request, Response, Router, NextFunction } from 'express';
 import Product from './product.model';
+import ProductCommon from './product.common';
 
 // Interfaces.
 import {
@@ -17,6 +18,9 @@ import {
   ProductDetailsDocument
 } from './product.interface';
 import { ResponseObject } from '../../models/database/connect.interface';
+
+// Utilities.
+import Keywords from '../../shared/keywords/keywords.model';
 
 /**
  * Routing controller for products.
@@ -73,6 +77,10 @@ export default class ProductController {
   static Create(request: AuthenticatedUserRequest, response: Response): void {
     // Define the provided product details.
     const productDetails: ProductDetails = request.body;
+
+    // Create the product name partial keyword matching list.
+    productDetails.namePartials = Keywords.CreatePartialMatches(
+      `${productDetails.brand} ${productDetails.name}`);
 
     // Create a new product from the request data.
     const newProduct: ProductDetailsDocument = new Product({
@@ -194,24 +202,23 @@ export default class ProductController {
       return;
     }
 
-    // As a poor person's search, let's just use regex for now and replace it
-    // with elastic at some point in the future.
+    // Regular expression to support fuzzy matching.
     const regEx = new RegExp(query.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, "\\$&"), 'gi');
 
     Product.find({
-      name: regEx
+      namePartials: regEx,
     })
     .lean()
     .then((products: Array<ProductDetails>) => {
-      // Attach the product to the response.
-      const responseObject = Connect.setResponse({
-        data: {
-          products: products
-        }
-      }, 200, 'Products search successfully');
+        // Attach the product to the response.
+        const responseObject = Connect.setResponse({
+          data: {
+            products: products
+          }
+        }, 200, 'Products search successfully');
 
-      // Return the response for the authenticated user.
-      response.status(responseObject.status).json(responseObject.data);
+        // Return the response for the authenticated user.
+        response.status(responseObject.status).json(responseObject.data);
     })
     .catch(() => {
       // Define the responseObject.
