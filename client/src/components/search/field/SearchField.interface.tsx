@@ -10,6 +10,7 @@ import { APIResponse } from '../../../utils/api/Api.interface';
  * Search field component properties.
  */
 export interface SearchFieldProps {
+  toggleSearchField?: (e: React.SyntheticEvent) => void;
 }
 
 /**

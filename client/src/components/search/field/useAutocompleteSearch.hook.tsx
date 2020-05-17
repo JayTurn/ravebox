@@ -72,6 +72,13 @@ export function useAutocompleteSearch() {
     query: string
   ): Promise<void> => {
 
+    if (!query) {
+      setQuery(query);
+      setResults([]);
+      setRetrievalStatus(RetrievalStatus.NOT_REQUESTED);
+      return;
+    }
+
     // Set the submission state.
     setRetrievalStatus(RetrievalStatus.WAITING);
 

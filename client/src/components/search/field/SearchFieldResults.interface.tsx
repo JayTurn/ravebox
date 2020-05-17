@@ -3,12 +3,16 @@
  * Interfaces for the search field results.
  */
 
+// Enumerators.
+import { RetrievalStatus } from '../../../utils/api/Api.enum';
+
 /**
  * Search field results component properties.
  */
 export interface SearchFieldResultsProps {
-  results: Array<SearchFieldResult>
   query: string;
+  results: Array<SearchFieldResult>
+  retrievalStatus: RetrievalStatus;
 }
 
 /**

@@ -4,6 +4,7 @@
  */
 
 // Modules.
+import ArrowBackRoundedIcon from '@material-ui/icons/ArrowBackRounded';
 import Box from '@material-ui/core/Box';
 import IconButton from '@material-ui/core/IconButton';
 import clsx from 'clsx';
@@ -11,12 +12,14 @@ import {
   createStyles,
   makeStyles,
   withStyles,
-  Theme
+  Theme,
+  useTheme
 } from '@material-ui/core/styles';
 import Grid from '@material-ui/core/Grid';
+import Input from '@material-ui/core/Input';
 import * as React from 'react';
 import SearchRoundedIcon from '@material-ui/icons/SearchRounded';
-import Input from '@material-ui/core/Input';
+import useMediaQuery from '@material-ui/core/useMediaQuery';
 
 // Components.
 import SearchFieldResults from './SearchFieldResults';
@@ -49,7 +52,22 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
     top: 48,
     width: '100%'
   },
+  listContainerLarge: {
+    position: 'absolute',
+    zIndex: 1,
+    top: 48,
+    width: '100%'
+  },
   searchButton: {
+    height: `2.2rem`,
+    lineHeight: `2.2rem`,
+    marginTop: 5,
+    padding: theme.spacing(0, 1),
+    '&:hover': {
+      backgroundColor: `rgba(67,74,217, 0.1)`,
+    }
+  },
+  searchButtonLarge: {
     backgroundColor: `rgba(67,74,217, 0.05)`,
     borderBottom: `1px solid rgba(67,74,217, 0.15)`,
     borderBottomLeftRadius: 0,
@@ -70,6 +88,10 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
     position: 'relative',
     zIndex: 1
   },
+  searchContainerLarge: {
+    position: 'relative',
+    zIndex: 1
+  },
   searchIcon: {
     color: theme.palette.primary.main,
     opacity: '0.8'
@@ -80,9 +102,35 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
 }));
 
 /**
- * Styled search field.
+ * Styled search field for small screens.
  */
 const StyledSearchField = withStyles(theme => ({
+  root: {
+    backgroundColor: theme.palette.common.white,
+    color: `rgba(33,36,104, 0.7)`,
+    fontSize: `.9rem`,
+    height: `2.2rem`,
+    lineHeight: `2.2rem`,
+    marginTop: 5,
+    padding: theme.spacing(.5, 2),
+    width: '100%',
+  },
+  input: {
+    borderBottom: `2px solid rgba(33,36,104, 0.4)`,
+    '&:focus': {
+      borderBottom: `2px solid rgba(33,36,104, 0.7)`,
+    },
+    '&::placeholder': {
+      color: `rgba(33,36,104, 0.4)`,
+      opacity: 1
+    }
+  }
+}))(Input);
+
+/**
+ * Styled search field for large screens.
+ */
+const StyledSearchFieldLarge = withStyles(theme => ({
   root: {
     backgroundColor: theme.palette.common.white,
     borderTopLeftRadius: 4,
@@ -110,7 +158,9 @@ const StyledSearchField = withStyles(theme => ({
 const SearchField: React.FC<SearchFieldProps> = (props: SearchFieldProps) => {
 
   // Define the component classes.
-  const classes = useStyles();
+  const classes = useStyles(),
+        theme = useTheme(),
+        largeScreen = useMediaQuery(theme.breakpoints.up('md'));
 
   // Use the autocomplete search hook for search requests.
   const {
@@ -155,42 +205,92 @@ const SearchField: React.FC<SearchFieldProps> = (props: SearchFieldProps) => {
   ): void => {
   }
 
-  const test: Array<AutocompleteSearchResult> = [{
-    title: 'Hello'
-  }];
+  /**
+   * Handles the search field state for small screens.
+   */
+  const handleSearchDisplay: (
+    e: React.SyntheticEvent
+  ) => void = (
+    e: React.SyntheticEvent
+  ): void => {
+    if (props.toggleSearchField) {
+      props.toggleSearchField(e);
+    }
+  }
 
   return (
     <Grid container direction='column' className={clsx(classes.searchContainer)}>
       <Grid item xs={12} className={clsx(classes.fieldContainer)}>
-        <Grid
-          container
-          direction='row'
-        >
-          <Grid item className={clsx(classes.inputContainer)}>
-            <StyledSearchField
-              className={clsx(classes.field)}
-              disableUnderline
-              id='product-search'
-              name='product_search'
-              onChange={handleChange}
-              onFocus={handleFocus}
-              placeholder='Search'
-              type='text'
-            />
-          </Grid>
-          <Grid item>
-            <IconButton
-              aria-label='Perform product search'
-              disableRipple
-              className={classes.searchButton}
-            >   
-              <SearchRoundedIcon className={classes.searchIcon}/>
-            </IconButton>
-          </Grid>
-        </Grid>
+          {largeScreen ? (
+            <Grid
+              container
+              direction='row'
+            >
+              <Grid item className={clsx(classes.inputContainer)}>
+                <StyledSearchFieldLarge
+                  className={clsx(classes.field)}
+                  disableUnderline
+                  id='product-search'
+                  name='product_search'
+                  onChange={handleChange}
+                  onFocus={handleFocus}
+                  placeholder='Search'
+                  type='text'
+                />
+              </Grid>
+              <Grid item>
+                <IconButton
+                  aria-label='Perform product search'
+                  disableRipple
+                  className={classes.searchButtonLarge}
+                >   
+                  <SearchRoundedIcon className={classes.searchIcon}/>
+                </IconButton>
+              </Grid>
+            </Grid>
+          ) : (
+            <Grid
+              container
+              direction='row'
+            >
+              <Grid item>
+                <IconButton
+                    style={{marginLeft: '6px', marginTop: '4px', padding: '6px 6px 6px'}}
+                    onClick={handleSearchDisplay}
+                >
+                  <ArrowBackRoundedIcon />
+                </IconButton>
+              </Grid>
+              <Grid item className={clsx(classes.inputContainer)}>
+                <StyledSearchField
+                  className={clsx(classes.field)}
+                  disableUnderline
+                  id='product-search'
+                  name='product_search'
+                  onChange={handleChange}
+                  onFocus={handleFocus}
+                  placeholder='Search'
+                  type='text'
+                />
+              </Grid>
+              <Grid item>
+                <IconButton
+                  aria-label='Perform product search'
+                  disableRipple
+                  className={classes.searchButton}
+                >   
+                  <SearchRoundedIcon className={classes.searchIcon}/>
+                </IconButton>
+              </Grid>
+            </Grid>
+          )}
       </Grid>
       <Grid item xs={12} className={clsx(classes.listContainer)}>
-        <SearchFieldResults results={[...results]} query={query}/>
+        <SearchFieldResults
+          query={query}
+          results={[...results]}
+          retrievalStatus={retrievalStatus}
+        />
       </Grid>
     </Grid>
   );
