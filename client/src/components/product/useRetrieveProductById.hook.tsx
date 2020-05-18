@@ -62,7 +62,8 @@ export function useRetrieveProductById(params: RetrieveProductByIdParams) {
     _id: '',
     brand: '',
     categories: [{key: '', label: ''}],
-    name: ''
+    name: '',
+    url: ''
   });
 
   /**

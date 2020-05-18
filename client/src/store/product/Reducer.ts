@@ -30,7 +30,8 @@ const emptyProductView: ProductView = {
     _id: '',
     brand: '',
     categories: [],
-    name: ''
+    name: '',
+    url: ''
   },
   reviews: []
 }

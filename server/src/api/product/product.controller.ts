@@ -7,7 +7,6 @@ import Authenticate from '../../models/authentication/authenticate.model';
 import Connect from '../../models/database/connect.model';
 import { Request, Response, Router, NextFunction } from 'express';
 import Product from './product.model';
-//import ProductCommon from './product.common';
 import Review from '../review/review.model';
 
 // Enumerators.
