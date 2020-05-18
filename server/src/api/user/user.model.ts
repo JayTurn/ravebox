@@ -69,7 +69,8 @@ UserSchema
       'emailVerified': this.emailVerified,
       'expires': this.expires,
       'handle': this.handle,
-      'oldEmail': this.oldEmail
+      'oldEmail': this.oldEmail,
+      'statistics': this.statistics
       //'name': this.name,
       //'phone': this.phone,
       //'address': this.address,
@@ -85,7 +86,8 @@ UserSchema
   .get(function() {
     return {
       '_id': this._id,
-      'handle': this.handle
+      'handle': this.handle,
+      'statistics': this.statistics
     };
   });
 

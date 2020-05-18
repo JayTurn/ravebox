@@ -55,6 +55,7 @@ import SideNavigation from '../components/navigation/side/SideNavigation';
 import Signup from './user/signup/Signup';
 import TopNavigation from '../components/navigation/top/TopNavigation';
 import Verify from './user/verify/Verify';
+import ViewProduct from './product/view/ViewProduct';
 import ViewReview from './review/view/ViewReview';
 
 // Hooks.
@@ -202,6 +203,9 @@ const App: React.FC<AppProps> = (props: AppProps) => {
                     </PrivateRoute>
                     <PrivateRoute exact={true} path="/product/:id/review">
                       <AddReview />
+                    </PrivateRoute>
+                    <PrivateRoute exact={true} path="/product/:category/:subCategory/:brand/:productName">
+                      <ViewProduct />
                     </PrivateRoute>
                     <PrivateRoute exact={true} path="/review/edit/:id">
                       <EditReview />

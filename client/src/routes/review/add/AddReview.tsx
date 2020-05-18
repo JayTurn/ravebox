@@ -35,7 +35,7 @@ import { RetrievalStatus } from '../../../utils/api/Api.enum';
 import { AddReviewProps } from './AddReview.interface';
 
 // Hooks.
-import { useRetrieveProductById } from '../../../components/product/useRetrieveProduct.hook';
+import { useRetrieveProductById } from '../../../components/product/useRetrieveProductById.hook';
 
 /**
  * Create styles for the review screen.

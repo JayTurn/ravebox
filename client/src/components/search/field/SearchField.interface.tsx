@@ -3,6 +3,9 @@
  * Interfaces for the search field component.
  */
 
+// Enumerators.
+import { ResultType } from '../Search.enum';
+
 // Interfaces.
 import { APIResponse } from '../../../utils/api/Api.interface';
 
@@ -31,5 +34,8 @@ export interface AutocompleteSearchResponse extends APIResponse {
  * Autocomplete search result.
  */
 export interface AutocompleteSearchResult {
+  id: string;
+  resultType: ResultType;
   title: string;
+  url?: string;
 }

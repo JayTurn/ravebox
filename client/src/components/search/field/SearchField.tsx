@@ -290,6 +290,7 @@ const SearchField: React.FC<SearchFieldProps> = (props: SearchFieldProps) => {
           query={query}
           results={[...results]}
           retrievalStatus={retrievalStatus}
+          closeSearchResults={closeSearchResults}
         />
       </Grid>
     </Grid>

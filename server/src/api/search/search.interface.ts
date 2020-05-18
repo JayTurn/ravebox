@@ -6,11 +6,23 @@
 // Enumerators.
 import { ResultType } from './search.enum';
 
+// Interfaces.
+import {
+  CategorizedReviewGroup
+} from '../review/review.interface';
+
 /**
  * Autocomplete search results interfaces.
  */
 export interface AutocompleteResults {
   results: Array<AutocompleteItem>;
+}
+
+/**
+ * Explore search results.
+ */
+export interface ExploreResults {
+  results: Array<CategorizedReviewGroup>;
 }
 
 /**

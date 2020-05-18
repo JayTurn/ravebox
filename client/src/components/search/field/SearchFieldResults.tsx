@@ -21,6 +21,7 @@ import ListItemText from '@material-ui/core/ListItemText';
 import * as React from 'react';
 import SearchRoundedIcon from '@material-ui/icons/SearchRounded';
 import useMediaQuery from '@material-ui/core/useMediaQuery';
+import { withRouter } from 'react-router';
 
 // Enumerators.
 import { RetrievalStatus } from '../../../utils/api/Api.enum';
@@ -94,6 +95,10 @@ const SearchFieldResults: React.FC<SearchFieldResultsProps> = (props: SearchFiel
   ) => void = (
     item: SearchFieldResult
   ): void => {
+    if (item.url) {
+      props.closeSearchResults();
+      props.history.push(`${item.resultType}/${item.url}`);
+    }
   }
 
   /**
@@ -153,4 +158,4 @@ const SearchFieldResults: React.FC<SearchFieldResultsProps> = (props: SearchFiel
   )
 };
 
-export default SearchFieldResults;
+export default withRouter(SearchFieldResults);

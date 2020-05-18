@@ -17,11 +17,20 @@ import { Workflow } from '../../shared/enumerators/workflow.enum';
 // Interfaces.
 import { Category } from '../product/product.interface';
 import {
+  CategorizedReviewGroup,
+  ProductReviewGroup,
   ReviewDetails,
   ReviewDocument,
   ReviewGroup,
+  ReviewGroupItem,
   ReviewPublishedSNS
 } from './review.interface';
+import {
+  ProductDetails
+} from '../product/product.interface';
+import {
+  PublicUserDetails
+} from '../user/user.interface';
 
 /**
  * ReviewCommon class.
@@ -206,6 +215,174 @@ export default class ReviewCommon {
     } while (i < reviews.length);
 
     return reviewGroup;
+  }
+
+  /**
+   * Requests reviews based on the product id's and categorizes results.
+   *
+   * @param { Array<ProductDetails> }
+   *
+   * @return Promise<Array<CategorizedReviewGroup>>
+   */
+  static RequestAndCategorizeReviewsFromProducts(
+    products: Array<ProductDetails>
+  ): Promise<Array<CategorizedReviewGroup>> {
+    return new Promise<Array<CategorizedReviewGroup>>((resolve: Function, reject: Function) => {
+
+      // Exit if we don't have any products.
+      if (products.length <= 0) {
+        return resolve([]);
+      }
+
+      // Create an array of promises to be resolved based on the array of
+      // product ids provided.
+      const productIds: Array<string> = [];
+
+      let i = 0;
+
+      do {
+        const current: ProductDetails = products[i]
+        productIds.push(current._id);
+        i++;
+      } while (i < products.length);
+
+      Review.find({
+        product: {
+          $in: productIds
+        },
+        published: Workflow.PUBLISHED
+      })
+      .populate({
+        path: 'product',
+        model: 'Product',
+      })
+      .populate({
+        path: 'statistics',
+        model: 'ReviewStatistic'
+      })
+      .populate({
+        path: 'user',
+        model: 'User',
+        populate: {
+          path: 'statistics',
+          model: 'UserStatistic'
+        }
+      })
+      .then((reviews: Array<ReviewDocument>) => {
+        const reviewGroups: Array<CategorizedReviewGroup> = ReviewCommon
+          .CreateCategorizedReviewGroups(reviews);
+
+        resolve(reviewGroups);
+      })
+      .catch((error: Error) => {
+        console.log(error);
+        reject(error);
+      })
+    });
+  }
+
+  /**
+   * Creates a categorised group of reviews.
+   */
+  static CreateCategorizedReviewGroups(
+    reviews: Array<ReviewDocument>
+  ): Array<CategorizedReviewGroup> {
+    const groups: Array<CategorizedReviewGroup> = [];
+
+    let i = 0;
+
+    do {
+
+      const current: ReviewDocument = reviews[i],
+            product: ProductDetails = reviews[i].product.details,
+            user: PublicUserDetails = reviews[i].user.publicProfile,
+            category: Category = current.product.categories[0],
+            subCategory: Category = current.product.categories[1];
+
+      if (!category || !subCategory) {
+        continue;
+      }
+
+      const groupIndex: number = groups.findIndex((groupItem: CategorizedReviewGroup) => {
+        return groupItem.category.key === category.key;
+      });
+
+      // If we don't have a group index, this is a new category.
+      if (groupIndex < 0) {
+        groups.push({
+          category: category,
+          items: [{
+            category: subCategory,
+            items: [{
+              product: {...product},
+              reviews: [{
+                ...current.details,
+                product: {...product},
+                user: {...user}
+              }]
+            }]
+          }]
+        });
+      } else {
+        // Check if we have results for the current sub-category
+        const subGroupIndex: number = groups[groupIndex].items.findIndex(
+          (item: ReviewGroupItem) => {
+            return item.category.key === subCategory.key;
+          }
+        );
+
+        // If we don't have a sub-group index, this is a new sub-category.
+        if (subGroupIndex < 0) {
+          groups[groupIndex].items.push({
+            category: subCategory,
+            items: [{
+              product: {...product},
+              reviews: [{
+                ...current.details,
+                product: {...product},
+                user: {...user}
+              }]
+            }]
+          });
+
+        } else {
+
+          // Check if we have results for the current product.
+          const productIndex: number = groups[groupIndex].items[subGroupIndex]
+            .items.findIndex((item: ProductReviewGroup) => {
+              return item.product._id === current.product._id;
+            });
+
+          // If we don't have a product index this is the first review for the
+          // product. Add a new product and review.
+          if (productIndex < 0) {
+
+            groups[groupIndex].items[subGroupIndex].items.push({
+              product: {...product},
+              reviews: [{
+                ...current.details,
+                product: {...product},
+                user: {...user}
+              }]
+            });
+
+          } else {
+            // We already have a product listed so we just need to add the
+            // review to the existing product in the group.
+            groups[groupIndex].items[subGroupIndex].items[productIndex].reviews.push({
+              ...current.details,
+              product: {...product},
+              user: {...user}
+            });
+          }
+        }
+      }
+
+      i++;
+
+    } while (i < reviews.length);
+
+    return groups;
   }
 
   /**

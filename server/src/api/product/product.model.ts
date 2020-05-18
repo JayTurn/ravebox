@@ -63,9 +63,9 @@ ProductSchema
  */
 ProductSchema
   .pre<ProductDetailsDocument>('save', function(next: Mongoose.HookNextFunction) {
-    const name: string = this.name.split(' ').join('-')
+    const name: string = this.name.split(' ').join('_')
             .split('&').join('and').toLowerCase(),
-          brand: string = encodeURIComponent(this.brand.split(' ').join('-')
+          brand: string = encodeURIComponent(this.brand.split(' ').join('_')
             .split('&').join('and').toLowerCase());
 
     let url = '',
@@ -74,7 +74,7 @@ ProductSchema
     do {
       const current: Category = this.categories[i];
 
-      const label: string = current.label.split(' ').join('-')
+      const label: string = current.label.split(' ').join('_')
         .split('&').join('and').toLowerCase();
 
       url += `${label}/`

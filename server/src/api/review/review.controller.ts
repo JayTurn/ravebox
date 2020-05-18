@@ -686,6 +686,10 @@ export default class ReviewController {
       path: 'user',
       model: 'User'
     })
+    .populate({
+      path: 'user.userStatistics',
+      model: 'UserStatistic'
+    })
     .then((reviews: Array<ReviewDocument>) => {
 
       // Sort the results randomly.

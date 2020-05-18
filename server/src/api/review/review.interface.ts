@@ -12,6 +12,7 @@ import { Workflow } from '../../shared/enumerators/workflow.enum';
 
 // Interfaces.
 import {
+  Category,
   ProductDetails,
   ProductDetailsDocument
 } from '../product/product.interface';
@@ -84,6 +85,30 @@ export interface ReviewRequestBody {
   videoTitle: string;
   videoSize: string;
   videoType: string;
+}
+
+/**
+ * Categorised review groups.
+ */
+export interface CategorizedReviewGroup {
+  category: Category;
+  items: Array<ReviewGroupItem>;
+}
+
+/**
+ * Categorized review group item.
+ */
+export interface ReviewGroupItem {
+  category: Category;
+  items: Array<ProductReviewGroup>;
+}
+
+/**
+ * Group of reviews for a product.
+ */
+export interface ProductReviewGroup {
+  product: ProductDetails;
+  reviews?: Array<ReviewDetails>;
 }
 
 /**
