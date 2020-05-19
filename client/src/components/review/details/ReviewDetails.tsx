@@ -103,11 +103,12 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
     fontWeight: 600
   },
   productPreviewContainer: {
-    padding: theme.spacing(1, 2, 2, 9)
+    padding: theme.spacing(1, 2)
   },
   publicProfileContainer: {
-    paddingTop: theme.spacing(3)
-    //backgroundColor: `rgba(0,0,0,.01)`
+    paddingTop: theme.spacing(3),
+    backgroundColor: `rgba(0,0,0,.02)`,
+    boxShadow: `0 1px 1px inset rgba(0,0,0,0.05)`
   },
   ratingContainerLarge: {
   },
@@ -309,18 +310,6 @@ const ReviewDetails: React.FC<ReviewDetailsProps> = (props: ReviewDetailsProps) 
                   </Grid>
                 </Grid>
               </Grid>
-              {review.user &&
-                <Grid item xs={12} className={clsx(
-                    classes.columnLarge,
-                    classes.publicProfileContainer
-                  )}
-                >
-                  <PublicProfilePreview {...review.user} />
-                </Grid>
-              }
-              <Grid item xs={12} className={clsx(classes.recommendationContainer)}>
-                <RecommendationChip recommended={review.recommended} />
-              </Grid>
               {review.product &&
                 <Grid container direction='row'>
                   <Grid item xs={12} className={clsx(
@@ -334,16 +323,35 @@ const ReviewDetails: React.FC<ReviewDetailsProps> = (props: ReviewDetailsProps) 
                   </Grid>
                 </Grid>
               }
+              {review.user &&
+                <Grid container direction='column' className={clsx(
+                    classes.publicProfileContainer
+                  )}
+                >
+                  <Grid item xs={12} className={clsx(
+                      classes.columnLarge,
+                    )}
+                  >
+                    <PublicProfilePreview {...review.user} />
+                  </Grid>
+                  <Grid item xs={12} className={clsx(classes.recommendationContainer)}>
+                    <RecommendationChip recommended={review.recommended} />
+                  </Grid>
+                </Grid>
+              }
             </Grid>
           </Grid>
           <Grid item xs={12} md={5} lg={4} className={classes.sidebarContainer}>
-            {props.productGroup && props.productGroup[productId] &&
+            {props.productGroup && props.productGroup[productId] && review.product &&
               <ListByQuery
                 listType={ReviewListType.PRODUCT}
                 presentationType={largeScreen ? PresentationType.SIDEBAR : PresentationType.SCROLLABLE}
                 reviews={props.productGroup[productId]}
                 title={
-                  <ListTitle title={`More reviews for this product`} />
+                  <ListTitle
+                    title={`More reviews for this product`}
+                    url={`/product/${review.product.url}`}
+                  />
                 }
               />
             }

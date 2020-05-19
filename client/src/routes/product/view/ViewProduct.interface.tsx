@@ -8,7 +8,8 @@ import { RouteComponentProps } from 'react-router';
 
 // Interfaces.
 import {
-  Review
+  Review,
+  ReviewGroup
 } from '../../../components/review/Review.interface';
 import {
   ProductView,
@@ -19,6 +20,8 @@ import {
  * ViewProduct properties.
  */
 export interface ViewProductProps extends RouteComponentProps<ProductByURLMatchParams> {
+  categoryGroup?: ReviewGroup;
   productView?: ProductView;
   updateActive?: (productView: ProductView) => void;
+  updateListByCategory?: (reviews: ReviewGroup) => void;
 }

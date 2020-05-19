@@ -97,7 +97,7 @@ const SearchFieldResults: React.FC<SearchFieldResultsProps> = (props: SearchFiel
   ): void => {
     if (item.url) {
       props.closeSearchResults();
-      props.history.push(`${item.resultType}/${item.url}`);
+      props.history.push(`/${item.resultType}/${item.url}`);
     }
   }
 
@@ -105,10 +105,12 @@ const SearchFieldResults: React.FC<SearchFieldResultsProps> = (props: SearchFiel
    * Handles the navigation to generic search results based on the query.
    */
   const handleQueryNavigation: (
-    query: string
+    term: string
   ) => void = (
-    query: string
+    term: string
   ): void => {
+    props.closeSearchResults();
+    props.history.push(`/discover/${term}`);
   }
 
   return (
@@ -144,6 +146,7 @@ const SearchFieldResults: React.FC<SearchFieldResultsProps> = (props: SearchFiel
                 [classes.listItemQueryContainer]: props.results.length > 0
               }
             )}
+            onClick={() => handleQueryNavigation(props.query)}
           >
             <ListItemIcon className={clsx(classes.listIconContainer)}>
               <SearchRoundedIcon className={clsx(classes.listIcon)}/>

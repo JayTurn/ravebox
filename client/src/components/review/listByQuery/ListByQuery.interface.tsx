@@ -39,8 +39,9 @@ export interface RetrieveListByQueryResponse extends APIResponse {
  * Parameters to be provided for querying lists of reviews.
  */
 export interface RetrieveListByQueryParams {
-  queries: Array<string>;
+  ignoreProductIds?: Array<string>;
   listType: ReviewListType;
+  queries: Array<string>;
   update?: (reviews: ReviewGroup) => void;
 }
 

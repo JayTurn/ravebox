@@ -50,8 +50,8 @@ export default class SearchController {
 
     // Performs a complete search query.
     router.get(
-      `${path}/explore/:query`,
-      SearchController.Explore
+      `${path}/discover/:query`,
+      SearchController.Discover
     );
   }
 
@@ -124,30 +124,6 @@ export default class SearchController {
         } while (i < products.length);
       }
 
-      return Product.find({
-        brand: regEx
-      })
-      .lean();
-    })
-    .then((products: Array<ProductDetails>) => {
-      // If we found products, loop through them and add them to the
-      // autocomplete search results array.
-      if (products.length > 0) {
-        let i = 0;
-
-        do {
-          const current: ProductDetails = products[i];
-
-          searchResults.push({
-            id: current._id,
-            resultType: ResultType.BRAND,
-            title: `${current.brand}`
-          });
-
-          i++;
-        } while (i < products.length);
-      }
-
       // Set the response object.
       const responseObject: ResponseObject = Connect.setResponse({
         data: {
@@ -184,14 +160,14 @@ export default class SearchController {
    * @param {object} res
    * The response object.
    */
-  static Explore(request: Request, response: Response): void {
+  static Discover(request: Request, response: Response): void {
     let query: string = request.params.query;
 
     if (!query) {
       // Set the response object.
       const responseObject: ResponseObject = Connect.setResponse({
         data: {
-          results: {} 
+          groups: [] 
         }
       }, 200, 'No results were found for your search');
 
@@ -224,7 +200,7 @@ export default class SearchController {
       // Set the response object.
       const responseObject: ResponseObject = Connect.setResponse({
         data: {
-          results: groups 
+          groups: groups 
         }
       }, 200, 'Categorized search results retrieved successfully');
 

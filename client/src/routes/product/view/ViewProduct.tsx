@@ -27,29 +27,45 @@ import { withRouter } from 'react-router';
 
 // Actions.
 import { updateActive } from '../../../store/product/Actions';
+import {
+  updateListByCategory,
+} from '../../../store/review/Actions';
 
 // Components.
 import PageTitle from '../../../components/elements/pageTitle/PageTitle';
 import ReviewList from '../../../components/review/list/ReviewList';
+import ListByQuery from '../../../components/review/listByQuery/ListByQuery';
+import ListTitle from '../../../components/elements/listTitle/ListTitle';
 
 // Enumerators.
 import {
   RequestType,
   RetrievalStatus
 } from '../../../utils/api/Api.enum';
+import {
+  PresentationType,
+  ReviewListType
+} from '../../../components/review/listByQuery/ListByQuery.enum';
 
 // Hooks.
 import {
   useRetrieveProductByURL
 } from '../../../components/product/useRetrieveProductByURL.hook';
+import {
+  useRetrieveListByQuery
+} from '../../../components/review/listByQuery/useRetrieveListsByQuery.hook';
 
 // Interfaces.
+import {
+  Category
+} from '../../../components/category/Category.interface';
 import {
   ProductResponse,
   ProductView
 } from '../../../components/product/Product.interface';
 import {
-  Review
+  Review,
+  ReviewGroup
 } from '../../../components/review/Review.interface';
 import { ViewProductProps } from './ViewProduct.interface';
 
@@ -66,6 +82,35 @@ const useStyles = makeStyles((theme: Theme) =>
     }
   })
 );
+
+/**
+ * Formulates a list of categories based on the selected product.
+ *
+ * @param { Array<Category> } categories - the list of categories.
+ *
+ * @return Array<string>
+ */
+const setCategoryQueries: (
+  categories: Array<Category>
+) => Array<string> = (
+  categories: Array<Category>
+): Array<string> => {
+  const queries: Array<string> = [];
+
+  if (!categories || categories.length <= 0) {
+    return queries;
+  }
+
+  let i: number = 0;
+
+  do {
+    const current: Category = categories[i];
+      queries.push(current.key);
+    i++;
+  } while (i < categories.length);
+
+  return queries;
+}
 
 /**
  * Loads the product and related reviews from the api before rendering.
@@ -114,12 +159,22 @@ const ViewProduct: React.FC<ViewProductProps> = (props: ViewProductProps) => {
 
   const {
     product,
-    retrievalStatus,
+    productStatus,
     reviews
   } = useRetrieveProductByURL({
     existing: props.productView ? props.productView : undefined,
     setProductView: props.updateActive,
     requested: props.match.params
+  });
+
+  const {
+    queries,
+    listStatus 
+  } = useRetrieveListByQuery({
+    ignoreProductIds: product ? [product._id] : undefined,
+    listType: ReviewListType.CATEGORY,
+    queries: setCategoryQueries(product.categories),
+    update: props.updateListByCategory
   });
 
   return (
@@ -138,6 +193,24 @@ const ViewProduct: React.FC<ViewProductProps> = (props: ViewProductProps) => {
           <ReviewList reviews={reviews} retrievalStatus={RetrievalStatus.SUCCESS} />
         </Grid>
       }
+      {props.categoryGroup && product.categories &&
+        <React.Fragment>
+          {product.categories[0] && props.categoryGroup[product.categories[0].key] &&
+            <ListByQuery
+              listType={ReviewListType.CATEGORY}
+              presentationType={largeScreen ? PresentationType.GRID : PresentationType.SCROLLABLE}
+              reviews={props.categoryGroup[product.categories[0].key]}
+              title={
+                <ListTitle
+                  presentationType={largeScreen ? PresentationType.GRID : PresentationType.SCROLLABLE} 
+                  title={`More ${product.categories[0].label} raves`}
+                  url={`/categories/${product.categories[0].key}`}
+                />
+              }
+            />
+          }
+        </React.Fragment>
+      }
     </Grid>
   );
 }
@@ -150,7 +223,8 @@ const ViewProduct: React.FC<ViewProductProps> = (props: ViewProductProps) => {
 const mapDispatchToProps = (dispatch: Dispatch<AnyAction>) =>
   bindActionCreators(
     {
-      updateActive: updateActive
+      updateActive: updateActive,
+      updateListByCategory
     },
     dispatch
   );
@@ -159,11 +233,14 @@ const mapDispatchToProps = (dispatch: Dispatch<AnyAction>) =>
  * Mapping the state updates to the properties from redux.
  */
 const mapStateToProps = (state: any, ownProps: ViewProductProps) => {
+  // Retrieve the active category groups.
+  const categoryGroup: ReviewGroup | undefined = state.review ? state.review.listByCategory : undefined;
   // Retrieve the review from the active properties.
   const productView: ProductView = state.product ? state.product.active : undefined;
 
   return {
     ...ownProps,
+    categoryGroup,
     productView
   };
 };

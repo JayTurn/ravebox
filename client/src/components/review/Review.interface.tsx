@@ -33,6 +33,16 @@ export interface Review {
 export type ReviewGroup = Record<string, Array<Review>>;
 
 /**
+ * Interface for lists of reviews with titles.
+ */
+export interface ReviewList {
+  id: string;
+  title: string;
+  reviews: Array<Review>;
+  url: string;
+}
+
+/**
  * Private review interface.
  */
 export interface PrivateReview extends Review {

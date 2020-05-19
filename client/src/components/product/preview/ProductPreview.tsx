@@ -26,8 +26,17 @@ import { ProductPreviewProps } from './ProductPreview.interface';
  * Search product list.
  */
 const useStyles = makeStyles((theme: Theme) => createStyles({
-  container: { },
+  container: {
+    margin: theme.spacing(2, 0)
+  },
+  containerItem: {
+    backgroundColor: theme.palette.primary.dark,
+    borderRadius: theme.shape.borderRadius,
+    display: 'inline-block',
+    padding: theme.spacing(1, 2)
+  },
   productName: {
+    color: theme.palette.common.white,
     fontSize: '1rem',
     fontWeight: 600
   },
@@ -35,8 +44,9 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
     fontSize: '1.1rem'
   },
   productBrand: {
+    color: theme.palette.common.white,
     fontSize: '.8rem',
-    fontWeight: 600
+    fontWeight: 600,
   },
   productBrandLarge: {
     fontSize: '.9rem'
@@ -67,20 +77,24 @@ const ProductPreview: React.FC<ProductPreviewProps> = (
       className={classes.container}
     >
       <Grid item xs={12} lg={6}>
-        <Typography variant='body2' className={clsx(
-          classes.productBrand, {
-            [classes.productBrandLarge]: largeScreen
-          }
-        )}>
-          {props.brand}
-        </Typography>
-        <Typography variant='body1' className={clsx(
-          classes.productName, {
-            [classes.productNameLarge]: largeScreen
-          })}
+        <Box
+          className={classes.containerItem}
         >
-          {props.name}
-        </Typography>
+          <Typography variant='body2' className={clsx(
+            classes.productBrand, {
+              [classes.productBrandLarge]: largeScreen
+            }
+          )}>
+            {props.brand}
+          </Typography>
+          <Typography variant='body1' className={clsx(
+            classes.productName, {
+              [classes.productNameLarge]: largeScreen
+            })}
+          >
+            {props.name}
+          </Typography>
+        </Box>
       </Grid>
     </Grid>
   );

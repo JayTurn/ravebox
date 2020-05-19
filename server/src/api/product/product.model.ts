@@ -54,7 +54,8 @@ ProductSchema
       '_id': this._id,
       'brand': this.brand,
       'categories': this.categories,
-      'name': this.name
+      'name': this.name,
+      'url': this.url
     };
   });
 

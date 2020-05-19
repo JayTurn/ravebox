@@ -40,6 +40,7 @@ import About from './about/About';
 import Account from './user/account/Account';
 import AddProduct from './product/add/AddProduct';
 import AddReview from './review/add/AddReview';
+import Discover from './discover/Discover';
 import EditReview from './review/edit/EditReview';
 import Home from './home/Home';
 import Login from './user/login/Login';
@@ -53,6 +54,7 @@ import Channel from './user/channel/Channel';
 import ScrollToTop from '../utils/scroll/ScrollToTop';
 import SideNavigation from '../components/navigation/side/SideNavigation';
 import Signup from './user/signup/Signup';
+import Search from './discover/search/Search';
 import TopNavigation from '../components/navigation/top/TopNavigation';
 import Verify from './user/verify/Verify';
 import ViewProduct from './product/view/ViewProduct';
@@ -177,6 +179,12 @@ const App: React.FC<AppProps> = (props: AppProps) => {
                     <PrivateRoute exact={true} path="/account">
                       <Account />
                     </PrivateRoute>
+                    <Route exact={true} path="/discover/:term">
+                      <Search />
+                    </Route>
+                    <Route exact={true} path="/discover">
+                      <Discover />
+                    </Route>
                     <Route exact={true} path="/user/login">
                       <Login />
                     </Route>
@@ -204,9 +212,9 @@ const App: React.FC<AppProps> = (props: AppProps) => {
                     <PrivateRoute exact={true} path="/product/:id/review">
                       <AddReview />
                     </PrivateRoute>
-                    <PrivateRoute exact={true} path="/product/:category/:subCategory/:brand/:productName">
+                    <Route exact={true} path="/product/:category/:subCategory/:brand/:productName">
                       <ViewProduct />
-                    </PrivateRoute>
+                    </Route>
                     <PrivateRoute exact={true} path="/review/edit/:id">
                       <EditReview />
                     </PrivateRoute>
