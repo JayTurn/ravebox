@@ -40,6 +40,7 @@ import About from './about/About';
 import Account from './user/account/Account';
 import AddProduct from './product/add/AddProduct';
 import AddReview from './review/add/AddReview';
+import CategoryList from './category/CategoryList';
 import Discover from './discover/Discover';
 import EditReview from './review/edit/EditReview';
 import Home from './home/Home';
@@ -179,6 +180,9 @@ const App: React.FC<AppProps> = (props: AppProps) => {
                     <PrivateRoute exact={true} path="/account">
                       <Account />
                     </PrivateRoute>
+                    <Route exact={true} path="/categories/:category">
+                      <CategoryList />
+                    </Route>
                     <Route exact={true} path="/discover/:term">
                       <Search />
                     </Route>

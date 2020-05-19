@@ -204,7 +204,7 @@ const ReviewDetails: React.FC<ReviewDetailsProps> = (props: ReviewDetailsProps) 
   const productId: string = (review && review.product) ? review.product._id : '';
 
   const {
-    retrievalStatus
+    listStatus
   } = useRetrieveListByQuery({
     queries: [productId],
     listType: ReviewListType.PRODUCT,
