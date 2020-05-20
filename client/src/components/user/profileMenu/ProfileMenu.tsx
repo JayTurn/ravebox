@@ -44,6 +44,7 @@ import { ProfileMenuProps } from './ProfileMenu.interface';
  */
 const ProfileIconButton = withStyles((theme: Theme) => ({
   root: {
+    padding: `10px 12px`,
     '&:hover': {
       backgroundColor: 'rgba(203,205,255, 0.2)' 
     }
@@ -57,6 +58,7 @@ const MobileProfileIconButton = withStyles((theme: Theme) => ({
   root: {
     padding: '6px',
     marginRight: '6px',
+    marginTop: theme.spacing(0.5),
     '&:hover': {
       backgroundColor: 'rgba(203,205,255, 0.2)' 
     }
@@ -173,7 +175,7 @@ const ProfileMenu: React.FC<ProfileMenuProps> = (props: ProfileMenuProps) => {
         </ProfileIconButton>
       ) : (
         <MobileProfileIconButton onClick={handleClick}>
-          <AccountCircleSharpIcon color='primary' style={{fontSize: '1.7rem', marginTop: '4px'}}/>
+          <AccountCircleSharpIcon color='primary' style={{fontSize: '1.7rem'}}/>
         </MobileProfileIconButton>
       )}
       <StyledMenu

@@ -10,6 +10,7 @@ import * as H from 'history';
 
 // Dependent models.
 import ChannelReducer from './channel/Reducer';
+import DiscoverReducer from './discover/Reducer';
 import NavigationReducer from './navigation/Reducer';
 import ReviewReducer from './review/Reducer';
 import UserReducer from './user/Reducer';
@@ -21,6 +22,7 @@ const RootReducer = (history: H.History) =>
   combineReducers({
     router: connectRouter(history),
     channel: ChannelReducer,
+    discover: DiscoverReducer,
     navigation: NavigationReducer,
     review: ReviewReducer,
     user: UserReducer,

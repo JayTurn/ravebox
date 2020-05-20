@@ -95,20 +95,37 @@ export function useRetrieveListByQuery(params: RetrieveListByQueryParams) {
 
   // Queries can contain an array of descriptors or ids for queriying lists
   // of reviews.
-  const { queries, listType, update } = {...params};
+  const {
+    ignoreProductIds,
+    listType,
+    queries,
+    update
+  } = {...params};
 
   // Add the safety check to ensure the component is still mounted.
   const isMounted = useIsMounted();
 
   // Define the retrieval status to be used for rating requests.
-  const [retrieved, setRetrieved] = React.useState(RetrievalStatus.REQUESTED);
+  const [retrieved, setRetrieved] = React.useState(RetrievalStatus.NOT_REQUESTED);
+
+  const [values, setValues] = React.useState<Array<string>>([]);
+
+  /**
+   * Handle state updates to the requested path.
+   */
+  React.useEffect(() => {
+    if (queries[0] !== values[0]) {
+      setRetrieved(RetrievalStatus.REQUESTED);
+      setValues(queries);
+    }
+  }, [queries, values]);
 
   /**
    * Handle state updates based on the retrieval status.
    */
   React.useEffect(() => {
     // If we haven't performed a request continue.
-    if (retrieved === RetrievalStatus.REQUESTED && queries[0]) {
+    if (retrieved === RetrievalStatus.REQUESTED && values[0]) {
       // Update the retrieval status to avoid subsequent requests.
       setRetrieved(RetrievalStatus.WAITING);
 
@@ -119,7 +136,8 @@ export function useRetrieveListByQuery(params: RetrieveListByQueryParams) {
       API.requestAPI<RetrieveListByQueryResponse>(path, {
         method: RequestType.POST,
         body: JSON.stringify({
-          queries: queries
+          queries: values,
+          ignore: ignoreProductIds ? ignoreProductIds : undefined
         })
       })
       .then((response: RetrieveListByQueryResponse) => {
@@ -141,9 +159,10 @@ export function useRetrieveListByQuery(params: RetrieveListByQueryParams) {
         setRetrieved(RetrievalStatus.FAILED);
       });
     }
-  }, [queries, listType]);
+  }, [values, listType]);
 
   return {
-    retrievalStatus: retrieved
+    queries: values,
+    listStatus: retrieved
   };
 }

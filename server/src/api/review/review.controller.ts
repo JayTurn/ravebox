@@ -373,7 +373,11 @@ export default class ReviewController {
     })
     .populate({
       path: 'user',
-      model: 'User'
+      model: 'User',
+      populate: {
+        path: 'statistics',
+        model: 'UserStatistic'
+      }
     })
     .then((reviewDocument: ReviewDocument) => {
       const details: ReviewDetails = {
@@ -451,8 +455,16 @@ export default class ReviewController {
       model: 'Product',
     })
     .populate({
+      path: 'statistics',
+      model: 'ReviewStatistic'
+    })
+    .populate({
       path: 'user',
-      model: 'User'
+      model: 'User',
+      populate: {
+        path: 'statistics',
+        model: 'UserStatistic'
+      }
     })
     .then((reviews: Array<ReviewDocument>) => {
       // Fitler the results for each review to the details object only.
@@ -686,6 +698,10 @@ export default class ReviewController {
       path: 'user',
       model: 'User'
     })
+    .populate({
+      path: 'user.userStatistics',
+      model: 'UserStatistic'
+    })
     .then((reviews: Array<ReviewDocument>) => {
 
       // Sort the results randomly.
@@ -742,7 +758,8 @@ export default class ReviewController {
    * The response object.
    */
   static RetrieveListsByCategories(request: Request, response: Response): void {
-    const queries: Array<string> = request.body.queries;
+    const queries: Array<string> = request.body.queries,
+          ignoreIds: Array<string> = request.body.ignore || [];
 
     if (!queries || queries.length === 0) {
       // Define the responseObject.
@@ -759,11 +776,26 @@ export default class ReviewController {
       return;
     }
 
-    Product.find({
-      'categories.key': {
-        $in: queries
-      }
-    })
+    let query;
+
+    if (ignoreIds.length > 0) {
+      query = {
+        _id: {
+          $ne: ignoreIds
+        },
+        'categories.key': {
+          $in: queries
+        }
+      };
+    } else {
+      query = {
+        'categories.key': {
+          $in: queries
+        }
+      };
+    }
+
+    Product.find(query)
     .then((products: Array<ProductDetailsDocument>) => {
 
       // Collect all of the product id's matching the category.
@@ -787,7 +819,11 @@ export default class ReviewController {
       })
       .populate({
         path: 'user',
-        model: 'User'
+        model: 'User',
+        populate: {
+          path: 'statistics',
+          model: 'UserStatistic'
+        }
       })
       .then((reviewDocuments: Array<ReviewDocument>) => {
 

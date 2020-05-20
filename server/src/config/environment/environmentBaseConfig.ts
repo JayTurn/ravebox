@@ -17,6 +17,7 @@ import { UserRole } from '../../api/user/user.enum';
 import {
   AWSProperties,
   EnvironmentProperties,
+  ElasticsearchProperties,
   DatabaseProperties,
   NotificationProperties,
   S3Properties,
@@ -41,6 +42,9 @@ class EnvConfig implements EnvironmentProperties {
     secretAccessKey: '',
     region: '',
     signatureVersion: ''
+  };
+  public elasticsearch: ElasticsearchProperties = {
+    url: ''
   };
   public env: string = process.env.NODE_ENV;
   public root: string = Path.normalize(__dirname + '/../../../');

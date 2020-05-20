@@ -50,6 +50,7 @@ services:
   react_client:
     build: client/
     command: yarn start:local
+    container_name: ravebox_client
     image: jayturn/react:1.2.4
     depends_on:
       - mongodb

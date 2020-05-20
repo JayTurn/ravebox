@@ -18,7 +18,7 @@ const Schema = Mongoose.Schema;
 // Create the product schema to be the base for the product model.
 const ProductSchema = new Schema({
   brand: {
-    type: String
+    type: String,
   },
   categories: {
     type: Array,
@@ -29,20 +29,22 @@ const ProductSchema = new Schema({
     default: Date.now
   },
   name: {
-    type: String
+    type: String,
+  },
+  namePartials: {
+    type: Array,
+    default: [],
+    index: true
   },
   creator:  { 
     type: Schema.Types.ObjectId, 
-    ref: 'User'
+    ref: 'User',
   },
   url: {
     type: String,
-    index: true
+    index: true,
   }
 });
-
-// Define text search fields.
-ProductSchema.path('name').index({text: true});
 
 // Define a view to be used for product responses.
 ProductSchema
@@ -52,7 +54,8 @@ ProductSchema
       '_id': this._id,
       'brand': this.brand,
       'categories': this.categories,
-      'name': this.name
+      'name': this.name,
+      'url': this.url
     };
   });
 
@@ -61,9 +64,9 @@ ProductSchema
  */
 ProductSchema
   .pre<ProductDetailsDocument>('save', function(next: Mongoose.HookNextFunction) {
-    const name: string = this.name.split(' ').join('-')
+    const name: string = this.name.split(' ').join('_')
             .split('&').join('and').toLowerCase(),
-          brand: string = encodeURIComponent(this.brand.split(' ').join('-')
+          brand: string = encodeURIComponent(this.brand.split(' ').join('_')
             .split('&').join('and').toLowerCase());
 
     let url = '',
@@ -72,7 +75,7 @@ ProductSchema
     do {
       const current: Category = this.categories[i];
 
-      const label: string = current.label.split(' ').join('-')
+      const label: string = current.label.split(' ').join('_')
         .split('&').join('and').toLowerCase();
 
       url += `${label}/`

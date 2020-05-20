@@ -143,7 +143,7 @@ const Home: React.FC<HomeProps> = (props: HomeProps) => {
         queries: Array<string> = getTopLevelCategories(categoryList); 
 
   const {
-    retrievalStatus
+    listStatus
   } = useRetrieveListByQuery({
     queries: queries,
     listType: ReviewListType.CATEGORY,
@@ -205,6 +205,7 @@ const Home: React.FC<HomeProps> = (props: HomeProps) => {
             title={
               <ListTitle
                 title={`${categoryList[0].label} raves`}
+                url={`/categories/${categoryList[0].key}`}
                 presentationType={largeScreen ? PresentationType.GRID : PresentationType.SCROLLABLE} 
               />
             }
@@ -219,7 +220,8 @@ const Home: React.FC<HomeProps> = (props: HomeProps) => {
             reviews={props.categoryGroup[queries[1]]}
             title={
               <ListTitle
-                title={`${categoryList[0].label} raves`}
+                title={`${categoryList[1].label} raves`}
+                url={`/categories/${categoryList[1].key}`}
                 presentationType={largeScreen ? PresentationType.GRID : PresentationType.SCROLLABLE} 
               />
             }
@@ -266,8 +268,9 @@ const Home: React.FC<HomeProps> = (props: HomeProps) => {
             reviews={props.categoryGroup[queries[2]]}
             title={
               <ListTitle
-                title={`${categoryList[2].label} raves`}
                 presentationType={largeScreen ? PresentationType.GRID : PresentationType.SCROLLABLE} 
+                title={`${categoryList[2].label} raves`}
+                url={`/categories/${categoryList[2].key}`}
               />
             }
           />
@@ -281,8 +284,9 @@ const Home: React.FC<HomeProps> = (props: HomeProps) => {
             reviews={props.categoryGroup[queries[3]]}
             title={
               <ListTitle
-                title={`${categoryList[3].label} raves`}
                 presentationType={largeScreen ? PresentationType.GRID : PresentationType.SCROLLABLE} 
+                title={`${categoryList[3].label} raves`}
+                url={`/categories/${categoryList[3].key}`}
               />
             }
           />

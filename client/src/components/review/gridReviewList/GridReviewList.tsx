@@ -35,6 +35,9 @@ import { GridReviewListProps } from './GridReviewList.interface';
  * Create styles for the review lists.
  */
 const useStyles = makeStyles((theme: Theme) => createStyles({
+  container: {
+    padding: theme.spacing(2, 0, 4)
+  },
   divider: {
     margin: theme.spacing(2)
   },
@@ -63,7 +66,7 @@ const GridReviewList: React.FC<GridReviewListProps> = (props: GridReviewListProp
       {props.retrievalStatus === RetrievalStatus.SUCCESS ? (
         <React.Fragment>
           {props.reviews.length > 0 ? (
-            <Grid container direction='column' className={classes.listContainer}>
+            <Grid container direction='column' className={classes.container}>
               <Grid item xs={12}>
                 {props.title &&
                   <React.Fragment>

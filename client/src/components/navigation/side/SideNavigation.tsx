@@ -10,14 +10,16 @@ import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
 import clsx from 'clsx';
 import { connect } from 'react-redux';
 import Drawer from '@material-ui/core/Drawer';
-import HomeIcon from '@material-ui/icons/Home';
+import HomeRoundedIcon from '@material-ui/icons/HomeRounded';
+import InfoRoundedIcon from '@material-ui/icons/InfoRounded';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
 import { NavLink } from 'react-router-dom';
+import SubscriptionsRoundedIcon from '@material-ui/icons/SubscriptionsRounded';
 import Typography from '@material-ui/core/Typography';
-import VideocamIcon from '@material-ui/icons/Videocam';
+import VideocamRoundedIcon from '@material-ui/icons/VideocamRounded';
 import { withRouter } from 'react-router';
 
 // Actions.
@@ -151,7 +153,7 @@ const SideNavigation: React.FC<SideNavigationProps> = (props: SideNavigationProp
               [classes.listButtonIconClosed]: !props.expanded,
               [classes.listButtonIconActive]: activePath === '/'
             })}>
-              <HomeIcon />
+              <HomeRoundedIcon />
             </ListItemIcon>
             <ListItemText disableTypography className={clsx({
               [classes.listButtonTextOpen]: props.expanded,
@@ -169,6 +171,33 @@ const SideNavigation: React.FC<SideNavigationProps> = (props: SideNavigationProp
           [classes.listButtonOpen]: props.expanded,
           [classes.listButtonClosed]: !props.expanded,
         })}>
+          <NavLink to='/discover' className={clsx(classes.linkStyle, {
+            [classes.linkStyleOpen]: props.expanded,
+            [classes.linkStyleClosed]: !props.expanded
+          })}>
+            <ListItemIcon className={clsx({
+              [classes.listButtonIconOpen]: props.expanded,
+              [classes.listButtonIconClosed]: !props.expanded,
+              [classes.listButtonIconActive]: activePath === '/discover'
+            })}>
+              <SubscriptionsRoundedIcon />
+            </ListItemIcon>
+            <ListItemText disableTypography className={clsx({
+              [classes.listButtonTextOpen]: props.expanded,
+              [classes.listButtonTextClosed]: !props.expanded,
+              [classes.listButtonTextActive]: activePath === '/discover'
+            })}>
+              <Typography variant='subtitle2' className={clsx({
+                [classes.listButtonTypographyOpen]: props.expanded,
+                [classes.listButtonTypographyClosed]: !props.expanded
+              })}>Discover</Typography>
+            </ListItemText>
+          </NavLink>
+        </ListItem>
+        <ListItem button alignItems='center' className={clsx(classes.listButton, {
+          [classes.listButtonOpen]: props.expanded,
+          [classes.listButtonClosed]: !props.expanded,
+        })}>
           <NavLink to='/product/add' className={clsx(classes.linkStyle, {
             [classes.linkStyleOpen]: props.expanded,
             [classes.linkStyleClosed]: !props.expanded
@@ -178,7 +207,7 @@ const SideNavigation: React.FC<SideNavigationProps> = (props: SideNavigationProp
               [classes.listButtonIconClosed]: !props.expanded,
               [classes.listButtonIconActive]: activePath === '/product/add'
             })}>
-              <VideocamIcon />
+              <VideocamRoundedIcon />
             </ListItemIcon>
             <ListItemText disableTypography className={clsx({
               [classes.listButtonTextOpen]: props.expanded,
@@ -189,6 +218,33 @@ const SideNavigation: React.FC<SideNavigationProps> = (props: SideNavigationProp
                 [classes.listButtonTypographyOpen]: props.expanded,
                 [classes.listButtonTypographyClosed]: !props.expanded
               })}>Rave</Typography>
+            </ListItemText>
+          </NavLink>
+        </ListItem>
+        <ListItem button alignItems='center' className={clsx(classes.listButton, {
+          [classes.listButtonOpen]: props.expanded,
+          [classes.listButtonClosed]: !props.expanded,
+        })}>
+          <NavLink to='/about' className={clsx(classes.linkStyle, {
+            [classes.linkStyleOpen]: props.expanded,
+            [classes.linkStyleClosed]: !props.expanded
+          })}>
+            <ListItemIcon className={clsx({
+              [classes.listButtonIconOpen]: props.expanded,
+              [classes.listButtonIconClosed]: !props.expanded,
+              [classes.listButtonIconActive]: activePath === '/about'
+            })}>
+              <InfoRoundedIcon />
+            </ListItemIcon>
+            <ListItemText disableTypography className={clsx({
+              [classes.listButtonTextOpen]: props.expanded,
+              [classes.listButtonTextClosed]: !props.expanded,
+              [classes.listButtonTextActive]: activePath === '/about'
+            })}>
+              <Typography variant='subtitle2' className={clsx({
+                [classes.listButtonTypographyOpen]: props.expanded,
+                [classes.listButtonTypographyClosed]: !props.expanded
+              })}>About</Typography>
             </ListItemText>
           </NavLink>
         </ListItem>

@@ -5,12 +5,14 @@
 
 // Interfaces.
 import { CategoryItem } from '../category/Category.interface';
+import { Review } from '../review/Review.interface';
 
 export interface Product {
   _id: string;
   brand: string;
   categories: Array<CategoryItem>;
   name: string;
+  url: string;
 }
 
 export interface ProductGroup {
@@ -30,9 +32,9 @@ export interface RetrieveProductByIdParams {
  * Paramters used when retrieving a product from the api.
  */
 export interface RetrieveProductByURLParams {
-  brand: string;
-  productName: string;
-  reviewTitle: string;
+  existing?: ProductView;
+  setProductView?: (productView: ProductView) => void;
+  requested: ProductByURLMatchParams;
 }
 
 /**
@@ -40,6 +42,15 @@ export interface RetrieveProductByURLParams {
  */
 export interface ProductResponse {
   product: Product;
+  reviews?: Array<Review>;
+}
+
+/**
+ * Product view interface.
+ */
+export interface ProductView {
+  product: Product;
+  reviews?: Array<Review>;
 }
 
 export interface ProductByIdMatchParams {
@@ -47,5 +58,8 @@ export interface ProductByIdMatchParams {
 }
 
 export interface ProductByURLMatchParams {
-  id: string;
+  category: string;
+  subCategory: string;
+  brand: string;
+  productName: string;
 }

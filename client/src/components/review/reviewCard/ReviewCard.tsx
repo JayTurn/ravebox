@@ -65,6 +65,9 @@ const useStyles = makeStyles((theme: Theme) =>
       boxShadow: 'none',
       padding: theme.spacing(2, 0)
     },
+    cardContainerLarge: {
+      padding: 0
+    },
     cardHeaderContent: {
       marginBottom: theme.spacing(1),
       maxWidth: '100%',
@@ -143,7 +146,13 @@ const ReviewCard: React.FC<ReviewCardProps> = (props: ReviewCardProps) => {
         largeScreen = useMediaQuery(theme.breakpoints.up('sm'));
 
   return (
-    <Card className={classes.cardContainer}>
+    <Card className={clsx(
+      classes.cardContainer,
+      {
+        [classes.cardContainerLarge]: largeScreen
+      }
+      )}
+    >
       <StyledCardHeader
         className={clsx(classes.cardHeaderContent, {
           [classes.cardHeaderContentLarge]: largeScreen

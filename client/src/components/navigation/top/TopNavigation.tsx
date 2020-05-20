@@ -11,6 +11,7 @@ import {
   Dispatch
 } from 'redux';
 import AppBar from '@material-ui/core/AppBar';
+import Box from '@material-ui/core/Box';
 import Button from '@material-ui/core/Button';
 import clsx from 'clsx';
 import { connect } from 'react-redux';
@@ -23,12 +24,14 @@ import {
   useTheme,
   withStyles
 } from '@material-ui/core/styles';
+import Grid from '@material-ui/core/Grid';
 import IconButton from '@material-ui/core/IconButton';
 import Menu from '@material-ui/core/Menu';
 import MenuIcon from '@material-ui/icons/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 import { NavLink } from 'react-router-dom';
 import * as React from 'react';
+import SearchRoundedIcon from '@material-ui/icons/SearchRounded';
 import Slide from '@material-ui/core/Slide';
 import Toolbar from '@material-ui/core/Toolbar';
 import useMediaQuery from '@material-ui/core/useMediaQuery';
@@ -43,6 +46,7 @@ import { toggleSide } from '../../../store/navigation/Actions';
 // Components.
 import Logo from '../../logo/Logo';
 import ProfileMenu from '../../user/profileMenu/ProfileMenu';
+import SearchField from '../../search/field/SearchField';
 
 // Interfaces.
 import {
@@ -88,6 +92,9 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
     '&.active': {
       color: theme.palette.primary.contrastText,
     }
+  },
+  toolbar: {
+    minHeight: 52
   }
 }));
 
@@ -167,10 +174,17 @@ const TopNavigation: React.FC<TopNavigationProps> = (props: TopNavigationProps) 
   const classes = useStyles(),
         theme = useTheme();
 
+  // Create a search bar state.
+  const [searchBar, setSearchBar] = React.useState<boolean>(false);
 
   // Match the small media query size.
   const largeScreen = useMediaQuery(theme.breakpoints.up('md'));
 
+  /**
+   * Toggles the display of side navigation menu.
+   *
+   * @param { React.SyntheticEvent } e - the trigger event.
+   */
   const toggleSideNavigation: (
     e: React.SyntheticEvent
   ) => void = (
@@ -186,99 +200,136 @@ const TopNavigation: React.FC<TopNavigationProps> = (props: TopNavigationProps) 
   }
 
   /**
+   * Toggles the display of the search field for small screens.
+   *
+   * @param { React.SyntheticEvent } e - the trigger event.
+   */
+  const toggleSearchField: (
+    e: React.SyntheticEvent
+  ) => void = (
+    e: React.SyntheticEvent
+  ): void => {
+    setSearchBar(!searchBar);
+  }
+
+  /**
    * Renders the navigation menu.
    */
   return (
     <React.Fragment>
       {largeScreen ? (
         <StyledAppBar position='sticky' color='inherit'>
-          <Toolbar disableGutters={true}>
-            <MenuIconButton
-              style={{marginLeft: 12, marginRight: 20}}
-              onClick={toggleSideNavigation}
-            >
-              <MenuIcon />
-            </MenuIconButton>
-            <LogoButton
-              color='inherit'
-              disableElevation={true}
-              style={{paddingTop: '5px'}}
-            >
-              <NavLink to="/" exact activeClassName='active'>
-                <Logo iconOnly={false} fullWidth='130px'/>
-              </NavLink>
-            </LogoButton>
-            {props.profile ? (
-              <React.Fragment>
-                <div style={{flexGrow: 1}} />
-                <ProfileMenu />
-              </React.Fragment>
-            ) : (
-              <React.Fragment>
-                <div style={{flexGrow: 1}} />
-                <MenuButton
-                  className={clsx(classes.linkButtonLarge)}
-                  color="inherit"
+          <Toolbar disableGutters={true} className={classes.toolbar}>
+            <Grid container direction='row'>
+              <Grid item xs={4}>
+                <MenuIconButton
+                  style={{marginLeft: 12, marginRight: 20}}
+                  onClick={toggleSideNavigation}
                 >
-                  <NavLink to="/user/login" activeClassName="active" className={classes.links}>Log in</NavLink>
-                </MenuButton>
-                <Button
-                  className={clsx(classes.linkButtonLarge, classes.lastButton)}
-                  color="primary"
-                  disableElevation
-                  variant='contained'
+                  <MenuIcon />
+                </MenuIconButton>
+                <LogoButton
+                  color='inherit'
+                  disableElevation={true}
+                  style={{paddingTop: '5px'}}
                 >
-                  <NavLink to="/user/signup" activeClassName="active" className={classes.linksInverse}>Sign up</NavLink>
-                </Button>
-              </React.Fragment>
-            )}
+                  <NavLink to="/" exact activeClassName='active'>
+                    <Logo iconOnly={false} fullWidth='130px'/>
+                  </NavLink>
+                </LogoButton>
+              </Grid>
+              <Grid item xs={4}>
+                <SearchField />
+              </Grid>
+              <Grid item xs={4} style={{textAlign: 'right'}}>
+                {props.profile ? (
+                  <React.Fragment>
+                    <ProfileMenu />
+                  </React.Fragment>
+                ) : (
+                  <React.Fragment>
+                    <div style={{flexGrow: 1}} />
+                    <MenuButton
+                      className={clsx(classes.linkButtonLarge)}
+                      color="inherit"
+                    >
+                      <NavLink to="/user/login" activeClassName="active" className={classes.links}>Log in</NavLink>
+                    </MenuButton>
+                    <Button
+                      className={clsx(classes.linkButtonLarge, classes.lastButton)}
+                      color="primary"
+                      disableElevation
+                      variant='contained'
+                    >
+                      <NavLink to="/user/signup" activeClassName="active" className={classes.linksInverse}>Sign up</NavLink>
+                    </Button>
+                  </React.Fragment>
+                )}
+              </Grid>
+            </Grid>
           </Toolbar>
         </StyledAppBar>
       ) : (
-        <HideOnScroll>
-          <StyledMobileAppBar position='sticky' color='inherit'>
-            <Toolbar disableGutters={true} style={{minHeight: '50px'}}>
-              <MenuIconButton
-                style={{marginLeft: '6px', marginTop: '4px', padding: '6px 6px 6px'}}
-                onClick={toggleSideNavigation}
-              >
-                <MenuIcon />
-              </MenuIconButton>
-              <LogoButton
-                color='inherit'
-                disableElevation={true}
-              >
-                <NavLink to="/" exact activeClassName='active'>
-                  <Logo iconOnly={true} fullWidth='30px'/>
-                </NavLink>
-              </LogoButton>
-              {props.profile ? (
-                <React.Fragment>
-                  <div style={{flexGrow: 1}} />
-                  <ProfileMenu />
-                </React.Fragment>
-              ) : (
-                <React.Fragment>
-                  <div style={{flexGrow: 1}} />
-                  <MenuButton
-                    color="inherit"
-                    className={clsx(classes.linkButton)}
+        <React.Fragment>
+          {searchBar ? (
+            <StyledMobileAppBar position='sticky' color='inherit'>
+              <Toolbar disableGutters={true} style={{minHeight: '50px'}}>
+                <SearchField toggleSearchField={toggleSearchField} />
+              </Toolbar>
+            </StyledMobileAppBar>
+          ) : (
+            <HideOnScroll>
+              <StyledMobileAppBar position='sticky' color='inherit'>
+                <Toolbar disableGutters={true} style={{minHeight: '50px'}}>
+                  <MenuIconButton
+                    style={{marginLeft: '6px', marginTop: '4px', padding: '6px 6px 6px'}}
+                    onClick={toggleSideNavigation}
                   >
-                    <NavLink to="/user/login" activeClassName="active" className={classes.links}>Log in</NavLink>
-                  </MenuButton>
-                  <Button
-                    className={clsx(classes.linkButton, classes.lastButton)}
-                    color="primary"
-                    disableElevation
-                    variant='contained'
+                    <MenuIcon />
+                  </MenuIconButton>
+                  <LogoButton
+                    color='inherit'
+                    disableElevation={true}
                   >
-                    <NavLink to="/user/signup" activeClassName="active" className={classes.linksInverse}>Sign up</NavLink>
-                  </Button>
-                </React.Fragment>
-              )}
-            </Toolbar>
-          </StyledMobileAppBar>
-        </HideOnScroll>
+                    <NavLink to="/" exact activeClassName='active'>
+                      <Logo iconOnly={true} fullWidth='30px'/>
+                    </NavLink>
+                  </LogoButton>
+                  <div style={{flexGrow: 1}} />
+                  <MenuIconButton
+                    style={{padding: theme.spacing(1), marginTop: theme.spacing(0.5)}}
+                    onClick={toggleSearchField}
+                  >
+                    <SearchRoundedIcon />
+                  </MenuIconButton>
+                  {props.profile ? (
+                    <React.Fragment>
+                      <ProfileMenu />
+                    </React.Fragment>
+                  ) : (
+                    <React.Fragment>
+                      <div style={{flexGrow: 1}} />
+                      <MenuButton
+                        color="inherit"
+                        className={clsx(classes.linkButton)}
+                      >
+                        <NavLink to="/user/login" activeClassName="active" className={classes.links}>Log in</NavLink>
+                      </MenuButton>
+                      <Button
+                        className={clsx(classes.linkButton, classes.lastButton)}
+                        color="primary"
+                        disableElevation
+                        variant='contained'
+                      >
+                        <NavLink to="/user/signup" activeClassName="active" className={classes.linksInverse}>Sign up</NavLink>
+                      </Button>
+                    </React.Fragment>
+                  )}
+                </Toolbar>
+              </StyledMobileAppBar>
+            </HideOnScroll>
+          )}
+        </React.Fragment>
       )}
     </React.Fragment>
   );
