@@ -70,6 +70,7 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
   },
   linkButtonLarge: {
     fontSize: '0.8rem',
+    marginTop: 13,
     padding: theme.spacing(.5, 1)
   },
   links: {
@@ -308,7 +309,6 @@ const TopNavigation: React.FC<TopNavigationProps> = (props: TopNavigationProps) 
                     </React.Fragment>
                   ) : (
                     <React.Fragment>
-                      <div style={{flexGrow: 1}} />
                       <MenuButton
                         color="inherit"
                         className={clsx(classes.linkButton)}

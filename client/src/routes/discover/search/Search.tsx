@@ -34,6 +34,7 @@ import PageTitle from '../../../components/elements/pageTitle/PageTitle';
 import ListByQuery from '../../../components/review/listByQuery/ListByQuery';
 import ListTitle from '../../../components/elements/listTitle/ListTitle';
 import ProductPreview from '../../../components/product/preview/ProductPreview';
+import StyledButton from '../../../components/elements/buttons/StyledButton';
 
 // Enumerators.
 import {
@@ -69,6 +70,18 @@ import { SearchProps } from './Search.interface';
  */
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
+    ctaButton: {
+      marginTop: theme.spacing(3)
+    },
+    ctaWrapper: {
+      marginBottom: theme.spacing(2),
+      marginTop: theme.spacing(2),
+      padding: theme.spacing(0, 1),
+      textAlign: 'center'
+    },
+    ctaWrapperDesktop: {
+      padding: theme.spacing(6, 2),
+    },
     listContainer: {
       padding: 0
     },
@@ -118,19 +131,31 @@ const Search: React.FC<SearchProps> = (props: SearchProps) => {
         theme = useTheme(),
         largeScreen = useMediaQuery(theme.breakpoints.up('sm'));
 
+  const groups: Array<DiscoverGroup> | undefined = props.discoverGroups && props.discoverGroups.length > 0 ?
+    props.discoverGroups : undefined;
+
   // Invoke the discover groups hook to perform requests and set content.
   const {
     lists,
     retrievalStatus
   } = useRetrieveDiscoverGroups({
-    existing: props.discoverGroups && props.discoverGroups[0].category.key ? props.discoverGroups : undefined,
+    existing: [...props.discoverGroups || []],
     term: props.match.params.term,
     updateGroups: props.updateGroups
   });
 
+  /**
+   * Navigates to the discover screen.
+   */
+  const navigateToAlternative: (
+  ) => void = (
+  ): void => {
+    props.history.push('/discover');
+  }
+
   return (
     <Grid container direction='column'>
-      {lists && lists.length > 0 &&
+      {lists && lists.length > 0 ? (
         <React.Fragment> 
           {lists.map((list: ReviewList) => {
             return (
@@ -151,7 +176,33 @@ const Search: React.FC<SearchProps> = (props: SearchProps) => {
             )
           })}
         </React.Fragment>
-      }
+      ) : (
+        <Grid container direction='column' className={clsx(classes.ctaWrapper, { 
+            [classes.ctaWrapperDesktop]: largeScreen
+          })}
+        >
+          <Grid item xs={12}>
+            <Typography variant='h2'>
+              It seems we don't have exactly what you're looking for 
+            </Typography>
+            <Typography variant='body1'>
+              You can visit the discover screen to find all of our raves listed by their categories or try searching for something else. You never know what you might discover.    
+            </Typography>
+          </Grid>
+          <Grid item xs={12}>
+            <Grid container direction='column' alignItems='center' className={classes.ctaButton}>
+              <Grid item xs={12}>
+                <StyledButton
+                  color='secondary'
+                  clickAction={navigateToAlternative}
+                  submitting={false}
+                  title='Discover raves'
+                />
+              </Grid>
+            </Grid>
+          </Grid>
+        </Grid>
+      )}
     </Grid>
   );
 }

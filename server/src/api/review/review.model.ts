@@ -105,7 +105,7 @@ ReviewSchema
         thumbnailURL = '';
 
     if (this.video && this.video.egressEndpoints) {
-      videoURL = this.video.egressEndpoints.DASH;
+      videoURL = this.video.egressEndpoints.HLS;
     }
 
     if (this.thumbnails && this.thumbnails.length > 0) {

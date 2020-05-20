@@ -116,32 +116,34 @@ const BrandSelection: React.FC<BrandSelectionProps> = (props: BrandSelectionProp
     e: React.SyntheticEvent
   ): void => {
     setChanged(true);
-    props.handleFocus(e);
   }
 
   return (
-    <Fade in={props.visible} timeout={500}>
-      <Grid
-        container
-        direction='column'
-      >
-        <Grid item xs={12} lg={6} style={{marginBottom: '1.5rem', marginTop: '2rem'}}>
-          <Typography variant='h3'>
-            Brand name
-          </Typography>
-        </Grid>
-        <Grid item xs={12} lg={6}>
-          <Input
-            handleBlur={updateForm}
-            handleFocus={handleFocus}
-            name='brand'
-            type='text'
-            title="Brand name"
-            validation={validation.brand}
-          />
-        </Grid>
+    <Grid
+      container
+      direction='column'
+    >
+      <Grid item xs={12} lg={6} style={{marginBottom: '1.5rem', marginTop: '1rem'}}>
+        <Typography variant='h3'>
+          Enter Product Details
+        </Typography>
       </Grid>
-    </Fade>
+      <Grid item xs={12} lg={6} style={{marginBottom: '2rem'}}>
+        <Typography variant='subtitle1'>
+          Enter the brand and product names separately. We'll try to match them with known products to make the process as quick as possible.
+        </Typography>
+      </Grid>
+      <Grid item xs={12} lg={6} style={{marginBottom: '2rem'}}>
+        <Input
+          handleBlur={updateForm}
+          handleFocus={handleFocus}
+          name='brand'
+          type='text'
+          title="Brand name"
+          validation={validation.brand}
+        />
+      </Grid>
+    </Grid>
   );
 }
 

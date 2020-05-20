@@ -941,7 +941,8 @@ export default class UserController {
     };
 
     Review.countDocuments({
-      user: userId
+      user: userId,
+      published: Workflow.PUBLISHED
     })
     .then((count: number) => {
       userStatistics.ravesCount = count;

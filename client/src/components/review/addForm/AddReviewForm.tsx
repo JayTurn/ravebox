@@ -74,6 +74,9 @@ import {
  * Styles for the wrapping button element.
  */
 const useStyles = makeStyles((theme: Theme) => createStyles({
+  ctaButton: {
+    marginTop: theme.spacing(3)
+  },
   progressNumber: {
     border: `2px solid ${theme.palette.primary.dark}`,
     borderRadius: 50,
@@ -132,7 +135,7 @@ const AddReviewForm: React.FC<AddReviewFormProps> = (props: AddReviewFormProps) 
 
   const [uploadProgress, setUploadProgress] = React.useState({
     completion: 0,  
-    state: FileUploadState.WAITING
+    state: FileUploadState.SUBMITTED
   });
 
   // Validation hook.
@@ -339,6 +342,15 @@ const AddReviewForm: React.FC<AddReviewFormProps> = (props: AddReviewFormProps) 
   };
 
   /**
+   * Navigate to your raves.
+   */
+  const navigateToMyRaves: (
+  ) => void = (
+  ): void => {
+    props.history.push('/user/reviews');
+  }
+
+  /**
    * Displays the add review form prompt.
    * @method render
    *
@@ -352,7 +364,7 @@ const AddReviewForm: React.FC<AddReviewFormProps> = (props: AddReviewFormProps) 
     >
       {uploadProgress.state === FileUploadState.WAITING &&
         <Fade in={uploadProgress.state === FileUploadState.WAITING} timeout={300}>
-          <React.Fragment>
+          <form noValidate autoComplete='off'>
             <Grid item xs={12} lg={6} style={{marginBottom: '1.5rem'}}>
               <Typography variant='h3'>
                 Add a title for your review
@@ -407,7 +419,7 @@ const AddReviewForm: React.FC<AddReviewFormProps> = (props: AddReviewFormProps) 
                 title='Submit'
               />
             </Grid>
-          </React.Fragment>
+          </form>
         </Fade>
       }
       {uploadProgress.state === FileUploadState.SUBMITTED &&
@@ -434,27 +446,27 @@ const AddReviewForm: React.FC<AddReviewFormProps> = (props: AddReviewFormProps) 
       }
       {uploadProgress.state === FileUploadState.COMPLETE &&
         <Fade in={uploadProgress.state === FileUploadState.COMPLETE} timeout={300}>
-          <Grid item xs={12} lg={12}>
-            <Typography variant='h2' color='primary' style={{marginBottom: '2rem'}}>Upload successful</Typography>
-            <Typography variant='body1' gutterBottom>
-              <Box component='p'>
-                Great news, we've sucessfully uploaded your new rave!
-              </Box>
-              <Box component='p'>
-                We need to review your video before it goes live but rest assured, we'll notify you as soon as it is live.
-              </Box>
-            </Typography>
-            <Grid container direction='row' alignItems='center'>
-              <Grid item xs={9}>
-                <LinearProgress variant='determinate' color='primary' value={uploadProgress.completion} />
-              </Grid>
-              <Grid item xs={3}>
-                <Typography variant='h4' className={classes.progressNumber}>
-                  {Math.ceil(uploadProgress.completion)}%
-                </Typography>
-              </Grid>
+          <React.Fragment>
+            <Grid item xs={12}>
+              <Typography variant='h2' color='primary' style={{marginBottom: '2rem'}}>Upload successful</Typography>
+              <Typography variant='body1' gutterBottom>
+                <Box component='p'>
+                  Great news, we've sucessfully uploaded your new rave!
+                </Box>
+                <Box component='p'>
+                  We need to review your video before it goes live but rest assured, we'll notify you as soon as it is live.
+                </Box>
+              </Typography>
             </Grid>
-          </Grid>
+            <Grid item xs={12} className={classes.ctaButton}>
+              <StyledButton
+                color='secondary'
+                clickAction={navigateToMyRaves}
+                submitting={false}
+                title='View your raves'
+              />
+            </Grid>
+          </React.Fragment>
         </Fade>
       }
     </Grid>

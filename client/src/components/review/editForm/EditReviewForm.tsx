@@ -369,7 +369,7 @@ const EditReviewForm: React.FC<EditReviewFormProps> = (props: EditReviewFormProp
     >
       {uploadProgress.state === FileUploadState.WAITING &&
         <Fade in={uploadProgress.state === FileUploadState.WAITING} timeout={300}>
-          <React.Fragment>
+          <form noValidate autoComplete='off'>
             <Grid item xs={12} lg={6} style={{marginBottom: '1.5rem'}}>
               <Typography variant='h3'>
                 Update your title
@@ -443,7 +443,7 @@ const EditReviewForm: React.FC<EditReviewFormProps> = (props: EditReviewFormProp
                 title='Update Rave'
               />
             </Grid>
-          </React.Fragment>
+          </form>
         </Fade>
       }
       {uploadProgress.state === FileUploadState.SUBMITTED &&

@@ -92,8 +92,10 @@ export default class ProductController {
     const productDetails: ProductDetails = request.body;
 
     // Create the product name partial keyword matching list.
-    productDetails.namePartials = Keywords.CreatePartialMatches(
-      `${productDetails.brand} ${productDetails.name}`);
+    productDetails.namePartials = Keywords.CreatePartialMatchesForProduct(
+      productDetails.brand, productDetails.name);
+    productDetails.brandPartials = Keywords.CreatePartialMatches(
+      productDetails.brand);
 
     // Create a new product from the request data.
     const newProduct: ProductDetailsDocument = new Product({

@@ -32,6 +32,9 @@ import useMediaQuery from '@material-ui/core/useMediaQuery';
 import LinkElement from '../../elements/link/Link';
 import PrivateReviewMenu from '../privateReviewMenu/PrivateReviewMenu';
 
+// Enumerators.
+import { Workflow } from '../../../utils/workflow/Workflow.enum';
+
 // Interfaces.
 import { PrivateReviewCardProps } from './PrivateReviewCard.interface';
 
@@ -64,7 +67,9 @@ const useStyles = makeStyles((theme: Theme) =>
       backgroundColor: 'transparent',
       borderRadius: 0,
       boxShadow: 'none',
-      padding: theme.spacing(2, 0)
+      padding: theme.spacing(2, 0),
+      position: 'relative',
+      zIndex: 1
     },
     cardHeaderContent: {
       marginBottom: theme.spacing(1),
@@ -77,6 +82,31 @@ const useStyles = makeStyles((theme: Theme) =>
     divider: {
       marginBottom: theme.spacing(1),
       marginTop: theme.spacing(1)
+    },
+    draftCard: {
+      backgroundColor: `rgba(255,255,255,0.75)`,
+      height: '100%',
+      position: 'absolute',
+      width: '100%',
+      zIndex: 2
+    },
+    draftCardContainer: {
+      height: '100%'
+    },
+    draftCardContent: {
+      alignItems: 'center',
+      height: '100%',
+      display: 'flex'
+    },
+    draftCardText: {
+      color: theme.palette.primary.main,
+      backgroundColor: theme.palette.common.white,
+      borderRadius: 12,
+      boxShadow: `0 0 0 2px inset ${theme.palette.primary.main}`,
+      fontSize: '.8rem',
+      fontWeight: 700,
+      padding: theme.spacing(1, 2),
+      textTransform: 'uppercase'
     },
     handleText: {
       display: 'block',
@@ -145,7 +175,28 @@ const PrivateReviewCard: React.FC<PrivateReviewCardProps> = (props: PrivateRevie
         largeScreen = useMediaQuery(theme.breakpoints.up('sm'));
 
   return (
-    <Card className={classes.cardContainer}>
+    <Card className={clsx(classes.cardContainer)}
+    >
+      {props.published === Workflow.DRAFT &&
+        <Box className={classes.draftCard}>
+          <Grid
+            alignItems='center'
+            container
+            direction='column'
+            className={classes.draftCardContainer}
+          >
+            <Grid
+              className={classes.draftCardContent}
+              item
+              xs={12}
+            >
+              <Typography variant='body1' className={classes.draftCardText}>
+                Awaiting review
+              </Typography>
+            </Grid>
+          </Grid>
+        </Box>
+      }
       <StyledCardHeader
         className={clsx(classes.cardHeaderContent, {
           [classes.cardHeaderContentLarge]: largeScreen
@@ -174,13 +225,14 @@ const PrivateReviewCard: React.FC<PrivateReviewCardProps> = (props: PrivateRevie
           </Grid>
         }
       />
-      <CardActionArea style={{height: 'calc(100% * 0.56)', overflow: 'hidden'}}>
+      <NavLink to={`/review/${props.url}`} className={classes.linkText}>
         <CardMedia
           component='img'
-          src={props.thumbnailURL}
+          image={props.thumbnailURL}
+          src='/images/placeholder.png'
           title={`${props.product ? props.product.name : ''} review`}
         />
-      </CardActionArea>
+      </NavLink>
       <CardContent className={clsx(classes.textContent, {
           [classes.textContentLarge]: largeScreen
         })}

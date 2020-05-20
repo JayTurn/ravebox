@@ -171,7 +171,7 @@ export default class ReviewController {
     const newReview: ReviewDocument = new Review({
       product: reviewDetails.product,
       recommended: reviewDetails.recommended,
-      published: Workflow.PUBLISHED,
+      published: Workflow.DRAFT,
       statistics: newReviewStatistics._id,
       title: reviewDetails.title,
       user: request.auth._id

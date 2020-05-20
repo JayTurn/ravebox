@@ -40,7 +40,7 @@ const createReviewLists: (
 ): Array<ReviewList> => {
   const lists: Array<ReviewList> = [];
 
-  if (discoverGroups.length <= 0) {
+  if (discoverGroups.length <= 0 || !discoverGroups[0].category.key) {
     return lists;
   }
 
@@ -96,7 +96,7 @@ export function useRetrieveDiscoverGroups(params: RetrieveDiscoverGroupsParams) 
   } = {...params};
 
   // Define the product to be used for view rendering.
-  const [lists, setLists] = React.useState<Array<ReviewList>|null>(existing ?
+  const [lists, setLists] = React.useState<Array<ReviewList>|null>(existing.length > 0 ?
     createReviewLists(existing) : null);
 
   // Define the retrieval status to be used for view rendering.

@@ -103,12 +103,15 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
     fontWeight: 600
   },
   productPreviewContainer: {
-    padding: theme.spacing(1, 2)
+    padding: theme.spacing(1, 2),
+    backgroundColor: 'rgba(100, 106, 240, 0.1)',
+    boxShadow: '0 1px 1px inset rgba(100,106,240, 0.2)'
   },
   publicProfileContainer: {
     paddingTop: theme.spacing(3),
-    backgroundColor: `rgba(0,0,0,.02)`,
-    boxShadow: `0 1px 1px inset rgba(0,0,0,0.05)`
+    //backgroundColor: `rgba(0,0,0,.02)`,
+    backgroundColor: theme.palette.common.white,
+    //boxShadow: `0 1px 1px inset rgba(0,0,0,0.05)`
   },
   ratingContainerLarge: {
   },
@@ -129,7 +132,7 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
     margin: 0
   },
   reviewTitleContainer: {
-    borderBottom: `1px solid rgba(0,0,0,0.15)`,
+    //borderBottom: `1px solid rgba(0,0,0,0.15)`,
   },
   reviewTitleContainerLarge: {
     alignItems: 'flex-end',

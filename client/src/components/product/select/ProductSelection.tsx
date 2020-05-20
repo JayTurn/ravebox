@@ -150,8 +150,10 @@ const ProductSelection: React.FC<ProductSelectionProps> = (props: ProductSelecti
   ) => void = (
     fieldEvent: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ): void => {
-    setQuery(fieldEvent.target.value);
-    delayedQuery(fieldEvent.target.value);
+    const term: string = fieldEvent.target.value;
+
+    setQuery(term);
+    delayedQuery(term);
   }
 
   /**
@@ -207,13 +209,6 @@ const ProductSelection: React.FC<ProductSelectionProps> = (props: ProductSelecti
         container
         direction='column'
       >
-        {!selected &&
-          <Grid item xs={12} lg={6} style={{marginBottom: '2rem'}}>
-            <Typography variant='subtitle1'>
-              Begin by entering the official product name and we'll try to match it with known products to make the process as quick as possible
-            </Typography>
-          </Grid>
-        }
         <Grid item xs={12} lg={6}>
           <Input
             handleBlur={handleBlur}
