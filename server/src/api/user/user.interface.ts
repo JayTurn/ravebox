@@ -17,6 +17,7 @@ import {
 } from '../userStatistics/userStatistics.interface';
 
 export interface UserDetailsDocument extends Mongoose.Document {
+  about: string;
   authenticate: Function;
   createSalt: Function;
   email: string;
@@ -25,10 +26,12 @@ export interface UserDetailsDocument extends Mongoose.Document {
   expires: number;
   handle: string;
   _id: string;
+  links: Array<LinkDetails>;
   oldEmail: string;
   password: string;
   provider: string;
   privateProfile: PrivateUserDetails;
+  profileImage: string;
   publicProfile: PublicUserDetails;
   role: Array<UserRole>;
   salt: string;
@@ -47,8 +50,11 @@ export interface PrivateUserDetails {
 }
 
 export interface PublicUserDetails {
+  about?: string;
   _id: string;
   handle: string;
+  links?: Array<LinkDetails>;
+  profileImage?: string;
   statistics?: UserStatistics;
 }
 
@@ -77,4 +83,12 @@ export interface ProfileSettings {
 export interface UserChannel {
   profile?: PublicUserDetails;
   reviews?: Array<ReviewDetails>;
+}
+
+/**
+ * Links.
+ */
+export interface LinkDetails {
+  title: string;
+  path: string;
 }

@@ -20,6 +20,11 @@ const ProductSchema = new Schema({
   brand: {
     type: String,
   },
+  brandPartials: {
+    type: Array,
+    default: [],
+    index: true
+  },
   categories: {
     type: Array,
     default: []

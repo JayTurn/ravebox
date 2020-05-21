@@ -4,6 +4,7 @@
  */
 
 // Dependent modules.
+import InputAdornment from '@material-ui/core/InputAdornment';
 import * as React from 'react';
 import TextField from '@material-ui/core/TextField';
 
@@ -55,12 +56,18 @@ const Input: React.FC<InputProps> = (props: InputProps) => {
       error={props.validation && props.validation.errorMessage !== ''}
       fullWidth={true}
       helperText={message}
-      id={props.name}
+      id={props.id || props.name}
+      InputProps={{
+        startAdornment: props.prefix ? <InputAdornment position='start'>{props.prefix}</InputAdornment> : ''
+      }}
       label={props.title}
+      multiline={props.multiline}
       onChange={handleInputUpdate}
       onBlur={updateValues}
       onFocus={props.handleFocus}
       required={props.required}
+      rows={props.rows}
+      rowsMax={props.rowsMax}
       type={props.type}
       variant='outlined'
       value={props.value}

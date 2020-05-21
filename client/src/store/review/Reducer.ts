@@ -21,8 +21,11 @@ import {
 } from './review.interface';
 
 const emptyReview: Review = {
-  _id: '',
   created: new Date(),
+  description: '',
+  _id: '',
+  links: [],
+  sponsored: false,
   title: '',
   recommended: Recommended.RECOMMENDED,
   url: ''

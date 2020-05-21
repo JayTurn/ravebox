@@ -96,12 +96,12 @@ const ProductSelectList: React.FC<ProductSelectListProps> = (props: ProductSelec
                 <Zoom 
                   in={added}
                   style={{transitionDelay: added ? `${100 * index}ms`: `100ms`}}
+                  key={product._id}
                 >
                   <ListItem
                     button
                     className={classes.listItem}
                     disableRipple
-                    key={product._id}
                     onClick={() => selectProduct(product._id)}
                   >
                     <Box component='div'>

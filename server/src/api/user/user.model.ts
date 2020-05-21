@@ -20,6 +20,9 @@ const Schema = Mongoose.Schema;
 
 // Create the User Schema to be the base for the User model.
 const UserSchema = new Schema({
+  about: {
+    type: String
+  },
   created: {
     type: Date,
     default: Date.now
@@ -35,12 +38,18 @@ const UserSchema = new Schema({
   handle: {
     type: String
   },
+  links: {
+    type: Array
+  },
   oldEmail: {
     type: String,
     lowercase: true,
   },
   password: {
     type: String,
+  },
+  profileImage: {
+    type: String
   },
   provider: {
     type: String,

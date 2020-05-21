@@ -110,13 +110,14 @@ const StyledSearchField = withStyles(theme => ({
     color: `rgba(33,36,104, 0.7)`,
     fontSize: `.9rem`,
     height: `2.2rem`,
-    lineHeight: `2.2rem`,
+    lineHeight: `100%`,
     marginTop: 5,
     padding: theme.spacing(.5, 2),
     width: '100%',
   },
   input: {
     borderBottom: `2px solid rgba(33,36,104, 0.4)`,
+    borderRadius: 0,
     '&:focus': {
       borderBottom: `2px solid rgba(33,36,104, 0.7)`,
     },

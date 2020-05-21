@@ -35,11 +35,14 @@ import {
 export interface ReviewDocument extends Mongoose.Document {
   _id: string;
   created: Date;
+  description: string;
   details: ReviewDetails;
+  links: Array<LinkDetails>;
   privateDetails: PrivateReviewDetails;
   product: ProductDetailsDocument;
   published: Workflow;
   recommended: Recommended;
+  sponsored: Array<string>;
   statistics: ReviewStatisticsDocument;
   thumbnails: Array<string>;
   title: string;
@@ -53,10 +56,13 @@ export interface ReviewDocument extends Mongoose.Document {
  */
 export interface ReviewDetails {
   created: Date;
+  description?: string;
   _id: string;
+  links?: Array<LinkDetails>;
   product: ProductDetails;
   recommended: Recommended;
   statistics?: ReviewStatistics;
+  sponsored: boolean;
   title: string;
   user: PublicUserDetails;
   videoURL: string;
@@ -79,8 +85,11 @@ export interface PrivateReviewDetails extends ReviewDetails {
  * Review request body interface.
  */
 export interface ReviewRequestBody {
+  description: string;
+  links: Array<LinkDetails>;
   product: string;
   recommended: Recommended;
+  sponsored: boolean;
   title: string;
   videoTitle: string;
   videoSize: string;
@@ -152,4 +161,12 @@ export interface AWSVideo {
   workflowName: string;
   workflowStatus: string;
   workflowTrigger: string;
+}
+
+/**
+ * Links.
+ */
+export interface LinkDetails {
+  title: string;
+  path: string;
 }

@@ -169,9 +169,12 @@ export default class ReviewController {
 
     // Create a new review from the request data.
     const newReview: ReviewDocument = new Review({
+      description: reviewDetails.description,
+      links: reviewDetails.links,
       product: reviewDetails.product,
+      published: Workflow.DRAFT,
       recommended: reviewDetails.recommended,
-      published: Workflow.PUBLISHED,
+      sponsored: reviewDetails.sponsored,
       statistics: newReviewStatistics._id,
       title: reviewDetails.title,
       user: request.auth._id

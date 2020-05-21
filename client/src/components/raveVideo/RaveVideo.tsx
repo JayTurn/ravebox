@@ -27,7 +27,7 @@ const RaveVideo: React.FC<RaveVideoProps> = (props: RaveVideoProps) => {
   const config = {
     controls: true,
     file: {
-      forceDASH: true
+      forceHLS: true
     },
     height: '100%',
     url: props.url,
@@ -63,7 +63,6 @@ const RaveVideo: React.FC<RaveVideoProps> = (props: RaveVideoProps) => {
   ): void => {
     // Define the player reference.
     const current: Player | null = playerRef.current;
-    console.log('Progress: ', state.playedSeconds);
 
     // If we have a player reference, check if we have passed the minimum
     // watch duration so we can set the allowable rating state.
@@ -71,7 +70,6 @@ const RaveVideo: React.FC<RaveVideoProps> = (props: RaveVideoProps) => {
       const minimumDuration: number = Math.floor(current.getDuration() / 2);
 
       if (state.playedSeconds > minimumDuration) {
-        console.log('Allowed');
         if (props.makeRatingAllowable) {
           props.makeRatingAllowable(true);
         }

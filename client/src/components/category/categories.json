@@ -1,6 +1,6 @@
 {
   "ontology": [{
-    "label": "Tech",
+    "label": "Technology",
     "key": "technology",
     "children": [{
         "label": "Cameras & Accessories",
@@ -84,141 +84,137 @@
     "label": "Health & Beauty",
     "key": "health_and_beauty",
     "children": [{
-      "label": "Beauty",
-      "key": "beauty",
+      "label": "Bath & Body",
+      "key": "bath_and_body",
       "children": [{
-        "label": "Bath & Body",
-        "key": "bath_and_body",
-        "children": [{
-          "label": "Bath additives",
-          "key": "bath_additives"
-        }, {
-          "label": "Bathing accessories",
-          "key": "bathing_accessories"
-        }, {
-          "label": "Body Cleansers",
-          "key": "body_cleansers"
-        }, {
-          "label": "Scrubs & Body Treatments",
-          "key": "scrubs_and_body_treatments"
-        }]
+        "label": "Bath additives",
+        "key": "bath_additives"
       }, {
-        "label": "Perfumes & Fragrances",
-        "key": "perfumes_and_fragrances",
-        "children": [{
-          "label": "Women's Fragrances",
-          "key": "womens_fragrances"
-        }, {
-          "label": "Men's Fragrances",
-          "key": "mens_fragrances"
-        }, {
-          "label": "Non-Binary Fragrances",
-          "key": "non_binary_fragrances"
-        }]
+        "label": "Bathing accessories",
+        "key": "bathing_accessories"
       }, {
-        "label": "Hair Care",
-        "key": "hair_care",
-        "children": [{
-          "label": "Hair Care Products",
-          "key": "hair_care_products"
-        }, {
-          "label": "Hair Care Coloring",
-          "key": "hair_coloring"
-        }, {
-          "label": "Hair Cutting",
-          "key": "hair_cutting"
-        }, {
-          "label": "Hair Styling Accessories",
-          "key": "hair_styling_accessories"
-        }, {
-          "label": "Hair Styling Products",
-          "key": "hair_styling_products"
-        }, {
-          "label": "Hair Styling Tools",
-          "key": "hair_styling_tools"
-        }]
+        "label": "Body Cleansers",
+        "key": "body_cleansers"
       }, {
-        "label": "Makeup",
-        "key": "makeup",
-        "children": [{
-          "label": "Body Makeup",
-          "key": "body_makeup"
-        }, {
-          "label": "Eye Makeup",
-          "key": "eye_makeup"
-        }, {
-          "label": "Face Makeup",
-          "key": "face_makeup"
-        }, {
-          "label": "Lip Makeup",
-          "key": "lip_makeup"
-        }, {
-          "label": "Makeup Sets",
-          "key": "makeup_sets"
-        }, {
-          "label": "Makeup Brushes & Tools",
-          "key": "makeup_brushes_and_tools"
-        }]
+        "label": "Scrubs & Body Treatments",
+        "key": "scrubs_and_body_treatments"
+      }]
+    }, {
+      "label": "Perfumes & Fragrances",
+      "key": "perfumes_and_fragrances",
+      "children": [{
+        "label": "Women's Fragrances",
+        "key": "womens_fragrances"
       }, {
-        "label": "Manicure & Pedicure",
-        "key": "manicure_and_pedicure",
-        "children": [{
-          "label": "Gel Nails & Polishes",
-          "key": "gel_nails_and_polishes"
-        }, {
-          "label": "Ingrown Toenail Care",
-          "key": "ingrown_toenail_care"
-        }, {
-          "label": "Nail Design Products",
-          "key": "nail_design_products"
-        }, {
-          "label": "Nail Polishes",
-          "key": "nail_polishes"
-        }, {
-          "label": "Foot Pumice Stones",
-          "key": "foot_pumice_stones"
-        }, {
-          "label": "Nail Tools & Accessories",
-          "key": "nail_tools_and_accessories"
-        }]
+        "label": "Men's Fragrances",
+        "key": "mens_fragrances"
       }, {
-        "label": "Skin Care",
-        "key": "skin_care",
-        "children": [{
-          "label": "Body Skin Care",
-          "key": "body_skin_care"
-        }, {
-          "label": "Eye Treatment",
-          "key": "eye_treatment"
-        }, {
-          "label": "Facial Skin Care",
-          "key": "facial_skin_care"
-        }, {
-          "label": "Hand Skin Care",
-          "key": "hands_skin_care"
-        }, {
-          "label": "Feet Skin Care",
-          "key": "feet_skin_care"
-        }, {
-          "label": "Sun Skin Care",
-          "key": "sun_skin_care"
-        }]
+        "label": "Non-Binary Fragrances",
+        "key": "non_binary_fragrances"
+      }]
+    }, {
+      "label": "Hair Care",
+      "key": "hair_care",
+      "children": [{
+        "label": "Hair Care Products",
+        "key": "hair_care_products"
       }, {
-        "label": "Beauty Tools & Accessories",
-        "key": "beauty_tools_and_accessories",
-        "children": [{
-          "label": "Make-up Bags",
-          "key": "makeup_bags"
-        }, {
-          "label": "Cotton Balls Pads & Swabs",
-          "key": "cotton_balls_pads_and_swabs"
-        }, {
-          "label": "Makeup Brushes & Tools",
-          "key": "makeup_brushes_and_tools"
-        }, {
-          "label": "Skin Care Tools",
-          "key": "skin_care_tools"
-        }]
+        "label": "Hair Care Coloring",
+        "key": "hair_coloring"
+      }, {
+        "label": "Hair Cutting",
+        "key": "hair_cutting"
+      }, {
+        "label": "Hair Styling Accessories",
+        "key": "hair_styling_accessories"
+      }, {
+        "label": "Hair Styling Products",
+        "key": "hair_styling_products"
+      }, {
+        "label": "Hair Styling Tools",
+        "key": "hair_styling_tools"
+      }]
+    }, {
+      "label": "Makeup",
+      "key": "makeup",
+      "children": [{
+        "label": "Body Makeup",
+        "key": "body_makeup"
+      }, {
+        "label": "Eye Makeup",
+        "key": "eye_makeup"
+      }, {
+        "label": "Face Makeup",
+        "key": "face_makeup"
+      }, {
+        "label": "Lip Makeup",
+        "key": "lip_makeup"
+      }, {
+        "label": "Makeup Sets",
+        "key": "makeup_sets"
+      }, {
+        "label": "Makeup Brushes & Tools",
+        "key": "makeup_brushes_and_tools"
+      }]
+    }, {
+      "label": "Manicure & Pedicure",
+      "key": "manicure_and_pedicure",
+      "children": [{
+        "label": "Gel Nails & Polishes",
+        "key": "gel_nails_and_polishes"
+      }, {
+        "label": "Ingrown Toenail Care",
+        "key": "ingrown_toenail_care"
+      }, {
+        "label": "Nail Design Products",
+        "key": "nail_design_products"
+      }, {
+        "label": "Nail Polishes",
+        "key": "nail_polishes"
+      }, {
+        "label": "Foot Pumice Stones",
+        "key": "foot_pumice_stones"
+      }, {
+        "label": "Nail Tools & Accessories",
+        "key": "nail_tools_and_accessories"
+      }]
+    }, {
+      "label": "Skin Care",
+      "key": "skin_care",
+      "children": [{
+        "label": "Body Skin Care",
+        "key": "body_skin_care"
+      }, {
+        "label": "Eye Treatment",
+        "key": "eye_treatment"
+      }, {
+        "label": "Facial Skin Care",
+        "key": "facial_skin_care"
+      }, {
+        "label": "Hand Skin Care",
+        "key": "hands_skin_care"
+      }, {
+        "label": "Feet Skin Care",
+        "key": "feet_skin_care"
+      }, {
+        "label": "Sun Skin Care",
+        "key": "sun_skin_care"
+      }]
+    }, {
+      "label": "Beauty Tools & Accessories",
+      "key": "beauty_tools_and_accessories",
+      "children": [{
+        "label": "Make-up Bags",
+        "key": "makeup_bags"
+      }, {
+        "label": "Cotton Balls Pads & Swabs",
+        "key": "cotton_balls_pads_and_swabs"
+      }, {
+        "label": "Makeup Brushes & Tools",
+        "key": "makeup_brushes_and_tools"
+      }, {
+        "label": "Skin Care Tools",
+        "key": "skin_care_tools"
       }]
     }]
   }, {

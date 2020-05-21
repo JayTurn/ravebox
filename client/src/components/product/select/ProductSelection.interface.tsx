@@ -12,6 +12,7 @@ import { Product } from '../Product.interface';
  * Product selection properties.
  */
 export interface ProductSelectionProps {
+  brand: string;
   update: (data: InputData) => void;
 } 
 

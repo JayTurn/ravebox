@@ -29,7 +29,7 @@ import IconButton from '@material-ui/core/IconButton';
 import Menu from '@material-ui/core/Menu';
 import MenuIcon from '@material-ui/icons/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
-import { NavLink } from 'react-router-dom';
+import { NavLink, useLocation } from 'react-router-dom';
 import * as React from 'react';
 import SearchRoundedIcon from '@material-ui/icons/SearchRounded';
 import Slide from '@material-ui/core/Slide';
@@ -70,6 +70,7 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
   },
   linkButtonLarge: {
     fontSize: '0.8rem',
+    marginTop: 13,
     padding: theme.spacing(.5, 1)
   },
   links: {
@@ -172,13 +173,29 @@ const TopNavigation: React.FC<TopNavigationProps> = (props: TopNavigationProps) 
 
   // Define the component classes.
   const classes = useStyles(),
-        theme = useTheme();
+        theme = useTheme(),
+        path = useLocation();
 
   // Create a search bar state.
   const [searchBar, setSearchBar] = React.useState<boolean>(false);
 
   // Match the small media query size.
   const largeScreen = useMediaQuery(theme.breakpoints.up('md'));
+
+  const [showLogo, setShowLogo] = React.useState<boolean>(true);
+
+  /**
+   * Checks the route path for logo display.
+   */
+  React.useEffect(() => {
+    if (path.pathname === '/') {
+      setShowLogo(false);
+    } else {
+      if (!showLogo) {
+        setShowLogo(true);
+      }
+    }
+  }, [path]);
 
   /**
    * Toggles the display of side navigation menu.
@@ -223,20 +240,22 @@ const TopNavigation: React.FC<TopNavigationProps> = (props: TopNavigationProps) 
             <Grid container direction='row'>
               <Grid item xs={4}>
                 <MenuIconButton
-                  style={{marginLeft: 12, marginRight: 20}}
+                  style={{marginLeft: 12, marginRight: 20, marginTop: 8}}
                   onClick={toggleSideNavigation}
                 >
                   <MenuIcon />
                 </MenuIconButton>
-                <LogoButton
-                  color='inherit'
-                  disableElevation={true}
-                  style={{paddingTop: '5px'}}
-                >
-                  <NavLink to="/" exact activeClassName='active'>
-                    <Logo iconOnly={false} fullWidth='130px'/>
-                  </NavLink>
-                </LogoButton>
+                {showLogo &&
+                  <LogoButton
+                    color='inherit'
+                    disableElevation={true}
+                    style={{paddingTop: '5px'}}
+                  >
+                    <NavLink to="/" exact activeClassName='active'>
+                      <Logo iconOnly={false} fullWidth='130px'/>
+                    </NavLink>
+                  </LogoButton>
+                }
               </Grid>
               <Grid item xs={4}>
                 <SearchField />
@@ -287,14 +306,16 @@ const TopNavigation: React.FC<TopNavigationProps> = (props: TopNavigationProps) 
                   >
                     <MenuIcon />
                   </MenuIconButton>
-                  <LogoButton
-                    color='inherit'
-                    disableElevation={true}
-                  >
-                    <NavLink to="/" exact activeClassName='active'>
-                      <Logo iconOnly={true} fullWidth='30px'/>
-                    </NavLink>
-                  </LogoButton>
+                  {showLogo &&
+                    <LogoButton
+                      color='inherit'
+                      disableElevation={true}
+                    >
+                      <NavLink to="/" exact activeClassName='active'>
+                        <Logo iconOnly={true} fullWidth='30px'/>
+                      </NavLink>
+                    </LogoButton>
+                  }
                   <div style={{flexGrow: 1}} />
                   <MenuIconButton
                     style={{padding: theme.spacing(1), marginTop: theme.spacing(0.5)}}
@@ -308,7 +329,6 @@ const TopNavigation: React.FC<TopNavigationProps> = (props: TopNavigationProps) 
                     </React.Fragment>
                   ) : (
                     <React.Fragment>
-                      <div style={{flexGrow: 1}} />
                       <MenuButton
                         color="inherit"
                         className={clsx(classes.linkButton)}

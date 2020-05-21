@@ -58,6 +58,9 @@ export function useRetrieveProductByURL(params: RetrieveProductByURLParams) {
     existing.reviews : [{
       _id: '',
       created: new Date(),
+      description: '',
+      links: [],
+      sponsored: false,
       title: '',
       recommended: Recommended.RECOMMENDED,
       url: ''

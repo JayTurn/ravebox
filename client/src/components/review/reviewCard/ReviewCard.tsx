@@ -174,13 +174,14 @@ const ReviewCard: React.FC<ReviewCardProps> = (props: ReviewCardProps) => {
           </Grid>
         }
       />
-      <CardActionArea style={{height: 'calc(100% * 0.56)', overflow: 'hidden'}}>
+      <NavLink to={`/review/${props.url}`} className={classes.linkText}>
         <CardMedia
           component='img'
-          src={props.thumbnailURL}
+          image={props.thumbnailURL}
+          src='/images/placeholder.png'
           title={`${props.product ? props.product.name : ''} review`}
         />
-      </CardActionArea>
+      </NavLink>
       <CardContent className={clsx(classes.textContent, {
           [classes.textContentLarge]: largeScreen
         })}

@@ -254,34 +254,36 @@ const ProductForm: React.FC<ProductFormProps> = (
   };
 
   return (
-    <Grid
-      container
-      direction='column'
-    >
-      <Box className={clsx(classes.padding)}
+    <form noValidate autoComplete='off'>
+      <Grid
+        container
+        direction='column'
       >
-        <ProductSelection update={updateInputs} />
-        <BrandSelection update={updateInputs} visible={product.name !== ''} handleFocus={handleBrandFocus}/>
-        <CategorySelection
-          update={updateCategories}
-          visible={brandChanged}
-        />
-        <Grid item xs={12} md={6} style={{marginTop: '2rem'}}>
-          <ErrorMessages errors={formErrorMessages} />
-        </Grid>
-        <Fade in={product.categories.length > 1} timeout={300}>
-          <Grid item xs={12}>
-            <StyledButton
-              clickAction={submit}
-              color='secondary'
-              disabled={submitting}
-              submitting={submitting}
-              title='Next'
-            />
+        <Box className={clsx(classes.padding)}
+        >
+          <BrandSelection update={updateInputs} />
+          <ProductSelection update={updateInputs} brand={product.brand} />
+          <CategorySelection
+            update={updateCategories}
+            visible={product.name !== ''}
+          />
+          <Grid item xs={12} md={6} style={{marginTop: '2rem'}}>
+            <ErrorMessages errors={formErrorMessages} />
           </Grid>
-        </Fade>
-      </Box>
-    </Grid>
+          <Fade in={product.categories.length > 1} timeout={300}>
+            <Grid item xs={12}>
+              <StyledButton
+                clickAction={submit}
+                color='secondary'
+                disabled={submitting}
+                submitting={submitting}
+                title='Next'
+              />
+            </Grid>
+          </Fade>
+        </Box>
+      </Grid>
+    </form>
   );
 };
 

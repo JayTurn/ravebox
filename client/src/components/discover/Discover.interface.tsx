@@ -38,7 +38,7 @@ export interface DiscoverProductGroup {
  */
 export interface RetrieveDiscoverGroupsParams {
   term: string;
-  existing?: Array<DiscoverGroup>;
+  existing: Array<DiscoverGroup>;
   updateGroups?: (discoverGroups: Array<DiscoverGroup>) => void;
 }
 

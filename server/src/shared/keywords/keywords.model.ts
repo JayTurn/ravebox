@@ -40,6 +40,56 @@ export default class Keywords {
   }
 
   /**
+   * Creates an array of partial matches for brand and product.
+   *
+   * @param { string } brandName - the word to be used.
+   * @param { string } productName - the word to be used.
+   *
+   * @return Array<string>
+   */
+  static CreatePartialMatchesForProduct(
+    brandName: string,
+    productName: string
+  ): Array<string> {
+    const partials: Array<string> = [];
+
+    let tmp: string,
+        hasPartial: boolean;
+
+    // Loop through each product word and append the brand name.
+    const productWords: Array<string> = productName.split(' ');
+
+    let i = 0;
+
+    do {
+      const current = `${brandName} ${productWords.join(' ')}`;
+
+        for (let j = 0; j < current.length - 2; j++) {
+          tmp = current.substr(j).toUpperCase();
+          hasPartial = false;
+
+          for (let k = 0; k < partials.length; k++) {
+            if (partials[k].indexOf(tmp) === 0) {
+              hasPartial = true;
+              break;
+            }
+          }
+
+          if (!hasPartial) {
+            partials.push(tmp);
+          }
+        }
+
+      productWords.shift();
+
+      i++;
+    } while (i <= productWords.length);
+
+
+    return partials;
+  }
+
+  /**
    * Creates an array of partial matches for a list of keywords.
    *
    * @param { Array<string> } words - the list of words to be used.
