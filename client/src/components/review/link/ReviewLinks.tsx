@@ -74,7 +74,16 @@ const ReviewLinks: React.FC<ReviewLinksProps> = (
           return (
             <React.Fragment key={index}>          
               <Typography variant='body1'>
-                {item.title}: <Link href={`https://${item.path}`} title={item.title}>{item.path}</Link>
+                Promo/coupon code
+              </Typography>
+              <Typography variant='body1'>
+                {item.code}
+              </Typography>
+              <Typography variant='body1'>
+                Promo details
+              </Typography>
+              <Typography variant='body1'>
+                <Link href={`https://${item.path}`} title={item.title}>{item.path}</Link>
               </Typography>
             </React.Fragment>
           )
