@@ -58,7 +58,7 @@ export function useRetrieveProductById(params: RetrieveProductByIdParams) {
   const [retrieved, setRetrieved] = React.useState(setDefaultRetrievalStatus(id)); 
 
   // Define the product to be used for view rendering.
-  const [product, setProduct] = React.useState({
+  const [product, setProduct] = React.useState<Product>({
     _id: '',
     brand: '',
     categories: [{key: '', label: ''}],

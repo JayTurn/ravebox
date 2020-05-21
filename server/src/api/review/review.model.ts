@@ -28,6 +28,9 @@ const ReviewSchema = new Schema<ReviewDocument>({
     type: Date,
     default: Date.now
   },
+  description: {
+    type: String
+  },
   product:  { 
     type: Schema.Types.ObjectId, 
     ref: 'Product'
@@ -42,6 +45,13 @@ const ReviewSchema = new Schema<ReviewDocument>({
   statistics: {
     type: Schema.Types.ObjectId, 
     ref: 'ReviewStatistic'
+  },
+  sponsored: {
+    type: Boolean,
+    default: false
+  },
+  links: {
+    type: Array
   },
   title: {
     type: String
@@ -114,9 +124,12 @@ ReviewSchema
 
     return {
       'created': this.created,
+      'description': this.description,
       '_id': this._id,
+      'links': this.links,
       'product': this.product,
       'recommended': this.recommended,
+      'sponsored': this.sponsored,
       'thumbnailURL': thumbnailURL,
       'title': this.title,
       'url': this.url,

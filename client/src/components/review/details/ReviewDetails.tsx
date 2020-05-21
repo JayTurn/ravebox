@@ -41,6 +41,8 @@ import Rate from '../rate/Rate';
 import RaveVideo from '../../raveVideo/RaveVideo';
 import Recommendation from '../recommendation/Recommendation';
 import RecommendationChip from '../recommendationChip/RecommendationChip';
+import ReviewDescription from '../description/ReviewDescription';
+import ReviewLinks from '../link/ReviewLinks';
 
 // Enumerators.
 import {
@@ -84,6 +86,13 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
     width: '100%',
     maxWidth: '100%'
   },
+  descriptionContainer: {
+    margin: theme.spacing(0)
+  },
+  descriptionContainerSmall: {
+    borderTop: `1px solid rgba(0,0,0,0.1)`,
+    backgroundColor: theme.palette.common.white
+  },
   moreReviewsTitle: {
     margin: theme.spacing(2),
     fontSize: '.8rem',
@@ -103,7 +112,7 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
     fontWeight: 600
   },
   productPreviewContainer: {
-    padding: theme.spacing(1, 2),
+    padding: theme.spacing(1, 2, 2),
     backgroundColor: 'rgba(100, 106, 240, 0.1)',
     boxShadow: '0 1px 1px inset rgba(100,106,240, 0.2)'
   },
@@ -116,7 +125,10 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
   ratingContainerLarge: {
   },
   recommendationContainer: {
-    padding: theme.spacing(1, 1, 3, 9)
+    padding: theme.spacing(2, 1, 3, 2)
+  },
+  reviewIntroContainer: {
+    backgroundColor: theme.palette.common.white
   },
   reviewStatisticsText: {
     color: theme.palette.grey.A700,
@@ -132,10 +144,10 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
     margin: 0
   },
   reviewTitleContainer: {
-    //borderBottom: `1px solid rgba(0,0,0,0.15)`,
+    borderBottom: `1px solid rgba(0,0,0,0.1)`
   },
   reviewTitleContainerLarge: {
-    alignItems: 'flex-end',
+    alignItems: 'center',
     flexWrap: 'nowrap',
     justifyContent: 'space-between'
   },
@@ -144,15 +156,13 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
     fontWeight: 400
   },
   reviewTitleSection: {
-    margin: theme.spacing(2, 0, 1),
+    margin: theme.spacing(2, 0),
     flexGrow: 1
   },
   reviewTitleSectionSmall: {
     width: '100%'
   },
   sidebarContainer: {
-    //backgroundColor: theme.palette.common.white,
-    //padding: theme.spacing(2)
   },
   sidebarMidLine: {
     backgroundColor: theme.palette.secondary.main,
@@ -163,10 +173,7 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
     zIndex: 0
   },
   sidebarMoreContainer: {
-    margin: theme.spacing(0, 0, 2),
-    position: 'relative',
-    width: '100%',
-    zIndex: 1
+    margin: theme.spacing(2, 0),
   },
   sidebarMoreText: {
     display: 'block',
@@ -198,8 +205,10 @@ const ReviewDetails: React.FC<ReviewDetailsProps> = (props: ReviewDetailsProps) 
   const [review, setReview] = React.useState<Review>({
     _id: '',
     created: new Date(),
-    title: '',
+    links: [],
     recommended: 0,
+    sponsored: false,
+    title: '',
     url: '',
     videoURL: ''
   });
@@ -274,7 +283,11 @@ const ReviewDetails: React.FC<ReviewDetailsProps> = (props: ReviewDetailsProps) 
                 />
               </Grid>
               <Grid container direction='column'>
-                <Grid item xs={12} className={classes.contentPadding}>
+                <Grid item xs={12} className={clsx(
+                    classes.contentPadding,
+                    classes.reviewIntroContainer
+                  )}
+                >
                   <Grid container direction='row' className={clsx(
                       classes.reviewTitleContainer,
                       {
@@ -313,19 +326,6 @@ const ReviewDetails: React.FC<ReviewDetailsProps> = (props: ReviewDetailsProps) 
                   </Grid>
                 </Grid>
               </Grid>
-              {review.product &&
-                <Grid container direction='row'>
-                  <Grid item xs={12} className={clsx(
-                      classes.columnLarge,
-                      classes.productPreviewContainer
-                    )}
-                  >
-                    {review.user &&
-                      <ProductPreview {...review.product} recommendation={{handle: review.user.handle, recommended: review.recommended}}/>
-                    }
-                  </Grid>
-                </Grid>
-              }
               {review.user &&
                 <Grid container direction='column' className={clsx(
                     classes.publicProfileContainer
@@ -340,24 +340,65 @@ const ReviewDetails: React.FC<ReviewDetailsProps> = (props: ReviewDetailsProps) 
                   <Grid item xs={12} className={clsx(classes.recommendationContainer)}>
                     <RecommendationChip recommended={review.recommended} />
                   </Grid>
+                  {review.description && largeScreen &&
+                    <Grid item xs={12} className={clsx(
+                      classes.contentPadding,
+                      classes.columnLarge,
+                      classes.descriptionContainer
+                    )}>
+                      <ReviewDescription description={review.description} />
+                    </Grid>
+                  }
                 </Grid>
               }
             </Grid>
           </Grid>
+          {review.description && !largeScreen &&
+            <Grid item xs={12} className={clsx(
+              classes.contentPadding,
+              classes.columnLarge,
+              classes.descriptionContainer,
+              classes.descriptionContainerSmall,
+            )}>
+              <ReviewDescription description={review.description} />
+            </Grid>
+          }
           <Grid item xs={12} md={5} lg={4} className={classes.sidebarContainer}>
-            {props.productGroup && props.productGroup[productId] && review.product &&
-              <ListByQuery
-                listType={ReviewListType.PRODUCT}
-                presentationType={largeScreen ? PresentationType.SIDEBAR : PresentationType.SCROLLABLE}
-                reviews={props.productGroup[productId]}
-                title={
-                  <ListTitle
-                    title={`More reviews for this product`}
-                    url={`/product/${review.product.url}`}
+            <Grid container direction='column'>
+              <Grid item xs={12}>
+                {review.product &&
+                  <Grid container direction='row'>
+                    <Grid item xs={12} className={clsx(
+                        classes.columnLarge,
+                        classes.productPreviewContainer
+                      )}
+                    >
+                      {review.user &&
+                        <ProductPreview {...review.product} recommendation={{handle: review.user.handle, recommended: review.recommended}}/>
+                      }
+                      {review.links && review.links.length > 0 && review.user &&
+                        <ReviewLinks handle={review.user.handle} links={[...review.links]} />
+                      }
+                    </Grid>
+                  </Grid>
+                }
+              </Grid>
+              <Grid item xs={12} className={clsx(classes.sidebarMoreContainer)}>
+                {props.productGroup && props.productGroup[productId] && review.product &&
+                  <ListByQuery
+                    listType={ReviewListType.PRODUCT}
+                    presentationType={largeScreen ? PresentationType.SIDEBAR : PresentationType.SCROLLABLE}
+                    reviews={props.productGroup[productId]}
+                    title={
+                      <ListTitle
+                        title={`More reviews for this product`}
+                        url={`/product/${review.product.url}`}
+                      />
+                    }
                   />
                 }
-              />
-            }
+              </Grid>
+            </Grid>
           </Grid>
         </Grid>
       }

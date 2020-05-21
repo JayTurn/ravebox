@@ -16,15 +16,18 @@ import { PublicProfile } from '../user/User.interface';
  */
 export interface Review {
   created: Date;
+  description?: string;
   _id: string;
+  links: Array<ReviewLink>;
   product?: Product;
-  user?: PublicProfile;
-  title: string;
   recommended: Recommended;
+  sponsored: boolean;
   statistics?: ReviewStatistics;
   thumbnailURL?: string;
-  videoURL?: string;
+  title: string;
   url: string;
+  user?: PublicProfile;
+  videoURL?: string;
 }
 
 /**
@@ -72,6 +75,15 @@ export interface ReviewStatistics {
     down: number;
   };
   views: number;
+}
+
+/**
+ * Review links interface.
+ */
+export interface ReviewLink {
+  title: string;
+  path: string;
+  code?: string;
 }
 
 /**

@@ -30,7 +30,8 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
   titleContainer: {
   },
   titleText: {
-    fontSize: '.8rem',
+    color: theme.palette.text.secondary,
+    fontSize: '.9rem',
     fontWeight: 700,
     margin: theme.spacing(0, 2, 3),
     textTransform: 'uppercase'

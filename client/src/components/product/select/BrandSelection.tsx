@@ -125,7 +125,7 @@ const BrandSelection: React.FC<BrandSelectionProps> = (props: BrandSelectionProp
     >
       <Grid item xs={12} lg={6} style={{marginBottom: '1.5rem', marginTop: '1rem'}}>
         <Typography variant='h3'>
-          Enter Product Details
+          Product details
         </Typography>
       </Grid>
       <Grid item xs={12} lg={6} style={{marginBottom: '2rem'}}>

@@ -37,6 +37,8 @@ import { withRouter } from 'react-router';
 import Input from '../../forms/input/Input';
 import FileUpload from '../../forms/fileUpload/FileUpload';
 import Recommendation from '../recommendation/Recommendation';
+import AddReviewLink from '../addReviewLink/AddReviewLink';
+import Sponsored from '../sponsored/Sponsored';
 import StyledButton from '../../elements/buttons/StyledButton';
 import PaddedDivider from '../../elements/dividers/PaddedDivider';
 
@@ -54,10 +56,12 @@ import { useValidation } from '../../forms/validation/useValidation.hook';
 import { FileUploadStatus } from '../../forms/fileUpload/FileUpload.interface';
 import { InputData } from '../../forms/input/Input.interface';
 import {
+  AddReviewFormRequest,
   AddReviewFormResponse, 
   AddReviewFormProps,
   AddReviewMetadataResponse
 } from './AddReviewForm.interface';
+import { ReviewLink } from '../Review.interface';
 import { ValidationSchema } from '../../forms/validation/Validation.interface';
 
 // Validation rules.
@@ -117,10 +121,17 @@ const AddReviewForm: React.FC<AddReviewFormProps> = (props: AddReviewFormProps) 
         largeScreen = useMediaQuery(theme.breakpoints.up('md'));
 
   // Define the review details.
-  const [review, setReview] = React.useState({
-    title: '',
+  const [review, setReview] = React.useState<AddReviewFormRequest>({
+    description: '',
+    links: [{
+      title: '',
+      path: '',
+      code: ''
+    }],
+    product: props.productId || '',
     recommended: Recommended.RECOMMENDED,
-    product: props.productId,
+    sponsored: false,
+    title: '',
   });
 
   // Set a form submission state, used to inform the user their form has been
@@ -135,7 +146,7 @@ const AddReviewForm: React.FC<AddReviewFormProps> = (props: AddReviewFormProps) 
 
   const [uploadProgress, setUploadProgress] = React.useState({
     completion: 0,  
-    state: FileUploadState.SUBMITTED
+    state: FileUploadState.WAITING
   });
 
   // Validation hook.
@@ -189,6 +200,49 @@ const AddReviewForm: React.FC<AddReviewFormProps> = (props: AddReviewFormProps) 
     setReview({
       ...review,
       recommended: recommended
+    });
+  }
+
+  /**
+   * Handles updates to the review links.
+   *
+   * @param { ReviewLink } reviewLink - the review link provided.
+   * @param { number } index - the link index to be updated.
+   */
+  const updateReviewLinks: (
+    reviewLink: ReviewLink
+  ) => (
+    index: number
+  ) => void = (
+    reviewLink: ReviewLink
+  ) => (
+    index: number
+  ): void => {
+    const current: AddReviewFormRequest = { ...review };
+
+    // If we have an index for the current link, update the values.
+    if (current.links[index]) {
+      current.links[index] = {...reviewLink};
+    }
+
+    setReview({
+      ...current,
+    });
+  }
+
+  /**
+   * Handles updates to the sponsored content field.
+   *
+   * @param { boolean } sponsored - the sponsorship choice.
+   */
+  const updatedSponsorship: (
+    sponsored: boolean
+  ) => void = (
+    sponsored: boolean
+  ): void => {
+    setReview({
+      ...review,
+      sponsored: sponsored
     });
   }
 
@@ -299,10 +353,6 @@ const AddReviewForm: React.FC<AddReviewFormProps> = (props: AddReviewFormProps) 
       request.upload.addEventListener('progress', (e: ProgressEvent) => {
         let progress: number = (e.loaded / e.total) * 100;
 
-        if (progress === 100) {
-          progress = 99;
-        }
-
         if (e.loaded) {
           setUploadProgress({
             state: FileUploadState.SUBMITTED,
@@ -393,6 +443,47 @@ const AddReviewForm: React.FC<AddReviewFormProps> = (props: AddReviewFormProps) 
               update={updateRecommendation} 
               recommended={review.recommended}
             />
+            <Sponsored
+              update={updatedSponsorship}
+              sponsored={review.sponsored}
+            />
+            <Grid item xs={12} lg={6} style={{marginBottom: '1rem', marginTop: '1rem'}}>
+              <Typography variant='h3' style={{}}>
+                Review details
+              </Typography>
+            </Grid>
+            <Grid item xs={12} lg={6} style={{marginBottom: '1rem'}}>
+              <Typography variant='subtitle1' gutterBottom>
+                Do you have a link for users to purchase the product and support you?
+              </Typography>
+            </Grid>
+            {review.links.map((reviewLink: ReviewLink, index: number) => {
+              return (
+                <AddReviewLink
+                  index={index}
+                  key={index}
+                  link={reviewLink}
+                  update={updateReviewLinks}
+                />
+              )
+            })}
+            <Grid item xs={12} lg={6} style={{marginBottom: '1rem'}}>
+              <Typography variant='subtitle1' gutterBottom>
+                Do you have additional information?
+              </Typography>
+            </Grid>
+            <Grid item xs={12} lg={6} style={{marginBottom: '1.5rem'}}>
+              <Input
+                handleBlur={updateInputs}
+                multiline
+                name='description'
+                required={false}
+                rows={4}
+                rowsMax={10}
+                type='text'
+                title="Description"
+              />
+            </Grid>
             <Grid item xs={12} lg={6} style={{marginBottom: '1.5rem'}}>
               <Typography variant='h3'>
                 Review video

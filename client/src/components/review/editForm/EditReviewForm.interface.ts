@@ -11,7 +11,10 @@ import { Recommended } from '../recommendation/Recommendation.enum';
 
 // Interfaces.
 import { APIResponse } from '../../../utils/api/Api.interface';
-import { Review } from '../Review.interface';
+import {
+  Review,
+  ReviewLink
+} from '../Review.interface';
 
 /**
  * Edit review form properties.
@@ -37,9 +40,12 @@ export interface EditReviewFormResponse extends APIResponse {
  * Review form request.
  */
 export interface EditReviewFormRequest {
+  description: string;
   _id: string;
-  title: string;
+  links: Array<ReviewLink>;
   recommended: Recommended;
+  sponsored: boolean;
+  title: string;
   videoSize?: number;
   videoTitle?: string;
   videoType?: string;

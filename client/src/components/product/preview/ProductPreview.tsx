@@ -14,6 +14,7 @@ import {
   withStyles
 } from '@material-ui/core/styles';
 import Grid from '@material-ui/core/Grid';
+import { NavLink } from 'react-router-dom';
 import * as React from 'react';
 import Typography from '@material-ui/core/Typography';
 import useMediaQuery from '@material-ui/core/useMediaQuery';
@@ -27,13 +28,30 @@ import { ProductPreviewProps } from './ProductPreview.interface';
  */
 const useStyles = makeStyles((theme: Theme) => createStyles({
   container: {
-    margin: theme.spacing(2, 0)
+    margin: theme.spacing(1, 0, 2)
   },
   containerItem: {
     backgroundColor: theme.palette.primary.dark,
     borderRadius: theme.shape.borderRadius,
     display: 'inline-block',
-    padding: theme.spacing(1, 2)
+    minWidth: 270,
+    padding: theme.spacing(1, 2),
+    transition: theme.transitions.create('background-color', {
+      easing: theme.transitions.easing.sharp,
+      duration: theme.transitions.duration.short
+    }),
+    '&:hover': {
+      backgroundColor: theme.palette.primary.main,
+    }
+  },
+  header: {
+    color: '#3E42A3',
+    fontSize: '1.1rem',
+    fontWeight: 500
+  },
+  linkText: {
+    color: theme.palette.common.white,
+    textDecoration: 'none'
   },
   productName: {
     color: theme.palette.common.white,
@@ -76,25 +94,31 @@ const ProductPreview: React.FC<ProductPreviewProps> = (
       direction='column'
       className={classes.container}
     >
-      <Grid item xs={12} lg={6}>
-        <Box
-          className={classes.containerItem}
-        >
-          <Typography variant='body2' className={clsx(
-            classes.productBrand, {
-              [classes.productBrandLarge]: largeScreen
-            }
-          )}>
-            {props.brand}
-          </Typography>
-          <Typography variant='body1' className={clsx(
-            classes.productName, {
-              [classes.productNameLarge]: largeScreen
-            })}
+      <Grid item xs={12} lg={12}>
+        <Typography variant='h2' className={clsx(classes.header)}>
+          Product details
+        </Typography>
+        
+        <NavLink to={`/product/${props.url}`} className={classes.linkText}>
+          <Box
+            className={classes.containerItem}
           >
-            {props.name}
-          </Typography>
-        </Box>
+            <Typography variant='body2' className={clsx(
+              classes.productBrand, {
+                [classes.productBrandLarge]: largeScreen
+              }
+            )}>
+              {props.brand}
+            </Typography>
+            <Typography variant='body1' className={clsx(
+              classes.productName, {
+                [classes.productNameLarge]: largeScreen
+              })}
+            >
+              {props.name}
+            </Typography>
+          </Box>
+        </NavLink>
       </Grid>
     </Grid>
   );

@@ -86,12 +86,6 @@ export function useRetrieveReviewByURL(params: RetrieveReviewParams) {
 
   const newPath: string = constructRequestPath({...requested});
 
-  /*
-  if (existing !== constructRequestPath({...requested})) {
-    setRetrieved(RetrievalStatus.REQUESTED);
-  }
-  */
-
   /**
    * Handle state updates based on the presence of a review.
    */

@@ -33,6 +33,8 @@ import Input from '../../forms/input/Input';
 import FileUpload from '../../forms/fileUpload/FileUpload';
 import RaveVideo from '../../raveVideo/RaveVideo';
 import Recommendation from '../recommendation/Recommendation';
+import AddReviewLink from '../addReviewLink/AddReviewLink';
+import Sponsored from '../sponsored/Sponsored';
 import StyledButton from '../../elements/buttons/StyledButton';
 import PaddedDivider from '../../elements/dividers/PaddedDivider';
 
@@ -55,7 +57,10 @@ import {
   EditReviewFormProps,
   ReviewMetadataResponse
 } from './EditReviewForm.interface';
-import { Review } from '../Review.interface';
+import {
+  Review,
+  ReviewLink
+} from '../Review.interface';
 import { ValidationSchema } from '../../forms/validation/Validation.interface';
 
 // Validation rules.
@@ -74,7 +79,7 @@ import {
 const useStyles = makeStyles((theme: Theme) => createStyles({
   padding: {
     paddingLeft: theme.spacing(2),
-    paddingRight: theme.spacing(2)
+    paddingRight: theme.spacing(2),
   },
   progressNumber: {
     border: `2px solid ${theme.palette.primary.dark}`,
@@ -115,7 +120,14 @@ const EditReviewForm: React.FC<EditReviewFormProps> = (props: EditReviewFormProp
   // Define the review details.
   const [review, setReview] = React.useState<Review>(props.review ? props.review : {
     created: new Date(),
+    description: '',
+    links: [{
+      title: '',
+      path: '',
+      code: ''
+    }],
     _id: '',
+    sponsored: false,
     title: '',
     recommended: Recommended.RECOMMENDED,
     url: ''
@@ -176,6 +188,49 @@ const EditReviewForm: React.FC<EditReviewFormProps> = (props: EditReviewFormProp
     setReview({
       ...review,
       recommended: recommended
+    });
+  }
+
+  /**
+   * Handles updates to the review links.
+   *
+   * @param { ReviewLink } reviewLink - the review link provided.
+   * @param { number } index - the link index to be updated.
+   */
+  const updateReviewLinks: (
+    reviewLink: ReviewLink
+  ) => (
+    index: number
+  ) => void = (
+    reviewLink: ReviewLink
+  ) => (
+    index: number
+  ): void => {
+    const current: Review = { ...review };
+
+    // If we have an index for the current link, update the values.
+    if (current.links[index]) {
+      current.links[index] = {...reviewLink};
+    }
+
+    setReview({
+      ...current,
+    });
+  }
+
+  /**
+   * Handles updates to the sponsored content field.
+   *
+   * @param { boolean } sponsored - the sponsorship choice.
+   */
+  const updatedSponsorship: (
+    sponsored: boolean
+  ) => void = (
+    sponsored: boolean
+  ): void => {
+    setReview({
+      ...review,
+      sponsored: sponsored
     });
   }
 
@@ -272,7 +327,10 @@ const EditReviewForm: React.FC<EditReviewFormProps> = (props: EditReviewFormProp
 
     // Define the request object to be sent for updating.
     let editedReview: EditReviewFormRequest = {
+      description: review.description || '',
+      links: review.links,
       _id: review._id,
+      sponsored: review.sponsored,
       title: review.title,
       recommended: review.recommended
     };
@@ -362,141 +420,186 @@ const EditReviewForm: React.FC<EditReviewFormProps> = (props: EditReviewFormProp
    * @return React.ReactNode
    */
   return (
-    <Grid
-      container
-      direction='column'
-      className={classes.padding}
-    >
-      {uploadProgress.state === FileUploadState.WAITING &&
-        <Fade in={uploadProgress.state === FileUploadState.WAITING} timeout={300}>
-          <form noValidate autoComplete='off'>
-            <Grid item xs={12} lg={6} style={{marginBottom: '1.5rem'}}>
-              <Typography variant='h3'>
-                Update your title
-              </Typography>
-            </Grid>
-            <Grid item xs={12} lg={6} style={{marginBottom: '1.5rem'}}>
-              <Input
-                defaultValue={review.title}
-                handleBlur={updateInputs}
-                name='title'
-                required={true}
-                type='text'
-                title="Title"
+    <form noValidate autoComplete='off'>
+      <Grid
+        alignItems='flex-start'
+        container
+        direction='column'
+        className={classes.padding}
+      >
+        {uploadProgress.state === FileUploadState.WAITING &&
+          <Fade in={uploadProgress.state === FileUploadState.WAITING} timeout={300}>
+            <React.Fragment>
+              <Grid item xs={12} lg={6} style={{marginBottom: '1.5rem', width: '100%'}}>
+                <Typography variant='h3'>
+                  Update your title
+                </Typography>
+              </Grid>
+              <Grid item xs={12} lg={6} style={{marginBottom: '1.5rem', width: '100%'}}>
+                <Input
+                  defaultValue={review.title}
+                  handleBlur={updateInputs}
+                  name='title'
+                  required={true}
+                  type='text'
+                  title="Title"
+                />
+              </Grid>
+              <Recommendation 
+                update={updateRecommendation} 
+                recommended={review.recommended}
               />
-            </Grid>
-            <Recommendation 
-              update={updateRecommendation} 
-              recommended={review.recommended}
-            />
-            <Grid item xs={12} lg={6} style={{marginBottom: '1.5rem'}}>
-              <Typography variant='h3'>
-                Review video
-              </Typography>
-              <List>
-                <ListItem>
-                  Videos must be less than 2 minutes in length
-                </ListItem>
-                <ListItem>
-                  Videos containing nudity or profanity will be removed
-                </ListItem>
-              </List>
-            </Grid>
-            {changeVideo || !review.videoURL ? (
-              <React.Fragment>
-                <Grid item xs={12} lg={6} style={{marginBottom: review.videoURL ? '0' : '3rem'}}>
-                  <FileUpload name='videoFile' update={updateVideo} filename={video.name}/>
-                </Grid>
-                { review.videoURL &&
-                  <Grid item xs={12} lg={6} style={{marginTop: '1rem', marginBottom: '3rem'}}>
+              <Sponsored
+                update={updatedSponsorship}
+                sponsored={review.sponsored}
+              />
+              <Grid item xs={12} lg={6} style={{marginBottom: '1rem', marginTop: '1rem', width: '100%'}}>
+                <Typography variant='h3' style={{}}>
+                  Review details
+                </Typography>
+              </Grid>
+              <Grid item xs={12} lg={6} style={{marginBottom: '1rem', width: '100%'}}>
+                <Typography variant='subtitle1' gutterBottom>
+                  Do you have a link for users to purchase the product and support you?
+                </Typography>
+              </Grid>
+              {review.links.map((reviewLink: ReviewLink, index: number) => {
+                return (
+                  <AddReviewLink
+                    index={index}
+                    key={index}
+                    link={reviewLink}
+                    update={updateReviewLinks}
+                  />
+                )
+              })}
+              <Grid item xs={12} lg={6} style={{marginBottom: '1rem', width: '100%'}}>
+                <Typography variant='subtitle1' gutterBottom>
+                  Do you have additional information?
+                </Typography>
+              </Grid>
+              <Grid item xs={12} lg={6} style={{marginBottom: '1.5rem', width: '100%'}}>
+                <Input
+                  defaultValue={review.description}
+                  handleBlur={updateInputs}
+                  multiline
+                  name='description'
+                  required={false}
+                  rows={4}
+                  rowsMax={10}
+                  type='text'
+                  title="Description"
+                />
+              </Grid>
+              <Grid item xs={12} lg={6} style={{marginBottom: '1.5rem', width: '100%'}}>
+                <Typography variant='h3'>
+                  Review video
+                </Typography>
+                <List>
+                  <ListItem>
+                    Videos must be less than 2 minutes in length
+                  </ListItem>
+                  <ListItem>
+                    Videos containing nudity or profanity will be removed
+                  </ListItem>
+                </List>
+              </Grid>
+              {changeVideo || !review.videoURL ? (
+                <React.Fragment>
+                  <Grid item xs={12} lg={6} style={{marginBottom: review.videoURL ? '0' : '3rem', width: '100%'}}>
+                    <FileUpload name='videoFile' update={updateVideo} filename={video.name}/>
+                  </Grid>
+                  { review.videoURL &&
+                    <Grid item xs={12} lg={6} style={{marginTop: '1rem', marginBottom: '3rem', width: '100%'}}>
+                      <StyledButton
+                        clickAction={() => editVideo(false)}
+                        color='primary'
+                        size='large'
+                        title={'Cancel'}
+                      />
+                    </Grid>
+                  }
+                </React.Fragment>
+              ) : (
+                <React.Fragment>
+                  <Grid item xs={12} lg={6} style={{marginBottom: '1.5rem', width: '100%'}}>
+                    <RaveVideo url={review.videoURL} reviewId={review._id} />
+                  </Grid>
+                  <Grid item xs={12} lg={6} style={{marginBottom: '3rem', width: '100%'}}>
                     <StyledButton
-                      clickAction={() => editVideo(false)}
+                      clickAction={() => editVideo(true)}
                       color='primary'
                       size='large'
-                      title={'Cancel'}
+                      title={review.videoURL ? 'Upload new video' : 'Upload'}
                     />
                   </Grid>
-                }
-              </React.Fragment>
-            ) : (
-              <React.Fragment>
-                <Grid item xs={12} lg={6} style={{marginBottom: '1.5rem'}}>
-                  <RaveVideo url={review.videoURL} reviewId={review._id} />
+                </React.Fragment>
+              )}
+              <Grid item xs={12}>
+                <StyledButton
+                  clickAction={submit}
+                  color='secondary'
+                  disabled={submitting}
+                  size='large'
+                  submitting={submitting}
+                  title='Update Rave'
+                />
+              </Grid>
+            </React.Fragment>
+          </Fade>
+        }
+        {uploadProgress.state === FileUploadState.SUBMITTED &&
+          <Fade in={uploadProgress.state === FileUploadState.SUBMITTED} timeout={300}>
+            <Grid item xs={12} lg={6}>
+              <Typography variant='h2' color='primary' style={{marginBottom: '2rem'}}>We're uploading your rave</Typography>
+              <Typography variant='body1' style={{marginBottom: '2rem'}}>
+                <Box component='p'>
+                  Thanks for posting your rave!
+                </Box>
+                <Box component='p'>
+                Hang tight, please don't close the ravebox window whilst we upload your video. If you close this window the upload will fail and penguins will perish. Nobody wants that.
+                </Box>
+              </Typography>
+              <Grid container direction='row' alignItems='center'>
+                <Grid item xs={9}>
+                  <LinearProgress variant='determinate' color='primary' value={uploadProgress.completion} />
                 </Grid>
-                <Grid item xs={12} lg={6} style={{marginBottom: '3rem'}}>
-                  <StyledButton
-                    clickAction={() => editVideo(true)}
-                    color='primary'
-                    size='large'
-                    title={review.videoURL ? 'Upload new' : 'Upload'}
-                  />
+                <Grid item xs={3}>
+                  <Typography variant='h4' className={classes.progressNumber}>
+                    {Math.ceil(uploadProgress.completion)}%
+                  </Typography>
                 </Grid>
-              </React.Fragment>
-            )}
-            <Grid item xs={12}>
-              <StyledButton
-                clickAction={submit}
-                color='secondary'
-                disabled={submitting}
-                size='large'
-                submitting={submitting}
-                title='Update Rave'
-              />
-            </Grid>
-          </form>
-        </Fade>
-      }
-      {uploadProgress.state === FileUploadState.SUBMITTED &&
-        <Fade in={uploadProgress.state === FileUploadState.SUBMITTED} timeout={300}>
-          <Grid item xs={12} lg={6}>
-            <Typography variant='h2' color='primary' style={{marginBottom: '2rem'}}>We're uploading your rave</Typography>
-            <Typography variant='body1' style={{marginBottom: '2rem'}}>
-              <Box component='p'>
-                Thanks for posting your rave!
-              </Box>
-              <Box component='p'>
-              Hang tight, please don't close the ravebox window whilst we upload your video. If you close this window the upload will fail and penguins will perish. Nobody wants that.
-              </Box>
-            </Typography>
-            <Grid container direction='row' alignItems='center'>
-              <Grid item xs={9}>
-                <LinearProgress variant='determinate' color='primary' value={uploadProgress.completion} />
-              </Grid>
-              <Grid item xs={3}>
-                <Typography variant='h4' className={classes.progressNumber}>
-                  {Math.ceil(uploadProgress.completion)}%
-                </Typography>
               </Grid>
             </Grid>
-          </Grid>
-        </Fade>
-      }
-      {uploadProgress.state === FileUploadState.COMPLETE &&
-        <Fade in={uploadProgress.state === FileUploadState.COMPLETE} timeout={300}>
-          <Grid item xs={12} lg={12}>
-            <Typography variant='h2' color='primary' style={{marginBottom: '2rem'}}>Upload successful</Typography>
-            <Typography variant='body1' gutterBottom>
-              <Box component='p'>
-                Great news, we've sucessfully uploaded your rave!
-              </Box>
-              <Box component='p'>
-                We need to review your video before it goes live but rest assured, we'll notify you as soon as it is live.
-              </Box>
-            </Typography>
-            <Grid container direction='row' alignItems='center'>
-              <Grid item xs={9}>
-                <LinearProgress variant='determinate' color='primary' value={uploadProgress.completion} />
-              </Grid>
-              <Grid item xs={3}>
-                <Typography variant='h4' className={classes.progressNumber}>
-                  {Math.ceil(uploadProgress.completion)}%
-                </Typography>
+          </Fade>
+        }
+        {uploadProgress.state === FileUploadState.COMPLETE &&
+          <Fade in={uploadProgress.state === FileUploadState.COMPLETE} timeout={300}>
+            <Grid item xs={12} lg={12}>
+              <Typography variant='h2' color='primary' style={{marginBottom: '2rem'}}>Upload successful</Typography>
+              <Typography variant='body1' gutterBottom>
+                <Box component='p'>
+                  Great news, we've sucessfully uploaded your rave!
+                </Box>
+                <Box component='p'>
+                  We need to review your video before it goes live but rest assured, we'll notify you as soon as it is live.
+                </Box>
+              </Typography>
+              <Grid container direction='row' alignItems='center'>
+                <Grid item xs={9}>
+                  <LinearProgress variant='determinate' color='primary' value={uploadProgress.completion} />
+                </Grid>
+                <Grid item xs={3}>
+                  <Typography variant='h4' className={classes.progressNumber}>
+                    {Math.ceil(uploadProgress.completion)}%
+                  </Typography>
+                </Grid>
               </Grid>
             </Grid>
-          </Grid>
-        </Fade>
-      }
-    </Grid>
+          </Fade>
+        }
+      </Grid>
+    </form>
   );
 }
 

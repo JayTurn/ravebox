@@ -63,7 +63,10 @@ export function useRetrieveReviewById(params: RetrieveReviewByIdParams) {
   // Define the review to be used for view rendering.
   const [review, setReview] = React.useState<Review>({
     created: new Date(),
+    description: '',
     _id: '',
+    links: [],
+    sponsored: false,
     title: '',
     recommended: Recommended.RECOMMENDED,
     url: ''

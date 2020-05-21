@@ -89,12 +89,23 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
     fontSize: '.9rem'
   },
   ratingItem: {
-    flexWrap: 'nowrap'
+    flexWrap: 'nowrap',
+    justifyContent: 'center'
   },
   ratingItemContainer: {
     '&:first-child': {
-      marginRight: theme.spacing(2)
+      marginRight: theme.spacing(3)
     }
+  },
+  ratingItemLabel: {
+    color: theme.palette.grey.A700,
+    fontSize: '.7rem',
+    fontWeight: 600,
+    textAlign: 'center',
+    textTransform: 'uppercase'
+  },
+  ratingItemWithValues: {
+    justifyContent: 'flex-start'
   },
   selectedIcon: {
     color: theme.palette.primary.main
@@ -177,120 +188,146 @@ const Rate: React.FC<RateProps> = (props: RateProps) => {
   }
 
   return (
-    <Grid container direction='row' className={clsx(classes.container)}>
-      <Grid item className={clsx(classes.ratingItemContainer)}>
-        <Grid container direction='row' className={clsx(classes.ratingItem)}>
-          <Grid item>
-            <IconButton
-              className={clsx(
-                classes.iconButton,
-                {
-                  [classes.selectedIcon]: ratingResults.userRating === Rating.HELPFUL
-                }
-              )}
-              onClick={handleUpvote}
-            >
-              <ThumbUpAltRoundedIcon className={clsx(classes.icon)}/>
-            </IconButton>
-          </Grid>
-          {ratingResults && ratingResults.up !== '0' &&
-            <Grid item className={clsx(
-                classes.ratingItem,
-                classes.countTextContainer
-              )}
-            >
-              <Typography variant='body1' className={clsx(
-                  classes.countText,
-                  {
-                    [classes.selectedText]: ratingResults.userRating === Rating.HELPFUL
-                  }
-                )}
-              >
-                {ratingResults.up}
+    <Grid container direction='column'>
+      <Grid item>
+        <Grid container direction='row' className={clsx(classes.container)}>
+          <Grid item className={clsx(classes.ratingItemContainer)}>
+            <Grid container direction='row' className={clsx(
+              classes.ratingItem,
+              {
+                [classes.ratingItemWithValues]: ratingResults.up !== '0'
+              }
+            )}>
+              <Grid item>
+                <IconButton
+                  className={clsx(
+                    classes.iconButton,
+                    {
+                      [classes.selectedIcon]: ratingResults.userRating === Rating.HELPFUL
+                    }
+                  )}
+                  onClick={handleUpvote}
+                >
+                  <ThumbUpAltRoundedIcon className={clsx(classes.icon)}/>
+                </IconButton>
+              </Grid>
+              {ratingResults && ratingResults.up !== '0' &&
+                <Grid item className={clsx(
+                    classes.ratingItem,
+                    classes.countTextContainer
+                  )}
+                >
+                  <Typography variant='body1' className={clsx(
+                      classes.countText,
+                      {
+                        [classes.selectedText]: ratingResults.userRating === Rating.HELPFUL
+                      }
+                    )}
+                  >
+                    {ratingResults.up}
+                  </Typography>
+                </Grid>
+              }
+            </Grid>
+            <Grid item>
+              <Typography variant='body1' className={clsx(classes.ratingItemLabel)}>
+                Helpful
               </Typography>
             </Grid>
-          }
-        </Grid>
-      </Grid>
-      <Grid item className={clsx(classes.ratingItemContainer)}>
-        <Grid container direction='row' className={clsx(classes.ratingItem)}>
-          <Grid item>
-            <IconButton
-              className={clsx(
-                classes.iconButton,
-                {
-                  [classes.selectedIcon]: ratingResults.userRating === Rating.UNHELPFUL
-                }
-              )}
-              onClick={handleDownvote}
-            >
-              <ThumbDownAltRoundedIcon className={clsx(classes.icon)}/>
-            </IconButton>
           </Grid>
-          {ratingResults && ratingResults.down !== '0' &&
-            <Grid item className={clsx(
-                classes.ratingItem,
-                classes.countTextContainer
-              )}
-            >
-              <Typography variant='body1' className={clsx(
-                  classes.countText,
-                  {
-                    [classes.selectedText]: ratingResults.userRating === Rating.UNHELPFUL
-                  }
-                )}
-              >
-                {ratingResults.down}
+          <Grid item className={clsx(classes.ratingItemContainer)}>
+            <Grid container direction='row' className={clsx(
+              classes.ratingItem,
+              {
+                [classes.ratingItemWithValues]: ratingResults.down !== '0'
+              }
+            )}>
+              <Grid item>
+                <IconButton
+                  className={clsx(
+                    classes.iconButton,
+                    {
+                      [classes.selectedIcon]: ratingResults.userRating === Rating.UNHELPFUL
+                    }
+                  )}
+                  onClick={handleDownvote}
+                >
+                  <ThumbDownAltRoundedIcon className={clsx(classes.icon)}/>
+                </IconButton>
+              </Grid>
+              {ratingResults && ratingResults.down !== '0' &&
+                <Grid item className={clsx(
+                    classes.ratingItem,
+                    classes.countTextContainer
+                  )}
+                >
+                  <Typography variant='body1' className={clsx(
+                      classes.countText,
+                      {
+                        [classes.selectedText]: ratingResults.userRating === Rating.UNHELPFUL
+                      }
+                    )}
+                  >
+                    {ratingResults.down}
+                  </Typography>
+                </Grid>
+              }
+            </Grid>
+            <Grid item>
+              <Typography variant='body1' className={clsx(classes.ratingItemLabel)}>
+                Unhelpful
               </Typography>
             </Grid>
-          }
+          </Grid>
         </Grid>
       </Grid>
-      <Popover
-        anchorEl={anchorEl}
-        anchorOrigin={{
-          vertical: 'bottom',
-          horizontal: 'center'
-        }}
-        className={clsx(classes.popoverContainer)}
-        open={open} 
-        onClose={handlePopoverClose}
-        transformOrigin={{
-          vertical: 'top',
-          horizontal: 'center'
-        }}
-      >
-        <Grid container direction='column'>
-          <Grid item className={clsx(
-              classes.popoverPadding,
-              classes.popoverTextContainer
-            )}
-          >
-            <Typography variant='h2' className={clsx(classes.popoverTitle)}>
-              Was this rave helpful?
-            </Typography>
-            <Typography variant='body1' component='p' className={clsx(classes.popoverText)}>
-              Please watch the entire rave before you rate it
-            </Typography>
-          </Grid>
-          <Grid item className={clsx(
-              classes.popoverPadding,
-              classes.popoverActionContainer
-            )}
-          >
-            <Button
-              color='primary'
-              disableElevation
-              onClick={handlePopoverClose}
-              size='small'
-              title='Ok'
-              variant='contained'
+      <Grid item>
+        <Popover
+          anchorEl={anchorEl}
+          anchorOrigin={{
+            vertical: 'bottom',
+            horizontal: 'center'
+          }}
+          className={clsx(classes.popoverContainer)}
+          open={open} 
+          onClose={handlePopoverClose}
+          transformOrigin={{
+            vertical: 'top',
+            horizontal: 'center'
+          }}
+        >
+          <Grid container direction='column'>
+            <Grid item className={clsx(
+                classes.popoverPadding,
+                classes.popoverTextContainer
+              )}
             >
-              Ok
-            </Button>
+              <Typography variant='h2' className={clsx(classes.popoverTitle)}>
+                Was this rave helpful?
+              </Typography>
+              <Typography variant='body1' component='p' className={clsx(classes.popoverText)}>
+                Please watch the entire rave before you rate it
+              </Typography>
+            </Grid>
+            <Grid item className={clsx(
+                classes.popoverPadding,
+                classes.popoverActionContainer
+              )}
+            >
+              <Button
+                color='primary'
+                disableElevation
+                onClick={handlePopoverClose}
+                size='small'
+                title='Ok'
+                variant='contained'
+              >
+                Ok
+              </Button>
+            </Grid>
           </Grid>
-        </Grid>
-      </Popover>
+        </Popover>
+      </Grid>
     </Grid>
   );
 }

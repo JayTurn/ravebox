@@ -21,6 +21,7 @@ export interface InputProps extends BaseTextFieldProps {
   handleFocus?: (e: React.SyntheticEvent) => void;
   name: string;
   required?: boolean;
+  prefix?: string;
   title: string;
   type: string;
   width?: number;
