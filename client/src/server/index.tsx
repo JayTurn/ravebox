@@ -98,7 +98,7 @@ const server = express()
            }
          </head>
          <body>
-           <div id="root">${markup}</div>
+           <div id="root" class="loader">${markup}</div>
          </body>
          <script>
            window.__PRELOADED_STATE__ = ${Serialize(storeState)}
