@@ -875,10 +875,13 @@ export default class ReviewController {
    * The response object.
    */
   static Update(request: AuthenticatedUserRequest, response: Response): void {
-    const id = request.params.id,
-          userId = request.auth._id,
-          title = request.body.title,
+    const description = request.body.description,
+          id = request.params.id,
+          links = request.body.links,
           recommended = request.body.recommended,
+          sponsored = request.body.sponsored,
+          title = request.body.title,
+          userId = request.auth._id,
           videoSize = request.body.videoSize,
           videoTitle = request.body.videoTitle,
           videoType = request.body.videoType;
@@ -887,8 +890,11 @@ export default class ReviewController {
       _id: id,
       user: userId
     }, {
-      title: title,
-      recommended: recommended
+      description: description,
+      links: links,
+      recommended: recommended,
+      sponsored: sponsored,
+      title: title
     }, {
       new: true,
       upsert: false

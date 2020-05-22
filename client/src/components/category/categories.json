@@ -3,70 +3,69 @@
     "label": "Technology",
     "key": "technology",
     "children": [{
-        "label": "Cameras & Accessories",
-        "key": "cameras_and_accessories"
-      }, {
-        "label": "Car & Vehicle Electronics",
-        "key": "car_and_vehicle_electronics"
-      }, {
-        "label": "Computers & Accessories",
-        "key": "computers_and_accessories",
-          "children": [{
-            "label": "Computer Accessories",
-            "key": "computer_accessories"
-          }, {
-            "label": "Computer Components",
-            "key": "computer_components"
-          }, {
-            "label": "Data Storage",
-            "key": "data_storage"
-          }, {
-            "label": "Desktop PCs",
-            "key": "desktop_pcs"
-          }, {
-            "label": "External Computer Components",
-            "key": "external_computer_components"
-          }, {
-            "label": "Laptop Components & Replacement Parts",
-            "key": "laptop_components_and_replacement_parts"
-          }, {
-            "label": "Laptops",
-            "key": "laptops"
-          }, {
-            "label": "Monitors",
-            "key": "monitors"
-          }, {
-            "label": "Networking Devices",
-            "key": "networking_devices"
-          }, {
-            "label": "Printers & Accessries",
-            "key": "printers_and_accessories"
-          }, {
-            "label": "Tablets",
-            "key": "tablets"
-          }]
-      }, {
-        "label": "Headphones, Earbuds & Accessories",
-        "key": "headphones_earbuds_and_accessories"
-      }, {
-        "label": "Hi-Fi & Home Audio",
-        "key": "hifi_and_home_audio"
-      }, {
-        "label": "Phones & Accessories",
-        "key": "phones_and_accessories"
-      }, {
-        "label": "Portable Sound & Vision",
-        "key": "portable_sound_and_vision"
-      }, {
-        "label": "Home Cinema, TV & Video",
-        "key": "home_cinema_tv_and_video"
-      }, {
-        "label": "Wearable Technology",
-        "key": "wearable_technology"
-    }]
-  }, {
-    "label": "Video Games",
-    "key": "video_games",
+      "label": "Cameras & Accessories",
+      "key": "cameras_and_accessories"
+    }, {
+      "label": "Car & Vehicle Electronics",
+      "key": "car_and_vehicle_electronics"
+    }, {
+      "label": "Computers & Accessories",
+      "key": "computers_and_accessories",
+        "children": [{
+          "label": "Computer Accessories",
+          "key": "computer_accessories"
+        }, {
+          "label": "Computer Components",
+          "key": "computer_components"
+        }, {
+          "label": "Data Storage",
+          "key": "data_storage"
+        }, {
+          "label": "Desktop PCs",
+          "key": "desktop_pcs"
+        }, {
+          "label": "External Computer Components",
+          "key": "external_computer_components"
+        }, {
+          "label": "Laptop Components & Replacement Parts",
+          "key": "laptop_components_and_replacement_parts"
+        }, {
+          "label": "Laptops",
+          "key": "laptops"
+        }, {
+          "label": "Monitors",
+          "key": "monitors"
+        }, {
+          "label": "Networking Devices",
+          "key": "networking_devices"
+        }, {
+          "label": "Printers & Accessries",
+          "key": "printers_and_accessories"
+        }, {
+          "label": "Tablets",
+          "key": "tablets"
+        }]
+    }, {
+      "label": "Headphones, Earbuds & Accessories",
+      "key": "headphones_earbuds_and_accessories"
+    }, {
+      "label": "Hi-Fi & Home Audio",
+      "key": "hifi_and_home_audio"
+    }, {
+      "label": "Phones & Accessories",
+      "key": "phones_and_accessories"
+    }, {
+      "label": "Portable Sound & Vision",
+      "key": "portable_sound_and_vision"
+    }, {
+      "label": "Home Cinema, TV & Video",
+      "key": "home_cinema_tv_and_video"
+    }, {
+      "label": "Wearable Technology",
+      "key": "wearable_technology"
+    }, {
+      "label": "Video Games",
+      "key": "video_games",
       "children": [{
         "label": "Nintendo Switch, Games & Accessories",
         "key": "nintendo_switch_games_and_accessories"
@@ -80,6 +79,7 @@
         "label": "XBox One Consoles, Games & Accessories",
         "key": "xbox_one_consoles_games_and_accessories"
       }]
+    }]
   }, {
     "label": "Health & Beauty",
     "key": "health_and_beauty",
@@ -238,6 +238,19 @@
     }, {
       "label": "Non-binary Shoes",
       "key": "non_binary_shoes"
+    }]
+  }, {
+    "label": "Travel",
+    "key": "travel",
+    "children": [{
+      "label": "Accommodation",
+      "key": "accommodaton"
+    }, {
+      "label": "Experiences",
+      "key": "experiences"
+    }, {
+      "label": "Locations",
+      "key": "locations"
     }]
   }, {
     "label": "Home",

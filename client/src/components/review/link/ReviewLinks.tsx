@@ -33,9 +33,28 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
     padding: theme.spacing(2)
   },
   header: {
-    fontSize: '1rem',
-    fontWeight: 600,
+    color: '#3E42A3',
+    fontSize: '1.1rem',
+    fontWeight: 500,
+    marginBottom: theme.spacing(1.5),
+    marginTop: theme.spacing(2)
+  },
+  infoText: {
+    fontSize: '.9rem',
+    margin: theme.spacing(1, 0, 1)
+  },
+  promoContainer: {
     marginBottom: theme.spacing(1)
+  },
+  promoText: {
+    fontSize: '1.6rem',
+    fontWeight: 600,
+    lineHeight: 1.3
+  },
+  promoTitle: {
+    fontSize: '.8rem',
+    fontWeight: 600,
+    //textTransform: 'uppercase'
   }
 }));
 
@@ -55,9 +74,6 @@ const ReviewLinks: React.FC<ReviewLinksProps> = (
     <Grid
       container
       direction='column'
-      className={clsx(
-        classes.container
-      )}
     >
       <Grid item xs={12}>
         <Typography
@@ -66,26 +82,37 @@ const ReviewLinks: React.FC<ReviewLinksProps> = (
             classes.header
           )}
         >
-          Support {props.handle}
+          Buy and support {props.handle}
         </Typography>
       </Grid>
-      <Grid item xs={12}>
+      <Grid
+        item xs={12}
+        className={clsx(
+          classes.container
+        )}
+      >
         {props.links.map((item: ReviewLink, index: number) => {
           return (
-            <React.Fragment key={index}>          
-              <Typography variant='body1'>
-                Promo/coupon code
-              </Typography>
-              <Typography variant='body1'>
-                {item.code}
-              </Typography>
-              <Typography variant='body1'>
-                Promo details
-              </Typography>
-              <Typography variant='body1'>
-                <Link href={`https://${item.path}`} title={item.title}>{item.path}</Link>
-              </Typography>
-            </React.Fragment>
+            <Grid container direction='column' key={index}>          
+              <Grid item xs={12} className={clsx(classes.promoContainer)}>
+                <Typography variant='body1' className={clsx(classes.promoTitle)}>
+                  Promo / Coupon code
+                </Typography>
+                <Typography variant='body1' className={clsx(classes.promoText)}>
+                  {item.code}
+                </Typography>
+              </Grid>
+              <Grid item xs={12}>
+                <Typography variant='body1' className={clsx(classes.infoText)}>
+                  {item.info} 
+                </Typography>
+              </Grid>
+              <Grid>
+                <Typography variant='body1'>
+                  <Link href={`https://${item.path}`} title={item.info}>{item.path}</Link>
+                </Typography>
+              </Grid>
+            </Grid>
           )
         })}
       </Grid>

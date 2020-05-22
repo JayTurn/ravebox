@@ -79,17 +79,17 @@ const AddReviewLink: React.FC<AddReviewLinkProps> = (props: AddReviewLinkProps) 
       <Grid item xs={12} lg={6} style={{marginBottom: '2rem'}}>
         <Grid container direction='row' spacing={2}>
           <Grid item xs={12} lg={6}>
-            <Input
-              defaultValue={props.link.title}
-              id='link-title'
-              handleBlur={updateInputs}
-              name='title'
-              required={false}
-              type='text'
-              title="Link title"
-            />
           </Grid>
           <Grid item xs={12} lg={6}>
+            <Input
+              defaultValue={props.link.path}
+              handleBlur={updateInputs}
+              name='path'
+              prefix='https://'
+              required={false}
+              type='text'
+              title="URL"
+            />
             <Input
               defaultValue={props.link.code}
               handleBlur={updateInputs}
@@ -101,14 +101,16 @@ const AddReviewLink: React.FC<AddReviewLinkProps> = (props: AddReviewLinkProps) 
           </Grid>
           <Grid item xs={12}>
             <Input
-              defaultValue={props.link.path}
+              defaultValue={props.link.info}
+              id='link-info'
               handleBlur={updateInputs}
-              helperText={`You link title is displayed separately to the clickable URL. You can use this to describe the benefit a user gets from purchasing with your link. Example: 10% discount with my promo code!`}
-              name='path'
-              prefix='https://'
+              helperText={`Describe any offers related to the link you've shared or the promo code you've provided. Example: Use the promo code to get 10%`}
+              name='info'
+              rows={3}
+              rowsMax={3}
               required={false}
               type='text'
-              title="URL"
+              title="Additional information"
             />
           </Grid>
         </Grid>

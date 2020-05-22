@@ -167,6 +167,7 @@ export interface AWSVideo {
  * Links.
  */
 export interface LinkDetails {
-  title: string;
+  code?: string;
+  info: string;
   path: string;
 }

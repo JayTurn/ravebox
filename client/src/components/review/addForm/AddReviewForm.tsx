@@ -124,9 +124,9 @@ const AddReviewForm: React.FC<AddReviewFormProps> = (props: AddReviewFormProps) 
   const [review, setReview] = React.useState<AddReviewFormRequest>({
     description: '',
     links: [{
-      title: '',
-      path: '',
-      code: ''
+      code: '',
+      info: '',
+      path: ''
     }],
     product: props.productId || '',
     recommended: Recommended.RECOMMENDED,
