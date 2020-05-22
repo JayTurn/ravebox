@@ -75,7 +75,7 @@ const PrivateReviews: React.FC<PrivateReviewsProps> = (props: PrivateReviewsProp
 
   return (
     <React.Fragment>
-      {props.retrievalStatus === RetrievalStatus.SUCCESS && props.reviews.length < 0 ? (
+      {props.retrievalStatus === RetrievalStatus.SUCCESS && props.reviews.length > 0 ? (
         <ReviewList reviews={props.reviews} retrievalStatus={props.retrievalStatus}/>
       ) : (
         <Grid container direction='column' className={clsx(classes.ctaWrapper, { 
