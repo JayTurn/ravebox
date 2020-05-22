@@ -79,8 +79,6 @@ const AddReviewLink: React.FC<AddReviewLinkProps> = (props: AddReviewLinkProps) 
       <Grid item xs={12} lg={6} style={{marginBottom: '2rem'}}>
         <Grid container direction='row' spacing={2}>
           <Grid item xs={12} lg={6}>
-          </Grid>
-          <Grid item xs={12} lg={6}>
             <Input
               defaultValue={props.link.path}
               handleBlur={updateInputs}
@@ -90,6 +88,8 @@ const AddReviewLink: React.FC<AddReviewLinkProps> = (props: AddReviewLinkProps) 
               type='text'
               title="URL"
             />
+          </Grid>
+          <Grid item xs={12} lg={6}>
             <Input
               defaultValue={props.link.code}
               handleBlur={updateInputs}
