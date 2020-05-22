@@ -7,8 +7,9 @@
 import * as React from 'react';
 import API from '../../../utils/api/Api.model';
 import Box from '@material-ui/core/Box';
-import Grid from '@material-ui/core/Grid';
 import { frontloadConnect } from 'react-frontload';
+import Grid from '@material-ui/core/Grid';
+import { Helmet } from 'react-helmet';
 import { withRouter } from 'react-router';
 import { bindActionCreators, Dispatch, AnyAction } from 'redux';
 import { connect } from 'react-redux';
@@ -71,6 +72,10 @@ const PasswordReset: React.FC<PasswordResetProps> = (
 
   return (
     <Box style={{flexGrow: 1, marginTop: '3rem' }}>
+      <Helmet>
+        <title>Reset password - ravebox</title>
+        <link rel='canonical' href='https://ravebox.io/user/reset' />
+      </Helmet>
       {props.allowed &&
         <Grid
           container

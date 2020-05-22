@@ -14,6 +14,7 @@ import {
   withStyles
 } from '@material-ui/core/styles';
 import Grid from '@material-ui/core/Grid';
+import { Helmet } from 'react-helmet';
 import LinkElement from '../../components/elements/link/Link';
 import Typography from '@material-ui/core/Typography';
 import * as React from 'react';
@@ -105,6 +106,10 @@ const About: React.FC<AboutProps> = (props: AboutProps) => {
       container
       direction='column'
     >
+      <Helmet>
+        <title>About ravebox - ravebox</title>
+        <link rel='canonical' href='https://ravebox.io/about' />
+      </Helmet>
       <Grid item xs={12} className={clsx(
           classes.container,
           classes.whiteContainer,

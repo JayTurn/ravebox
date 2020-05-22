@@ -21,6 +21,7 @@ import {
 } from '@material-ui/core/styles';
 import { frontloadConnect } from 'react-frontload';
 import Grid from '@material-ui/core/Grid';
+import { Helmet } from 'react-helmet';
 import * as React from 'react';
 import useMediaQuery from '@material-ui/core/useMediaQuery';
 import { withRouter } from 'react-router';
@@ -129,9 +130,13 @@ const Channel: React.FC<ChannelProps> = (props: ChannelProps) => {
             <Grid container direction='column'>
               {props.channel.profile &&
                 <Grid item xs={12}>
-                    <ChannelTitle
-                      handle={props.channel.profile.handle}
-                      ravesCount={props.channel.profile.ravesCount || ''} />
+                  <Helmet>
+                    <title>{props.channel.profile.handle} reviews - ravebox</title>
+                    <link rel='canonical' href={`https://ravebox.io/user/channel/${props.channel.profile.handle}`} />
+                  </Helmet>
+                  <ChannelTitle
+                    handle={props.channel.profile.handle}
+                    ravesCount={props.channel.profile.ravesCount || ''} />
                 </Grid>
               }
               {props.channel.reviews && props.channel.reviews.length > 0 &&

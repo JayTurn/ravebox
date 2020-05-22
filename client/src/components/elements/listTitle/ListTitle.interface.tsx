@@ -8,6 +8,6 @@ import { PresentationType } from '../../review/listByQuery/ListByQuery.enum';
 
 export interface ListTitleProps {
   title: string;
-  url: string;
+  url?: string;
   presentationType?: PresentationType;
 }

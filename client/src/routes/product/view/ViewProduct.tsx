@@ -19,6 +19,7 @@ import {
   withStyles
 } from '@material-ui/core/styles';
 import Grid from '@material-ui/core/Grid';
+import { Helmet } from 'react-helmet';
 import * as React from 'react';
 import { frontloadConnect } from 'react-frontload';
 import { connect } from 'react-redux';
@@ -180,7 +181,13 @@ const ViewProduct: React.FC<ViewProductProps> = (props: ViewProductProps) => {
   return (
     <Grid container direction='column'>
       {product._id &&
-        <PageTitle title={`${product.brand} ${product.name} reviews`} />
+        <React.Fragment>
+          <PageTitle title={`${product.brand} ${product.name} reviews`} />
+          <Helmet>
+            <title>{product.brand} {product.name} reviews - ravebox</title>
+            <link rel='canonical' href={`https://ravebox.io/product/${product.url}`} />
+          </Helmet>
+        </React.Fragment>
       }
       {reviews && reviews.length > 0 &&
         <Grid item xs={12} className={clsx(

@@ -39,7 +39,7 @@ const useStyles = makeStyles((theme: Theme) =>
     ctaWrapper: {
       marginBottom: theme.spacing(2),
       marginTop: theme.spacing(2),
-      padding: theme.spacing(0, 1),
+      padding: theme.spacing(0, 2),
       textAlign: 'center'
     },
     ctaWrapperDesktop: {
@@ -75,7 +75,7 @@ const PrivateReviews: React.FC<PrivateReviewsProps> = (props: PrivateReviewsProp
 
   return (
     <React.Fragment>
-      {props.retrievalStatus === RetrievalStatus.SUCCESS && props.reviews.length > 0 ? (
+      {props.retrievalStatus === RetrievalStatus.SUCCESS && props.reviews.length < 0 ? (
         <ReviewList reviews={props.reviews} retrievalStatus={props.retrievalStatus}/>
       ) : (
         <Grid container direction='column' className={clsx(classes.ctaWrapper, { 

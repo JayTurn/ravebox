@@ -18,6 +18,7 @@ import {
   useTheme
 } from '@material-ui/core/styles';
 import Grid from '@material-ui/core/Grid';
+import { Helmet } from 'react-helmet';
 import * as React from 'react';
 import Typography from '@material-ui/core/Typography';
 import { withRouter } from 'react-router';
@@ -82,6 +83,9 @@ const AddReview: React.FC<AddReviewProps> = (props: AddReviewProps) => {
     >
       {productStatus === RetrievalStatus.SUCCESS &&
         <React.Fragment>
+          <Helmet>
+            <title>Post a {product.brand} {product.name} review - ravebox</title>
+          </Helmet>
           <PageTitle title='Post a rave' />
           <Grid container direction='row'>
             <Grid item xs={12} className={clsx(

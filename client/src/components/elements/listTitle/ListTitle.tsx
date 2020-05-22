@@ -42,7 +42,8 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
   },
   scrollableTitle: {
     color: theme.palette.primary.main,
-    fontSize: '1rem'
+    fontSize: '1rem',
+    marginTop: theme.spacing(2)
   }
 }));
 
@@ -70,9 +71,15 @@ const ListTitle: React.FC<ListTitleProps> = (props: ListTitleProps) => {
               [classes.scrollableTitle]: props.presentationType === PresentationType.SCROLLABLE
             })}
           >
-            <LinkElement path={props.url} title={props.title}> 
-              {props.title}
-            </LinkElement>
+            {props.url ? (
+              <LinkElement path={props.url} title={props.title}> 
+                {props.title}
+              </LinkElement>
+            ) : (
+              <React.Fragment>
+                {props.title}
+              </React.Fragment>
+            )}
           </Typography>
       </Grid>
     </Grid>
