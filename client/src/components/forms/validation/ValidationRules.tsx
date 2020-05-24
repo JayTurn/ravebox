@@ -84,35 +84,35 @@ export const isPassword: (
 ) => string = (
   data: InputData
 ): string => {
-  let message: string = '';
+  let message: string = 'Please choose a stronger password. Try a mix of letters, numbers and symbols.';
 
   // Get the password.
   const password: string = data.value;
 
   // Determine the password is at least 6 characters in length.
   if (password.length < 8) {
-    return `Your password must be at least 8 characters long`;
+    return `Use 8 characters or more for your password`;
   }
 
-  const alphabetic = (/[A-Z]/.test(password));
+  const alphabetic = (/[a-zA-Z]/.test(password));
 
   if (!alphabetic) {
-    return `Your password must contain at least one uppercase character`;
+    return message;
   }
 
   const numeric = (/[0-9]/.test(password));
 
   if (!numeric) {
-    return 'Your password must contain at least one number'
+    return message
   }
 
   const special = (/[ `!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~]/.test(password));
 
   if (!special) {
-    return `Your password must contain at least one special character`;
+    return message;
   }
 
-  return message;
+  return '';
 }
 
 /**
