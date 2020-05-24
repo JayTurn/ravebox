@@ -222,9 +222,7 @@ const TopNavigation: React.FC<TopNavigationProps> = (props: TopNavigationProps) 
    * @param { React.SyntheticEvent } e - the trigger event.
    */
   const toggleSearchField: (
-    e: React.SyntheticEvent
   ) => void = (
-    e: React.SyntheticEvent
   ): void => {
     setSearchBar(!searchBar);
   }
@@ -319,7 +317,7 @@ const TopNavigation: React.FC<TopNavigationProps> = (props: TopNavigationProps) 
                   <div style={{flexGrow: 1}} />
                   <MenuIconButton
                     style={{padding: theme.spacing(1), marginTop: theme.spacing(0.5)}}
-                    onClick={toggleSearchField}
+                    onClick={e => toggleSearchField()}
                   >
                     <SearchRoundedIcon />
                   </MenuIconButton>

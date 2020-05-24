@@ -64,22 +64,23 @@ const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     aboutContainer: {
       backgroundColor: theme.palette.secondary.dark,
-      padding: theme.spacing(4, 2, 4),
+      padding: theme.spacing(6, 2),
     },
     aboutContainerLarge: {
       padding: theme.spacing(8, 2, 12)
     },
     aboutText: {
       color: theme.palette.common.white,
-      fontSize: '2rem',
+      fontSize: '1.8rem',
       fontWeight: 400,
       marginBottom: theme.spacing(6),
-      marginTop: theme.spacing(6),
+      marginTop: theme.spacing(0),
       textAlign: 'center',
       textShadow: `0 1px 1px rgba(0,32,27,0.2)`
     },
     aboutTextLarge: {
-      fontSize: '2.5rem'
+      fontSize: '2.5rem',
+      marginTop: theme.spacing(6),
     },
     containerPadding: {
       paddingLeft: theme.spacing(2),
@@ -94,7 +95,7 @@ const useStyles = makeStyles((theme: Theme) =>
     },
     introText: {
       color: theme.palette.text.secondary,
-      fontSize: '2rem',
+      fontSize: '1.8rem',
       fontWeight: 300,
       marginTop: theme.spacing(6),
       marginBottom: theme.spacing(6),

@@ -193,6 +193,9 @@ const SearchField: React.FC<SearchFieldProps> = (props: SearchFieldProps) => {
   ) => void = (
   ): void => {
     closeSearchResults();
+    if (!largeScreen && props.toggleSearchField) {
+      props.toggleSearchField();
+    }
   }
 
   /**
@@ -216,7 +219,7 @@ const SearchField: React.FC<SearchFieldProps> = (props: SearchFieldProps) => {
     e: React.SyntheticEvent
   ): void => {
     if (props.toggleSearchField) {
-      props.toggleSearchField(e);
+      props.toggleSearchField();
     }
   }
 
@@ -305,7 +308,7 @@ const SearchField: React.FC<SearchFieldProps> = (props: SearchFieldProps) => {
           query={query}
           results={[...results]}
           retrievalStatus={retrievalStatus}
-          closeSearchResults={closeSearchResults}
+          closeSearchResults={handleClose}
         />
       </Grid>
     </Grid>
