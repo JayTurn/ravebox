@@ -36,7 +36,8 @@ import { GridReviewListProps } from './GridReviewList.interface';
  */
 const useStyles = makeStyles((theme: Theme) => createStyles({
   container: {
-    padding: theme.spacing(2, 0, 4)
+    padding: theme.spacing(2, 0, 4),
+    flexWrap: 'nowrap'
   },
   divider: {
     margin: theme.spacing(2)

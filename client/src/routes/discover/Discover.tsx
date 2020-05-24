@@ -81,6 +81,10 @@ const useStyles = makeStyles((theme: Theme) =>
     aboutTextLarge: {
       fontSize: '2.5rem'
     },
+    container: {
+      maxWidth: '100%',
+      overflow: 'hidden'
+    },
     containerPadding: {
       paddingLeft: theme.spacing(2),
       paddingRight: theme.spacing(2)
@@ -155,6 +159,7 @@ const Discover: React.FC<DiscoverProps> = (props: DiscoverProps) => {
    */
   return (
     <Grid
+      className={clsx(classes.container)}
       container
       direction='column'
     >

@@ -89,6 +89,9 @@ const useStyles = makeStyles((theme: Theme) =>
       color: theme.palette.text.primary,
       textDecoration: 'none'
     },
+    media: {
+      height: 180
+    },
     menuIcon: {
       paddingRight: 0,
       paddingBottom: 0,
@@ -176,7 +179,7 @@ const ReviewCard: React.FC<ReviewCardProps> = (props: ReviewCardProps) => {
       />
       <NavLink to={`/review/${props.url}`} className={classes.linkText}>
         <CardMedia
-          component='img'
+          className={clsx(classes.media)}
           image={props.thumbnailURL}
           src='/images/placeholder.png'
           title={`${props.product ? props.product.name : ''} review`}
