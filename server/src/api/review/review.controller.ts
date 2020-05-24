@@ -6,6 +6,7 @@
 import { Request, Response, Router } from 'express';
 import Authenticate from '../../models/authentication/authenticate.model';
 import Connect from '../../models/database/connect.model';
+import { DocumentQuery } from 'mongoose';
 import EnvConfig from '../../config/environment/environmentBaseConfig';
 import * as http from 'http';
 import * as https from 'https';
@@ -779,56 +780,86 @@ export default class ReviewController {
       return;
     }
 
-    let query;
+    // We're creating a promise for each query so we can limit each query
+    // to a maximum number of results. We can't do this if we perform a single
+    // lookup with all of the queries in a single array.
+    const productPromises: Array<Promise<DocumentQuery<Array<ReviewDocument | null>, ReviewDocument> & any>> = [];
 
-    if (ignoreIds.length > 0) {
-      query = {
-        _id: {
-          $ne: ignoreIds
-        },
-        'categories.key': {
-          $in: queries
-        }
-      };
-    } else {
-      query = {
-        'categories.key': {
-          $in: queries
-        }
-      };
-    }
+    let i = 0;
 
-    Product.find(query)
-    .then((products: Array<ProductDetailsDocument>) => {
+    do {
+      const current: string = queries[i];
 
-      // Collect all of the product id's matching the category.
-      const productIdList: Array<string> = products.map((item: ProductDetailsDocument) => item._id);
+      let query;
 
-      Review.find({
-        product: {
-          $in: productIdList,
-        },
-        published: Workflow.PUBLISHED
-      })
-      .sort('created')
-      .limit(8)
-      .populate({
-        path: 'product',
-        model: 'Product',
-      })
-      .populate({
-        path: 'statistics',
-        model: 'ReviewStatistic'
-      })
-      .populate({
-        path: 'user',
-        model: 'User',
-        populate: {
-          path: 'statistics',
-          model: 'UserStatistic'
-        }
-      })
-      .then((reviewDocuments: Array<ReviewDocument>) => {
+      // If we should ignore any ids, make sure they are set in the query.
+      if (ignoreIds.length > 0) {
+        query = {
+          _id: {
+            $ne: ignoreIds
+          },
+          'categories.key': current
+        };
+      } else {
+        query = {
+          'categories.key': current
+        };
+      }
+
+      productPromises.push(Product.find(query)
+        .then((products: Array<ProductDetailsDocument>) => {
+
+          // Collect all of the product id's matching the category.
+          const productIdList: Array<string> = products.map((item: ProductDetailsDocument) => item._id);
+
+          return Review.find({
+            product: {
+              $in: productIdList,
+            },
+            published: Workflow.PUBLISHED
+          })
+          .sort('created')
+          .limit(8)
+          .populate({
+            path: 'product',
+            model: 'Product',
+          })
+          .populate({
+            path: 'statistics',
+            model: 'ReviewStatistic'
+          })
+          .populate({
+            path: 'user',
+            model: 'User',
+            populate: {
+              path: 'statistics',
+              model: 'UserStatistic'
+            }
+          })
+          .then((reviews: Array<ReviewDocument>) => {
+            return reviews;
+          });
+        })
+        .catch((error: Error) => {
+          console.log(error);
+        })
+      );
+
+      i++;
+    } while (i < queries.length); 
+
+    Promise.all(productPromises)
+      .then((listReviewDocuments: Array<Array<ReviewDocument>>) => {
+
+        // Combine all of the reviews into a single array to be grouped by their
+        // respective query.
+        const reviewDocuments: Array<ReviewDocument> = listReviewDocuments.reduce(
+          (
+            previous: Array<ReviewDocument>,
+            current: Array<ReviewDocument>
+          ) => {
+            return previous.concat(current);
+          });
 
         // Declare a reviews list to be returned with the response.
         let reviewGroups: ReviewGroup;
@@ -861,8 +892,6 @@ export default class ReviewController {
         // Return the error response for the user.
         response.status(responseObject.status).json(responseObject.data);
       });
-    })
-
   }
 
   /**
