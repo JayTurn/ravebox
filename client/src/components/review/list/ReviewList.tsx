@@ -60,7 +60,7 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
   ctaWrapper: {
     marginBottom: theme.spacing(2),
     marginTop: theme.spacing(4),
-    padding: theme.spacing(0, 1),
+    padding: theme.spacing(0, 2),
     textAlign: 'center'
   },
   ctaWrapperLarge: {

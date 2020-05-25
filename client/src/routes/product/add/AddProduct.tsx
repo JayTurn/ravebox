@@ -11,6 +11,7 @@ import {
 } from 'redux';
 import { connect } from 'react-redux';
 import Grid from '@material-ui/core/Grid';
+import { Helmet } from 'react-helmet';
 import * as React from 'react';
 import { withRouter } from 'react-router';
 
@@ -31,6 +32,10 @@ const AddProduct: React.FC<AddProductProps> = (props: AddProductProps) => {
       direction='column'
       style={{marginBottom: '3rem'}}
     >
+      <Helmet>
+        <title>Add a new product - ravebox</title>
+        <link rel='canonical' href='https://ravebox.io/product/add' />
+      </Helmet>
       <PageTitle title='Post a rave' />
       <ProductForm />
     </Grid>

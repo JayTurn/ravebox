@@ -8,12 +8,13 @@ import { ResultType } from '../Search.enum';
 
 // Interfaces.
 import { APIResponse } from '../../../utils/api/Api.interface';
+import { RouteComponentProps } from 'react-router';
 
 /**
  * Search field component properties.
  */
-export interface SearchFieldProps {
-  toggleSearchField?: (e: React.SyntheticEvent) => void;
+export interface SearchFieldProps extends RouteComponentProps {
+  toggleSearchField?: () => void;
 }
 
 /**

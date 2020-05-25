@@ -20,6 +20,7 @@ import Input from '@material-ui/core/Input';
 import * as React from 'react';
 import SearchRoundedIcon from '@material-ui/icons/SearchRounded';
 import useMediaQuery from '@material-ui/core/useMediaQuery';
+import { withRouter } from 'react-router';
 
 // Components.
 import SearchFieldResults from './SearchFieldResults';
@@ -192,6 +193,9 @@ const SearchField: React.FC<SearchFieldProps> = (props: SearchFieldProps) => {
   ) => void = (
   ): void => {
     closeSearchResults();
+    if (!largeScreen && props.toggleSearchField) {
+      props.toggleSearchField();
+    }
   }
 
   /**
@@ -215,8 +219,20 @@ const SearchField: React.FC<SearchFieldProps> = (props: SearchFieldProps) => {
     e: React.SyntheticEvent
   ): void => {
     if (props.toggleSearchField) {
-      props.toggleSearchField(e);
+      props.toggleSearchField();
     }
+  }
+
+  /**
+   * Handles the navigation to generic search results based on the query.
+   */
+  const handleQueryNavigation: (
+    e: React.SyntheticEvent
+  ) => void = (
+    e: React.SyntheticEvent
+  ): void => {
+    handleClose();
+    props.history.push(`/discover/${query}`);
   }
 
   return (
@@ -244,6 +260,7 @@ const SearchField: React.FC<SearchFieldProps> = (props: SearchFieldProps) => {
                   aria-label='Perform product search'
                   disableRipple
                   className={classes.searchButtonLarge}
+                  onClick={handleQueryNavigation}
                 >   
                   <SearchRoundedIcon className={classes.searchIcon}/>
                 </IconButton>
@@ -275,7 +292,7 @@ const SearchField: React.FC<SearchFieldProps> = (props: SearchFieldProps) => {
                 />
               </Grid>
               <Grid item>
-                <IconButton
+                <IconButton onClick={handleQueryNavigation}
                   aria-label='Perform product search'
                   disableRipple
                   className={classes.searchButton}
@@ -291,11 +308,11 @@ const SearchField: React.FC<SearchFieldProps> = (props: SearchFieldProps) => {
           query={query}
           results={[...results]}
           retrievalStatus={retrievalStatus}
-          closeSearchResults={closeSearchResults}
+          closeSearchResults={handleClose}
         />
       </Grid>
     </Grid>
   );
 }
 
-export default SearchField;
+export default withRouter(SearchField);

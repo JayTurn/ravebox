@@ -21,6 +21,7 @@ import {
 } from '@material-ui/core/styles';
 import { frontloadConnect } from 'react-frontload';
 import Grid from '@material-ui/core/Grid';
+import { Helmet } from 'react-helmet';
 import * as React from 'react';
 import Typography from '@material-ui/core/Typography';
 import useMediaQuery from '@material-ui/core/useMediaQuery';
@@ -79,6 +80,10 @@ const useStyles = makeStyles((theme: Theme) =>
     },
     aboutTextLarge: {
       fontSize: '2.5rem'
+    },
+    container: {
+      maxWidth: '100%',
+      overflow: 'hidden'
     },
     containerPadding: {
       paddingLeft: theme.spacing(2),
@@ -154,9 +159,14 @@ const Discover: React.FC<DiscoverProps> = (props: DiscoverProps) => {
    */
   return (
     <Grid
+      className={clsx(classes.container)}
       container
       direction='column'
     >
+      <Helmet>
+        <title>Discover reviews - ravebox</title>
+        <link rel='canonical' href='https://ravebox.io/discover' />
+      </Helmet>
       <PageTitle title='Discover raves' />
       {props.categoryGroup &&
         <React.Fragment>
@@ -172,7 +182,7 @@ const Discover: React.FC<DiscoverProps> = (props: DiscoverProps) => {
                       title={
                         <ListTitle
                           title={`${categoryList[index].label} raves`}
-                          url={`/categories/${categoryList[index].key}`}
+                          url={`/categories/${query}`}
                           presentationType={largeScreen ? PresentationType.GRID : PresentationType.SCROLLABLE} 
                         />
                       }

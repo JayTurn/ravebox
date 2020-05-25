@@ -11,6 +11,7 @@ import {
 } from 'redux';
 import { connect } from 'react-redux';
 import Grid from '@material-ui/core/Grid';
+import { Helmet } from 'react-helmet';
 import Typography from '@material-ui/core/Typography';
 import * as React from 'react';
 import { withRouter } from 'react-router';
@@ -47,6 +48,10 @@ const MyReviews: React.FC<MyReviewsProps> = (props: MyReviewsProps) => {
 
   return (
     <Grid container direction='column'>
+      <Helmet>
+        <title>My raves - ravebox</title>
+        <link rel='canonical' href='https://ravebox.io/user/reviews' />
+      </Helmet>
       <PageTitle title='My raves' />
       <PrivateReviews reviews={[...props.reviews || []]} retrievalStatus={reviewsStatus} />
     </Grid>

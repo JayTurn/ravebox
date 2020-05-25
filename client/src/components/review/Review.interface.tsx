@@ -81,7 +81,7 @@ export interface ReviewStatistics {
  * Review links interface.
  */
 export interface ReviewLink {
-  title: string;
+  info: string;
   path: string;
   code?: string;
 }

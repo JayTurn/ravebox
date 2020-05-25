@@ -13,6 +13,7 @@ import API from '../../../utils/api/Api.model';
 import { connect } from 'react-redux';
 import { frontloadConnect } from 'react-frontload';
 import Grid from '@material-ui/core/Grid';
+import { Helmet } from 'react-helmet';
 import * as React from 'react';
 import Typography from '@material-ui/core/Typography';
 import { withRouter } from 'react-router';
@@ -73,6 +74,12 @@ const EditReview: React.FC<EditReviewProps> = (props: EditReviewProps) => {
     >
       {reviewStatus === RetrievalStatus.SUCCESS &&
         <React.Fragment>
+          {review.product &&
+            <Helmet>
+              <title>Edit your {review.product.brand} {review.product.name} review - ravebox</title>
+              <link rel='canonical' href='https://ravebox.io/about' />
+            </Helmet>
+          }
           <PageTitle title='Edit your rave' />
           {review && review.product &&
             <EditReviewForm

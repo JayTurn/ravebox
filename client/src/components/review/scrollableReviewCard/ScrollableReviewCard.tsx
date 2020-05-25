@@ -77,6 +77,9 @@ const useStyles = makeStyles((theme: Theme) =>
       color: theme.palette.text.primary,
       textDecoration: 'none'
     },
+    media: {
+      height: 180
+    },
     menuIcon: {
       paddingRight: 0,
       paddingBottom: 0,
@@ -163,8 +166,9 @@ const ScrollableReviewCard: React.FC<ScrollableReviewCardProps> = (props: Scroll
         }
       />
       <CardMedia
-        component='img'
-        src={props.thumbnailURL}
+        className={clsx(classes.media)}
+        image={props.thumbnailURL}
+        src='/images/placeholder.png'
         title={`${props.product ? props.product.name : ''} review`}
       />
       <CardContent className={clsx(classes.textContent)}

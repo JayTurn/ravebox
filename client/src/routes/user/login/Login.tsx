@@ -4,12 +4,17 @@
  */
 
 // Dependent modules.
-import * as React from 'react';
-import Grid from '@material-ui/core/Grid';
-import { withRouter } from 'react-router';
-import { bindActionCreators, Dispatch, AnyAction } from 'redux';
-import { connect } from 'react-redux';
 import AccessType from '../../../components/user/accessType/AccessType';
+import {
+  AnyAction,
+  bindActionCreators,
+  Dispatch
+} from 'redux';
+import { connect } from 'react-redux';
+import Grid from '@material-ui/core/Grid';
+import { Helmet } from 'react-helmet';
+import * as React from 'react';
+import { withRouter } from 'react-router';
 
 // Enumerators.
 import { AccessOptions } from '../../../components/user/accessType/AccessType.enum';
@@ -33,6 +38,10 @@ const Login: React.FC<LoginProps> = (props: LoginProps) => {
         container
         direction='column'
       >
+        <Helmet>
+          <title>Log in - ravebox</title>
+          <link rel='canonical' href='https://ravebox.io/user/login' />
+        </Helmet>
         <AccessType selected={AccessOptions.LOGIN} />
         <LoginForm />
       </Grid>

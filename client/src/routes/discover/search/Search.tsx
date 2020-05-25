@@ -21,6 +21,7 @@ import {
 } from '@material-ui/core/styles';
 import { frontloadConnect } from 'react-frontload';
 import Grid from '@material-ui/core/Grid';
+import { Helmet } from 'react-helmet';
 import * as React from 'react';
 import Typography from '@material-ui/core/Typography';
 import useMediaQuery from '@material-ui/core/useMediaQuery';
@@ -155,6 +156,9 @@ const Search: React.FC<SearchProps> = (props: SearchProps) => {
 
   return (
     <Grid container direction='column'>
+      <Helmet>
+        <title>Search for reviews - ravebox</title>
+      </Helmet>
       {lists && lists.length > 0 ? (
         <React.Fragment> 
           {lists.map((list: ReviewList) => {

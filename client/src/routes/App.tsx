@@ -149,6 +149,20 @@ const App: React.FC<AppProps> = (props: AppProps) => {
     updateXsrf: props.updateXsrf
   });
 
+  const [loaded, setLoaded] = React.useState<boolean>(false);
+
+  React.useEffect(() => {
+    if (!loaded) {
+      setTimeout(() => {
+        setLoaded(true);
+      }, 1000);
+    }
+  }, [loaded]);
+
+  if (!loaded) {
+    return null;
+  }
+
   /**
    * Renders the application.
    */
@@ -157,7 +171,11 @@ const App: React.FC<AppProps> = (props: AppProps) => {
       <CssBaseline />
       <StyledSnackbar>
         <div className={`app`}>
-          <Helmet title="Ravebox" defaultTitle="Ravebox" />
+          <Helmet>
+            <meta charSet='utf-8' />
+            <title>ravebox</title>
+            <link rel='canonical' href='https://ravebox.io' />
+          </Helmet>
           <ScrollToTop />
           <TopNavigation />
           {largeScreen ? (

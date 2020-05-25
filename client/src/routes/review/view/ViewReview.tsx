@@ -11,6 +11,7 @@ import {
 } from 'redux';
 import API from '../../../utils/api/Api.model';
 import Grid from '@material-ui/core/Grid';
+import { Helmet } from 'react-helmet';
 import * as React from 'react';
 import { frontloadConnect } from 'react-frontload';
 import { connect } from 'react-redux';
@@ -81,7 +82,15 @@ const ViewReview: React.FC<ViewReviewProps> = (props: ViewReviewProps) => {
   return (
     <Grid container direction='column' alignItems='flex-start'>
       {props.review && props.review._id &&
-        <ReviewDetails key={props.review._id}/>
+        <React.Fragment>
+          {props.review.user && props.review.product &&
+            <Helmet>
+              <title>{props.review.user.handle} reviews {props.review.product.brand} {props.review.product.name} - ravebox</title>
+              <link rel='canonical' href={`https://ravebox.io/review/${props.review.url}`} />
+            </Helmet>
+          }
+          <ReviewDetails key={props.review._id}/>
+        </React.Fragment>
       }
     </Grid>
   );

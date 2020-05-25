@@ -124,9 +124,9 @@ const AddReviewForm: React.FC<AddReviewFormProps> = (props: AddReviewFormProps) 
   const [review, setReview] = React.useState<AddReviewFormRequest>({
     description: '',
     links: [{
-      title: '',
-      path: '',
-      code: ''
+      code: '',
+      info: '',
+      path: ''
     }],
     product: props.productId || '',
     recommended: Recommended.RECOMMENDED,
@@ -436,7 +436,7 @@ const AddReviewForm: React.FC<AddReviewFormProps> = (props: AddReviewFormProps) 
             </Grid>
             <Grid item xs={12} lg={6} style={{marginBottom: '1rem'}}>
               <Typography variant='subtitle1' gutterBottom>
-                At ravebox, we're all about honest reviews that get straight to the point. That's why rave's are limited to 2 minutes and we encourage you to review products you love <Box component='span' style={{fontWeight: 700}}>and</Box> one's you don't.
+                At ravebox, we're all about honest reviews that get straight to the point. That's why raves are limited to 2 minutes and we encourage you to review products you love <Box component='span' style={{fontWeight: 700}}>and</Box> ones you don't.
               </Typography>
             </Grid>
             <Recommendation 

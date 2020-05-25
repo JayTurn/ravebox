@@ -21,6 +21,7 @@ import {
 } from '@material-ui/core/styles';
 import { frontloadConnect } from 'react-frontload';
 import Grid from '@material-ui/core/Grid';
+import { Helmet } from 'react-helmet';
 import * as React from 'react';
 import Typography from '@material-ui/core/Typography';
 import useMediaQuery from '@material-ui/core/useMediaQuery';
@@ -265,7 +266,13 @@ const CategoryList: React.FC<CategoryListProps> = (props: CategoryListProps) => 
       direction='column'
     >
       {category &&
-        <PageTitle title={`${category.label}`} />
+        <React.Fragment>
+          <PageTitle title={`${category.label}`} />
+          <Helmet>
+            <title>{category.label} reviews - ravebox</title>
+            <link rel='canonical' href='https://ravebox.io/about' />
+          </Helmet>
+        </React.Fragment>
       }
       {props.categoryGroup && category &&
         <React.Fragment>
@@ -281,7 +288,6 @@ const CategoryList: React.FC<CategoryListProps> = (props: CategoryListProps) => 
                       title={
                         <ListTitle
                           title={`${category.children[index].label} raves`}
-                          url={`/categories/${categoryList[index].key}`}
                           presentationType={largeScreen ? PresentationType.GRID : PresentationType.SCROLLABLE} 
                         />
                       }

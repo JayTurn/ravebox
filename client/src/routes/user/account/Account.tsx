@@ -4,11 +4,12 @@
  */
 
 // Dependent modules.
-import * as React from 'react';
-import Grid from '@material-ui/core/Grid';
 import { withRouter } from 'react-router';
 import { bindActionCreators, Dispatch, AnyAction } from 'redux';
 import { connect } from 'react-redux';
+import Grid from '@material-ui/core/Grid';
+import { Helmet } from 'react-helmet';
+import * as React from 'react';
 
 // Components.
 import Settings from '../../../components/user/settings/Settings';
@@ -30,6 +31,10 @@ const Account: React.FC<AccountProps> = (props: AccountProps) => {
         direction='column'
         justify='flex-start'
       >
+        <Helmet>
+          <title>Account settings - ravebox</title>
+          <link rel='canonical' href='https://ravebox.io/account' />
+        </Helmet>
         <Settings />
       </Grid>
     </div>

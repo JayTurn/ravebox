@@ -87,7 +87,7 @@ const ExpansionPanelSummary = withStyles(theme => ({
 const ExpansionPanelDetails = withStyles({
   root: {
     flexDirection: 'column',
-    padding: `16px 0 8px`
+    padding: `0 0 8px`
   }
 })(MuiExpansionPanelDetails);
 

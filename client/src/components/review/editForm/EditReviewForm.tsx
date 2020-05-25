@@ -122,9 +122,9 @@ const EditReviewForm: React.FC<EditReviewFormProps> = (props: EditReviewFormProp
     created: new Date(),
     description: '',
     links: [{
-      title: '',
-      path: '',
-      code: ''
+      code: '',
+      info: '',
+      path: ''
     }],
     _id: '',
     sponsored: false,
