@@ -79,6 +79,7 @@ const ViewReview: React.FC<ViewReviewProps> = (props: ViewReviewProps) => {
     requested: props.match.params
   })
 
+  console.log('RENDER_REVIEW_DETAILS_PROPS: ', props);
   return (
     <Grid container direction='column' alignItems='flex-start'>
       {props.review && props.review._id &&
@@ -89,7 +90,10 @@ const ViewReview: React.FC<ViewReviewProps> = (props: ViewReviewProps) => {
               <link rel='canonical' href={`https://ravebox.io/review/${props.review.url}`} />
             </Helmet>
           }
-          <ReviewDetails key={props.review._id}/>
+          <ReviewDetails
+            key={props.review._id}
+            review={props.review}
+          />
         </React.Fragment>
       }
     </Grid>
@@ -126,10 +130,10 @@ export default withRouter(connect(
   mapStateToProps,
   mapDispatchToProps
 )(frontloadConnect(
-  frontloadReviewDetails,
-  {
-    noServerRender: false,     
+  frontloadReviewDetails, {
+    noServerRender: false,
     onMount: true,
     onUpdate: false
-  })(ViewReview)
+  }
+)(ViewReview)
 ));

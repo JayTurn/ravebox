@@ -42,6 +42,10 @@ import {
   PresentationType,
   ReviewListType
 } from '../../components/review/listByQuery/ListByQuery.enum';
+import {
+  QueryPath 
+} from '../../components/review/listByQuery/ListByQuery.enum';
+import { RequestType } from '../../utils/api/Api.enum';
 import { StyleType } from '../../components/elements/link/Link.enum';
 
 // Hooks.
@@ -52,7 +56,13 @@ import {
 // Interfaces.
 import { Category, CategoryItem } from '../../components/category/Category.interface';
 import { HomeProps } from './Home.interface';
+import {
+  RetrieveListByQueryResponse
+} from '../../components/review/listByQuery/ListByQuery.interface';
 import { ReviewGroup } from '../../components/review/Review.interface';
+
+// Utilities.
+import { getTopLevelCategories } from '../../utils/structures/Category';
 
 // Retrieve the list of categories.
 const categoryList: Array<Category> = require('../../components/category/categories.json').ontology;
@@ -108,29 +118,30 @@ const useStyles = makeStyles((theme: Theme) =>
 );
 
 /**
- * Retrieves the top level product categories.
- *
- * @return Array<string>
+ * Loads the home content from the api for server side rendering.
+ * 
+ * @param { HomeProps } props - the home properties.
  */
-const getTopLevelCategories: (
-  list: Array<Category>
-) => Array<string> = (
-  list: Array<Category>
-): Array<string> => {
-  const categories: Array<string> = [];
+const frontloadHome = async (props: HomeProps) => {
+  // Capture the category queries to.
+  const queries: Array<string> = getTopLevelCategories(categoryList); 
 
-  // Loop through the list of categories and add the top level items to the
-  // array.
-  let i: number = 0;
-
-  do {
-    const current: Category = list[i];
-    categories.push(current.key);
-    i++;
-  } while (i < list.length);
-
-  return categories;
-}
+  // Perform the API request to get the review group.
+  await API.requestAPI<RetrieveListByQueryResponse>(QueryPath.CATEGORY, {
+    method: RequestType.POST,
+    body: JSON.stringify({
+      queries: queries
+    })
+  })
+  .then((response: RetrieveListByQueryResponse) => {
+    if (response.reviews && props.updateListByCategory) {
+      props.updateListByCategory(response.reviews);
+    }
+  })
+  .catch((error: Error) => {
+    console.log(error);
+  });
+};
 
 /**
  * Home route component.
@@ -326,4 +337,11 @@ const mapDispatchToProps = (dispatch: Dispatch<AnyAction>) =>
 export default connect(
     mapStatetoProps,
     mapDispatchToProps
-  )(Home);
+)(frontloadConnect(
+  frontloadHome, {
+    noServerRender: false,
+    onMount: true,
+    onUpdate: false
+  }
+)(Home)
+);

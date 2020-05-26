@@ -41,6 +41,7 @@ import PageTitle from '../../components/elements/pageTitle/PageTitle';
 // Enumerators.
 import {
   PresentationType,
+  QueryPath,
   ReviewListType
 } from '../../components/review/listByQuery/ListByQuery.enum';
 import {
@@ -64,6 +65,13 @@ import {
   RetrieveListByQueryParams,
   RetrieveListByQueryResponse
 } from '../../components/review/listByQuery/ListByQuery.interface';
+
+// Utilities.
+import {
+  getCategory,
+  getSubCategoryQueries,
+  getTopLevelCategories
+} from '../../utils/structures/Category'; 
 
 // Retrieve the list of categories.
 const categoryList: Array<Category> = require('../../components/category/categories.json').ontology;
@@ -118,107 +126,32 @@ const useStyles = makeStyles((theme: Theme) =>
 );
 
 /**
- * Retrieves the category based on the provided category key.
- *
- * @return Array<string>
- */
-const getCategory: (
-  categoryKey: string
-) => (
-  list: Array<Category>
-) => Category | null = (
-  categoryKey: string
-) => (
-  list: Array<Category>
-): Category | null => {
-  let category: Category | null = null;
-
-  // Loop through the list of categories and add the top level items to the
-  // array.
-  let i: number = 0;
-
-  // Loop through the top level categories to retrieve the subcategories.
-  do {
-    const current: Category = list[i];
-
-    if (current.key !== categoryKey || !current.children) {
-      i++;
-      continue;
-    }
-
-    category = {...current};
-    break;
-
-  } while (i < list.length);
-
-  return category;
-}
-
-/**
- * Retrieves a list of sub-categories as an array of strings.
- *
- * @param { Category } category - the category object.
- *
- * @return Array<string>
- */
-const getSubCategoryQueries: (
-  category: Category
-) => Array<string> = (
-  category: Category
-): Array<string> => {
-  const subCategories: Array<string> = [];
-
-  if (!category || !category.children) {
-    return subCategories;
-  }
-
-  let i: number = 0;
-
-  do {
-    const current: Category = category.children[i];
-    subCategories.push(current.key);
-
-    i++;
-
-  } while (i < category.children.length);
-
-  return subCategories;
-}
-
-/**
  * Loads the product category lists from the api before rendering.
  * 
  * @param { CategoryProps } props - the category properties.
  */
 const frontloadCategoryList = async (props: CategoryListProps) => {
 
-  /*
-  // Retrieve the request parameters.
-  const { category } = {...props.match.params};
+  // Capture the category queries to.
+  const categoryKey: string = props.match.params.category,
+        category: Category | null = getCategory(categoryKey)(categoryList),
+        queries: Array<string> = category ? getSubCategoryQueries(category) : []; 
 
-  const topLevelCategory: Category | null = getCategory(category)(categoryList);
-
-  if (!topLevelCategory) {
-    return;
-  }
-
-  const values: Array<string> = getSubCategoryQueries(topLevelCategory);
-
-  await API.requestAPI<RetrieveListByQueryResponse>(`review/list/category`, {
+  // Perform the API request to get the review group.
+  await API.requestAPI<RetrieveListByQueryResponse>(QueryPath.CATEGORY, {
     method: RequestType.POST,
     body: JSON.stringify({
-      queries: values
+      queries: queries
     })
   })
   .then((response: RetrieveListByQueryResponse) => {
-    if (props.updateListByCategory) {
-      props.updateListByCategory({...response.reviews});
+    if (response.reviews && props.updateListByCategory) {
+      props.updateListByCategory(response.reviews);
     }
   })
   .catch((error: Error) => {
     console.log(error);
   });
-  */
 
 };
 
@@ -228,12 +161,15 @@ const frontloadCategoryList = async (props: CategoryListProps) => {
 const CategoryList: React.FC<CategoryListProps> = (props: CategoryListProps) => {
 
   // Define the component classes.
-  const classes = useStyles(),
+  const categoryKey: string = props.match.params.category,
+        classes = useStyles(),
         theme = useTheme(),
         largeScreen = useMediaQuery(theme.breakpoints.up('sm'));
 
-  const [category, setCategory] = React.useState<Category | null>(null),
-        [queries, setQueries] = React.useState<Array<string>>([]);
+  const [category, setCategory] = React.useState<Category | null>(
+          getCategory(categoryKey)(categoryList)
+        ),
+        [queries, setQueries] = React.useState<Array<string>>(category ? getSubCategoryQueries(category) : []);
 
   const {
     listStatus
@@ -255,7 +191,6 @@ const CategoryList: React.FC<CategoryListProps> = (props: CategoryListProps) => 
       }
     }
   }, [props.match.params, queries, category])
-
 
   /**
    * Render the home route component.
@@ -279,7 +214,7 @@ const CategoryList: React.FC<CategoryListProps> = (props: CategoryListProps) => 
           {
             queries.map((query: string, index: number) => {
               return (
-                <React.Fragment>
+                <React.Fragment key={query}>
                   {props.categoryGroup && props.categoryGroup[query] && category.children &&
                     <ListByQuery
                       listType={ReviewListType.CATEGORY}

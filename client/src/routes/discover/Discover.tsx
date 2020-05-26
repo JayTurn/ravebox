@@ -40,8 +40,10 @@ import PageTitle from '../../components/elements/pageTitle/PageTitle';
 // Enumerators.
 import {
   PresentationType,
+  QueryPath,
   ReviewListType
 } from '../../components/review/listByQuery/ListByQuery.enum';
+import { RequestType } from '../../utils/api/Api.enum';
 import { StyleType } from '../../components/elements/link/Link.enum';
 
 // Hooks.
@@ -52,10 +54,42 @@ import {
 // Interfaces.
 import { Category, CategoryItem } from '../../components/category/Category.interface';
 import { DiscoverProps } from './Discover.interface';
+import {
+  RetrieveListByQueryResponse
+} from '../../components/review/listByQuery/ListByQuery.interface';
 import { ReviewGroup } from '../../components/review/Review.interface';
+
+// Utilities.
+import { getTopLevelCategories } from '../../utils/structures/Category';
 
 // Retrieve the list of categories.
 const categoryList: Array<Category> = require('../../components/category/categories.json').ontology;
+
+/**
+ * Loads the discover content from the api for server side rendering.
+ * 
+ * @param { HomeProps } props - the home properties.
+ */
+const frontloadDiscover = async (props: DiscoverProps) => {
+  // Capture the category queries to.
+  const queries: Array<string> = getTopLevelCategories(categoryList); 
+
+  // Perform the API request to get the review group.
+  await API.requestAPI<RetrieveListByQueryResponse>(QueryPath.CATEGORY, {
+    method: RequestType.POST,
+    body: JSON.stringify({
+      queries: queries
+    })
+  })
+  .then((response: RetrieveListByQueryResponse) => {
+    if (response.reviews && props.updateListByCategory) {
+      props.updateListByCategory(response.reviews);
+    }
+  })
+  .catch((error: Error) => {
+    console.log(error);
+  });
+};
 
 /**
  * Create the theme styles to be used for the display.
@@ -109,31 +143,6 @@ const useStyles = makeStyles((theme: Theme) =>
     }
   })
 );
-
-/**
- * Retrieves the top level product categories.
- *
- * @return Array<string>
- */
-const getTopLevelCategories: (
-  list: Array<Category>
-) => Array<string> = (
-  list: Array<Category>
-): Array<string> => {
-  const categories: Array<string> = [];
-
-  // Loop through the list of categories and add the top level items to the
-  // array.
-  let i: number = 0;
-
-  do {
-    const current: Category = list[i];
-    categories.push(current.key);
-    i++;
-  } while (i < list.length);
-
-  return categories;
-}
 
 /**
  * Discover route component.
@@ -226,4 +235,10 @@ const mapDispatchToProps = (dispatch: Dispatch<AnyAction>) =>
 export default connect(
     mapStatetoProps,
     mapDispatchToProps
-  )(Discover);
+)(frontloadConnect(
+  frontloadDiscover, {
+    noServerRender: false,
+    onMount: true,
+    onUpdate: false
+  }
+)(Discover));

@@ -11,7 +11,7 @@ import { Provider } from 'react-redux';
 import React from 'react';
 
 // Import the dependent components.
-import AppContainer from '../routes/AppContainer';
+import App from '../routes/App';
 
 // Import the dependent models.
 import { store, history } from '../store/Store';
@@ -22,7 +22,7 @@ hydrate(
   <Provider store={store}>
     <ConnectedRouter history={history}>
       <Frontload noServerRender={true}>
-        <AppContainer />
+        <App />
       </Frontload>
     </ConnectedRouter>
   </Provider>,
@@ -32,14 +32,14 @@ hydrate(
 // If hot module replacement is present, trigger reloads from the app 
 // container.
 if (module.hot) {
-  module.hot.accept('../routes/AppContainer', () => {
+  module.hot.accept('../routes/App', () => {
     // Render the application using hyrdate to maintain the server-rendered markup
     // and simlpy attach event handlers.
     hydrate(
       <Provider store={store}>
         <ConnectedRouter history={history}>
           <Frontload noServerRender={true}>
-            <AppContainer />
+            <App />
           </Frontload>
         </ConnectedRouter>
       </Provider>,

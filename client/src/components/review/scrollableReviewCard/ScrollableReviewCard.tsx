@@ -139,6 +139,17 @@ const StyledCardHeader = withStyles(theme => ({
 }))(CardHeader);
 
 /**
+ * Prevents the default link click as redirects are handled by parent elements.
+ */
+const handleClick: (
+  e: React.SyntheticEvent
+) => void = (
+  e: React.SyntheticEvent
+): void => {
+  e.preventDefault();
+}
+
+/**
  * Review card for public display.
  */
 const ScrollableReviewCard: React.FC<ScrollableReviewCardProps> = (props: ScrollableReviewCardProps) => {
@@ -152,17 +163,23 @@ const ScrollableReviewCard: React.FC<ScrollableReviewCardProps> = (props: Scroll
         className={clsx(classes.cardHeaderContent)}
         style={{maxWidth: '100%'}}
         title={
-          <Grid container direction='row' style={{flexWrap: 'nowrap', maxWidth: '100%'}}>
-            <Grid item style={{flexGrow: 1, minWidth: 0}}>
-              {props.user &&
-                <Typography variant='body2' className={classes.title}>
-                  <Box component='span' className={classes.handleText}>{props.user.handle}</Box> {props.title} 
-                </Typography>
-              }
+            <Grid container direction='row' style={{flexWrap: 'nowrap', maxWidth: '100%'}}>
+              <Grid item style={{flexGrow: 1, minWidth: 0}}>
+                {props.user &&
+                  <NavLink
+                    className={classes.linkText}
+                    onClick={handleClick}
+                    to={`/review/${props.url}`} 
+                  >
+                    <Typography variant='body2' className={classes.title}>
+                      <Box component='span' className={classes.handleText}>{props.user.handle}</Box> {props.title} 
+                    </Typography>
+                  </NavLink>
+                }
+              </Grid>
+              <Grid item style={{flexGrow: 0}}>
+              </Grid>
             </Grid>
-            <Grid item style={{flexGrow: 0}}>
-            </Grid>
-          </Grid>
         }
       />
       <CardMedia

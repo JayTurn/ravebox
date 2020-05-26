@@ -65,8 +65,8 @@ export default class ReviewStatisticsController {
     // Retrieves the rating statistics for a review.
     router.get(
       `${path}/rating/:id`,
-      Authenticate.AddUserToRequest,
-      UserStatisticsCommon.AttachUserStatistics,
+      //Authenticate.AddUserToRequest,
+      //UserStatisticsCommon.AttachUserStatistics,
       ReviewStatisticsController.RetrieveReviewRatings
     );
   }
@@ -202,7 +202,6 @@ export default class ReviewStatisticsController {
 
       // Return the response.
       response.status(responseObject.status).json(responseObject.data);
-      console.log(statistics);
     })
     .catch(() => {
       // Define the responseObject.

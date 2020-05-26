@@ -16,7 +16,7 @@ import {
  * Review details properties.
  */
 export interface ReviewDetailsProps extends RouteComponentProps {
-  review?: Review;
+  review: Review;
   productGroup?: ReviewGroup;
   updateListByProduct?: (reviews: ReviewGroup) => void;
   xsrf?: string;
