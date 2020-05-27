@@ -152,7 +152,7 @@ export default class ReviewCommon {
 
     do {
       // Capture the public details for the review and the categories.
-      const currentReview: ReviewDetails = {...reviews[i].details},
+      const currentReview: ReviewDocument = reviews[i],
             categories: Array<string> = currentReview.product.categories.map(
               (category: Category) => category.key);
 
@@ -167,9 +167,17 @@ export default class ReviewCommon {
         // If we have found a match for the category, add it to the review group.
         if (index >= 0 ) {
           if (reviewGroup[currentQuery]) {
-            reviewGroup[currentQuery].push({...currentReview});
+            reviewGroup[currentQuery].push({
+              ...currentReview.details,
+              product: currentReview.product.details,
+              user: currentReview.user.publicProfile
+            });
           } else {
-            reviewGroup[currentQuery] = [{...currentReview}];
+            reviewGroup[currentQuery] = [{
+              ...currentReview.details,
+              product: currentReview.product.details,
+              user: currentReview.user.publicProfile
+            }];
           }
 
           break;
@@ -202,12 +210,20 @@ export default class ReviewCommon {
     do {
 
       // Capture the public details for the review and the categories.
-      const currentReview: ReviewDetails = {...reviews[i].details};
+      const currentReview: ReviewDocument = reviews[i];
 
       if (reviewGroup[currentReview.product._id]) {
-        reviewGroup[currentReview.product._id].push({...currentReview});
+        reviewGroup[currentReview.product._id].push({
+          ...currentReview.details,
+          product: currentReview.product.details,
+          user: currentReview.user.publicProfile
+        });
       } else {
-        reviewGroup[currentReview.product._id] = [{...currentReview}];
+        reviewGroup[currentReview.product._id] = [{
+          ...currentReview.details,
+          product: currentReview.product.details,
+          user: currentReview.user.publicProfile
+        }];
       }
 
       i++;

@@ -202,16 +202,7 @@ const ReviewDetails: React.FC<ReviewDetailsProps> = (props: ReviewDetailsProps) 
         theme = useTheme(),
         largeScreen = useMediaQuery(theme.breakpoints.up('md'));
 
-  const [review, setReview] = React.useState<Review>({
-    _id: '',
-    created: new Date(),
-    links: [],
-    recommended: 0,
-    sponsored: false,
-    title: '',
-    url: '',
-    videoURL: ''
-  });
+  const { review } = {...props};
 
   const productId: string = (review && review.product) ? review.product._id : '';
 
@@ -224,7 +215,7 @@ const ReviewDetails: React.FC<ReviewDetailsProps> = (props: ReviewDetailsProps) 
   });
 
   const [reviewStatistics, setReviewStatistics] = React.useState({
-    views: ''
+    views: (review.statistics && review.statistics.views > 1) ? `${CommaSeparatedNumber(review.statistics.views)} views`: `1 view`
   });
 
   // Create a token to be used for video ratings.
@@ -233,27 +224,6 @@ const ReviewDetails: React.FC<ReviewDetailsProps> = (props: ReviewDetailsProps) 
   // Define a property to support the rating of content after an allowable
   // duration has passed.
   const [ratingAllowed, setRatingAllowed] = React.useState<boolean>(false);
-
-  // Perform the request to retrieve product reviews.
-
-  React.useEffect(() => {
-    if (props.review) {
-      if (props.review._id !== review._id) {
-        setReview({...props.review});
-
-        if (props.review.statistics) {
-          const statistics: ReviewStatistics = {...props.review.statistics};
-          if (statistics.views) {
-            const views: string = (statistics.views > 1) ? `${CommaSeparatedNumber(statistics.views)} views`: `1 view`; 
-            setReviewStatistics({
-              ...reviewStatistics,
-              views: views
-            });
-          }
-        }
-      }
-    }
-  }, [review, props.review]);
 
   /**
    * Handles the updating of the allowable rating state.

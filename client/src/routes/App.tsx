@@ -149,20 +149,6 @@ const App: React.FC<AppProps> = (props: AppProps) => {
     updateXsrf: props.updateXsrf
   });
 
-  const [loaded, setLoaded] = React.useState<boolean>(false);
-
-  React.useEffect(() => {
-    if (!loaded) {
-      setTimeout(() => {
-        setLoaded(true);
-      }, 1000);
-    }
-  }, [loaded]);
-
-  if (!loaded) {
-    return null;
-  }
-
   /**
    * Renders the application.
    */
