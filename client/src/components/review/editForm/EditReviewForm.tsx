@@ -523,7 +523,7 @@ const EditReviewForm: React.FC<EditReviewFormProps> = (props: EditReviewFormProp
               ) : (
                 <React.Fragment>
                   <Grid item xs={12} lg={6} style={{marginBottom: '1.5rem', width: '100%'}}>
-                    <RaveVideo url={review.videoURL} reviewId={review._id} />
+                    <RaveVideo review={review} />
                   </Grid>
                   <Grid item xs={12} lg={6} style={{marginBottom: '3rem', width: '100%'}}>
                     <StyledButton

@@ -225,10 +225,11 @@ const ReviewDetails: React.FC<ReviewDetailsProps> = (props: ReviewDetailsProps) 
 
   // Define a property to support the rating of content after an allowable
   // duration has passed.
-  const [ratingAcceptance, setRatingAcceptance] = React.useState({
+  const [ratingAcceptance, setRatingAcceptance] = React.useState<RatingAcceptance>({
     allowed: false,
     played: 0,
-    playedSeconds: 0
+    playedSeconds: 0,
+    videoDuration: 0
   });
 
   /**
