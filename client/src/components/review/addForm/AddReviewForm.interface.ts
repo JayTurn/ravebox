@@ -11,6 +11,8 @@ import { Recommended } from '../recommendation/Recommendation.enum';
 
 // Interfaces.
 import { APIResponse } from '../../../utils/api/Api.interface';
+import { PrivateProfile } from '../../user/User.interface';
+import { Product } from '../../product/Product.interface';
 import {
   Review,
   ReviewLink
@@ -20,7 +22,8 @@ import {
  * Add review form properties.
  */
 export interface AddReviewFormProps extends RouteComponentProps {
-  productId: string | undefined;
+  product: Product;
+  profile?: PrivateProfile;
   review?: Review;
   toggleProduct: (visible: boolean) => void;
   xsrf?: string;

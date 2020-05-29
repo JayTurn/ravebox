@@ -86,7 +86,7 @@ const CategorySelection: React.FC<CategorySelectionProps> = (props: CategorySele
       setSubCategories([...selectedCategoryList]);
       setSelectedCategoryIndex(index);
       setSelectedSubCategoryIndex(-1);
-      props.update([selectedCategory]);
+      props.update('category')([selectedCategory]);
     }
   }
 
@@ -111,7 +111,7 @@ const CategorySelection: React.FC<CategorySelectionProps> = (props: CategorySele
 
     if (selectedCategory && selectedSubCategory) {
       setSelectedSubCategoryIndex(index);
-      props.update([selectedCategory, selectedSubCategory]);
+      props.update('sub-category')([selectedCategory, selectedSubCategory]);
     }
   }
 

@@ -21,7 +21,14 @@ import Typography from '@material-ui/core/Typography';
 import { withRouter } from 'react-router';
 import Zoom from '@material-ui/core/Zoom';
 
+// Hooks.
+import { useAnalytics } from '../../analytics/Analytics.provider';
+
 // Interfaces.
+import {
+  AnalyticsContextProps,
+  EventObject
+} from '../../analytics/Analytics.interface';
 import { CategoryItem } from '../../category/Category.interface';
 import { Product, ProductGroup } from '../Product.interface';
 import { ProductSelectListProps } from './ProductSelectList.interface';
@@ -69,6 +76,9 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
  */
 const ProductSelectList: React.FC<ProductSelectListProps> = (props: ProductSelectListProps) => {
 
+  // Define the analytics context and a tracking event.
+  const analytics: AnalyticsContextProps = useAnalytics() as AnalyticsContextProps;
+
   // Use the custom styles.
   const classes = useStyles();
 
@@ -78,11 +88,31 @@ const ProductSelectList: React.FC<ProductSelectListProps> = (props: ProductSelec
    * @param { string } id - the product id.
    */
   const selectProduct: (
-    id: string
+    index: number
   ) => void = (
-    id: string
+    index: number
   ): void => {
-    props.history.push(`/product/${id}/review`);
+
+    const product: Product = {...props.products[index]};
+
+    // Create the event object from the provided values.
+    const eventData: EventObject = {
+      'brand name': product.brand,
+      'product id': product._id,
+      'product name': product.name
+    };
+
+    if (product.categories && product.categories.length > 0) {
+      eventData['product category'] = product.categories[0].key;
+
+      if (product.categories.length > 1) {
+        eventData['product sub-category'] = product.categories[1].key;
+      }
+    }
+
+    analytics.trackEvent(`select existing product`)(eventData);
+
+    props.history.push(`/product/${product._id}/review`);
   }
 
   return (
@@ -102,7 +132,7 @@ const ProductSelectList: React.FC<ProductSelectListProps> = (props: ProductSelec
                     button
                     className={classes.listItem}
                     disableRipple
-                    onClick={() => selectProduct(product._id)}
+                    onClick={() => selectProduct(index)}
                   >
                     <Box component='div'>
                       <Typography variant='body2' color='textPrimary' className={classes.productBrand}>

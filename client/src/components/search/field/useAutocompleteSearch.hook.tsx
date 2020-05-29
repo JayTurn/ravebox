@@ -15,12 +15,12 @@ import {
 } from '../../../utils/api/Api.enum';
 
 // Hooks.
-import { useAnalytics } from '../../../components/analytics/Analytics.provider';
+import { useAnalytics } from '../../analytics/Analytics.provider';
 
 // Interfaces.
 import {
   AnalyticsContextProps
-} from '../../../components/analytics/Analytics.interface';
+} from '../../analytics/Analytics.interface';
 import {
   AutocompleteSearchParams,
   AutocompleteSearchResponse,
@@ -93,7 +93,7 @@ export function useAutocompleteSearch() {
 
     setQuery(query);
 
-    // Performt he product name search.
+    // Perform the product name search.
     API.requestAPI<AutocompleteSearchResponse>(`search/autocomplete/${encodeURIComponent(query)}`, {
       method: RequestType.GET,
     })

@@ -21,9 +21,14 @@ import StyledButton from '../../elements/buttons/StyledButton';
 import { RequestType } from '../../../utils/api/Api.enum';
 
 // Hooks.
+import { useAnalytics } from '../../../components/analytics/Analytics.provider';
 import { useValidation } from '../../forms/validation/useValidation.hook';
 
 // Interfaces.
+import {
+  AnalyticsContextProps,
+  EventObject
+} from '../../../components/analytics/Analytics.interface';
 import { InputData } from '../../forms/input/Input.interface';
 import { Product } from '../Product.interface';
 import {
@@ -54,6 +59,9 @@ const formValidation: ValidationSchema = {
  * Assists the user in the selection of a product.
  */
 const ProductSelection: React.FC<ProductSelectionProps> = (props: ProductSelectionProps) => {
+
+  // Define the analytics context and a tracking event.
+  const analytics: AnalyticsContextProps = useAnalytics() as AnalyticsContextProps;
 
   // Define the product selection form state.
   const [values, setValues] = React.useState<ProductSelectionForm>({
@@ -181,6 +189,9 @@ const ProductSelection: React.FC<ProductSelectionProps> = (props: ProductSelecti
       } else {
         // Set the options returned.
         setOptions(response.products);
+        analytics.trackEvent('search existing review product')({
+          'term': query
+        });
       }
 
       // Set the submission state.
