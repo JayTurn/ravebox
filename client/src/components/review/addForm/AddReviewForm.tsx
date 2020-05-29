@@ -169,7 +169,7 @@ const formatEventData: (
   eventData['review title'] = review.title;
   eventData['review description provided'] = review.description !== '';
 
-  if (video && video.name) {
+  if (video && video.type) {
     eventData['video type'] = `${video.type}`;
     eventData['video size'] = video.size;
   }
@@ -261,9 +261,9 @@ const AddReviewForm: React.FC<AddReviewFormProps> = (props: AddReviewFormProps) 
         ...props.product
       })({
         ...review
-      })({
-        ...video
-      })({
+      })(
+        video
+      )({
         ...props.profile
       });
 
@@ -300,9 +300,9 @@ const AddReviewForm: React.FC<AddReviewFormProps> = (props: AddReviewFormProps) 
         ...props.product
       })({
         ...review
-      })({
-        ...video
-      })({
+      })(
+        video
+      )({
         ...props.profile
       });
 
@@ -344,9 +344,9 @@ const AddReviewForm: React.FC<AddReviewFormProps> = (props: AddReviewFormProps) 
         ...props.product
       })({
         ...review
-      })({
-        ...video
-      })({
+      })(
+        video
+      )({
         ...props.profile
       });
 
@@ -379,9 +379,9 @@ const AddReviewForm: React.FC<AddReviewFormProps> = (props: AddReviewFormProps) 
         ...props.product
       })({
         ...review
-      })({
-        ...video
-      })({
+      })(
+        video
+      )({
         ...props.profile
       });
 
@@ -410,14 +410,11 @@ const AddReviewForm: React.FC<AddReviewFormProps> = (props: AddReviewFormProps) 
         ...props.product
       })({
         ...review
-      })({
-        ...video
-      })({
+      })(
+        uploadFile
+      )({
         ...props.profile
       });
-
-      eventData['video type'] = `${uploadFile.type}`;
-      eventData['video size'] = uploadFile.size;
 
       analytics.trackEvent(`add review video`)(eventData);
     }
@@ -458,9 +455,9 @@ const AddReviewForm: React.FC<AddReviewFormProps> = (props: AddReviewFormProps) 
           ...props.product
         })({
           ...review
-        })({
-          ...video
-        })({
+        })(
+          video
+        )({
           ...props.profile
         });
 
@@ -531,9 +528,9 @@ const AddReviewForm: React.FC<AddReviewFormProps> = (props: AddReviewFormProps) 
           ...props.product
         })({
           ...review
-        })({
-          ...video
-        })({
+        })(
+          video
+        )({
           ...props.profile
         });
 

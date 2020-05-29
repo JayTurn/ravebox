@@ -221,6 +221,14 @@ const ProductForm: React.FC<ProductFormProps> = (
       }
     }
 
+    if (data.key === 'brand') {
+      eventData['brand name'] = data.value;
+    }
+
+    if (data.key === 'name') {
+      eventData['product name'] = data.value;
+    }
+
     analytics.trackEvent(`add ${data.key}`)(eventData);
   }
 

@@ -89,6 +89,7 @@ const FileUpload: React.FC<FileUploadProps> = (props: FileUploadProps) => {
     acceptedFiles,
     getRootProps,
     getInputProps,
+    inputRef,
     isDragActive,
     rejectedFiles,
   } = useDropzone({
@@ -102,7 +103,13 @@ const FileUpload: React.FC<FileUploadProps> = (props: FileUploadProps) => {
       setErrors([]);
     }
 
-    props.update(file);
+    if (props.filename !== file.name) {
+      props.update(file);
+    }
+
+    if (inputRef.current) {
+      inputRef.current.blur();
+    }
   })
 
   // Handle rejected file types.

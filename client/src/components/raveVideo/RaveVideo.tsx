@@ -155,21 +155,24 @@ const RaveVideo: React.FC<RaveVideoProps> = (props: RaveVideoProps) => {
         data['watched seconds'] = Math.floor(state.playedSeconds);
         data['watched percentage'] = '0.25';
         setQuarterWatched(true);
+
+        analytics.trackEvent('continue review video')(data);
       }
 
       if (state.played > 0.5 && !halfWatched) {
         data['watched seconds'] = Math.floor(state.playedSeconds);
         data['watched percentage'] = '0.5';
         setHalfWatched(true);
+        analytics.trackEvent('continue review video')(data);
       }
 
       if (state.played > 0.75 && !threeQuarterWatched) {
         data['watched seconds'] = Math.floor(state.playedSeconds);
         data['watched percentage'] = '0.75';
         setThreeQuarterWatched(true);
+        analytics.trackEvent('continue review video')(data);
       }
 
-      analytics.trackEvent('continue review video')(data);
     }
   }
 
