@@ -31,8 +31,18 @@ import useMediaQuery from '@material-ui/core/useMediaQuery';
 // Components.
 import LinkElement from '../../elements/link/Link';
 
+// Hooks.
+import { useAnalytics } from '../../analytics/Analytics.provider';
+
 // Interfaces.
+import {
+  AnalyticsContextProps,
+  EventObject
+} from '../../analytics/Analytics.interface';
 import { ReviewCardProps } from './ReviewCard.interface';
+
+// Utilities.
+import { formatReviewForTracking } from '../Review.common';
 
 /**
  * Card header styles.
@@ -143,10 +153,27 @@ const useStyles = makeStyles((theme: Theme) =>
  * Review card for public display.
  */
 const ReviewCard: React.FC<ReviewCardProps> = (props: ReviewCardProps) => {
+  // Define the analytics context and a tracking event.
+  const analytics: AnalyticsContextProps = useAnalytics() as AnalyticsContextProps;
+
   // Define the style classes.
   const classes = useStyles(),
         theme = useTheme(),
         largeScreen = useMediaQuery(theme.breakpoints.up('sm'));
+
+  /**
+   * Tracks the review card navigation event.
+   */
+  const handleNavigation: (
+  ) => void = (
+  ): void => {
+
+    // Format the review for tracking.
+    const data: EventObject = formatReviewForTracking(props.context)(props);
+
+    // Track the select event.
+    analytics.trackEvent('select review')(data);
+  }
 
   return (
     <Card className={clsx(
@@ -164,7 +191,11 @@ const ReviewCard: React.FC<ReviewCardProps> = (props: ReviewCardProps) => {
         title={
           <Grid container direction='row' style={{flexWrap: 'nowrap', maxWidth: '100%'}}>
             <Grid item style={{flexGrow: 1, minWidth: 0}}>
-              <NavLink to={`/review/${props.url}`} className={classes.linkText}>
+              <NavLink
+                className={classes.linkText}
+                onClick={handleNavigation}
+                to={`/review/${props.url}`}
+              >
                 {props.user &&
                   <Typography variant='body2' className={classes.title}>
                     <Box component='span' className={classes.handleText}>{props.user.handle}</Box> {props.title} 
@@ -177,7 +208,11 @@ const ReviewCard: React.FC<ReviewCardProps> = (props: ReviewCardProps) => {
           </Grid>
         }
       />
-      <NavLink to={`/review/${props.url}`} className={classes.linkText}>
+      <NavLink
+        className={classes.linkText}
+        onClick={handleNavigation}
+        to={`/review/${props.url}`}
+      >
         <CardMedia
           className={clsx(classes.media)}
           image={props.thumbnailURL}
@@ -192,7 +227,11 @@ const ReviewCard: React.FC<ReviewCardProps> = (props: ReviewCardProps) => {
         <Grid container direction='row' style={{flexWrap: 'nowrap', maxWidth: '100%'}}>
           {props.product &&
             <Grid item style={{flexGrow: 1, minWidth: 0}}>
-              <NavLink to={`/review/${props.url}`} className={classes.linkText}>
+              <NavLink
+                className={classes.linkText}
+                onClick={handleNavigation}
+                to={`/review/${props.url}`}
+              >
                 <Typography variant='body2' className={classes.productNameText}>
                   <Box component='span' className={classes.brandText}>{props.product.brand}</Box> {props.product.name}
                 </Typography>
@@ -200,7 +239,11 @@ const ReviewCard: React.FC<ReviewCardProps> = (props: ReviewCardProps) => {
             </Grid>
           }
           <Grid item style={{flexGrow: 0, marginLeft: theme.spacing(1)}}>
-            <NavLink to={`/review/${props.url}`} className={classes.linkText}>
+            <NavLink
+              className={classes.linkText}
+              onClick={handleNavigation}
+              to={`/review/${props.url}`}
+            >
               <IconButton className={classes.reviewLinkButton}>
                 <PlayArrowRoundedIcon color='secondary' className={classes.reviewLinkIcon} />
               </IconButton>

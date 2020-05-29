@@ -18,6 +18,14 @@ const dbname: string = process.env.MONGODB_NAME,
       uri = `${process.env.MONGODB_URI}/${process.env.MONGODB_NAME}`;
 
 const config: Partial<EnvironmentProperties> = {
+  analytics: {
+    amplitude: {
+      apiKey: '24b5a7dd44938c8470f4fa887931a9ee' 
+    },
+    google: {
+      apiKey: ''
+    }
+  },
   aws: {
     accessKeyId: 'AKIAQZGCV7RFVDNF32PN',
     secretAccessKey: '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',

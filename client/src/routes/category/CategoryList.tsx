@@ -48,14 +48,17 @@ import {
   RequestType,
   RetrievalStatus
 } from '../../utils/api/Api.enum';
+import { ScreenContext } from '../../components/review/Review.enum';
 import { StyleType } from '../../components/elements/link/Link.enum';
 
 // Hooks.
+import { useAnalytics } from '../../components/analytics/Analytics.provider';
 import {
   useRetrieveListByQuery
 } from '../../components/review/listByQuery/useRetrieveListsByQuery.hook';
 
 // Interfaces.
+import { AnalyticsContextProps } from '../../components/analytics/Analytics.interface';
 import { Category, CategoryItem } from '../../components/category/Category.interface';
 import {
   CategoryListProps
@@ -160,6 +163,9 @@ const frontloadCategoryList = async (props: CategoryListProps) => {
  */
 const CategoryList: React.FC<CategoryListProps> = (props: CategoryListProps) => {
 
+  // Define the analytics context and a tracking event.
+  const analytics: AnalyticsContextProps = useAnalytics() as AnalyticsContextProps;
+
   // Define the component classes.
   const categoryKey: string = props.match.params.category,
         classes = useStyles(),
@@ -179,8 +185,15 @@ const CategoryList: React.FC<CategoryListProps> = (props: CategoryListProps) => 
     update: props.updateListByCategory
   });
 
+  // Create a page viewed state to avoid duplicate views.
+  const [pageViewed, setPageViewed] = React.useState<boolean>(false);
+
+  /**
+   * Set the reviews based on their sub-category groupings.
+   */
   React.useEffect(() => {
     const categoryKey: string = props.match.params.category;
+
 
     if (!category || category.key !== categoryKey) {
       const current: Category | null = getCategory(categoryKey)(categoryList);
@@ -190,7 +203,18 @@ const CategoryList: React.FC<CategoryListProps> = (props: CategoryListProps) => 
         setQueries([...getSubCategoryQueries(current)]);
       }
     }
-  }, [props.match.params, queries, category])
+
+    // Track the category list page view.
+    if (!pageViewed) {
+
+      analytics.trackEvent('view category list')({
+        'category': categoryKey
+      });
+
+      setPageViewed(true);
+    }
+
+  }, [props.match.params, queries, category, pageViewed]);
 
   /**
    * Render the home route component.
@@ -217,6 +241,7 @@ const CategoryList: React.FC<CategoryListProps> = (props: CategoryListProps) => 
                 <React.Fragment key={query}>
                   {props.categoryGroup && props.categoryGroup[query] && category.children &&
                     <ListByQuery
+                      context={ScreenContext.CATEGORY_LIST}
                       listType={ReviewListType.CATEGORY}
                       presentationType={largeScreen ? PresentationType.GRID : PresentationType.SCROLLABLE}
                       reviews={props.categoryGroup[query]}

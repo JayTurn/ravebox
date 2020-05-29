@@ -26,9 +26,19 @@ import StyledButton from '../../elements/buttons/StyledButton';
 // Enumerators.
 import { RetrievalStatus } from '../../../utils/api/Api.enum';
 
+// Hooks.
+import { useAnalytics } from '../../analytics/Analytics.provider';
+
 // Interfaces.
+import {
+  AnalyticsContextProps,
+  EventObject
+} from '../../analytics/Analytics.interface';
 import { Review } from '../Review.interface';
 import { ScrollableReviewListProps } from './ScrollableReviewList.interface';
+
+// Utilities.
+import { formatReviewForTracking } from '../Review.common';
 
 /**
  * Create styles for the review lists.
@@ -61,16 +71,30 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
  * @param { ScrollableReviewListProps } props - the review list properties.
  */
 const ScrollableReviewList: React.FC<ScrollableReviewListProps> = (props: ScrollableReviewListProps) => {
+
+  // Define the analytics context and a tracking event.
+  const analytics: AnalyticsContextProps = useAnalytics() as AnalyticsContextProps;
+
   // Determine if we're need to load private reviews.
   const classes = useStyles();
 
   const navigate:(
-    path: string | number | null
+    index: string | number | null
   ) => void = (
-    path: string | number | null
+    index: string | number | null
   ): void => {
-    if (path) {
-      props.history.push(`/review/${path}`);
+
+    // Get the selected review.
+    if (index) {
+      const review: Review = {...props.reviews[Number(index)]};
+
+      // Format the review for tracking.
+      const data: EventObject = formatReviewForTracking(props.context)(review);
+
+      // Track the select event.
+      analytics.trackEvent('select review')(data);
+
+      props.history.push(`/review/${review.url}`);
     }
   }
 
@@ -90,7 +114,8 @@ const ScrollableReviewList: React.FC<ScrollableReviewListProps> = (props: Scroll
                 return (
                   <ScrollableReviewCard
                     {...review}
-                    key={review.url}
+                    context={props.context}
+                    key={index}
                     listType={props.listType}
                   />
                 )})

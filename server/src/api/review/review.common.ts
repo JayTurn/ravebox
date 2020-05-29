@@ -19,7 +19,6 @@ import { Category } from '../product/product.interface';
 import {
   CategorizedReviewGroup,
   ProductReviewGroup,
-  ReviewDetails,
   ReviewDocument,
   ReviewGroup,
   ReviewGroupItem,
@@ -399,6 +398,32 @@ export default class ReviewCommon {
     } while (i < reviews.length);
 
     return groups;
+  }
+
+  /**
+   * Formats the product, brand and review title for a url.
+   *
+   * @param { string } product - the name of the product.
+   * @param { string } brand - the name of the brand.
+   * @param { string } title - the title of the review.
+   *
+   * @return string
+   */
+  static formatReviewURL(
+    product: string,
+    brand: string,
+    title: string
+  ): string {
+    // Format the product name, brand and review and concatenate them into
+    // a single url string.
+    const productName: string = product.split(' ').join('-')
+            .split('&').join('and').toLowerCase(),
+          brandName: string = encodeURIComponent(brand.split(' ').join('-')
+            .split('&').join('and').toLowerCase()),
+          reviewTitle: string = encodeURIComponent(title.split(' ').join('-')
+            .split('&').join('and').toLowerCase());
+
+    return `${brandName}/${productName}/${reviewTitle}`;
   }
 
   /**

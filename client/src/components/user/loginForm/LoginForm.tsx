@@ -42,9 +42,14 @@ import Link from '../../elements/link/Link';
 import StyledButton from '../../elements/buttons/StyledButton';
 
 // Hooks.
+import { useAnalytics } from '../../../components/analytics/Analytics.provider';
 import { useValidation } from '../../forms/validation/useValidation.hook';
 
 // Interfaces.
+import {
+  AnalyticsContextProps,
+  EventObject
+} from '../../../components/analytics/Analytics.interface';
 import { InputData } from '../../forms/input/Input.interface';
 import { PrivateProfile } from '../User.interface';
 import {
@@ -86,6 +91,9 @@ const loginValidation: ValidationSchema = {
  * Login form component.
  */
 const LoginForm: React.FC<LoginFormProps> = (props: LoginFormProps) => {
+
+  // Define the analytics context and a tracking event.
+  const analytics: AnalyticsContextProps = useAnalytics() as AnalyticsContextProps;
 
   // Define the theme for consistent styling.
   const classes = useStyles(),
@@ -178,6 +186,13 @@ const LoginForm: React.FC<LoginFormProps> = (props: LoginFormProps) => {
         setFormErrorMessages([response.title])
         return;
       }
+
+      // Register the login event.
+      analytics.trackUser(response.user._id);
+      analytics.trackEvent('log in')({
+        'handle': response.user.handle,
+        'email': response.user.email
+      });
 
       if (props.addXsrf && props.login) {
         // Retrieve the xsrf cookie to be set on the header for future requests. 

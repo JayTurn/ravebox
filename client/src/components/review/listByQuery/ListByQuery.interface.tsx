@@ -9,6 +9,7 @@ import {
   QueryPath,
   ReviewListType
 } from './ListByQuery.enum';
+import { ScreenContext } from '../Review.enum';
 
 // Interfaces.
 import { APIResponse } from '../../../utils/api/Api.interface';
@@ -22,6 +23,7 @@ import {
  */
 export interface ListByQueryProps {
   activeReview?: Review;
+  context: ScreenContext;
   listType: ReviewListType;
   presentationType?: PresentationType;
   reviews: Array<Review>;

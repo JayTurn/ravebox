@@ -47,8 +47,10 @@ import {
   PresentationType,
   ReviewListType
 } from '../../../components/review/listByQuery/ListByQuery.enum';
+import { ScreenContext } from '../../../components/review/Review.enum';
 
 // Hooks.
+import { useAnalytics } from '../../../components/analytics/Analytics.provider';
 import {
   useRetrieveProductByURL
 } from '../../../components/product/useRetrieveProductByURL.hook';
@@ -57,6 +59,7 @@ import {
 } from '../../../components/review/listByQuery/useRetrieveListsByQuery.hook';
 
 // Interfaces.
+import { AnalyticsContextProps } from '../../../components/analytics/Analytics.interface';
 import {
   Category
 } from '../../../components/category/Category.interface';
@@ -153,6 +156,9 @@ const frontloadReviewDetails = async (props: ViewProductProps) => {
  */
 const ViewProduct: React.FC<ViewProductProps> = (props: ViewProductProps) => {
 
+  // Define the analytics context and a tracking event.
+  const analytics: AnalyticsContextProps = useAnalytics() as AnalyticsContextProps;
+
   // Define the component classes.
   const classes = useStyles(),
         theme = useTheme(),
@@ -178,6 +184,37 @@ const ViewProduct: React.FC<ViewProductProps> = (props: ViewProductProps) => {
     update: props.updateListByCategory
   });
 
+  // Create a page viewed state to avoid duplicate views.
+  const [pageViewed, setPageViewed] = React.useState<boolean>(false);
+
+  /**
+   * Track the product page view.
+   */
+  React.useEffect(() => {
+
+    // Track the category list page view.
+    if (!pageViewed && product._id) {
+
+      const category: string = product.categories.length > 0
+              ? product.categories[0].key
+              : '',
+            subCategory: string = product.categories.length > 1
+              ? product.categories[1].key
+              : '';
+
+      analytics.trackEvent('view product')({
+        'product brand': product.brand,
+        'product category': category,
+        'product sub-category': subCategory,
+        'product id': product._id,
+        'product name': product.name
+      });
+
+      setPageViewed(true);
+
+    }
+  }, [pageViewed, product]);
+
   return (
     <Grid container direction='column'>
       {product._id &&
@@ -197,13 +234,18 @@ const ViewProduct: React.FC<ViewProductProps> = (props: ViewProductProps) => {
             }
           )}
         >
-          <ReviewList reviews={reviews} retrievalStatus={RetrievalStatus.SUCCESS} />
+          <ReviewList
+            context={ScreenContext.PRODUCT}
+            reviews={reviews}
+            retrievalStatus={RetrievalStatus.SUCCESS} 
+          />
         </Grid>
       }
       {props.categoryGroup && product.categories &&
         <React.Fragment>
           {product.categories[0] && props.categoryGroup[product.categories[0].key] &&
             <ListByQuery
+              context={ScreenContext.PRODUCT_CATEGORY_LIST}
               listType={ReviewListType.CATEGORY}
               presentationType={largeScreen ? PresentationType.GRID : PresentationType.SCROLLABLE}
               reviews={props.categoryGroup[product.categories[0].key]}

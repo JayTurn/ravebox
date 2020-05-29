@@ -18,3 +18,18 @@ export enum Workflow {
 export enum ListDisplayType {
   PRODUCT = 'product'
 }
+
+/**
+ * Screen context for reviews.
+ */
+export enum ScreenContext {
+  CATEGORY_LIST = 'category list',
+  CHANNEL = 'channel',
+  DISCOVER = 'discover',
+  HOME = 'home',
+  MY_REVIEWS = 'my reviews',
+  PRODUCT = 'product',
+  PRODUCT_CATEGORY_LIST = 'product: category list',
+  REVIEW_PRODUCT_LIST = 'review: product list',
+  SEARCH = 'search'
+}

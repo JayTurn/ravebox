@@ -6,6 +6,7 @@
 // Dependent modules.
 import * as React from 'react';
 import Grid from '@material-ui/core/Grid';
+import { Helmet } from 'react-helmet';
 import { withRouter } from 'react-router';
 import { bindActionCreators, Dispatch, AnyAction } from 'redux';
 import { connect } from 'react-redux';
@@ -13,6 +14,7 @@ import Typography from '@material-ui/core/Typography';
 
 // Components.
 import PaddedDivider from '../../../components/elements/dividers/PaddedDivider';
+import PageTitle from '../../../components/elements/pageTitle/PageTitle';
 
 // Interfaces.
 import {
@@ -30,20 +32,17 @@ const PasswordResetRequest: React.FC<PasswordResetRequestProps> = (
 ) => {
 
   return (
-    <div style={{flexGrow: 1, marginTop: '3rem' }}>
-      <Grid
-        container
-        direction='column'
-        justify='flex-start'
-      >
-        <Grid item xs={12} md={6} style={{marginBottom: '1rem'}}>
-          <Typography variant='h1' color='textPrimary'>
-            Account recovery
-          </Typography>
-        </Grid>
-        <ForgotPasswordForm />
-      </Grid>
-    </div>
+    <Grid
+      container
+      direction='column'
+    >
+      <Helmet>
+        <title>Account recovery - ravebox</title>
+        <link rel='canonical' href='https://ravebox.io/user/reset' />
+      </Helmet>
+      <PageTitle title='Account recovery' />
+      <ForgotPasswordForm />
+    </Grid>
   );
 }
 

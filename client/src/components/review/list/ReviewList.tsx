@@ -119,7 +119,7 @@ const ReviewList: React.FC<ReviewListProps> = (props: ReviewListProps) => {
                             [classes.listElementSmall]: !largeScreen
                           })}
                         >
-                          <PrivateReviewCard {...review} />
+                          <PrivateReviewCard {...review} context={props.context} />
                         </Grid>
                       );
                     })}
@@ -156,7 +156,7 @@ const ReviewList: React.FC<ReviewListProps> = (props: ReviewListProps) => {
                           [classes.listElementSmall]: !largeScreen
                         })}
                       >
-                        <ReviewCard {...review} />
+                        <ReviewCard {...review} context={props.context}/>
                       </Grid>
                     );
                   })}

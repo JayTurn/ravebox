@@ -138,6 +138,7 @@ const ListByQuery: React.FC<ListByQueryProps> = (props: ListByQueryProps) => {
         <React.Fragment>
           {props.presentationType === PresentationType.SCROLLABLE &&
             <ScrollableReviewList
+              context={props.context}
               listType={props.listType}
               reviews={reviews}
               retrievalStatus={RetrievalStatus.SUCCESS}
@@ -146,6 +147,7 @@ const ListByQuery: React.FC<ListByQueryProps> = (props: ListByQueryProps) => {
           }
           {props.presentationType === PresentationType.SIDEBAR &&
             <SidebarReviewList
+              context={props.context}
               listType={props.listType}
               reviews={reviews}
               retrievalStatus={RetrievalStatus.SUCCESS}
@@ -154,6 +156,7 @@ const ListByQuery: React.FC<ListByQueryProps> = (props: ListByQueryProps) => {
           }
           {props.presentationType === PresentationType.GRID &&
             <GridReviewList
+              context={props.context}
               listType={props.listType}
               reviews={reviews}
               retrievalStatus={RetrievalStatus.SUCCESS}

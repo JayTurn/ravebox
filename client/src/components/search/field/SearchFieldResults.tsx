@@ -27,7 +27,11 @@ import { withRouter } from 'react-router';
 import { RetrievalStatus } from '../../../utils/api/Api.enum';
 import { StyleType } from '../../elements/link/Link.enum';
 
+// Hooks.
+import { useAnalytics } from '../../analytics/Analytics.provider';
+
 // Interfaces.
+import { AnalyticsContextProps } from '../../analytics/Analytics.interface';
 import {
   SearchFieldResult,
   SearchFieldResultsProps
@@ -79,6 +83,8 @@ const StyledListItemText = withStyles(theme => ({
  * Renders the list of search field results.
  */
 const SearchFieldResults: React.FC<SearchFieldResultsProps> = (props: SearchFieldResultsProps) => {
+  // Define the analytics context and a tracking event.
+  const analytics: AnalyticsContextProps = useAnalytics() as AnalyticsContextProps;
 
   // Define the component classes.
   const classes = useStyles(),
@@ -97,6 +103,13 @@ const SearchFieldResults: React.FC<SearchFieldResultsProps> = (props: SearchFiel
   ): void => {
     if (item.url) {
       props.closeSearchResults();
+
+      // Track the select event.
+      analytics.trackEvent('select search result')({
+        'product id': item.id,
+        'title': item.title
+      });
+
       props.history.push(`/${item.resultType}/${item.url}`);
     }
   }

@@ -11,6 +11,7 @@ import {
   ReviewListType
 } from '../listByQuery/ListByQuery.enum';
 import { RetrievalStatus } from '../../../utils/api/Api.enum';
+import { ScreenContext } from '../Review.enum';
 
 // Interfaces.
 import {
@@ -21,6 +22,7 @@ import {
  * Scrollable review list properties.
  */
 export interface ScrollableReviewListProps extends RouteComponentProps {
+  context: ScreenContext;
   listType: ReviewListType;
   retrievalStatus: RetrievalStatus;
   reviews: Array<Review>;

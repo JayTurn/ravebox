@@ -5,8 +5,11 @@
 
 // Interfaces.
 import { PrivateReview } from '../Review.interface';
+import { ScreenContext } from '../Review.enum';
 
 /**
  * The private review card properties.
  */
-export interface PrivateReviewCardProps extends PrivateReview { }
+export interface PrivateReviewCardProps extends PrivateReview {
+  context: ScreenContext;
+}

@@ -38,6 +38,7 @@ import {
   RequestType,
   RetrievalStatus
 } from '../../../utils/api/Api.enum';
+import { ScreenContext } from '../../../components/review/Review.enum';
 
 // Hooks.
 import { useRetrieveChannel } from './useRetrieveChannel';
@@ -147,7 +148,11 @@ const Channel: React.FC<ChannelProps> = (props: ChannelProps) => {
                     }
                   )}
                 >
-                  <ReviewList reviews={props.channel.reviews} retrievalStatus={RetrievalStatus.SUCCESS} />
+                  <ReviewList
+                    context={ScreenContext.CHANNEL}
+                    reviews={props.channel.reviews} 
+                    retrievalStatus={RetrievalStatus.SUCCESS}
+                  />
                 </Grid>
               }
             </Grid>

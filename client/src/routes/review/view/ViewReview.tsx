@@ -30,17 +30,23 @@ import {
 } from '../../../utils/api/Api.enum';
 
 // Hooks.
+import { useAnalytics } from '../../../components/analytics/Analytics.provider';
 import { useRetrieveReviewByURL } from '../../../components/review/useRetrieveReviewByURL.hook';
 
 // Interfaces.
-import { ViewReviewProps } from './ViewReview.interface';
+import {
+  AnalyticsContextProps,
+  EventObject
+} from '../../../components/analytics/Analytics.interface';
 import {
   Review,
   ReviewResponse
 } from '../../../components/review/Review.interface';
+import { ViewReviewProps } from './ViewReview.interface';
 
 // Utilities.
 import { CommaSeparatedNumber } from '../../../utils/display/numeric/Numeric';
+import { formatReviewProperties } from '../../../components/review/Review.common';
 
 /**
  * Loads the review from the api before rendering the component the first time.
@@ -72,14 +78,33 @@ const frontloadReviewDetails = async (props: ViewReviewProps) => {
  * Route to retrieve a review and present the display components.
  */
 const ViewReview: React.FC<ViewReviewProps> = (props: ViewReviewProps) => {
+  // Define the analytics context and a tracking event.
+  const analytics: AnalyticsContextProps = useAnalytics() as AnalyticsContextProps;
+
   const {review, reviewStatus} = useRetrieveReviewByURL({
     existing: props.review ? props.review.url : '',
     review: props.review,
     setReview: props.updateActive,
     requested: props.match.params
-  })
+  });
 
-  console.log('RENDER_REVIEW_DETAILS_PROPS: ', props);
+  // Create a page viewed state to avoid duplicate views.
+  const [pageViewed, setPageViewed] = React.useState<boolean>(false);
+
+  /**
+   * On updates, check if we need to track the page view.
+   */
+  React.useEffect(() => {
+    if (!pageViewed && review && review._id) {
+
+      const data: EventObject = formatReviewProperties(review);
+
+      analytics.trackEvent('view review')(data);
+
+      setPageViewed(true);
+    }
+  }, [pageViewed, review]);
+
   return (
     <Grid container direction='column' alignItems='flex-start'>
       {props.review && props.review._id &&

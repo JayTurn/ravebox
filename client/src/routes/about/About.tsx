@@ -23,8 +23,12 @@ import useMediaQuery from '@material-ui/core/useMediaQuery';
 // Enumerators.
 import { StyleType } from '../../components/elements/link/Link.enum';
 
+// Hooks.
+import { useAnalytics } from '../../components/analytics/Analytics.provider';
+
 // Interfaces.
 import { AboutProps } from './About.interface';
+import { AnalyticsContextProps } from '../../components/analytics/Analytics.interface';
 
 /**
  * Create the theme styles to be used for the display.
@@ -93,10 +97,27 @@ const useStyles = makeStyles((theme: Theme) =>
  * About route component.
  */
 const About: React.FC<AboutProps> = (props: AboutProps) => {
+
+  // Define the analytics context and a tracking event.
+  const analytics: AnalyticsContextProps = useAnalytics() as AnalyticsContextProps;
+
   // Define the component classes.
   const classes = useStyles(),
         theme = useTheme(),
         largeScreen = useMediaQuery(theme.breakpoints.up('sm'));
+
+  // Create a page viewed state to avoid duplicate views.
+  const [pageViewed, setPageViewed] = React.useState<boolean>(false);
+
+  /**
+   * On updates, check if we need to track the page view.
+   */
+  React.useEffect(() => {
+    if (!pageViewed) {
+      analytics.trackEvent('view about')();
+      setPageViewed(true);
+    }
+  }, [pageViewed]);
 
   /**
    * Render the about JSX elements.

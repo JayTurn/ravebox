@@ -7,11 +7,11 @@
 import { RouteComponentProps } from 'react-router';
 
 // Enumerators.
-// Enumerators.
 import {
   ReviewListType
 } from '../listByQuery/ListByQuery.enum';
 import { RetrievalStatus } from '../../../utils/api/Api.enum';
+import { ScreenContext } from '../Review.enum';
 
 // Interfaces.
 import {
@@ -22,6 +22,7 @@ import {
  * Sidebar review list properties.
  */
 export interface SidebarReviewListProps extends RouteComponentProps {
+  context: ScreenContext;
   listType: ReviewListType;
   retrievalStatus: RetrievalStatus;
   reviews: Array<Review>;

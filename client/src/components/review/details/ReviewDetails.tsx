@@ -50,6 +50,7 @@ import {
   ReviewListType
 } from '../listByQuery/ListByQuery.enum';
 import { RetrievalStatus } from '../../../utils/api/Api.enum';
+import { ScreenContext } from '../Review.enum';
 
 // Hooks.
 import { useGenerateRatingToken } from '../rate/useGenerateRatingToken.hook';
@@ -59,6 +60,7 @@ import {
 
 // Interfaces.
 import { Product } from '../../product/Product.interface';
+import { RatingAcceptance } from '../rate/Rate.interface';
 import {
   Review,
   ReviewGroup,
@@ -223,7 +225,11 @@ const ReviewDetails: React.FC<ReviewDetailsProps> = (props: ReviewDetailsProps) 
 
   // Define a property to support the rating of content after an allowable
   // duration has passed.
-  const [ratingAllowed, setRatingAllowed] = React.useState<boolean>(false);
+  const [ratingAcceptance, setRatingAcceptance] = React.useState({
+    allowed: false,
+    played: 0,
+    playedSeconds: 0
+  });
 
   /**
    * Handles the updating of the allowable rating state.
@@ -231,11 +237,11 @@ const ReviewDetails: React.FC<ReviewDetailsProps> = (props: ReviewDetailsProps) 
    * @param { boolean } allowed - the allowable rating state.
    */
   const handleRatingAcceptance: (
-    allowed: boolean
+    acceptance: RatingAcceptance
   ) => void = (
-    allowed: boolean
+    acceptance: RatingAcceptance
   ): void => {
-    setRatingAllowed(allowed);
+    setRatingAcceptance(acceptance);
   }
 
   return (
@@ -248,8 +254,7 @@ const ReviewDetails: React.FC<ReviewDetailsProps> = (props: ReviewDetailsProps) 
                 <RaveVideo
                   generateToken={generateToken}
                   makeRatingAllowable={handleRatingAcceptance}
-                  reviewId={review._id} 
-                  url={review.videoURL || ''}
+                  review={review} 
                 />
               </Grid>
               <Grid container direction='column'>
@@ -290,7 +295,7 @@ const ReviewDetails: React.FC<ReviewDetailsProps> = (props: ReviewDetailsProps) 
                     </Grid>
                     {review &&
                       <Grid item className={classes.ratingContainerLarge}>
-                        <Rate reviewId={review._id} token={token} allowed={ratingAllowed}/>
+                        <Rate review={review} token={token} acceptance={ratingAcceptance}/>
                       </Grid>
                     }
                   </Grid>
@@ -356,6 +361,7 @@ const ReviewDetails: React.FC<ReviewDetailsProps> = (props: ReviewDetailsProps) 
               <Grid item xs={12} className={clsx(classes.sidebarMoreContainer)}>
                 {props.productGroup && props.productGroup[productId] && review.product &&
                   <ListByQuery
+                    context={ScreenContext.REVIEW_PRODUCT_LIST}
                     listType={ReviewListType.PRODUCT}
                     presentationType={largeScreen ? PresentationType.SIDEBAR : PresentationType.SCROLLABLE}
                     reviews={props.productGroup[productId]}

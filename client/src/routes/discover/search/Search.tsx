@@ -46,14 +46,17 @@ import {
   PresentationType,
   ReviewListType
 } from '../../../components/review/listByQuery/ListByQuery.enum';
+import { ScreenContext } from '../../../components/review/Review.enum';
 import { StyleType } from '../../../components/elements/link/Link.enum';
 
 // Hooks.
+import { useAnalytics } from '../../../components/analytics/Analytics.provider';
 import {
   useRetrieveDiscoverGroups
 } from '../../../components/discover/useRetrieveDiscoverGroups.hook';
 
 // Interfaces.
+import { AnalyticsContextProps } from '../../../components/analytics/Analytics.interface';
 import {
   DiscoverGroup,
   DiscoverProductGroup,
@@ -126,6 +129,8 @@ const frontloadReviewDetails = async (props: SearchProps) => {
  * @param { SearchProps } props - the search properties.
  */
 const Search: React.FC<SearchProps> = (props: SearchProps) => {
+  // Define the analytics context and a tracking event.
+  const analytics: AnalyticsContextProps = useAnalytics() as AnalyticsContextProps;
 
   // Define the component classes.
   const classes = useStyles(),
@@ -144,6 +149,30 @@ const Search: React.FC<SearchProps> = (props: SearchProps) => {
     term: props.match.params.term,
     updateGroups: props.updateGroups
   });
+
+  // Create a page viewed state to avoid duplicate views.
+  const [pageViewed, setPageViewed] = React.useState<boolean>(false);
+
+  /**
+   * On updates, check if we need to track the page view.
+   */
+  React.useEffect(() => {
+    if (!pageViewed && lists && lists.length > 0) {
+      // Count the number of results.
+      let resultCount: number = 0;
+
+      for (let i = 0; i < lists.length;i++) {
+        resultCount += lists[i].reviews.length;
+      }
+
+      analytics.trackEvent('view search results')({
+        'term': props.match.params.term,
+        'result count': resultCount
+      });
+
+      setPageViewed(true);
+    }
+  }, [pageViewed, props, lists]);
 
   /**
    * Navigates to the discover screen.
@@ -165,6 +194,7 @@ const Search: React.FC<SearchProps> = (props: SearchProps) => {
             return (
               <Grid item key={list.id} xs={12}>
                 <ListByQuery
+                  context={ScreenContext.SEARCH}
                   listType={ReviewListType.CATEGORY}
                   presentationType={largeScreen ? PresentationType.GRID : PresentationType.SCROLLABLE}
                   reviews={[...list.reviews]}

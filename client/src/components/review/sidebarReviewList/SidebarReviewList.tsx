@@ -71,6 +71,7 @@ const SidebarReviewList: React.FC<SidebarReviewListProps> = (props: SidebarRevie
                   >
                     <SidebarReviewCard
                       {...review}
+                      context={props.context}
                       listType={props.listType}
                     />
                   </Grid>

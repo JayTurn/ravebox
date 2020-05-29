@@ -5,6 +5,14 @@
 
 // Export the configuration shared across environments.
 export const sharedConfig = {
+  analytics: {
+    amplitude: {
+      apiKey: '24b5a7dd44938c8470f4fa887931a9ee' 
+    },
+    google: {
+      apiKey: ''
+    }
+  },
   aws: {
     accessKeyId: process.env.AWSACCESSKEY,
     secretAccessKey: process.env.AWSACCESSSECRET,
