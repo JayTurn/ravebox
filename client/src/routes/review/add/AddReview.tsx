@@ -99,7 +99,7 @@ const AddReview: React.FC<AddReviewProps> = (props: AddReviewProps) => {
               }
             </Grid>
           </Grid>
-          <AddReviewForm productId={product._id} toggleProduct={toggleProduct}/>
+          <AddReviewForm product={product} toggleProduct={toggleProduct}/>
         </React.Fragment>
       }
     </Grid>

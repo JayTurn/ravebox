@@ -46,14 +46,17 @@ import {
   QueryPath 
 } from '../../components/review/listByQuery/ListByQuery.enum';
 import { RequestType } from '../../utils/api/Api.enum';
+import { ScreenContext } from '../../components/review/Review.enum';
 import { StyleType } from '../../components/elements/link/Link.enum';
 
 // Hooks.
+import { useAnalytics } from '../../components/analytics/Analytics.provider';
 import {
   useRetrieveListByQuery
 } from '../../components/review/listByQuery/useRetrieveListsByQuery.hook';
 
 // Interfaces.
+import { AnalyticsContextProps } from '../../components/analytics/Analytics.interface';
 import { Category, CategoryItem } from '../../components/category/Category.interface';
 import { HomeProps } from './Home.interface';
 import {
@@ -148,6 +151,9 @@ const frontloadHome = async (props: HomeProps) => {
  */
 const Home: React.FC<HomeProps> = (props: HomeProps) => {
 
+  // Define the analytics context and a tracking event.
+  const analytics: AnalyticsContextProps = useAnalytics() as AnalyticsContextProps;
+
   // Define the component classes.
   const classes = useStyles(),
         theme = useTheme(),
@@ -161,6 +167,19 @@ const Home: React.FC<HomeProps> = (props: HomeProps) => {
     listType: ReviewListType.CATEGORY,
     update: props.updateListByCategory
   });
+
+  // Create a page viewed state to avoid duplicate views.
+  const [pageViewed, setPageViewed] = React.useState<boolean>(false);
+
+  /**
+   * On updates, check if we need to track the page view.
+   */
+  React.useEffect(() => {
+    if (!pageViewed) {
+      analytics.trackEvent('view home')();
+      setPageViewed(true);
+    }
+  }, [pageViewed]);
 
   /**
    * Render the home route component.
@@ -211,6 +230,7 @@ const Home: React.FC<HomeProps> = (props: HomeProps) => {
       <Grid item xs={12}>
         {props.categoryGroup && props.categoryGroup[queries[0]] &&
           <ListByQuery
+            context={ScreenContext.HOME}
             listType={ReviewListType.CATEGORY}
             presentationType={largeScreen ? PresentationType.GRID : PresentationType.SCROLLABLE}
             reviews={props.categoryGroup[queries[0]]}
@@ -227,6 +247,7 @@ const Home: React.FC<HomeProps> = (props: HomeProps) => {
       <Grid item xs={12}>
         {props.categoryGroup && props.categoryGroup[queries[1]] &&
           <ListByQuery
+            context={ScreenContext.HOME}
             listType={ReviewListType.CATEGORY}
             presentationType={largeScreen ? PresentationType.GRID : PresentationType.SCROLLABLE}
             reviews={props.categoryGroup[queries[1]]}
@@ -275,6 +296,7 @@ const Home: React.FC<HomeProps> = (props: HomeProps) => {
       <Grid item xs={12}>
         {props.categoryGroup && props.categoryGroup[queries[2]] &&
           <ListByQuery
+            context={ScreenContext.HOME}
             listType={ReviewListType.CATEGORY}
             presentationType={largeScreen ? PresentationType.GRID : PresentationType.SCROLLABLE}
             reviews={props.categoryGroup[queries[2]]}
@@ -291,6 +313,7 @@ const Home: React.FC<HomeProps> = (props: HomeProps) => {
       <Grid item xs={12}>
         {props.categoryGroup && props.categoryGroup[queries[3]] &&
           <ListByQuery
+            context={ScreenContext.HOME}
             listType={ReviewListType.CATEGORY}
             presentationType={largeScreen ? PresentationType.GRID : PresentationType.SCROLLABLE}
             reviews={props.categoryGroup[queries[3]]}

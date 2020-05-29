@@ -3,14 +3,17 @@
  * Interfaces for the video component.
  */
 
+// Interfaces.
+import { RatingAcceptance } from '../review/rate/Rate.interface';
+import { Review } from '../review/Review.interface';
+
 /**
  * Video review properties.
  */
 export interface RaveVideoProps {
-  reviewId: string;
+  review: Review;
   generateToken?: (reviewId: string) => (duration: number) => void;
-  makeRatingAllowable?: (allowed: boolean) => void;
-  url: string;
+  makeRatingAllowable?: (acceptance: RatingAcceptance) => void;
   xsrf?: string;
 }
 

@@ -19,6 +19,7 @@
     "@material-ui/icons": "4.9.1",
     "@material-ui/lab": "4.0.0-alpha.48",
     "@material-ui/styles": "4.9.6",
+    "amplitude-js": "6.1.0-debug-cookie.1",
     "clsx": "1.1.0",
     "connected-react-router": "6.7.0",
     "env-cmd": "10.1.0",
@@ -71,6 +72,7 @@
     "watch-css": "npm run build-css && node-sass-chokidar src/ -o src/ --watch --recursive"
   },
   "devDependencies": {
+    "@types/amplitude-js": "5.11.0",
     "@types/enzyme": "3.10.5",
     "@types/enzyme-adapter-react-16": "1.0.6",
     "@types/enzyme-to-json": "1.5.3",

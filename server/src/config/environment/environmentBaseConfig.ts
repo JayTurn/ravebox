@@ -15,6 +15,7 @@ import { UserRole } from '../../api/user/user.enum';
 
 // Interfaces.
 import {
+  AnalyticsProperties,
   AWSProperties,
   EnvironmentProperties,
   ElasticsearchProperties,
@@ -36,6 +37,14 @@ const config: EnvironmentProperties = require(__dirname + '/' + process.env.ENVI
  */
 class EnvConfig implements EnvironmentProperties {
   // Node environment.
+  public analytics: AnalyticsProperties = {
+    amplitude: {
+      apiKey: ''
+    },
+    google: {
+      apiKey: ''
+    }
+  };
   public authenticationTimeout: string; 
   public aws: AWSProperties = {
     accessKeyId: '',

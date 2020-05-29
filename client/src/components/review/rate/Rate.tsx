@@ -26,10 +26,18 @@ import { Rating } from './Rate.enum';
 import { RetrievalStatus } from '../../../utils/api/Api.enum';
 
 // Hooks.
+import { useAnalytics } from '../../analytics/Analytics.provider';
 import { useRate } from './useRate.hook';
 
 // Interfaces.
+import {
+  AnalyticsContextProps,
+  EventObject
+} from '../../analytics/Analytics.interface';
 import { RateProps } from './Rate.interface';
+
+// Utilities.
+import { formatReviewProperties } from '../Review.common';
 
 /**
  * Styles for the wrapping button element.
@@ -121,6 +129,9 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
  * @param { RateProps } props - the rating properties.
  */
 const Rate: React.FC<RateProps> = (props: RateProps) => {
+  // Define the analytics context and a tracking event.
+  const analytics: AnalyticsContextProps = useAnalytics() as AnalyticsContextProps;
+
   // Use the custom styles.
   const classes = useStyles();
 
@@ -129,11 +140,14 @@ const Rate: React.FC<RateProps> = (props: RateProps) => {
     rate,
     retrieved,
     setRatingResults
-  } = useRate({reviewId: props.reviewId});
+  } = useRate({reviewId: props.review._id});
 
   const [anchorEl, setAnchorEl] = React.useState<HTMLButtonElement | null>(null);
 
   const [open, setOpen] = React.useState<boolean>(false);
+
+  const [eventData, setEventData] = React.useState<EventObject>(
+          formatReviewProperties({...props.review}));
 
   /**
    * Handles the upvote event.
@@ -144,15 +158,21 @@ const Rate: React.FC<RateProps> = (props: RateProps) => {
     e: React.MouseEvent<HTMLButtonElement>
   ): void => {
     // Check if we're allowed to rate.
-    if (!props.allowed) {
+    if (!props.acceptance.allowed) {
       // Trigger the display of the minimum duration message.
       setAnchorEl(e.currentTarget);
       setOpen(true);
+
+      // Track the failed attempt to rate the review.
+      trackRating(Rating.HELPFUL);
       return;
     }
 
     if (props.token) {
       rate(Rating.HELPFUL)(props.token);
+
+      // Track the successful attempt to rate the review.
+      trackRating(Rating.HELPFUL);
     }
   }
 
@@ -165,15 +185,22 @@ const Rate: React.FC<RateProps> = (props: RateProps) => {
     e: React.MouseEvent<HTMLButtonElement>
   ): void => {
     // Check if we're allowed to rate.
-    if (!props.allowed) {
+    if (!props.acceptance.allowed) {
       // Trigger the display of the minimum duration message.
       setAnchorEl(e.currentTarget);
       setOpen(true);
+
+      // Track the failed attempt to rate the review.
+      trackRating(Rating.UNHELPFUL);
+
       return;
     }
 
     if (props.token) {
       rate(Rating.UNHELPFUL)(props.token);
+
+      // Track the successful attempt to rate the review.
+      trackRating(Rating.UNHELPFUL);
     }
   }
 
@@ -185,6 +212,24 @@ const Rate: React.FC<RateProps> = (props: RateProps) => {
   ): void => {
     setOpen(false);
     setAnchorEl(null)
+  }
+
+  /**
+   * Handles the tracking event.
+   */
+  const trackRating: (
+    rating: Rating
+  ) => void = (
+    rating: Rating
+  ): void => {
+    const data: EventObject = {...eventData};
+
+    data['rating allowed'] = props.acceptance.allowed;
+    data['rating'] = rating;
+    data['watched seconds'] = props.acceptance.playedSeconds
+    data['watched percentage'] = props.acceptance.played
+
+    analytics.trackEvent('rate review')(data);
   }
 
   return (

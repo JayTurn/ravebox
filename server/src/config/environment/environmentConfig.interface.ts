@@ -7,6 +7,7 @@
 import { UserRole } from '../../api/user/user.enum';
 
 export interface EnvironmentProperties {
+  analytics: AnalyticsProperties;
   authenticationTimeout: string;
   aws: AWSProperties;
   database?: DatabaseProperties;
@@ -22,6 +23,15 @@ export interface EnvironmentProperties {
   root: string;
   s3: S3Properties;
   security?: SecurityProperties;
+}
+
+export interface AnalyticsProperties {
+  amplitude: {
+    apiKey: string;
+  };
+  google: {
+    apiKey: string;
+  };
 }
 
 export interface AWSProperties {

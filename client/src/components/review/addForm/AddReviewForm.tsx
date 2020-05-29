@@ -50,9 +50,14 @@ import { Recommended } from '../recommendation/Recommendation.enum';
 import { FileUploadState } from '../../forms/fileUpload/FileUpload.enum';
 
 // Hooks.
+import { useAnalytics } from '../../../components/analytics/Analytics.provider';
 import { useValidation } from '../../forms/validation/useValidation.hook';
 
 // Interfaces.
+import {
+  AnalyticsContextProps,
+  EventObject
+} from '../../../components/analytics/Analytics.interface';
 import { FileUploadStatus } from '../../forms/fileUpload/FileUpload.interface';
 import { InputData } from '../../forms/input/Input.interface';
 import {
@@ -61,6 +66,8 @@ import {
   AddReviewFormProps,
   AddReviewMetadataResponse
 } from './AddReviewForm.interface';
+import { PrivateProfile } from '../../user/User.interface';
+import { Product } from '../../product/Product.interface';
 import { ReviewLink } from '../Review.interface';
 import { ValidationSchema } from '../../forms/validation/Validation.interface';
 
@@ -113,9 +120,70 @@ const addReviewValidation: ValidationSchema = {
 };
 
 /**
+ * Formats the event data based on the values provided.
+ */
+const formatEventData: (
+  product: Product
+) => (
+  review: AddReviewFormRequest
+) => (
+  video: File
+) => (
+  profile: PrivateProfile
+) => EventObject = (
+  product: Product
+) => (
+  review: AddReviewFormRequest
+) => (
+  video: File
+) => (
+  profile: PrivateProfile
+): EventObject => {
+  // Create the event object from the provided values.
+  let eventData: EventObject = {
+    'brand name': product.brand,
+    'product id': product._id,
+    'product name': product.name,
+    'product recommended': review.recommended === Recommended.RECOMMENDED,
+    'sponsored review': review.sponsored,
+  };
+
+  if (review.links.length > 0) {
+    eventData['review url provided'] = review.links[0].path !== '';
+    eventData['review promo provided'] = review.links[0].code !== ''; 
+    eventData['review promo information provided'] = review.links[0].info !== '';
+  }
+
+  if (product.categories && product.categories.length > 0) {
+    eventData['product category'] = product.categories[0].key;
+
+    if (product.categories.length > 1) {
+      eventData['product sub-category'] = product.categories[1].key;
+    }
+  }
+
+  if (profile) {
+    eventData['reviewer'] = profile.handle;
+  }
+
+  eventData['review title'] = review.title;
+  eventData['review description provided'] = review.description !== '';
+
+  if (video && video.type) {
+    eventData['video type'] = `${video.type}`;
+    eventData['video size'] = video.size;
+  }
+
+  return eventData;
+}
+
+/**
  * Add review form component.
  */
 const AddReviewForm: React.FC<AddReviewFormProps> = (props: AddReviewFormProps) => {
+  // Define the analytics context and a tracking event.
+  const analytics: AnalyticsContextProps = useAnalytics() as AnalyticsContextProps;
+
   const classes = useStyles(),
         theme = useTheme(),
         largeScreen = useMediaQuery(theme.breakpoints.up('md'));
@@ -128,7 +196,7 @@ const AddReviewForm: React.FC<AddReviewFormProps> = (props: AddReviewFormProps) 
       info: '',
       path: ''
     }],
-    product: props.productId || '',
+    product: props.product._id,
     recommended: Recommended.RECOMMENDED,
     sponsored: false,
     title: '',
@@ -171,6 +239,7 @@ const AddReviewForm: React.FC<AddReviewFormProps> = (props: AddReviewFormProps) 
     }
   }, [props.review]);
 
+
   /**
    * Handles updates to the review form field.
    *
@@ -185,6 +254,29 @@ const AddReviewForm: React.FC<AddReviewFormProps> = (props: AddReviewFormProps) 
       ...review,
       [data.key]: data.value
     });
+
+    // Create the event object from the provided values.
+    if (video && props.profile) {
+      let eventData: EventObject = formatEventData({
+        ...props.product
+      })({
+        ...review
+      })(
+        video
+      )({
+        ...props.profile
+      });
+
+      if (data.key === 'title') {
+        eventData['review title'] = data.value;
+      }
+
+      if (data.key === 'description') {
+        eventData['review description'] = data.value !== '';
+      }
+
+      analytics.trackEvent(`add review ${data.key}`)(eventData);
+    }
   }
 
   /**
@@ -201,6 +293,23 @@ const AddReviewForm: React.FC<AddReviewFormProps> = (props: AddReviewFormProps) 
       ...review,
       recommended: recommended
     });
+
+    // Create the event object from the provided values.
+    if (video && props.profile) {
+      let eventData: EventObject = formatEventData({
+        ...props.product
+      })({
+        ...review
+      })(
+        video
+      )({
+        ...props.profile
+      });
+
+      eventData['product recommended'] = recommended === Recommended.NOT_RECOMMENDED;
+
+      analytics.trackEvent(`add product recommendation`)(eventData);
+    }
   }
 
   /**
@@ -228,6 +337,25 @@ const AddReviewForm: React.FC<AddReviewFormProps> = (props: AddReviewFormProps) 
     setReview({
       ...current,
     });
+
+    // Create the event object from the provided values.
+    if (video && props.profile) {
+      let eventData: EventObject = formatEventData({
+        ...props.product
+      })({
+        ...review
+      })(
+        video
+      )({
+        ...props.profile
+      });
+
+      eventData['review url provided'] = current.links[0].path !== '';
+      eventData['review promo provided'] = current.links[0].code !== ''; 
+      eventData['review promo information provided'] = current.links[0].info !== '';
+
+      analytics.trackEvent(`add review link`)(eventData);
+    }
   }
 
   /**
@@ -244,6 +372,24 @@ const AddReviewForm: React.FC<AddReviewFormProps> = (props: AddReviewFormProps) 
       ...review,
       sponsored: sponsored
     });
+
+    // Create the event object from the provided values.
+    if (video && props.profile) {
+      let eventData: EventObject = formatEventData({
+        ...props.product
+      })({
+        ...review
+      })(
+        video
+      )({
+        ...props.profile
+      });
+
+      eventData['sponsored review'] = sponsored;
+
+      analytics.trackEvent(`add sponsored`)(eventData);
+    }
+
   }
 
   /**
@@ -257,6 +403,21 @@ const AddReviewForm: React.FC<AddReviewFormProps> = (props: AddReviewFormProps) 
     uploadFile: File
   ): void => {
     setVideo(uploadFile);
+
+    // Create the event object from the provided values.
+    if (video && props.profile) {
+      let eventData: EventObject = formatEventData({
+        ...props.product
+      })({
+        ...review
+      })(
+        uploadFile
+      )({
+        ...props.profile
+      });
+
+      analytics.trackEvent(`add review video`)(eventData);
+    }
   }
 
   /**
@@ -287,6 +448,24 @@ const AddReviewForm: React.FC<AddReviewFormProps> = (props: AddReviewFormProps) 
         completion: 100,
         state: FileUploadState.COMPLETE
       });
+
+      // Create the event object from the provided values.
+      if (video && props.profile) {
+        let eventData: EventObject = formatEventData({
+          ...props.product
+        })({
+          ...review
+        })(
+          video
+        )({
+          ...props.profile
+        });
+
+        eventData['review id'] = reviewId;
+
+        analytics.trackEvent(`complete video upload`)(eventData);
+      }
+
     })
     .catch((error: Error) => {
       console.log(error);
@@ -342,6 +521,23 @@ const AddReviewForm: React.FC<AddReviewFormProps> = (props: AddReviewFormProps) 
     .then((response: AddReviewFormResponse) => {
       const data: FormData = new FormData();
       const request: XMLHttpRequest = new XMLHttpRequest();
+
+      // Create the event object from the provided values.
+      if (video && props.profile) {
+        let eventData: EventObject = formatEventData({
+          ...props.product
+        })({
+          ...review
+        })(
+          video
+        )({
+          ...props.profile
+        });
+
+        eventData['review id'] = response.review._id;
+
+        analytics.trackEvent(`add new review`)(eventData);
+      }
 
       Object.keys(response.presigned.fields).forEach((key: string) => {
         data.append(key, response.presigned.fields[key]);
@@ -581,9 +777,14 @@ const mapDispatchToProps = (dispatch: Dispatch<AnyAction>) =>
 const mapStatetoProps = (state: any, ownProps: AddReviewFormProps): AddReviewFormProps => {
   // Retrieve the xsrf token to be submitted with the request.
   const xsrfToken: string = state.xsrf ? state.xsrf.token : undefined;
+  let profile: PrivateProfile | undefined = state.user ? state.user.profile : undefined;
+  if (profile && !profile._id) {
+    profile = undefined;
+  }
 
   return {
     ...ownProps,
+    profile,
     xsrf: xsrfToken
   };
 };

@@ -8,13 +8,14 @@ import { Rating } from './Rate.enum';
 
 // Interfaces.
 import { APIResponse } from '../../../utils/api/Api.interface';
+import { Review } from '../Review.interface';
 
 /**
  * Properties for the review rating component.
  */
 export interface RateProps {
-  allowed: boolean;
-  reviewId: string;
+  acceptance: RatingAcceptance;
+  review: Review;
   token: string;
 }
 
@@ -39,6 +40,16 @@ export interface RatingResponse extends APIResponse {
  */
 export interface RatingParams {
   reviewId: string;
+}
+
+/**
+ * Paramters for the rating data.
+ */
+export interface RatingAcceptance {
+  allowed: boolean;
+  played: number;
+  playedSeconds: number;
+  videoDuration: number;
 }
 
 /**

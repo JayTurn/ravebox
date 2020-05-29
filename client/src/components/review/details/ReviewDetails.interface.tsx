@@ -6,6 +6,9 @@
 // Modules.
 import { RouteComponentProps } from 'react-router';
 
+// Enumerators.
+import { ScreenContext } from '../Review.enum';
+
 // Interfaces.
 import {
   Review,

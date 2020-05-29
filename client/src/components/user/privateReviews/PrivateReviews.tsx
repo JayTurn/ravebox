@@ -24,6 +24,7 @@ import StyledButton from '../../elements/buttons/StyledButton';
 
 // Enumerators.
 import { RetrievalStatus } from '../../../utils/api/Api.enum';
+import { ScreenContext } from '../../review/Review.enum';
 
 // Interfaces.
 import { PrivateReviewsProps } from './PrivateReviews.interface';
@@ -76,7 +77,11 @@ const PrivateReviews: React.FC<PrivateReviewsProps> = (props: PrivateReviewsProp
   return (
     <React.Fragment>
       {props.retrievalStatus === RetrievalStatus.SUCCESS && props.reviews.length > 0 ? (
-        <ReviewList reviews={props.reviews} retrievalStatus={props.retrievalStatus}/>
+        <ReviewList
+          context={ScreenContext.MY_REVIEWS}
+          reviews={props.reviews}
+          retrievalStatus={props.retrievalStatus}
+        />
       ) : (
         <Grid container direction='column' className={clsx(classes.ctaWrapper, { 
             [classes.ctaWrapperDesktop]: largeScreen

@@ -34,12 +34,14 @@ import {
 import {
   add
 } from '../store/xsrf/Actions';
+import { updateAPIImageConfig } from '../store/configuration/Actions';
 
 // Components.
 import About from './about/About';
 import Account from './user/account/Account';
 import AddProduct from './product/add/AddProduct';
 import AddReview from './review/add/AddReview';
+import { AnalyticsProvider } from '../components/analytics/Analytics.provider';
 import CategoryList from './category/CategoryList';
 import Discover from './discover/Discover';
 import EditReview from './review/edit/EditReview';
@@ -65,18 +67,15 @@ import ViewReview from './review/view/ViewReview';
 import { useRetrieveProfile } from '../components/user/profile/useRetrieveProfile.hook';
 
 // Interfaces.
-import { PrivateProfile } from '../components/user/User.interface';
-
-// Models.
-import API from '../utils/api/Api.model';
-import { updateAPIImageConfig } from '../store/configuration/Actions';
-
-// Dependent interfaces.
-import { AppProps, AppState } from './App.interface';
 import {
   APIImageConfig,
   RequestInterface
 } from '../utils/api/Api.interface';
+import {
+  AppProps,
+  AppState
+} from './App.interface';
+import { PrivateProfile } from '../components/user/User.interface';
 
 // Theme.
 import RaveboxTheme from '../theme/RaveboxTheme';
@@ -84,6 +83,9 @@ import DesktopRaveboxTheme from '../theme/DesktopRaveboxTheme';
 
 // Dependent styles.
 import './App.css';
+
+// Utilities.
+import API from '../utils/api/Api.model';
 
 // Define the snackbar styles.
 const StyledSnackbar = withStyles((theme: Theme) => ({
@@ -156,92 +158,94 @@ const App: React.FC<AppProps> = (props: AppProps) => {
     <ThemeProvider theme={largeScreen ? DesktopRaveboxTheme : RaveboxTheme}>
       <CssBaseline />
       <StyledSnackbar>
-        <div className={`app`}>
-          <Helmet>
-            <meta charSet='utf-8' />
-            <title>ravebox</title>
-            <link rel='canonical' href='https://ravebox.io' />
-          </Helmet>
-          <ScrollToTop />
-          <TopNavigation />
-          {largeScreen ? (
-            <SideNavigation expanded={false} />
-          ) : (
-            <MobileNavigation expanded={false} />
-          )}
-          <Container maxWidth="lg" disableGutters={true} className={clsx({
-            [classes.lgContent]: largeScreen,
-            [classes.lgContentOpen]: largeScreen && props.expanded,
-            [classes.lgContentClosed]: largeScreen && !props.expanded
-          })}>
-            <Route
-              render={(route: RouteComponentProps) => {
-                return (
-                  <Switch location={route.location}>
-                    <Route path="/about" exact={true}>
-                      <About />
-                    </Route>
-                    <PrivateRoute exact={true} path="/account">
-                      <Account />
-                    </PrivateRoute>
-                    <Route exact={true} path="/categories/:category">
-                      <CategoryList />
-                    </Route>
-                    <Route exact={true} path="/discover/:term">
-                      <Search />
-                    </Route>
-                    <Route exact={true} path="/discover">
-                      <Discover />
-                    </Route>
-                    <Route exact={true} path="/user/login">
-                      <Login />
-                    </Route>
-                    <Route exact={true} path="/user/signup">
-                      <Signup />
-                    </Route>
-                    <Route exact={true} path="/user/reviews">
-                      <MyReviews />
-                    </Route>
-                    <Route exact={true} path="/user/channel/:handle">
-                      <Channel />
-                    </Route>
-                    <Route exact={true} path="/user/verify/:token">
-                      <Verify />
-                    </Route>
-                    <Route exact={true} path="/user/reset/:token">
-                      <PasswordReset />
-                    </Route>
-                    <Route exact={true} path="/user/reset">
-                      <PasswordResetRequest />
-                    </Route>
-                    <PrivateRoute exact={true} path="/product/add">
-                      <AddProduct />
-                    </PrivateRoute>
-                    <PrivateRoute exact={true} path="/product/:id/review">
-                      <AddReview />
-                    </PrivateRoute>
-                    <Route exact={true} path="/product/:category/:subCategory/:brand/:productName">
-                      <ViewProduct />
-                    </Route>
-                    <PrivateRoute exact={true} path="/review/edit/:id">
-                      <EditReview />
-                    </PrivateRoute>
-                    <Route exact={true} path="/review/:brand/:productName/:reviewTitle">
-                      <ViewReview />
-                    </Route>
-                    <Route exact={true} path="/">
-                      <Home />
-                    </Route>
-                    <Route path="/page-not-found" exact={true}>
-                      <PageNotFound />
-                    </Route>
-                    <Redirect from='*' to='/page-not-found' />
-                  </Switch>
-                );
-              }}
-            />
-          </Container>
-        </div>
+        <AnalyticsProvider>
+          <div className={`app`}>
+            <Helmet>
+              <meta charSet='utf-8' />
+              <title>ravebox</title>
+              <link rel='canonical' href='https://ravebox.io' />
+            </Helmet>
+            <ScrollToTop />
+            <TopNavigation />
+            {largeScreen ? (
+              <SideNavigation expanded={false} />
+            ) : (
+              <MobileNavigation expanded={false} />
+            )}
+            <Container maxWidth="lg" disableGutters={true} className={clsx({
+              [classes.lgContent]: largeScreen,
+              [classes.lgContentOpen]: largeScreen && props.expanded,
+              [classes.lgContentClosed]: largeScreen && !props.expanded
+            })}>
+              <Route
+                render={(route: RouteComponentProps) => {
+                  return (
+                    <Switch location={route.location}>
+                      <Route path="/about" exact={true}>
+                        <About />
+                      </Route>
+                      <PrivateRoute exact={true} path="/account">
+                        <Account />
+                      </PrivateRoute>
+                      <Route exact={true} path="/categories/:category">
+                        <CategoryList />
+                      </Route>
+                      <Route exact={true} path="/discover/:term">
+                        <Search />
+                      </Route>
+                      <Route exact={true} path="/discover">
+                        <Discover />
+                      </Route>
+                      <Route exact={true} path="/user/login">
+                        <Login />
+                      </Route>
+                      <Route exact={true} path="/user/signup">
+                        <Signup />
+                      </Route>
+                      <Route exact={true} path="/user/reviews">
+                        <MyReviews />
+                      </Route>
+                      <Route exact={true} path="/user/channel/:handle">
+                        <Channel />
+                      </Route>
+                      <Route exact={true} path="/user/verify/:token">
+                        <Verify />
+                      </Route>
+                      <Route exact={true} path="/user/reset/:token">
+                        <PasswordReset />
+                      </Route>
+                      <Route exact={true} path="/user/reset">
+                        <PasswordResetRequest />
+                      </Route>
+                      <PrivateRoute exact={true} path="/product/add">
+                        <AddProduct />
+                      </PrivateRoute>
+                      <PrivateRoute exact={true} path="/product/:id/review">
+                        <AddReview />
+                      </PrivateRoute>
+                      <Route exact={true} path="/product/:category/:subCategory/:brand/:productName">
+                        <ViewProduct />
+                      </Route>
+                      <PrivateRoute exact={true} path="/review/edit/:id">
+                        <EditReview />
+                      </PrivateRoute>
+                      <Route exact={true} path="/review/:brand/:productName/:reviewTitle">
+                        <ViewReview />
+                      </Route>
+                      <Route exact={true} path="/">
+                        <Home />
+                      </Route>
+                      <Route path="/page-not-found" exact={true}>
+                        <PageNotFound />
+                      </Route>
+                      <Redirect from='*' to='/page-not-found' />
+                    </Switch>
+                  );
+                }}
+              />
+            </Container>
+          </div>
+        </AnalyticsProvider>
       </StyledSnackbar>
     </ThemeProvider>
   );

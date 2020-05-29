@@ -7,6 +7,6 @@
 import { CategoryItem } from '../Category.interface';
 
 export interface CategorySelectionProps {
-  update: (selected: Array<CategoryItem>) => void;
+  update: (categoryType: string) => (selected: Array<CategoryItem>) => void;
   visible: boolean;
 }

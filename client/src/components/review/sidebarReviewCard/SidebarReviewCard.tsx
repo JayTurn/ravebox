@@ -37,8 +37,18 @@ import LinkElement from '../../elements/link/Link';
 // Enumerators.
 import { ReviewListType } from '../listByQuery/ListByQuery.enum';
 
+// Hooks.
+import { useAnalytics } from '../../analytics/Analytics.provider';
+
 // Interfaces.
+import {
+  AnalyticsContextProps,
+  EventObject
+} from '../../analytics/Analytics.interface';
 import { SidebarReviewCardProps } from './SidebarReviewCard.interface';
+
+// Utilities.
+import { formatReviewForTracking } from '../Review.common';
 
 /**
  * Create the theme styles to be used for the display.
@@ -163,13 +173,35 @@ const StyledCardHeader = withStyles(theme => ({
  * Review card for public display.
  */
 const SidebarReviewCard: React.FC<SidebarReviewCardProps> = (props: SidebarReviewCardProps) => {
+
+  // Define the analytics context and a tracking event.
+  const analytics: AnalyticsContextProps = useAnalytics() as AnalyticsContextProps;
+
   // Define the style classes.
   const classes = useStyles(),
         theme = useTheme()
 
+  /**
+   * Tracks the review card navigation event.
+   */
+  const handleNavigation: (
+  ) => void = (
+  ): void => {
+
+    // Format the review for tracking.
+    const data: EventObject = formatReviewForTracking(props.context)(props);
+
+    // Track the select event.
+    analytics.trackEvent('select review')(data);
+  }
+
   return (
     <Card className={classes.cardContainer}>
-      <NavLink to={`/review/${props.url}`} className={classes.flexContainer}>
+      <NavLink
+        className={classes.flexContainer}
+        onClick={handleNavigation}
+        to={`/review/${props.url}`}
+      >
         <Box className={classes.mediaContainer}>
           <CardMedia
             className={clsx(classes.media)}

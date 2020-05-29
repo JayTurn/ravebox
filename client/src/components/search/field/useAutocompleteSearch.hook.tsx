@@ -14,7 +14,13 @@ import {
   RetrievalStatus
 } from '../../../utils/api/Api.enum';
 
+// Hooks.
+import { useAnalytics } from '../../analytics/Analytics.provider';
+
 // Interfaces.
+import {
+  AnalyticsContextProps
+} from '../../analytics/Analytics.interface';
 import {
   AutocompleteSearchParams,
   AutocompleteSearchResponse,
@@ -51,6 +57,9 @@ const setDefaultRetrievalStatus: (
  */
 export function useAutocompleteSearch() {
 
+  // Define the analytics context and a tracking event.
+  const analytics: AnalyticsContextProps = useAnalytics() as AnalyticsContextProps;
+
   // Define the retrieval status to be used for view rendering.
   const [retrievalStatus, setRetrievalStatus] = React.useState(RetrievalStatus.NOT_REQUESTED);
 
@@ -84,7 +93,7 @@ export function useAutocompleteSearch() {
 
     setQuery(query);
 
-    // Performt he product name search.
+    // Perform the product name search.
     API.requestAPI<AutocompleteSearchResponse>(`search/autocomplete/${encodeURIComponent(query)}`, {
       method: RequestType.GET,
     })
@@ -98,6 +107,9 @@ export function useAutocompleteSearch() {
         // Set the options returned.
         setResults([...response.results]);
         setRetrievalStatus(RetrievalStatus.SUCCESS);
+        analytics.trackEvent('perform search')({
+          'term': query
+        });
       }
     })
     .catch((error: Error) => {

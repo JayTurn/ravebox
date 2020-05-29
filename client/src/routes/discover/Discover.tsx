@@ -44,14 +44,17 @@ import {
   ReviewListType
 } from '../../components/review/listByQuery/ListByQuery.enum';
 import { RequestType } from '../../utils/api/Api.enum';
+import { ScreenContext } from '../../components/review/Review.enum';
 import { StyleType } from '../../components/elements/link/Link.enum';
 
 // Hooks.
 import {
   useRetrieveListByQuery
 } from '../../components/review/listByQuery/useRetrieveListsByQuery.hook';
+import { useAnalytics } from '../../components/analytics/Analytics.provider';
 
 // Interfaces.
+import { AnalyticsContextProps } from '../../components/analytics/Analytics.interface';
 import { Category, CategoryItem } from '../../components/category/Category.interface';
 import { DiscoverProps } from './Discover.interface';
 import {
@@ -64,32 +67,6 @@ import { getTopLevelCategories } from '../../utils/structures/Category';
 
 // Retrieve the list of categories.
 const categoryList: Array<Category> = require('../../components/category/categories.json').ontology;
-
-/**
- * Loads the discover content from the api for server side rendering.
- * 
- * @param { HomeProps } props - the home properties.
- */
-const frontloadDiscover = async (props: DiscoverProps) => {
-  // Capture the category queries to.
-  const queries: Array<string> = getTopLevelCategories(categoryList); 
-
-  // Perform the API request to get the review group.
-  await API.requestAPI<RetrieveListByQueryResponse>(QueryPath.CATEGORY, {
-    method: RequestType.POST,
-    body: JSON.stringify({
-      queries: queries
-    })
-  })
-  .then((response: RetrieveListByQueryResponse) => {
-    if (response.reviews && props.updateListByCategory) {
-      props.updateListByCategory(response.reviews);
-    }
-  })
-  .catch((error: Error) => {
-    console.log(error);
-  });
-};
 
 /**
  * Create the theme styles to be used for the display.
@@ -145,9 +122,38 @@ const useStyles = makeStyles((theme: Theme) =>
 );
 
 /**
+ * Loads the discover content from the api for server side rendering.
+ * 
+ * @param { HomeProps } props - the home properties.
+ */
+const frontloadDiscover = async (props: DiscoverProps) => {
+  // Capture the category queries to.
+  const queries: Array<string> = getTopLevelCategories(categoryList); 
+
+  // Perform the API request to get the review group.
+  await API.requestAPI<RetrieveListByQueryResponse>(QueryPath.CATEGORY, {
+    method: RequestType.POST,
+    body: JSON.stringify({
+      queries: queries
+    })
+  })
+  .then((response: RetrieveListByQueryResponse) => {
+    if (response.reviews && props.updateListByCategory) {
+      props.updateListByCategory(response.reviews);
+    }
+  })
+  .catch((error: Error) => {
+    console.log(error);
+  });
+};
+
+/**
  * Discover route component.
  */
 const Discover: React.FC<DiscoverProps> = (props: DiscoverProps) => {
+
+  // Define the analytics context and a tracking event.
+  const analytics: AnalyticsContextProps = useAnalytics() as AnalyticsContextProps;
 
   // Define the component classes.
   const classes = useStyles(),
@@ -162,6 +168,19 @@ const Discover: React.FC<DiscoverProps> = (props: DiscoverProps) => {
     listType: ReviewListType.CATEGORY,
     update: props.updateListByCategory
   });
+
+  // Create a page viewed state to avoid duplicate views.
+  const [pageViewed, setPageViewed] = React.useState<boolean>(false);
+
+  /**
+   * On updates, check if we need to track the page view.
+   */
+  React.useEffect(() => {
+    if (!pageViewed) {
+      analytics.trackEvent('view discover')();
+      setPageViewed(true);
+    }
+  }, [pageViewed]);
 
   /**
    * Render the home route component.
@@ -182,9 +201,10 @@ const Discover: React.FC<DiscoverProps> = (props: DiscoverProps) => {
           {
             queries.map((query: string, index: number) => {
               return (
-                <React.Fragment>
+                <React.Fragment key={query}>
                   {props.categoryGroup && props.categoryGroup[query] &&
                     <ListByQuery
+                      context={ScreenContext.DISCOVER}
                       listType={ReviewListType.CATEGORY}
                       presentationType={largeScreen ? PresentationType.GRID : PresentationType.SCROLLABLE}
                       reviews={props.categoryGroup[query]}

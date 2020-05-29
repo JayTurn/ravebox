@@ -8,11 +8,18 @@ import API from '../../../utils/api/Api.model';
 import Box from '@material-ui/core/Button';
 import Button from '@material-ui/core/Button';
 import CircularProgress from '@material-ui/core/CircularProgress';
-import Grid from '@material-ui/core/Grid';
-import Typography from '@material-ui/core/Typography';
-import { createStyles, makeStyles, withStyles, Theme } from '@material-ui/core/styles';
-import * as React from 'react';
+import clsx from 'clsx';
 import Cookies from 'universal-cookie';
+import {
+  createStyles,
+  makeStyles,
+  withStyles,
+  Theme
+} from '@material-ui/core/styles';
+import Grid from '@material-ui/core/Grid';
+import * as React from 'react';
+import Typography from '@material-ui/core/Typography';
+import useMediaQuery from '@material-ui/core/useMediaQuery';
 import { useTheme } from '@material-ui/core/styles';
 
 // Components.
@@ -40,6 +47,18 @@ import { ValidationSchema } from '../../forms/validation/Validation.interface';
 import { isRequired, isPassword } from '../../forms/validation/ValidationRules';
 
 /**
+ * Create styles for the login form.
+ */
+const useStyles = makeStyles((theme: Theme) => createStyles({
+  fieldPadding: {
+    padding: theme.spacing(1, 2)
+  },
+  titleContainer: {
+    margin: theme.spacing(2, 0)
+  }
+}));
+
+/**
  * PasswordReset form validation schema.
  */
 const passwordResetValidation: ValidationSchema = {
@@ -53,7 +72,10 @@ const passwordResetValidation: ValidationSchema = {
  * PasswordReset form component.
  */
 const PasswordResetForm: React.FC<PasswordResetFormProps> = (props: PasswordResetFormProps) => {
-  const theme = useTheme();
+  // Define the theme for consistent styling.
+  const classes = useStyles(),
+        theme = useTheme(),
+        desktop = useMediaQuery(theme.breakpoints.up('sm'));
 
   // Define the base state for the signup form.
   const [values, setValues] = React.useState({
@@ -69,7 +91,7 @@ const PasswordResetForm: React.FC<PasswordResetFormProps> = (props: PasswordRese
   // submitted and to prevent duplicate submissions.
   const [submitting, setSubmitting] = React.useState(false);
 
-  const [changed, setChanged] = React.useState(false);
+  const [changed, setChanged] = React.useState(true);
 
   // Validation hook.
   const {
@@ -165,33 +187,41 @@ const PasswordResetForm: React.FC<PasswordResetFormProps> = (props: PasswordRese
         <Grid
           container
           direction='column'
-          spacing={2}
-          alignItems='stretch'
         >
-          <Typography variant='h2' color='textPrimary' style={{marginBottom: '2rem'}}>
-            Password changed successfully  
-          </Typography>
-          <Typography variant='body1'>
-            You may now <Link path='/user/login' title='log in' /> with your new password.  
-          </Typography>
+          <Grid item xs={12} md={6} lg={5} className={clsx(
+            classes.fieldPadding,
+            classes.titleContainer
+          )}>
+            <Typography variant='h2' color='textPrimary'>
+              Password changed successfully  
+            </Typography>
+          </Grid>
+          <Grid item xs={12} md={6} lg={5} className={clsx(classes.fieldPadding)}>
+            <Typography variant='body1'>
+              You may now <Link path='/user/login' title='log in' /> with your new password.  
+            </Typography>
+          </Grid>
         </Grid>
       ) : (
         <form noValidate autoComplete="off">
           <Grid
             container
             direction='column'
-            spacing={2}
-            alignItems='stretch'
           >
-            <Typography variant='h2' color='textPrimary'>
-              Create a new password  
-            </Typography>
-            <Grid item xs={12} md={6}>
+            <Grid item xs={12} md={6} lg={5} className={clsx(
+              classes.fieldPadding,
+              classes.titleContainer
+            )}>
+              <Typography variant='h2' color='textPrimary'>
+                Create a new password  
+              </Typography>
+            </Grid>
+            <Grid item xs={12} md={6} lg={5} className={clsx(classes.fieldPadding)}>
               <Typography variant='subtitle1'>
                 Enter a new password and we'll update your account
               </Typography>
             </Grid>
-            <Grid item xs={12} md={6}>
+            <Grid item xs={12} md={6} lg={5} className={clsx(classes.fieldPadding)}>
               <Input
                 handleBlur={updateForm}
                 name='password'
@@ -200,10 +230,10 @@ const PasswordResetForm: React.FC<PasswordResetFormProps> = (props: PasswordRese
                 validation={validation.password}
               />
             </Grid>
-            <Grid item xs={12} md={6}>
+            <Grid item xs={12} md={6} lg={5} className={clsx(classes.fieldPadding)}>
               <ErrorMessages errors={formErrorMessages} />
             </Grid>
-            <Grid item xs={12} md={6}>
+            <Grid item xs={12} md={6} lg={5} className={clsx(classes.fieldPadding)}>
               <StyledButton
                 title='Change password'
                 clickAction={submitPassword}

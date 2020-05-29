@@ -7,11 +7,19 @@
 import API from '../../../utils/api/Api.model';
 import Button from '@material-ui/core/Button';
 import CircularProgress from '@material-ui/core/CircularProgress';
-import Grid from '@material-ui/core/Grid';
-import Typography from '@material-ui/core/Typography';
-import { createStyles, makeStyles, withStyles, Theme } from '@material-ui/core/styles';
-import * as React from 'react';
+import clsx from 'clsx';
 import Cookies from 'universal-cookie';
+import {
+  createStyles,
+  makeStyles,
+  Theme,
+  useTheme,
+  withStyles
+} from '@material-ui/core/styles';
+import Grid from '@material-ui/core/Grid';
+import * as React from 'react';
+import Typography from '@material-ui/core/Typography';
+import useMediaQuery from '@material-ui/core/useMediaQuery';
 
 // Components.
 import ErrorMessages from '../../forms/errorMessages/ErrorMessages';
@@ -37,6 +45,15 @@ import { ValidationSchema } from '../../forms/validation/Validation.interface';
 import { isRequired, isEmail } from '../../forms/validation/ValidationRules';
 
 /**
+ * Create styles for the login form.
+ */
+const useStyles = makeStyles((theme: Theme) => createStyles({
+  fieldPadding: {
+    padding: theme.spacing(1, 2)
+  },
+}));
+
+/**
  * ForgotPassword form validation schema.
  */
 const passwordResetValidation: ValidationSchema = {
@@ -50,6 +67,11 @@ const passwordResetValidation: ValidationSchema = {
  * ForgotPassword form component.
  */
 const ForgotPasswordForm: React.FC<ForgotPasswordFormProps> = (props: ForgotPasswordFormProps) => {
+
+  // Define the theme for consistent styling.
+  const classes = useStyles(),
+        theme = useTheme(),
+        desktop = useMediaQuery(theme.breakpoints.up('sm'));
 
   // Define the base state for the signup form.
   const [values, setValues] = React.useState({
@@ -161,30 +183,29 @@ const ForgotPasswordForm: React.FC<ForgotPasswordFormProps> = (props: ForgotPass
         <Grid
           container
           direction='column'
-          spacing={2}
-          alignItems='stretch'
         >
-          <Typography variant='h3'>
-            Password reset email sent
-          </Typography>
-          <Typography variant='body1'>
-            We've sent you an email with instructions to help you reset your password.    
-          </Typography>
+          <Grid item xs={12} md={6} className={clsx(classes.fieldPadding)}>
+            <Typography variant='h3' style={{marginBottom: '1rem'}}>
+              Password reset email sent
+            </Typography>
+            <Typography variant='body1'>
+              We've sent you an email with instructions to help you reset your password.    
+            </Typography>
+          </Grid>
         </Grid>
       ) : (
       <form noValidate autoComplete="off">
         <Grid
           container
           direction='column'
-          spacing={2}
           alignItems='stretch'
         >
-          <Grid item xs={12} md={6}>
+          <Grid item xs={12} md={6} className={clsx(classes.fieldPadding)}>
             <Typography variant='subtitle1'>
               If you're having trouble accessing your account, enter your email address below and we'll send you instructions to reset your password
             </Typography>
           </Grid>
-          <Grid item xs={12} md={6}>
+          <Grid item xs={12} md={6} className={clsx(classes.fieldPadding)}>
             <Input
               handleBlur={updateForm}
               name='email'
@@ -193,10 +214,10 @@ const ForgotPasswordForm: React.FC<ForgotPasswordFormProps> = (props: ForgotPass
               validation={validation.email}
             />
           </Grid>
-          <Grid item xs={12} md={6}>
+          <Grid item xs={12} md={6} className={clsx(classes.fieldPadding)}>
             <ErrorMessages errors={formErrorMessages} />
           </Grid>
-          <Grid item xs={12} md={6}>
+          <Grid item xs={12} md={6} className={clsx(classes.fieldPadding)}>
             <StyledButton
               title='Send instructions'
               clickAction={submitReset}

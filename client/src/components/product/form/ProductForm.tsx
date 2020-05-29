@@ -36,9 +36,14 @@ import {
 } from '../../../utils/api/Api.enum';
 
 // Hooks.
+import { useAnalytics } from '../../../components/analytics/Analytics.provider';
 import { useValidation } from '../../forms/validation/useValidation.hook';
 
 // Interfaces.
+import {
+  AnalyticsContextProps,
+  EventObject
+} from '../../../components/analytics/Analytics.interface';
 import { CategoryItem } from '../../category/Category.interface';
 import { InputData } from '../../forms/input/Input.interface';
 import { Product } from '../../product/Product.interface';
@@ -99,6 +104,9 @@ const ProductForm: React.FC<ProductFormProps> = (
   props: ProductFormProps
 ) => {
 
+  // Define the analytics context and a tracking event.
+  const analytics: AnalyticsContextProps = useAnalytics() as AnalyticsContextProps;
+
   // Match the mobile media query size.
   const classes = useStyles(),
         theme = useTheme(),
@@ -145,8 +153,12 @@ const ProductForm: React.FC<ProductFormProps> = (
    * @param { Array<string> } selected - the selected categories.
    */
   const updateCategories: (
+    categoryType: string
+  ) => (
     selected: Array<CategoryItem>
   ) => void = (
+    categoryType: string
+  ) => (
     selected: Array<CategoryItem>
   ): void => {
 
@@ -158,6 +170,22 @@ const ProductForm: React.FC<ProductFormProps> = (
       categories: selected
     });
 
+    // Create the event object from the provided values.
+    const eventData: EventObject = {
+      'brand name': product.brand,
+      'product name': product.name
+    };
+
+    if (categoryType === 'category') {
+      eventData['product category'] = selected[0].key;
+      analytics.trackEvent(`add category`)(eventData);
+    }
+
+    if (categoryType === 'sub-category') {
+      eventData['product category'] = selected[0].key;
+      eventData['product sub-category'] = selected[1].key;
+      analytics.trackEvent(`add sub-category`)(eventData);
+    }
   }
 
   /**
@@ -178,6 +206,30 @@ const ProductForm: React.FC<ProductFormProps> = (
       ...product,
       [data.key]: data.value
     });
+
+    // Create the event object from the provided values.
+    const eventData: EventObject = {
+      'brand name': product.brand,
+      'product name': product.name
+    };
+
+    if (product.categories && product.categories.length > 0) {
+      eventData['product category'] = product.categories[0].key;
+
+      if (product.categories.length > 1) {
+        eventData['product sub-category'] = product.categories[1].key;
+      }
+    }
+
+    if (data.key === 'brand') {
+      eventData['brand name'] = data.value;
+    }
+
+    if (data.key === 'name') {
+      eventData['product name'] = data.value;
+    }
+
+    analytics.trackEvent(`add ${data.key}`)(eventData);
   }
 
   /**
@@ -246,7 +298,26 @@ const ProductForm: React.FC<ProductFormProps> = (
       // Display the success message to the user.
       enqueueSnackbar('Product added successfully', { variant: 'success' });
 
+      // Create the event object from the provided values.
+      const eventData: EventObject = {
+        'brand name': response.product.brand,
+        'product id': response.product._id,
+        'product name': response.product.name
+      };
+
+      if (response.product.categories && response.product.categories.length > 0) {
+        eventData['product category'] = response.product.categories[0].key;
+
+        if (response.product.categories.length > 1) {
+          eventData['product sub-category'] = response.product.categories[1].key;
+        }
+      }
+
+      analytics.trackEvent(`add new product`)(eventData);
+
+      // Redirect to the add review screen.
       props.history.push(`/product/${response.product._id}/review`);
+
     })
     .catch((error: Error) => {
       console.error(error);

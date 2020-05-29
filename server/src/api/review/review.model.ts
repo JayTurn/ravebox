@@ -18,6 +18,7 @@ import { ProductDetailsDocument } from '../product/product.interface';
 
 // Models.
 import Product from '../product/product.model';
+import ReviewCommon from './review.common';
  
 // Get the Mongoose Shema method.
 const Schema = Mongoose.Schema;
@@ -85,14 +86,11 @@ ReviewSchema
       // Load the related prouct for this review.
       Product.findById(this.product) 
         .then((product: ProductDetailsDocument) => {
-          const productName: string = product.name.split(' ').join('-')
-                  .split('&').join('and').toLowerCase(),
-                brand: string = encodeURIComponent(product.brand.split(' ').join('-')
-                  .split('&').join('and').toLowerCase()),
-                reviewTitle: string = encodeURIComponent(_this.title.split(' ').join('-')
-                  .split('&').join('and').toLowerCase());
 
-          _this.url = `${brand}/${productName}/${reviewTitle}`;
+          // Format the url in a structured way to be used when retrieving
+          // results.
+          _this.url = ReviewCommon.formatReviewURL(
+            product.name, product.brand, _this.title);
 
           next();
         })

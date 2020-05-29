@@ -90,6 +90,7 @@ const GridReviewList: React.FC<GridReviewListProps> = (props: GridReviewListProp
                       >
                         <ReviewCard
                           {...review}
+                          context={props.context}
                         />
                       </Grid>
                     );

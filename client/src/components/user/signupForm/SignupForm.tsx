@@ -38,9 +38,14 @@ import API from '../../../utils/api/Api.model';
 import StyledButton from '../../elements/buttons/StyledButton';
 
 // Hooks.
+import { useAnalytics } from '../../../components/analytics/Analytics.provider';
 import { useValidation } from '../../forms/validation/useValidation.hook';
 
 // Interfaces.
+import {
+  AnalyticsContextProps,
+  EventObject
+} from '../../../components/analytics/Analytics.interface';
 import { InputData } from '../../forms/input/Input.interface';
 import { SignupFormProps, SignupFormResponse } from './SignupForm.interface';
 import { PrivateProfile } from '../User.interface';
@@ -92,6 +97,9 @@ const signupValidation: ValidationSchema = {
  * Signup form for new accounts.
  */
 const SignupForm: React.FC<SignupFormProps> = (props: SignupFormProps) => {
+  // Define the analytics context and a tracking event.
+  const analytics: AnalyticsContextProps = useAnalytics() as AnalyticsContextProps;
+
   // Define the theme for consistent styling.
   const classes = useStyles(),
         theme = useTheme(),
@@ -137,7 +145,22 @@ const SignupForm: React.FC<SignupFormProps> = (props: SignupFormProps) => {
 
     // Validate the field if it has rules associated with it.
     if (validation[data.key]) {
-      validateField(data.key)(data.value);
+      const properties: EventObject = {
+        'form': 'sign up',
+        'handle': data.key === 'handle' ? data.value : values.handle,
+      };
+
+      if (values.email) {
+        properties['email'] = values.email;
+      } else {
+        if (data.key === 'email') {
+          properties['email'] = data.value;
+        }
+      } 
+      validateField(data.key)(data.value)({
+        name: `add ${data.key}`,
+        properties: {...properties} 
+      });
     }
 
     setValues({
@@ -184,6 +207,18 @@ const SignupForm: React.FC<SignupFormProps> = (props: SignupFormProps) => {
         setFormErrorMessages([response.title])
         return;
       }
+
+      // Track the new user.
+      analytics.addUser(response.user._id)({
+        'handle': values.handle,
+        'email': values.email
+      });
+
+      // Track the signup event.
+      analytics.trackEvent('create account')({
+        'handle': values.handle,
+        'email': values.email
+      });
 
       if (props.addXsrf && props.login) {
         // Retrieve the xsrf cookie to be set on the header for future requests. 

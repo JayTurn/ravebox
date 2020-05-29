@@ -6,7 +6,14 @@
 // Modules.
 import * as React from 'react';
 
+// Hooks.
+import { useAnalytics } from '../../../components/analytics/Analytics.provider';
+
 // Interfaces.
+import {
+  AnalyticsContextProps,
+  EventData
+} from '../../../components/analytics/Analytics.interface';
 import {
   ValidationHook
 } from './Validation.interface';
@@ -29,6 +36,9 @@ export function useValidation(params: ValidationHook) {
 
   const [validation, setValidation] = React.useState({...params.validation});
 
+  // Define the analytics context and a tracking event.
+  const analytics: AnalyticsContextProps = useAnalytics() as AnalyticsContextProps;
+
   /** 
    * Validates a field using the rules provided.
    *
@@ -37,10 +47,14 @@ export function useValidation(params: ValidationHook) {
     name: string
   ) => (
     value: string
+  ) => (
+    eventData?: EventData
   ) => Promise<string> = (
     name: string
-  ) => async (
+  ) => (
     value: string
+  ) => async (
+    eventData?: EventData
   ): Promise<string> => {
     let i: number = 0;
     do {
@@ -69,11 +83,25 @@ export function useValidation(params: ValidationHook) {
       // If we have an error message, avoid triggering additional validation
       // rules and return the current error.
       if (message) {
+        // If we have an event name, log the validation error.
+        if (eventData) {
+          analytics.trackEvent(eventData.name)({
+            ...eventData.properties,
+            'error': message
+          });
+        }
         return message;
       }
 
       i++
     } while (i < validation[name].rules.length);
+
+    // If we have an event name, log the success event.
+    if (eventData) {
+      analytics.trackEvent(eventData.name)({
+        ...eventData.properties,
+      });
+    }
 
     // We haven't found any errors so return an empty string.
     return '';
@@ -99,7 +127,7 @@ export function useValidation(params: ValidationHook) {
         if (fields.hasOwnProperty(key)) {
           
           let message: string = '';
-          const invalid: string | Promise<string> = validateField(key)(fields[key]);
+          const invalid: string | Promise<string> = validateField(key)(fields[key])();
 
           if (isPromise(invalid)) {
             message = await invalid;

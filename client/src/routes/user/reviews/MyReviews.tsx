@@ -53,7 +53,10 @@ const MyReviews: React.FC<MyReviewsProps> = (props: MyReviewsProps) => {
         <link rel='canonical' href='https://ravebox.io/user/reviews' />
       </Helmet>
       <PageTitle title='My raves' />
-      <PrivateReviews reviews={[...props.reviews || []]} retrievalStatus={reviewsStatus} />
+      <PrivateReviews
+        reviews={[...props.reviews || []]}
+        retrievalStatus={reviewsStatus}
+      />
     </Grid>
   );
 }

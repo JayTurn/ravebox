@@ -5,15 +5,28 @@
 
 // Modules.
 import * as React from 'react';
+import {
+  AnyAction,
+  bindActionCreators,
+  Dispatch
+} from 'redux';
 import API from '../../../utils/api/Api.model';
 import Box from '@material-ui/core/Box';
+import clsx from 'clsx';
+import { connect } from 'react-redux';
+import {
+  createStyles,
+  makeStyles,
+  Theme,
+  useTheme,
+  withStyles
+} from '@material-ui/core/styles';
 import { frontloadConnect } from 'react-frontload';
 import Grid from '@material-ui/core/Grid';
 import { Helmet } from 'react-helmet';
 import { withRouter } from 'react-router';
-import { bindActionCreators, Dispatch, AnyAction } from 'redux';
-import { connect } from 'react-redux';
 import Typography from '@material-ui/core/Typography';
+import useMediaQuery from '@material-ui/core/useMediaQuery';
 
 // Actions.
 import { reset } from '../../../store/user/Actions';
@@ -34,6 +47,20 @@ import {
 
 // Dependent components.
 import PasswordResetForm from '../../../components/user/passwordResetForm/PasswordResetForm';
+
+/**
+ * Create the theme styles to be used for the display.
+ */
+const useStyles = makeStyles((theme: Theme) =>
+  createStyles({
+    listContainer: {
+      padding: 0
+    },
+    listContainerLarge: {
+      padding: theme.spacing(0, 2)
+    }
+  })
+);
 
 /**
  * Loads the password verification from the api before rendering the component
@@ -70,8 +97,13 @@ const PasswordReset: React.FC<PasswordResetProps> = (
   props: PasswordResetProps
 ) => {
 
+  // Define the component classes.
+  const classes = useStyles(),
+        theme = useTheme(),
+        largeScreen = useMediaQuery(theme.breakpoints.up('sm'));
+
   return (
-    <Box style={{flexGrow: 1, marginTop: '3rem' }}>
+    <Box style={{flexGrow: 1}}>
       <Helmet>
         <title>Reset password - ravebox</title>
         <link rel='canonical' href='https://ravebox.io/user/reset' />
@@ -80,13 +112,22 @@ const PasswordReset: React.FC<PasswordResetProps> = (
         <Grid
           container
           direction='column'
-          justify='flex-start'
         >
           {props.allowed === ResetTokenStatus.ALLOWED &&
             <PasswordResetForm token={props.match.params.token} />
           }
           {props.allowed === ResetTokenStatus.NOT_ALLOWED &&
-            <Grid item xs={12} md={6} style={{marginBottom: '1rem'}}>
+            <Grid
+              item
+              xs={12}
+              md={6}
+              className={clsx(
+                classes.listContainer,
+                {
+                  [classes.listContainerLarge]: largeScreen
+                }
+              )}
+            >
               <Typography variant='h2' color='error'>
                 Password reset link not valid  
               </Typography>

@@ -361,7 +361,7 @@ export default class ReviewController {
           productName = request.params.productName,
           reviewTitle = request.params.reviewTitle;
 
-    const path = `${brand}/${productName}/${reviewTitle}`;
+    const path = ReviewCommon.formatReviewURL(productName, brand, reviewTitle);
 
     Review.findOne({
       url: path,
