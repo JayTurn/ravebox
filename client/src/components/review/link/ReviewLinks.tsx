@@ -94,24 +94,30 @@ const ReviewLinks: React.FC<ReviewLinksProps> = (
         {props.links.map((item: ReviewLink, index: number) => {
           return (
             <Grid container direction='column' key={index}>          
-              <Grid item xs={12} className={clsx(classes.promoContainer)}>
-                <Typography variant='body1' className={clsx(classes.promoTitle)}>
-                  Promo / Coupon code
-                </Typography>
-                <Typography variant='body1' className={clsx(classes.promoText)}>
-                  {item.code}
-                </Typography>
-              </Grid>
-              <Grid item xs={12}>
-                <Typography variant='body1' className={clsx(classes.infoText)}>
-                  {item.info} 
-                </Typography>
-              </Grid>
-              <Grid>
-                <Typography variant='body1'>
-                  <Link href={`https://${item.path}`} title={item.info}>{item.path}</Link>
-                </Typography>
-              </Grid>
+              {item.code &&
+                <Grid item xs={12} className={clsx(classes.promoContainer)}>
+                  <Typography variant='body1' className={clsx(classes.promoTitle)}>
+                    Promo / Coupon code
+                  </Typography>
+                  <Typography variant='body1' className={clsx(classes.promoText)}>
+                    {item.code}
+                  </Typography>
+                </Grid>
+              }
+              {item.info &&
+                <Grid item xs={12}>
+                  <Typography variant='body1' className={clsx(classes.infoText)}>
+                    {item.info} 
+                  </Typography>
+                </Grid>
+              }
+              {item.path &&
+                <Grid>
+                  <Typography variant='body1'>
+                    <Link href={`https://${item.path}`} title={item.info}>{item.path}</Link>
+                  </Typography>
+                </Grid>
+              }
             </Grid>
           )
         })}
