@@ -352,7 +352,7 @@ const ReviewDetails: React.FC<ReviewDetailsProps> = (props: ReviewDetailsProps) 
                       {review.user &&
                         <ProductPreview {...review.product} recommendation={{handle: review.user.handle, recommended: review.recommended}}/>
                       }
-                      {review.links && review.links.length > 0 && review.user &&
+                      {review.links && review.links[0].path && review.user &&
                         <ReviewLinks handle={review.user.handle} links={[...review.links]} />
                       }
                     </Grid>
