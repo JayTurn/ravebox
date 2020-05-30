@@ -197,7 +197,7 @@ const Discover: React.FC<DiscoverProps> = (props: DiscoverProps) => {
       </Helmet>
       <PageTitle title='Discover raves' />
       {props.categoryGroup &&
-        <React.Fragment>
+        <Grid item xs={12}>
           {
             queries.map((query: string, index: number) => {
               return (
@@ -221,7 +221,7 @@ const Discover: React.FC<DiscoverProps> = (props: DiscoverProps) => {
               )
             })
           }
-        </React.Fragment>
+        </Grid>
       }
     </Grid>
   );

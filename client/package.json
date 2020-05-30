@@ -59,9 +59,11 @@
     ]
   },
   "scripts": {
-    "start": "razzle start",
+    "start": "razzle start --inspect=0.0.0.0:9229",
     "build": "razzle build",
-    "start:local": "razzle start --inspect=0.0.0.0:9229",
+    "start:local": "npm run build:local && npm run serve:local",
+    "build:local": "env-cmd .env.local razzle build",
+    "serve:local": "env-cmd -f .env.local node build/server.js",
     "build:development": "env-cmd .env.development razzle build",
     "start:staging": "npm run build:staging && npm run serve:staging",
     "start-debug:staging": "env-cmd -f .env.staging razzle start --inspect=0.0.0.0:9229",
