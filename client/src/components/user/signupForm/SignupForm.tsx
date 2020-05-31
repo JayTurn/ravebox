@@ -34,8 +34,12 @@ import { add } from '../../../store/xsrf/Actions';
 // Components.
 import ErrorMessages from '../../forms/errorMessages/ErrorMessages';
 import Input from '../../forms/input/Input'; 
+import LinkElement from '../../elements/link/Link';
 import API from '../../../utils/api/Api.model';
 import StyledButton from '../../elements/buttons/StyledButton';
+
+// Enumerators.
+import { StyleType } from '../../elements/link/Link.enum';
 
 // Hooks.
 import { useAnalytics } from '../../../components/analytics/Analytics.provider';
@@ -279,7 +283,7 @@ const SignupForm: React.FC<SignupFormProps> = (props: SignupFormProps) => {
         <Grid item xs={12} md={6} lg={5} className={clsx(classes.fieldPadding)}
         >
           <Typography variant='subtitle1'>
-            By clicking Sign Up, you are indicating that you have read and acknowledge the Terms of Service and Privacy Notice.
+            By clicking Sign Up, you are indicating that you have read and acknowledge the <LinkElement title='Terms of Service' path='/policies/terms' styleType={StyleType.STANDARD_PRIMARY} /> and <LinkElement title='Privacy policy' path='/policies/privacy-policy' styleType={StyleType.STANDARD_PRIMARY} />.
           </Typography>
         </Grid>
         <Grid item xs={12} md={6} lg={5} className={clsx(classes.fieldPadding)}

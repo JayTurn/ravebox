@@ -49,7 +49,7 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
     padding: theme.spacing(1)
   },
   listContainerScrollable: {
-    height: `calc(100vh)`,
+    height: `calc(100vh - 50px)`,
     overflowY: 'scroll'
   },
   listItemContainer: {

@@ -52,12 +52,14 @@ import MyReviews from './user/reviews/MyReviews';
 import PageNotFound from './page-not-found/PageNotFound';
 import PasswordReset from './user/reset/PasswordReset';
 import PasswordResetRequest from './user/reset/PasswordResetRequest';
+import PrivacyPolicy from './policies/PrivacyPolicy';
 import PrivateRoute from './privateRoute/PrivateRoute';
 import Channel from './user/channel/Channel';
 import ScrollToTop from '../utils/scroll/ScrollToTop';
 import SideNavigation from '../components/navigation/side/SideNavigation';
 import Signup from './user/signup/Signup';
 import Search from './discover/search/Search';
+import TermsOfService from './policies/TermsOfService';
 import TopNavigation from '../components/navigation/top/TopNavigation';
 import Verify from './user/verify/Verify';
 import ViewProduct from './product/view/ViewProduct';
@@ -195,6 +197,12 @@ const App: React.FC<AppProps> = (props: AppProps) => {
                       </Route>
                       <Route exact={true} path="/discover">
                         <Discover />
+                      </Route>
+                      <Route exact={true} path="/policies/privacy-policy">
+                        <PrivacyPolicy />
+                      </Route>
+                      <Route exact={true} path="/policies/terms">
+                        <TermsOfService />
                       </Route>
                       <Route exact={true} path="/user/login">
                         <Login />

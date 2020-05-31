@@ -96,8 +96,11 @@ export function useRetrieveDiscoverGroups(params: RetrieveDiscoverGroupsParams) 
   } = {...params};
 
   // Define the product to be used for view rendering.
-  const [lists, setLists] = React.useState<Array<ReviewList>|null>(existing.length > 0 ?
-    createReviewLists(existing) : null);
+  const [lists, setLists] = React.useState<Array<ReviewList>|null>(
+    existing.length > 0 && existing[0].category.key
+      ? createReviewLists(existing)
+      : null
+    );
 
   // Define the retrieval status to be used for view rendering.
   const [retrieved, setRetrieved] = React.useState(RetrievalStatus.NOT_REQUESTED);
@@ -106,11 +109,14 @@ export function useRetrieveDiscoverGroups(params: RetrieveDiscoverGroupsParams) 
   // requests when it changes.
   const [requestedTerm, setRequestedTerm] = React.useState<string>(term);
 
+  const [loading, setLoading] = React.useState<boolean>(true);
+
   /**
    * Handle state updates to the requested search term.
    */
   React.useEffect(() => {
     if (term !== requestedTerm || !lists) {
+      setLoading(true);
       setRetrieved(RetrievalStatus.REQUESTED);
       setRequestedTerm(term);
     }
@@ -143,16 +149,19 @@ export function useRetrieveDiscoverGroups(params: RetrieveDiscoverGroupsParams) 
           // for the view to render accordingly.
           setRetrieved(RetrievalStatus.NOT_FOUND);
         }
+        setLoading(false);
       })
       .catch((error: Error) => {
         console.error(error);
         setRetrieved(RetrievalStatus.FAILED);
+        setLoading(false);
       });
     }
   }, [retrieved]);
 
   return {
     lists,
+    loading,
     retrievalStatus: retrieved
   }
 }

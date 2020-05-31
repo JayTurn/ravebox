@@ -34,6 +34,7 @@ import { updateGroups } from '../../../store/discover/Actions';
 import PageTitle from '../../../components/elements/pageTitle/PageTitle';
 import ListByQuery from '../../../components/review/listByQuery/ListByQuery';
 import ListTitle from '../../../components/elements/listTitle/ListTitle';
+import LoadingReviewList from '../../../components/placeholders/loadingReviewList/LoadingReviewList';
 import ProductPreview from '../../../components/product/preview/ProductPreview';
 import StyledButton from '../../../components/elements/buttons/StyledButton';
 
@@ -143,6 +144,7 @@ const Search: React.FC<SearchProps> = (props: SearchProps) => {
   // Invoke the discover groups hook to perform requests and set content.
   const {
     lists,
+    loading,
     retrievalStatus
   } = useRetrieveDiscoverGroups({
     existing: [...props.discoverGroups || []],
@@ -172,7 +174,7 @@ const Search: React.FC<SearchProps> = (props: SearchProps) => {
 
       setPageViewed(true);
     }
-  }, [pageViewed, props, lists]);
+  }, [pageViewed, props, lists, retrievalStatus]);
 
   /**
    * Navigates to the discover screen.
@@ -184,58 +186,66 @@ const Search: React.FC<SearchProps> = (props: SearchProps) => {
   }
 
   return (
-    <Grid container direction='column'>
+    <Grid container direction='column' key={props.match.params.term}>
       <Helmet>
         <title>Search for reviews - ravebox</title>
       </Helmet>
-      {lists && lists.length > 0 ? (
-        <React.Fragment> 
-          {lists.map((list: ReviewList) => {
-            return (
-              <Grid item key={list.id} xs={12}>
-                <ListByQuery
-                  context={ScreenContext.SEARCH}
-                  listType={ReviewListType.CATEGORY}
-                  presentationType={largeScreen ? PresentationType.GRID : PresentationType.SCROLLABLE}
-                  reviews={[...list.reviews]}
-                  title={
-                    <ListTitle
-                      title={`${list.title} raves`}
-                      url={list.url}
-                      presentationType={largeScreen ? PresentationType.GRID : PresentationType.SCROLLABLE} 
-                    />
-                  }
-                />
-              </Grid>
-            )
-          })}
-        </React.Fragment>
+      {loading ? (
+        <Grid item xs={12}>
+          <LoadingReviewList presentationType={PresentationType.GRID} />  
+        </Grid>
       ) : (
-        <Grid container direction='column' className={clsx(classes.ctaWrapper, { 
-            [classes.ctaWrapperDesktop]: largeScreen
-          })}
-        >
-          <Grid item xs={12}>
-            <Typography variant='h2'>
-              It seems we don't have exactly what you're looking for 
-            </Typography>
-            <Typography variant='body1'>
-              You can visit the discover screen to find all of our raves listed by their categories or try searching for something else. You never know what you might discover.    
-            </Typography>
-          </Grid>
-          <Grid item xs={12}>
-            <Grid container direction='column' alignItems='center' className={classes.ctaButton}>
+        <React.Fragment>
+          {lists && lists.length > 0 ? (
+            <React.Fragment> 
+              {lists.map((list: ReviewList) => {
+                return (
+                  <Grid item key={list.id} xs={12}>
+                    <ListByQuery
+                      context={ScreenContext.SEARCH}
+                      listType={ReviewListType.CATEGORY}
+                      presentationType={largeScreen ? PresentationType.GRID : PresentationType.SCROLLABLE}
+                      reviews={[...list.reviews]}
+                      title={
+                        <ListTitle
+                          title={`${list.title} raves`}
+                          url={list.url}
+                          presentationType={largeScreen ? PresentationType.GRID : PresentationType.SCROLLABLE} 
+                        />
+                      }
+                    />
+                  </Grid>
+                )
+              })}
+            </React.Fragment>
+          ) : (
+            <Grid container direction='column' className={clsx(classes.ctaWrapper, { 
+                [classes.ctaWrapperDesktop]: largeScreen
+              })}
+            >
               <Grid item xs={12}>
-                <StyledButton
-                  color='secondary'
-                  clickAction={navigateToAlternative}
-                  submitting={false}
-                  title='Discover raves'
-                />
+                <Typography variant='h2'>
+                  It seems we don't have exactly what you're looking for 
+                </Typography>
+                <Typography variant='body1'>
+                  You can visit the discover screen to find all of our raves listed by their categories or try searching for something else. You never know what you might discover.    
+                </Typography>
+              </Grid>
+              <Grid item xs={12}>
+                <Grid container direction='column' alignItems='center' className={classes.ctaButton}>
+                  <Grid item xs={12}>
+                    <StyledButton
+                      color='secondary'
+                      clickAction={navigateToAlternative}
+                      submitting={false}
+                      title='Discover raves'
+                    />
+                  </Grid>
+                </Grid>
               </Grid>
             </Grid>
-          </Grid>
-        </Grid>
+          )}
+        </React.Fragment>
       )}
     </Grid>
   );
