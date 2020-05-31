@@ -103,6 +103,7 @@ export default class SearchController {
     Product.find({
       namePartials: regEx,
     })
+    .limit(8)
     .lean()
     .then((products: Array<ProductDetails>) => {
       // If we found products, loop through them and add them to the

@@ -234,7 +234,7 @@ const CategoryList: React.FC<CategoryListProps> = (props: CategoryListProps) => 
         </React.Fragment>
       }
       {props.categoryGroup && category &&
-        <React.Fragment>
+        <Grid item xs={12}>
           {
             queries.map((query: string, index: number) => {
               return (
@@ -257,7 +257,7 @@ const CategoryList: React.FC<CategoryListProps> = (props: CategoryListProps) => 
               )
             })
           }
-        </React.Fragment>
+        </Grid>
       }
     </Grid>
   );
