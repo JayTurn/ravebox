@@ -51,7 +51,7 @@ services:
     build: client/
     command: yarn start
     container_name: ravebox_client
-    image: jayturn/react:1.2.6
+    image: jayturn/react:1.2.7
     depends_on:
       - mongodb
       - node_server
