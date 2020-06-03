@@ -143,13 +143,11 @@ const LinkElement: React.FC<LinkProps> = (props: LinkProps) => {
         [classes.searchResultItem]: styleType === StyleType.SEARCH_RESULT_ITEM
       })}
       color={props.color}
-      component={({className, children}) => {
-        return (
-          <ReactLink className={className} to={props.path} title={props.title}>
-            {children}
-          </ReactLink>
-        );
-      }}
+      component={({className, children}) => (
+        <ReactLink className={className} to={props.path} title={props.title}>
+          {children}
+        </ReactLink>
+      )}
     >
     { props.title }
     </Link>

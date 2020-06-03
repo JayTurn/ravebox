@@ -49,7 +49,7 @@ services:
       - ./ngrok:/ngrok
   react_client:
     build: client/
-    command: yarn start:local
+    command: yarn start
     container_name: ravebox_client
     image: jayturn/react:1.2.6
     depends_on:

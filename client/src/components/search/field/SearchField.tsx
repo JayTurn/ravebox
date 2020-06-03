@@ -231,6 +231,7 @@ const SearchField: React.FC<SearchFieldProps> = (props: SearchFieldProps) => {
   ) => void = (
     e: React.SyntheticEvent
   ): void => {
+    e.preventDefault();
     handleClose();
     props.history.push(`/discover/${query}`);
   }
@@ -238,6 +239,7 @@ const SearchField: React.FC<SearchFieldProps> = (props: SearchFieldProps) => {
   return (
     <Grid container direction='column' className={clsx(classes.searchContainer)}>
       <Grid item xs={12} className={clsx(classes.fieldContainer)}>
+        <form noValidate autoComplete="off" onSubmit={handleQueryNavigation}>
           {largeScreen ? (
             <Grid
               container
@@ -261,6 +263,7 @@ const SearchField: React.FC<SearchFieldProps> = (props: SearchFieldProps) => {
                   disableRipple
                   className={classes.searchButtonLarge}
                   onClick={handleQueryNavigation}
+                  type='submit'
                 >   
                   <SearchRoundedIcon className={classes.searchIcon}/>
                 </IconButton>
@@ -296,12 +299,14 @@ const SearchField: React.FC<SearchFieldProps> = (props: SearchFieldProps) => {
                   aria-label='Perform product search'
                   disableRipple
                   className={classes.searchButton}
+                  type='submit'
                 >   
                   <SearchRoundedIcon className={classes.searchIcon}/>
                 </IconButton>
               </Grid>
             </Grid>
           )}
+        </form>
       </Grid>
       <Grid item xs={12} className={clsx(classes.listContainer)}>
         <SearchFieldResults

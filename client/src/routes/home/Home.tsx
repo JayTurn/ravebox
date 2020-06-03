@@ -77,10 +77,10 @@ const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     aboutContainer: {
       backgroundColor: theme.palette.secondary.dark,
-      padding: theme.spacing(6, 2),
+      padding: theme.spacing(6, 4),
     },
     aboutContainerLarge: {
-      padding: theme.spacing(8, 2, 12)
+      padding: theme.spacing(8, 4, 12)
     },
     aboutText: {
       color: theme.palette.common.white,
@@ -101,10 +101,10 @@ const useStyles = makeStyles((theme: Theme) =>
     },
     introContainer: {
       backgroundColor: theme.palette.common.white,
-      padding: theme.spacing(4, 2, 4),
+      padding: theme.spacing(4, 4, 4),
     },
     introContainerLarge: {
-      padding: theme.spacing(8, 2, 12)
+      padding: theme.spacing(8, 4, 12)
     },
     introText: {
       color: theme.palette.text.secondary,

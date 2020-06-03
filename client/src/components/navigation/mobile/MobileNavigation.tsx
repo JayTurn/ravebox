@@ -10,6 +10,7 @@ import Box from '@material-ui/core/Box';
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
 import clsx from 'clsx';
 import { connect } from 'react-redux';
+import Divider from '@material-ui/core/Divider';
 import HomeRoundedIcon from '@material-ui/icons/HomeRounded';
 import InfoRoundedIcon from '@material-ui/icons/InfoRounded';
 import List from '@material-ui/core/List';
@@ -33,6 +34,10 @@ import { MobileNavigationProps } from './MobileNavigation.interface';
 const drawerWidth: number = 240;
 
 const useStyles = makeStyles((theme: Theme) => createStyles({
+  copyrightText: {
+    fontSize: '.8rem',
+    fontWeight: 500
+  },
   listBox: {
     width: drawerWidth
   },
@@ -58,6 +63,20 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
       easing: theme.transitions.easing.sharp,
       duration: theme.transitions.duration.leavingScreen,
     })
+  },
+  footerContainer: {
+    padding: theme.spacing(2)
+  },
+  footerDivider: {
+    margin: theme.spacing(4, 0, 0)
+  },
+  footerLink: {
+    color: theme.palette.text.primary,
+    display: 'block',
+    margin: theme.spacing(1, 0),
+    fontSize: '.8rem',
+    fontWeight: 500,
+    textDecoration: 'none'
   },
   linkStyle: {
     textDecoration: 'none',
@@ -234,6 +253,36 @@ const MobileNavigation: React.FC<MobileNavigationProps> = (props: MobileNavigati
             </NavLink>
           </ListItem>
         </List>
+        <Divider className={clsx(classes.footerDivider)}/>
+        <Box className={clsx(classes.footerContainer)}>
+          <NavLink
+            className={classes.footerLink}
+            onClick={toggleDrawer}
+            to={'/policies/terms'} 
+            title='Terms of Service'
+          >
+            Terms of Service
+          </NavLink>
+          <NavLink
+            className={classes.footerLink}
+            onClick={toggleDrawer}
+            to={'/policies/community-guidelines'} 
+            title='Community Guidelines'
+          >
+            Community Guidelines
+          </NavLink>
+          <NavLink
+            className={classes.footerLink}
+            onClick={toggleDrawer}
+            to={'/policies/privacy-policy'} 
+            title='Privacy Policy'
+          >
+            Privacy Policy
+          </NavLink>
+          <Typography variant='subtitle2' className={clsx(classes.copyrightText)}>
+            &copy; Copyright Ravebox 2020
+          </Typography>
+        </Box>
       </Box>
     </SwipeableDrawer>
   );
