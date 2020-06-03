@@ -79,7 +79,7 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
     padding: theme.spacing(2)
   },
   footerDivider: {
-    margin: theme.spacing(36, 0, 2)
+    margin: theme.spacing(36, 0, 0)
   },
   linkStyle: {
     textDecoration: 'none',

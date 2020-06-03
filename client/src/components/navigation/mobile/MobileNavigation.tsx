@@ -10,6 +10,7 @@ import Box from '@material-ui/core/Box';
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
 import clsx from 'clsx';
 import { connect } from 'react-redux';
+import Divider from '@material-ui/core/Divider';
 import HomeRoundedIcon from '@material-ui/icons/HomeRounded';
 import InfoRoundedIcon from '@material-ui/icons/InfoRounded';
 import List from '@material-ui/core/List';
@@ -26,6 +27,12 @@ import { withRouter } from 'react-router';
 // Actions.
 import { toggleSide } from '../../../store/navigation/Actions';
 
+// Components.
+import LinkElement from '../../elements/link/Link';
+
+// Enumerators.
+import { StyleType } from '../../elements/link/Link.enum';
+
 // Interfaces.
 import { PrivateProfile } from '../../user/User.interface';
 import { MobileNavigationProps } from './MobileNavigation.interface';
@@ -33,6 +40,10 @@ import { MobileNavigationProps } from './MobileNavigation.interface';
 const drawerWidth: number = 240;
 
 const useStyles = makeStyles((theme: Theme) => createStyles({
+  copyrightText: {
+    fontSize: '.8rem',
+    fontWeight: 500
+  },
   listBox: {
     width: drawerWidth
   },
@@ -58,6 +69,12 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
       easing: theme.transitions.easing.sharp,
       duration: theme.transitions.duration.leavingScreen,
     })
+  },
+  footerContainer: {
+    padding: theme.spacing(2)
+  },
+  footerDivider: {
+    margin: theme.spacing(4, 0, 0)
   },
   linkStyle: {
     textDecoration: 'none',
@@ -234,6 +251,15 @@ const MobileNavigation: React.FC<MobileNavigationProps> = (props: MobileNavigati
             </NavLink>
           </ListItem>
         </List>
+        <Divider className={clsx(classes.footerDivider)}/>
+        <Box className={clsx(classes.footerContainer)}>
+          <LinkElement title='Terms of Service' path={'/policies/terms'} styleType={StyleType.FOOTER_LINK} />
+          <LinkElement title='Community Guidelines' path={'/policies/community-guidelines'} styleType={StyleType.FOOTER_LINK} />
+          <LinkElement title='Privacy Policy' path={'/policies/privacy-policy'} styleType={StyleType.FOOTER_LINK} />
+          <Typography variant='subtitle2' className={clsx(classes.copyrightText)}>
+            &copy; Copyright Ravebox 2020
+          </Typography>
+        </Box>
       </Box>
     </SwipeableDrawer>
   );
