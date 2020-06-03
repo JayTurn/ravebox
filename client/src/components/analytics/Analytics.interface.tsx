@@ -22,6 +22,7 @@ export interface AnalyticsProviderProps {
 export interface AnalyticsContextProps {
   addUser: (userId: string) => (data: EventObject) => void;
   trackEvent: (name: string) => (data?: EventObject) => void;
+  trackPageView: (page: PageTracking) => void;
   trackUser: (userId: string) => void;
 }
 
@@ -36,4 +37,18 @@ export type EventObject = Record<string, string | boolean | number>;
 export interface EventData {
   name: string;
   properties: EventObject;
+}
+
+/**
+ * Page data interface.
+ */
+export interface PageTracking {
+  properties: {
+    path: string;
+    title: string;
+  };
+  data?: EventObject;
+  amplitude?: {
+    label: string;
+  };
 }

@@ -23,7 +23,11 @@ import useMediaQuery from '@material-ui/core/useMediaQuery';
 import LinkElement from '../../components/elements/link/Link';
 import PageTitle from '../../components/elements/pageTitle/PageTitle';
 
+// Hooks.
+import { useAnalytics } from '../../components/analytics/Analytics.provider';
+
 // Interfaces.
+import { AnalyticsContextProps } from '../../components/analytics/Analytics.interface';
 import { PrivacyPolicyProps } from './PrivacyPolicy.interface';
 
 /**
@@ -54,14 +58,38 @@ const useStyles = makeStyles((theme: Theme) =>
  * Privacy policy route component.
  */
 const PrivacyPolicy: React.FC<PrivacyPolicyProps> = (props: PrivacyPolicyProps) => {
+  // Define the analytics context and a tracking event.
+  const analytics: AnalyticsContextProps = useAnalytics() as AnalyticsContextProps;
   const classes = useStyles();
+
+  // Create a page viewed state to avoid duplicate views.
+  const [pageViewed, setPageViewed] = React.useState<boolean>(false);
+
+  /**
+   * Set the reviews based on their sub-category groupings.
+   */
+  React.useEffect(() => {
+    if (!pageViewed) {
+      analytics.trackPageView({
+        properties: {
+          path: '/policies/privacy-policy',
+          title: 'Privacy policy'
+        },
+        amplitude: {
+          label: 'view privacy policy'
+        }
+      });
+      setPageViewed(true);
+    }
+  }, [pageViewed, setPageViewed]);
+
   return (
     <Grid
       container
       direction='column'
     >
       <Helmet>
-        <title>Privacy Policy - ravebox</title>
+        <title>Privacy Policy - Ravebox</title>
         <link rel='canonical' href='https://ravebox.io/policies/privacy-policy' />
       </Helmet>
       <PageTitle title='Privacy policy' />

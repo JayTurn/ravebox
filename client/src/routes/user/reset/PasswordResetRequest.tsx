@@ -16,7 +16,11 @@ import Typography from '@material-ui/core/Typography';
 import PaddedDivider from '../../../components/elements/dividers/PaddedDivider';
 import PageTitle from '../../../components/elements/pageTitle/PageTitle';
 
+// Hooks.
+import { useAnalytics } from '../../../components/analytics/Analytics.provider';
+
 // Interfaces.
+import { AnalyticsContextProps } from '../../../components/analytics/Analytics.interface';
 import {
   PasswordResetRequestProps,
 } from './PasswordResetRequest.interface';
@@ -30,6 +34,29 @@ import ForgotPasswordForm from '../../../components/user/forgotPasswordForm/Forg
 const PasswordResetRequest: React.FC<PasswordResetRequestProps> = (
   props: PasswordResetRequestProps
 ) => {
+  // Define the analytics context and a tracking event.
+  const analytics: AnalyticsContextProps = useAnalytics() as AnalyticsContextProps;
+
+  // Create a page viewed state to avoid duplicate views.
+  const [pageViewed, setPageViewed] = React.useState<boolean>(false);
+
+  /**
+   * Set the reviews based on their sub-category groupings.
+   */
+  React.useEffect(() => {
+
+    // Track the category list page view.
+    if (!pageViewed) {
+      analytics.trackPageView({
+        properties: {
+          path: props.location.pathname,
+          title: 'Account recovery'
+        }
+      });
+      setPageViewed(true);
+    }
+
+  }, [pageViewed, props.location.pathname]);
 
   return (
     <Grid

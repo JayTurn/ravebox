@@ -202,12 +202,21 @@ const ViewProduct: React.FC<ViewProductProps> = (props: ViewProductProps) => {
               ? product.categories[1].key
               : '';
 
-      analytics.trackEvent('view product')({
-        'product brand': product.brand,
-        'product category': category,
-        'product sub-category': subCategory,
-        'product id': product._id,
-        'product name': product.name
+      analytics.trackPageView({
+        properties: {
+          path: props.location.pathname,
+          title: `${product.brand} ${product.name} reviews`
+        },
+        data: {
+          'product brand': product.brand,
+          'product category': category,
+          'product sub-category': subCategory,
+          'product id': product._id,
+          'product name': product.name
+        },
+        amplitude: {
+          label: 'view product'
+        }
       });
 
       setPageViewed(true);
@@ -221,7 +230,7 @@ const ViewProduct: React.FC<ViewProductProps> = (props: ViewProductProps) => {
         <React.Fragment>
           <PageTitle title={`${product.brand} ${product.name} reviews`} />
           <Helmet>
-            <title>{product.brand} {product.name} reviews - ravebox</title>
+            <title>{product.brand} {product.name} reviews - Ravebox</title>
             <link rel='canonical' href={`https://ravebox.io/product/${product.url}`} />
           </Helmet>
         </React.Fragment>

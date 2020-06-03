@@ -41,9 +41,11 @@ import {
 import { ScreenContext } from '../../../components/review/Review.enum';
 
 // Hooks.
+import { useAnalytics } from '../../../components/analytics/Analytics.provider';
 import { useRetrieveChannel } from './useRetrieveChannel';
 
 // Interfaces.
+import { AnalyticsContextProps } from '../../../components/analytics/Analytics.interface';
 import {
   ChannelDetails,
   ChannelProps,
@@ -108,6 +110,9 @@ const frontloadReviewDetails = async (props: ChannelProps) => {
  * Channel component.
  */
 const Channel: React.FC<ChannelProps> = (props: ChannelProps) => {
+  // Define the analytics context and a tracking event.
+  const analytics: AnalyticsContextProps = useAnalytics() as AnalyticsContextProps;
+
   // Define the component classes.
   const classes = useStyles(),
         theme = useTheme(),
@@ -122,6 +127,26 @@ const Channel: React.FC<ChannelProps> = (props: ChannelProps) => {
     channel: props.channel,
     updateActive: props.updateActive
   });
+
+  // Create a page viewed state to avoid duplicate views.
+  const [pageViewed, setPageViewed] = React.useState<boolean>(false);
+
+  /**
+   * Set the reviews based on their sub-category groupings.
+   */
+  React.useEffect(() => {
+    // Track the category list page view.
+    if (!pageViewed && props.channel && props.channel.profile) {
+      analytics.trackPageView({
+        properties: {
+          path: props.location.pathname,
+          title: `${props.channel.profile.handle} reviews`
+        }
+      });
+      setPageViewed(true);
+    }
+
+  }, [pageViewed, props.location.pathname, props.channel]);
 
   return (
     <React.Fragment>

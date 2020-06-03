@@ -9,12 +9,14 @@ import {
   Identify 
 } from 'amplitude-js';
 import * as React from 'react';
+import ReactGA from 'react-ga';
 
 // Interfaces.
 import {
   AnalyticsContextProps,
   AnalyticsProviderProps,
-  EventObject
+  EventObject,
+  PageTracking
 } from './Analytics.interface';
 
 // Create an analytics context.
@@ -41,14 +43,13 @@ export const AnalyticsProvider = (
 
     return new Promise<AmplitudeClient>((resolve: Function, reject: Function) => {
       if (typeof window !== 'undefined' && !Amplitude) {
-
         const amplitude = require('amplitude-js');
-
         const amplitudeInstance = amplitude.getInstance();
-
         amplitudeInstance.init(`${process.env.RAZZLE_AMPLITUDE_KEY}`);
-
         setAmplitude(amplitudeInstance);
+
+        // Initialize google analytics.
+        ReactGA.initialize(`${process.env.RAZZLE_GA_KEY}`);
 
         resolve(amplitudeInstance);
       } else {
@@ -141,6 +142,34 @@ export const AnalyticsProvider = (
   }
 
   /**
+   * Tracks a page view.
+   *
+   * @param { string } name - the name of the event.
+   * @param { EventObject } data? - optional data parameter.
+   */
+  const trackPageView: (
+    page: PageTracking
+  ) => void = (
+    page: PageTracking
+  ): void => {
+    if (Amplitude) {
+      if (page.amplitude) {
+        trackEvent(page.amplitude.label)(page.data);
+      }
+      ReactGA.pageview(page.properties.path, undefined, page.properties.title);
+    } else {
+      initialize()
+        .then((instance: AmplitudeClient) => {
+          if (page.amplitude) {
+            trackEvent(page.amplitude.label)(page.data);
+          }
+          ReactGA.pageview(page.properties.path, undefined, page.properties.title);
+        });
+    }
+      
+  }
+
+  /**
    * Sets the user id for the current session.
    *
    * @param { string } userId - the id of the user.
@@ -184,6 +213,7 @@ export const AnalyticsProvider = (
   const contextState: AnalyticsContextProps = {
     addUser,
     trackEvent,
+    trackPageView,
     trackUser
   }
 

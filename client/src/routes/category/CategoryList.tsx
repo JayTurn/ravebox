@@ -205,16 +205,25 @@ const CategoryList: React.FC<CategoryListProps> = (props: CategoryListProps) => 
     }
 
     // Track the category list page view.
-    if (!pageViewed) {
+    if (!pageViewed && category) {
 
-      analytics.trackEvent('view category list')({
-        'category': categoryKey
+      analytics.trackPageView({
+        properties: {
+          path: props.location.pathname,
+          title: category.label
+        },
+        data: {
+          'category': categoryKey
+        },
+        amplitude: {
+          label: 'view category list'
+        }
       });
 
       setPageViewed(true);
     }
 
-  }, [props.match.params, queries, category, pageViewed]);
+  }, [props.match.params, queries, category, pageViewed, props.location.pathname]);
 
   /**
    * Render the home route component.
@@ -228,7 +237,7 @@ const CategoryList: React.FC<CategoryListProps> = (props: CategoryListProps) => 
         <React.Fragment>
           <PageTitle title={`${category.label}`} />
           <Helmet>
-            <title>{category.label} reviews - ravebox</title>
+            <title>{category.label} reviews - Ravebox</title>
             <link rel='canonical' href='https://ravebox.io/about' />
           </Helmet>
         </React.Fragment>

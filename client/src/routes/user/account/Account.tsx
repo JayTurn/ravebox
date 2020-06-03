@@ -14,15 +14,43 @@ import * as React from 'react';
 // Components.
 import Settings from '../../../components/user/settings/Settings';
 
+// Hooks.
+import { useAnalytics } from '../../../components/analytics/Analytics.provider';
+
 // Interfaces.
 import {
   AccountProps,
 } from './Account.interface';
+import { AnalyticsContextProps } from '../../../components/analytics/Analytics.interface';
 
 /**
  * Account component.
  */
 const Account: React.FC<AccountProps> = (props: AccountProps) => {
+
+  // Define the analytics context and a tracking event.
+  const analytics: AnalyticsContextProps = useAnalytics() as AnalyticsContextProps;
+
+  // Create a page viewed state to avoid duplicate views.
+  const [pageViewed, setPageViewed] = React.useState<boolean>(false);
+
+  /**
+   * Set the reviews based on their sub-category groupings.
+   */
+  React.useEffect(() => {
+    // Track the category list page view.
+    if (!pageViewed) {
+      analytics.trackPageView({
+        properties: {
+          path: props.location.pathname,
+          title: 'Account settings'
+        }
+      });
+      setPageViewed(true);
+    }
+
+  }, [pageViewed]);
+
 
   return (
     <div style={{flexGrow: 1, marginTop: '3rem' }}>
@@ -32,7 +60,7 @@ const Account: React.FC<AccountProps> = (props: AccountProps) => {
         justify='flex-start'
       >
         <Helmet>
-          <title>Account settings - ravebox</title>
+          <title>Account settings - Ravebox</title>
           <link rel='canonical' href='https://ravebox.io/account' />
         </Helmet>
         <Settings />

@@ -23,7 +23,11 @@ import useMediaQuery from '@material-ui/core/useMediaQuery';
 import LinkElement from '../../components/elements/link/Link';
 import PageTitle from '../../components/elements/pageTitle/PageTitle';
 
+// Hooks.
+import { useAnalytics } from '../../components/analytics/Analytics.provider';
+
 // Interfaces.
+import { AnalyticsContextProps } from '../../components/analytics/Analytics.interface';
 import { TermsOfServiceProps } from './TermsOfService.interface';
 
 /**
@@ -54,14 +58,39 @@ const useStyles = makeStyles((theme: Theme) =>
  * Terms of service route component.
  */
 const TermsOfService: React.FC<TermsOfServiceProps> = (props: TermsOfServiceProps) => {
+  // Define the analytics context and a tracking event.
+  const analytics: AnalyticsContextProps = useAnalytics() as AnalyticsContextProps;
+
   const classes = useStyles();
+
+  // Create a page viewed state to avoid duplicate views.
+  const [pageViewed, setPageViewed] = React.useState<boolean>(false);
+
+  /**
+   * Set the reviews based on their sub-category groupings.
+   */
+  React.useEffect(() => {
+    if (!pageViewed) {
+      analytics.trackPageView({
+        properties: {
+          path: '/policies/terms',
+          title: 'Terms of Service'
+        },
+        amplitude: {
+          label: 'view terms'
+        }
+      });
+      setPageViewed(true);
+    }
+  }, [pageViewed, setPageViewed]);
+
   return (
     <Grid
       container
       direction='column'
     >
       <Helmet>
-        <title>Terms of service - ravebox</title>
+        <title>Terms of service - Ravebox</title>
         <link rel='canonical' href='https://ravebox.io/policies/terms' />
       </Helmet>
       <PageTitle title='Terms of service' />

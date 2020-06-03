@@ -114,7 +114,15 @@ const About: React.FC<AboutProps> = (props: AboutProps) => {
    */
   React.useEffect(() => {
     if (!pageViewed) {
-      analytics.trackEvent('view about')();
+      analytics.trackPageView({
+        properties: {
+          path: '/about',
+          title: 'About Ravebox'
+        },
+        amplitude: {
+          label: 'view about'
+        }
+      });
       setPageViewed(true);
     }
   }, [pageViewed]);
@@ -128,7 +136,7 @@ const About: React.FC<AboutProps> = (props: AboutProps) => {
       direction='column'
     >
       <Helmet>
-        <title>About ravebox - ravebox</title>
+        <title>About Ravebox - Ravebox</title>
         <link rel='canonical' href='https://ravebox.io/about' />
       </Helmet>
       <Grid item xs={12} className={clsx(
