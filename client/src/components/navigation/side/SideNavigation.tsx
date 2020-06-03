@@ -4,11 +4,20 @@
  */
 
 // Modules.
-import * as React from 'react';
-import { bindActionCreators, Dispatch, AnyAction } from 'redux';
-import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
+import {
+  AnyAction,
+  bindActionCreators,
+  Dispatch
+} from 'redux';
+import Box from '@material-ui/core/Box';
 import clsx from 'clsx';
+import {
+  createStyles,
+  makeStyles,
+  Theme
+} from '@material-ui/core/styles';
 import { connect } from 'react-redux';
+import Divider from '@material-ui/core/Divider';
 import Drawer from '@material-ui/core/Drawer';
 import HomeRoundedIcon from '@material-ui/icons/HomeRounded';
 import InfoRoundedIcon from '@material-ui/icons/InfoRounded';
@@ -17,6 +26,7 @@ import ListItem from '@material-ui/core/ListItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
 import { NavLink } from 'react-router-dom';
+import * as React from 'react';
 import SubscriptionsRoundedIcon from '@material-ui/icons/SubscriptionsRounded';
 import Typography from '@material-ui/core/Typography';
 import VideocamRoundedIcon from '@material-ui/icons/VideocamRounded';
@@ -25,6 +35,12 @@ import { withRouter } from 'react-router';
 // Actions.
 import { toggleSide } from '../../../store/navigation/Actions';
 
+// Components.
+import LinkElement from '../../elements/link/Link';
+
+// Enumerators.
+import { StyleType } from '../../elements/link/Link.enum';
+
 // Interfaces.
 import { PrivateProfile } from '../../user/User.interface';
 import { SideNavigationProps } from './SideNavigation.interface';
@@ -32,6 +48,10 @@ import { SideNavigationProps } from './SideNavigation.interface';
 const drawerWidth: number = 240;
 
 const useStyles = makeStyles((theme: Theme) => createStyles({
+  copyrightText: {
+    fontSize: '.8rem',
+    fontWeight: 500
+  },
   drawer: {
     flexShrink: 0,
     whiteSpace: 'nowrap',
@@ -54,6 +74,12 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
       easing: theme.transitions.easing.sharp,
       duration: theme.transitions.duration.leavingScreen,
     })
+  },
+  footerContainer: {
+    padding: theme.spacing(2)
+  },
+  footerDivider: {
+    margin: theme.spacing(36, 0, 2)
   },
   linkStyle: {
     textDecoration: 'none',
@@ -157,12 +183,12 @@ const SideNavigation: React.FC<SideNavigationProps> = (props: SideNavigationProp
             </ListItemIcon>
             <ListItemText disableTypography className={clsx({
               [classes.listButtonTextOpen]: props.expanded,
-              [classes.listButtonTextClosed]: !props.expanded,
-              [classes.listButtonTextActive]: activePath === '/'
+              [classes.listButtonTextClosed]: !props.expanded
             })}>
               <Typography variant='subtitle2' className={clsx({
                 [classes.listButtonTypographyOpen]: props.expanded,
-                [classes.listButtonTypographyClosed]: !props.expanded
+                [classes.listButtonTypographyClosed]: !props.expanded,
+                [classes.listButtonTextActive]: activePath === '/'
               })}>Home</Typography>
             </ListItemText>
           </NavLink>
@@ -184,12 +210,12 @@ const SideNavigation: React.FC<SideNavigationProps> = (props: SideNavigationProp
             </ListItemIcon>
             <ListItemText disableTypography className={clsx({
               [classes.listButtonTextOpen]: props.expanded,
-              [classes.listButtonTextClosed]: !props.expanded,
-              [classes.listButtonTextActive]: activePath === '/discover'
+              [classes.listButtonTextClosed]: !props.expanded
             })}>
               <Typography variant='subtitle2' className={clsx({
                 [classes.listButtonTypographyOpen]: props.expanded,
-                [classes.listButtonTypographyClosed]: !props.expanded
+                [classes.listButtonTypographyClosed]: !props.expanded,
+                [classes.listButtonTextActive]: activePath === '/discover'
               })}>Discover</Typography>
             </ListItemText>
           </NavLink>
@@ -211,12 +237,12 @@ const SideNavigation: React.FC<SideNavigationProps> = (props: SideNavigationProp
             </ListItemIcon>
             <ListItemText disableTypography className={clsx({
               [classes.listButtonTextOpen]: props.expanded,
-              [classes.listButtonTextClosed]: !props.expanded,
-              [classes.listButtonTextActive]: activePath === '/product/add'
+              [classes.listButtonTextClosed]: !props.expanded
             })}>
               <Typography variant='subtitle2' className={clsx({
                 [classes.listButtonTypographyOpen]: props.expanded,
-                [classes.listButtonTypographyClosed]: !props.expanded
+                [classes.listButtonTypographyClosed]: !props.expanded,
+                [classes.listButtonTextActive]: activePath === '/product/add'
               })}>Rave</Typography>
             </ListItemText>
           </NavLink>
@@ -239,16 +265,29 @@ const SideNavigation: React.FC<SideNavigationProps> = (props: SideNavigationProp
             <ListItemText disableTypography className={clsx({
               [classes.listButtonTextOpen]: props.expanded,
               [classes.listButtonTextClosed]: !props.expanded,
-              [classes.listButtonTextActive]: activePath === '/about'
             })}>
               <Typography variant='subtitle2' className={clsx({
                 [classes.listButtonTypographyOpen]: props.expanded,
-                [classes.listButtonTypographyClosed]: !props.expanded
+                [classes.listButtonTypographyClosed]: !props.expanded,
+                [classes.listButtonTextActive]: activePath === '/about'
               })}>About</Typography>
             </ListItemText>
           </NavLink>
         </ListItem>
       </List>
+      {props.expanded &&
+        <React.Fragment>
+          <Divider className={clsx(classes.footerDivider)}/>
+          <Box className={clsx(classes.footerContainer)}>
+            <LinkElement title='Terms of Service' path={'/policies/terms'} styleType={StyleType.FOOTER_LINK} />
+            <LinkElement title='Community Guidelines' path={'/policies/community-guidelines'} styleType={StyleType.FOOTER_LINK} />
+            <LinkElement title='Privacy Policy' path={'/policies/privacy-policy'} styleType={StyleType.FOOTER_LINK} />
+            <Typography variant='subtitle2' className={clsx(classes.copyrightText)}>
+              &copy; Copyright Ravebox 2020
+            </Typography>
+          </Box>
+        </React.Fragment>
+      }
     </Drawer>
   );
 }

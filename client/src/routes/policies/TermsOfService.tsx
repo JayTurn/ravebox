@@ -91,7 +91,7 @@ const TermsOfService: React.FC<TermsOfServiceProps> = (props: TermsOfServiceProp
           Applicable terms
         </Typography>
         <Typography variant='body1' className={clsx(classes.paragraph)}>
-          When using the Service, you will be subject to the Ravebox’s <LinkElement title='Community Guidelines' path='/policies/community-guidelines'/>, the <LinkElement title='Privacy, Safety and Copyright Policies' path='/policies/privacy-policy'/> and additional terms and conditions and policies posted on the Ravebox Terms of Service and linked within, which may be updated from time to time (collectively referred to as the “Agreement”).
+          When using the Service, you will be subject to the Ravebox’s <LinkElement title='Community Guidelines' path='/policies/community-guidelines'/>, the <LinkElement title='Privacy Policy' path='/policies/privacy-policy'/> and additional terms and conditions and policies posted on the Ravebox Terms of Service and linked within, which may be updated from time to time (collectively referred to as the “Agreement”).
         </Typography>
         <Typography variant='body1' className={clsx(classes.paragraph)}>
           Please read this Agreement carefully and ensure you understand it. The Agreement is legally binding, if you do not understand it or do not accept any part of it, you may not use the Service.
@@ -145,7 +145,7 @@ const TermsOfService: React.FC<TermsOfServiceProps> = (props: TermsOfServiceProp
           Your privacy
         </Typography>
         <Typography variant='body1' className={clsx(classes.paragraph)}>
-          Ravebox takes your privacy seriously. Please read our <LinkElement title='Privacy, Safety and Copyright Policies' path='/policies/privacy-policy'/> to understand how Ravebox manages your personal data and ensures your privacy when using the Service.
+          Ravebox takes your privacy seriously. Please read our <LinkElement title='Privacy Policy' path='/policies/privacy-policy'/> to understand how Ravebox manages your personal data and ensures your privacy when using the Service.
         </Typography>
         <Typography variant='h3' className={clsx(classes.subHeading)}>
           Service permissions and restrictions

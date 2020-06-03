@@ -103,7 +103,7 @@ const PrivacyPolicy: React.FC<PrivacyPolicyProps> = (props: PrivacyPolicyProps) 
           Cookies
         </Typography>
         <Typography variant='body1' className={clsx(classes.paragraph)}>
-          “Cookies” are data files that are placed on your device or computer and often include an encrypted unique identifier. We use cookies to authenticate your access to the Service and collect anonymous Engagement Data to improve the user experience. For more information about cookies, and how to disable cookies, visit <Link href='http://www.allaboutcookies.org' target='_blank'>http://www.allaboutcookies.org</Link>
+          “Cookies” are data files that are placed on your device or computer and often include an encrypted unique identifier. We use cookies to authenticate your access to the Service and collect anonymous Engagement Data to improve the user experience. For more information about cookies, and how to disable cookies, visit <Link href='https://www.allaboutcookies.org' target='_blank'>https://www.allaboutcookies.org</Link>
         </Typography>
         <Typography variant='h3' className={clsx(classes.subHeading)}>
           Log files

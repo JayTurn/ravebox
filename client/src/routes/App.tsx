@@ -43,6 +43,7 @@ import AddProduct from './product/add/AddProduct';
 import AddReview from './review/add/AddReview';
 import { AnalyticsProvider } from '../components/analytics/Analytics.provider';
 import CategoryList from './category/CategoryList';
+import CommunityGuidelines from './policies/CommunityGuidelines';
 import Discover from './discover/Discover';
 import EditReview from './review/edit/EditReview';
 import Home from './home/Home';
@@ -197,6 +198,9 @@ const App: React.FC<AppProps> = (props: AppProps) => {
                       </Route>
                       <Route exact={true} path="/discover">
                         <Discover />
+                      </Route>
+                      <Route exact={true} path="/policies/community-guidelines">
+                        <CommunityGuidelines />
                       </Route>
                       <Route exact={true} path="/policies/privacy-policy">
                         <PrivacyPolicy />

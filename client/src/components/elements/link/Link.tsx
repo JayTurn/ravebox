@@ -106,6 +106,13 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
       backgroundColor: `rgba(224,255,251,1)`
     }
   },
+  footerLink: {
+    color: theme.palette.text.primary,
+    display: 'block',
+    margin: theme.spacing(1, 0),
+    fontSize: '.8rem',
+    fontWeight: 500
+  },
   searchResultItem: {
     color: `rgba(33,36,104, 0.8)`,
     display: 'block',
@@ -140,16 +147,15 @@ const LinkElement: React.FC<LinkProps> = (props: LinkProps) => {
         [classes.buttonPrimaryInverse]: styleType === StyleType.BUTTON_PRIMARY_INVERSE,
         [classes.buttonSecondary]: styleType === StyleType.BUTTON_SECONDARY,
         [classes.buttonSecondaryInverse]: styleType === StyleType.BUTTON_SECONDARY_INVERSE,
+        [classes.footerLink]: styleType === StyleType.FOOTER_LINK,
         [classes.searchResultItem]: styleType === StyleType.SEARCH_RESULT_ITEM
       })}
       color={props.color}
-      component={({className, children}) => {
-        return (
-          <ReactLink className={className} to={props.path} title={props.title}>
-            {children}
-          </ReactLink>
-        );
-      }}
+      component={({className, children}) => (
+        <ReactLink className={className} to={props.path} title={props.title}>
+          {children}
+        </ReactLink>
+      )}
     >
     { props.title }
     </Link>
