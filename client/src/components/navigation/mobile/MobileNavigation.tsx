@@ -27,12 +27,6 @@ import { withRouter } from 'react-router';
 // Actions.
 import { toggleSide } from '../../../store/navigation/Actions';
 
-// Components.
-import LinkElement from '../../elements/link/Link';
-
-// Enumerators.
-import { StyleType } from '../../elements/link/Link.enum';
-
 // Interfaces.
 import { PrivateProfile } from '../../user/User.interface';
 import { MobileNavigationProps } from './MobileNavigation.interface';
@@ -75,6 +69,14 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
   },
   footerDivider: {
     margin: theme.spacing(4, 0, 0)
+  },
+  footerLink: {
+    color: theme.palette.text.primary,
+    display: 'block',
+    margin: theme.spacing(1, 0),
+    fontSize: '.8rem',
+    fontWeight: 500,
+    textDecoration: 'none'
   },
   linkStyle: {
     textDecoration: 'none',
@@ -253,9 +255,30 @@ const MobileNavigation: React.FC<MobileNavigationProps> = (props: MobileNavigati
         </List>
         <Divider className={clsx(classes.footerDivider)}/>
         <Box className={clsx(classes.footerContainer)}>
-          <LinkElement title='Terms of Service' path={'/policies/terms'} styleType={StyleType.FOOTER_LINK} />
-          <LinkElement title='Community Guidelines' path={'/policies/community-guidelines'} styleType={StyleType.FOOTER_LINK} />
-          <LinkElement title='Privacy Policy' path={'/policies/privacy-policy'} styleType={StyleType.FOOTER_LINK} />
+          <NavLink
+            className={classes.footerLink}
+            onClick={toggleDrawer}
+            to={'/policies/terms'} 
+            title='Terms of Service'
+          >
+            Terms of Service
+          </NavLink>
+          <NavLink
+            className={classes.footerLink}
+            onClick={toggleDrawer}
+            to={'/policies/community-guidelines'} 
+            title='Community Guidelines'
+          >
+            Community Guidelines
+          </NavLink>
+          <NavLink
+            className={classes.footerLink}
+            onClick={toggleDrawer}
+            to={'/policies/privacy-policy'} 
+            title='Privacy Policy'
+          >
+            Privacy Policy
+          </NavLink>
           <Typography variant='subtitle2' className={clsx(classes.copyrightText)}>
             &copy; Copyright Ravebox 2020
           </Typography>

@@ -81,6 +81,14 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
   footerDivider: {
     margin: theme.spacing(36, 0, 0)
   },
+  footerLink: {
+    color: theme.palette.text.primary,
+    display: 'block',
+    margin: theme.spacing(1, 0),
+    fontSize: '.8rem',
+    fontWeight: 500,
+    textDecoration: 'none'
+  },
   linkStyle: {
     textDecoration: 'none',
     color: theme.palette.text.primary,
@@ -279,9 +287,27 @@ const SideNavigation: React.FC<SideNavigationProps> = (props: SideNavigationProp
         <React.Fragment>
           <Divider className={clsx(classes.footerDivider)}/>
           <Box className={clsx(classes.footerContainer)}>
-            <LinkElement title='Terms of Service' path={'/policies/terms'} styleType={StyleType.FOOTER_LINK} />
-            <LinkElement title='Community Guidelines' path={'/policies/community-guidelines'} styleType={StyleType.FOOTER_LINK} />
-            <LinkElement title='Privacy Policy' path={'/policies/privacy-policy'} styleType={StyleType.FOOTER_LINK} />
+          <NavLink
+            className={classes.footerLink}
+            to={'/policies/terms'} 
+            title='Terms of Service'
+          >
+            Terms of Service
+          </NavLink>
+          <NavLink
+            className={classes.footerLink}
+            to={'/policies/community-guidelines'} 
+            title='Community Guidelines'
+          >
+            Community Guidelines
+          </NavLink>
+          <NavLink
+            className={classes.footerLink}
+            to={'/policies/privacy-policy'} 
+            title='Privacy Policy'
+          >
+            Privacy Policy
+          </NavLink>
             <Typography variant='subtitle2' className={clsx(classes.copyrightText)}>
               &copy; Copyright Ravebox 2020
             </Typography>
