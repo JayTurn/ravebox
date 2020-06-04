@@ -4,6 +4,7 @@
  */
 
 // Modules.
+import * as WinstonCloudWatch from 'winston-cloudwatch';
 import EnvConfig from '../../config/environment/environmentBaseConfig';
 import * as Winston from 'winston';
 
@@ -17,7 +18,7 @@ import { LogLevel } from './Logging.enum';
 /*
 const logger = Winston.createLogger({
   transports: [
-    new CloudWatch({
+    new WinstonCloudWatch({
       awsAccessKeyId: EnvConfig.aws.accessKeyId,
       awsRegion: 'us-east-1',
       awsSecretKey: EnvConfig.aws.secretAccessKey,
