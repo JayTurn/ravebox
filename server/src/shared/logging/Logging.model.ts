@@ -4,7 +4,6 @@
  */
 
 // Modules.
-import * as CloudWatch from 'winston-cloudwatch';
 import EnvConfig from '../../config/environment/environmentBaseConfig';
 import * as Winston from 'winston';
 
