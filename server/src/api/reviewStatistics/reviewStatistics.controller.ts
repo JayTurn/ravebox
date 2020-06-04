@@ -6,6 +6,7 @@
 import Authenticate from '../../models/authentication/authenticate.model';
 import Connect from '../../models/database/connect.model';
 import * as Jwt from 'jsonwebtoken';
+import Logging from '../../shared/logging/Logging.model';
 import {
   Request,
   Response,
@@ -15,6 +16,7 @@ import ReviewStatisticsCommon from './reviewStatistics.common';
 import UserStatisticsCommon from '../userStatistics/userStatistics.common';
 
 // Enumerators.
+import { LogLevel } from '../../shared/logging/Logging.enum';
 import { RatingOptions } from './reviewStatistics.enum';
 
 // Interfaces.
@@ -108,6 +110,8 @@ export default class ReviewStatisticsController {
             title: `A review id wasn't provided for the rating`
           }
         }, 404, `A review id wasn't provided for the rating`);
+
+      Logging.Send(LogLevel.WARNING, responseObject);
 
       // Return the response.
       response.status(responseObject.status).json(responseObject.data);
@@ -203,14 +207,17 @@ export default class ReviewStatisticsController {
       // Return the response.
       response.status(responseObject.status).json(responseObject.data);
     })
-    .catch(() => {
+    .catch((error: Error) => {
       // Define the responseObject.
       const responseObject: ResponseObject = Connect.setResponse({
           data: {
             errorCode: 'REVIEW_NOT_RATED',
             title: `We couldn't add your rating for this review`
-          }
-        }, 404, `We couldn't add your rating for this review`);
+          },
+          error: error
+        }, 404, `${(request.user) ? request.user.handle : ''} rated ${id} unsucessfully`);
+
+      Logging.Send(LogLevel.ERROR, responseObject);
 
       // Return the response.
       response.status(responseObject.status).json(responseObject.data);
@@ -259,7 +266,19 @@ export default class ReviewStatisticsController {
       response.status(responseObject.status).json(responseObject.data);
     })
     .catch((error: Error) => {
-      console.log(error);
+
+      // Define the responseObject.
+      const responseObject: ResponseObject = Connect.setResponse({
+          data: {
+            errorCode: 'FAILED_TO_CREATE_RATING_TOKEN',
+            title: `We couldn't add your rating for this review`
+          },
+          error: error
+        }, 404, `Failed to create a rating token for ${reviewId}`);
+
+      Logging.Send(LogLevel.ERROR, responseObject);
+
+      response.status(responseObject.status).json(responseObject.data);
     })
   }
 
@@ -328,15 +347,18 @@ export default class ReviewStatisticsController {
       // Return the response.
       response.status(responseObject.status).json(responseObject.data);
     })
-    .catch(() => {
+    .catch((error: Error) => {
 
       // Define the responseObject.
       const responseObject: ResponseObject = Connect.setResponse({
           data: {
             errorCode: 'RATINGS_NOT_FOUND_FOR_REVIEW',
             title: `No ratings have been provided for this review`
-          }
+          },
+          error: error
         }, 404, `No ratings have been provided for this review`);
+
+      Logging.Send(LogLevel.ERROR, responseObject);
 
       // Return the response.
       response.status(responseObject.status).json(responseObject.data);

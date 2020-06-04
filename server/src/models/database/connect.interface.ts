@@ -5,6 +5,7 @@
 // Response object interface.
 export interface ResponseObject {
   data: Record<string, {}>;
+  error?: Error;
   status?: number;
 }
 

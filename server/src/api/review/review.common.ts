@@ -4,6 +4,8 @@
  */
 
 // Modules.
+import Connect from '../../models/database/connect.model';
+import Logging from '../../shared/logging/Logging.model';
 import Notifications from '../../shared/notifications/Notifications.model';
 import Review from './review.model';
 
@@ -12,6 +14,7 @@ import {
   EmailTemplate,
   ContactList
 } from '../../shared/notifications/Notifications.enum';
+import { LogLevel } from '../../shared/logging/Logging.enum';
 import { Workflow } from '../../shared/enumerators/workflow.enum';
 
 // Interfaces.
@@ -84,7 +87,16 @@ export default class ReviewCommon {
         });
       })
       .catch((error: Error) => {
-        console.log(error);
+        // Return an error indicating the review wasn't created.
+        const responseObject = Connect.setResponse({
+          data: {
+            errorCode: 'FAILED_TO_PUBLISH_REVIEW',
+            message: 'There was a problem publishing the review'
+          },
+          error: error
+        }, 401, `${publishMessage.reviewId} review failed to publish`);
+
+        Logging.Send(LogLevel.ERROR, responseObject);
       });
   }
 
@@ -129,7 +141,16 @@ export default class ReviewCommon {
 
       })
       .catch((error: Error) => {
-        console.log(error);
+        // Return an error indicating the review wasn't created.
+        const responseObject = Connect.setResponse({
+          data: {
+            errorCode: 'VIDEO_PROCESSING_FAILED',
+            message: 'There was a problem processing the video'
+          },
+          error: error
+        }, 401, `${publishMessage.reviewId} : Review video failed processing`);
+
+        Logging.Send(LogLevel.ERROR, responseObject);
       });
   }
 
@@ -290,7 +311,6 @@ export default class ReviewCommon {
         resolve(reviewGroups);
       })
       .catch((error: Error) => {
-        console.log(error);
         reject(error);
       })
     });
@@ -425,35 +445,4 @@ export default class ReviewCommon {
 
     return `${brandName}/${productName}/${reviewTitle}`;
   }
-
-  /**
-   * Captures all of the expected thumbnail images.
-   *
-   * @param { Array<string> } thumbnails - the list of thumbnail images.
-   */
-  /*
-  static captureThumbnails(thumbnails: Array<string>): Array<string> {
-    if (!thumbnails || thumbnails.length === 0) {
-      return thumbnails;
-    }
-
-    const latest: string = thumbnails[0],
-          items: Array<string> = [];
-
-    // Get the thumbnail pattern.
-    const compartments: Array<string> = latest.split('.'),
-          filename: string = latest.substr(0, latest.lastIndexOf('.') - 1),
-          imageNumberText = compartments[compartments.length - 2],
-          characterCount = imageNumberText.length;
-
-    const imageNumber = +imageNumberText;
-
-    let i = 0;
-
-    do {
-      items.push(`${filename}.`);
-      i++;
-    } while { i < imageNumber }
-  }
-  */
 }

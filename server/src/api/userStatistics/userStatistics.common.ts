@@ -4,6 +4,8 @@
  */
 
 // Modules.
+import Connect from '../../models/database/connect.model';
+import Logging from '../../shared/logging/Logging.model';
 import {
   NextFunction,
   Response
@@ -11,6 +13,7 @@ import {
 import UserStatistics from './userStatistics.model';
 
 // Enumerators.
+import { LogLevel } from '../../shared/logging/Logging.enum';
 import { RatingOptions } from '../reviewStatistics/reviewStatistics.enum';
 
 // Interfaces.
@@ -68,8 +71,17 @@ export default class UserStatisticsCommon {
       });
     })
     .catch((error: Error) => {
-      console.log(error);
-    })
+      // Attach the private user profile to the response.
+      const responseObject = Connect.setResponse({
+        data: {
+          errorCode: 'FAILED_TO_ADD_WATCH_EVENT',
+          message: 'There was a problem registering the watch event'
+        },
+        error: error
+      }, 401, 'There was a problem registering the watch event');
+
+      Logging.Send(LogLevel.ERROR, responseObject);
+    });
   }
 
   /**
@@ -95,7 +107,16 @@ export default class UserStatisticsCommon {
       }
     }, { new: true, upsert: true })
     .catch((error: Error) => {
-      console.log(error);
+      // Attach the private user profile to the response.
+      const responseObject = Connect.setResponse({
+        data: {
+          errorCode: 'FAILED_TO_ADD_RATING',
+          message: `We couldn't add the review rating`
+        },
+        error: error
+      }, 401, `Failed to add the review rating`);
+
+      Logging.Send(LogLevel.ERROR, responseObject);
     });
   }
 

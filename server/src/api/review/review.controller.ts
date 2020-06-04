@@ -10,6 +10,7 @@ import { DocumentQuery } from 'mongoose';
 import EnvConfig from '../../config/environment/environmentBaseConfig';
 import * as http from 'http';
 import * as https from 'https';
+import Logging from '../../shared/logging/Logging.model';
 import Product from '../product/product.model';
 import Review from './review.model';
 import ReviewCommon from './review.common';
@@ -19,8 +20,9 @@ import User from '../user/user.model';
 import Video from '../../shared/video/Video.model';
 
 // Enumerators.
-import { Workflow } from '../../shared/enumerators/workflow.enum';
+import { LogLevel } from '../../shared/logging/Logging.enum';
 import { SNSMessageType } from '../../shared/sns/sns.enum';
+import { Workflow } from '../../shared/enumerators/workflow.enum';
 
 // Interfaces.
 import {
@@ -201,7 +203,9 @@ export default class ReviewController {
                 review: review.details,
                 presigned: requestData
               }
-            }, 201, 'Review created successfully');
+            }, 201, `Review ${review._id} created successfully`);
+
+            Logging.Send(LogLevel.INFO, responseObject);
 
             // Return the response for the authenticated user.
             response.status(responseObject.status).json(responseObject.data);
@@ -211,14 +215,17 @@ export default class ReviewController {
             throw error;
           });
         })
-        .catch(() => {
+        .catch((error: Error) => {
           // Return an error indicating the review wasn't created.
           const responseObject = Connect.setResponse({
             data: {
               errorCode: 'REVIEW_NOT_CREATED',
               message: 'There was a problem creating your review'
-            }
+            },
+            error: error
           }, 401, 'There was a problem creating your review');
+
+          Logging.Send(LogLevel.ERROR, responseObject);
 
           // Return the error response for the user.
           response.status(401).json(responseObject.data);
@@ -262,14 +269,17 @@ export default class ReviewController {
         response.status(responseObject.status).json(responseObject.data);
 
       })
-      .catch(() => {
+      .catch((error: Error) => {
         // Return an error indicating the review wasn't created.
         const responseObject = Connect.setResponse({
           data: {
             errorCode: 'METADATA_SUBMISSION_FAILED',
             message: 'The video review metadata failed to upload'
-          }
+          },
+          error: error
         }, 401, 'The video review metadata file failed to upload');
+
+        Logging.Send(LogLevel.ERROR, responseObject);
 
         response.status(responseObject.status).json(responseObject.data);
       });
@@ -296,8 +306,11 @@ export default class ReviewController {
           data: {
             errorCode: 'SNS_VALIDATION_FAILED',
             message: 'The SNS message could not be validated with AWS'
-          }
+          },
+          error: error
         }, 401, 'The SNS message could not be validated with AWS');
+
+        Logging.Send(LogLevel.ERROR, responseObject);
 
         return response.status(responseObject.status).json(responseObject.data);
       }
@@ -312,8 +325,6 @@ export default class ReviewController {
           publishMessage = JSON.parse(message.Message);
 
           if (publishMessage.workflowStatus === 'Error') {
-            console.log('Error: ', publishMessage);
-
             ReviewCommon.ProcessingFailed(publishMessage);
             break;
           }
@@ -406,8 +417,10 @@ export default class ReviewController {
           data: {
             errorCode: 'REVIEW_NOT_FOUND',
             message: 'There was a problem retrieving this review'
-          }
-        }, 400, `The review could not be found`);
+          },
+        }, 404, `${path} review not found`);
+
+        Logging.Send(LogLevel.WARNING, responseObject);
 
         // Return the response for the authenticated user.
         response.status(responseObject.status).json(responseObject.data);
@@ -425,14 +438,17 @@ export default class ReviewController {
       // Return the response for the authenticated user.
       response.status(responseObject.status).json(responseObject.data);
     })
-    .catch(() => {
+    .catch((error: Error) => {
       // Return an error indicating the review wasn't created.
       const responseObject = Connect.setResponse({
         data: {
           errorCode: 'REVIEW_RETRIEVAL_ERROR',
           message: 'There was a problem retrieving this review'
-        }
+        },
+        error: error
       }, 401, 'There was a problem retrieving the review');
+
+      Logging.Send(LogLevel.ERROR, responseObject);
 
       // Return the error response for the user.
       response.status(401).json(responseObject.data);
@@ -497,17 +513,20 @@ export default class ReviewController {
       // Return the response for the authenticated user.
       response.status(responseObject.status).json(responseObject.data);
     })
-    .catch(() => {
+    .catch((error: Error) => {
       // Return an error indicating the review wasn't created.
       const responseObject = Connect.setResponse({
         data: {
           errorCode: 'OWN_REVIEWS_NOT_FOUND',
           message: `We experienced an issue attempting to retrieve your reviews`
-        }
+        },
+        error: error
       }, 404, `We experienced an issue attempting to retrieve your reviews`);
 
+      Logging.Send(LogLevel.ERROR, responseObject);
+
       // Return the error response for the user.
-      response.status(401).json(responseObject.data);
+      response.status(responseObject.status).json(responseObject.data);
     });
   }
 
@@ -549,7 +568,9 @@ export default class ReviewController {
             errorCode: 'EDIT_REVIEW_NOT_FOUND',
             message: 'There was a problem retrieving this review for editing'
           }
-        }, 400, `The review could not be found for editing`);
+        }, 404, `The review could not be found for editing`);
+
+        Logging.Send(LogLevel.WARNING, responseObject);
 
       } else {
 
@@ -564,14 +585,17 @@ export default class ReviewController {
       // Return the response for the authenticated user.
       response.status(responseObject.status).json(responseObject.data);
     })
-    .catch(() => {
+    .catch((error: Error) => {
       // Return an error indicating the review wasn't created.
       const responseObject = Connect.setResponse({
         data: {
           errorCode: 'EDIT_REVIEW_RETRIEVAL_ERROR',
           message: 'There was a problem retrieving this review for editing'
-        }
+        },
+        error: error
       }, 401, 'There was a problem retrieving the review for editing');
+
+      Logging.Send(LogLevel.WARNING, responseObject);
 
       // Return the error response for the user.
       response.status(401).json(responseObject.data);
@@ -598,6 +622,8 @@ export default class ReviewController {
             title: `We couldn't find reviews for the user you requested`
           }
         }, 403, `We couldn't find reviews for the user you requested`);
+
+      Logging.Send(LogLevel.WARNING, responseObject);
 
       // Return the response.
       response.status(responseObject.status).json(responseObject.data);
@@ -642,15 +668,18 @@ export default class ReviewController {
       // Return the response for the authenticated user.
       response.status(responseObject.status).json(responseObject.data);
     })
-    .catch(() => {
+    .catch((error: Error) => {
 
       // Return an error indicating the review wasn't created.
       const responseObject = Connect.setResponse({
         data: {
           errorCode: 'USER_REVIEWS_NOT_FOUND',
           message: `We experienced an issue retrieving reviews for the user`
-        }
+        },
+        error: error
       }, 404, `We experienced an issue retrieving reviews for the user`);
+
+      Logging.Send(LogLevel.ERROR, responseObject);
 
       // Return the error response for the user.
       response.status(responseObject.status).json(responseObject.data);
@@ -677,6 +706,8 @@ export default class ReviewController {
             title: `The product id is missing from the request`
           }
         }, 404, `The product id is missing from the request`);
+
+      Logging.Send(LogLevel.WARNING, responseObject);
 
       // Return the response.
       response.status(responseObject.status).json(responseObject.data);
@@ -737,15 +768,18 @@ export default class ReviewController {
       // Return the response for the authenticated user.
       response.status(responseObject.status).json(responseObject.data);
     })
-    .catch(() => {
+    .catch((error: Error) => {
 
       // Return an error indicating the list of reviews weren't found.
       const responseObject = Connect.setResponse({
         data: {
           errorCode: 'PRODUCT_REVIEWS_NOT_FOUND',
           message: `We experienced an issue retrieving reviews for the requested product`
-        }
+        },
+        error: error
       }, 404, `We experienced an issue retrieving reviews for the requested product`);
+
+      Logging.Send(LogLevel.ERROR, responseObject);
 
       // Return the error response for the user.
       response.status(responseObject.status).json(responseObject.data);
@@ -773,6 +807,8 @@ export default class ReviewController {
             title: `The category labels are missing from the request`
           }
         }, 404, `The category labels are missing from the request`);
+
+      Logging.Send(LogLevel.WARNING, responseObject);
 
       // Return the response.
       response.status(responseObject.status).json(responseObject.data);
@@ -841,7 +877,17 @@ export default class ReviewController {
           });
         })
         .catch((error: Error) => {
-          console.log(error);
+          // Define the responseObject.
+          const responseObject = Connect.setResponse({
+              data: {
+                errorCode: 'FAILED_TO_RETRIEVE_REVIEWS_BY_CATEGORY',
+                title: `The category labels are missing from the request`
+              },
+              error: error
+            }, 404, `The category labels are missing from the request`);
+
+          Logging.Send(LogLevel.ERROR, responseObject);
+
         })
       );
 
@@ -879,15 +925,18 @@ export default class ReviewController {
         // Return the response for the authenticated user.
         response.status(responseObject.status).json(responseObject.data);
       })
-      .catch(() => {
+      .catch((error: Error) => {
 
         // Return an error indicating the list of reviews weren't found.
         const responseObject = Connect.setResponse({
           data: {
             errorCode: 'REVIEWS_FOR_CATEGORY_NOT_FOUND',
             message: `We experienced an issue retrieving reviews for the requested category`
-          }
+          },
+          error: error
         }, 404, `We experienced an issue retrieving reviews for the requested category`);
+
+        Logging.Send(LogLevel.ERROR, responseObject);
 
         // Return the error response for the user.
         response.status(responseObject.status).json(responseObject.data);
@@ -942,7 +991,9 @@ export default class ReviewController {
           data: {
             review: review
           }
-        }, 200, 'Review updated successfully');
+        }, 200, `Review ${review._id}: Updated successfully`);
+
+        Logging.Send(LogLevel.INFO, responseObject);
         
         // Return the response for the successful update.
         response.status(responseObject.status).json(responseObject.data);
@@ -963,34 +1014,42 @@ export default class ReviewController {
             review: review.details,
             presigned: requestData
           }
-        }, 200, 'Review updated successfully');
+        }, 200, `Review ${review._id}: Updated successfully`);
+
+        Logging.Send(LogLevel.INFO, responseObject);
 
         // Return the response for the authenticated user.
         response.status(responseObject.status).json(responseObject.data);
 
       })
-      .catch(() => {
+      .catch((error: Error) => {
         // Return an error indicating the review wasn't created.
         const responseObject = Connect.setResponse({
           data: {
             errorCode: 'REVIEW_NOT_UPDATED',
             message: 'There was a problem updating your review'
-          }
+          },
+          error: error
         }, 401, 'There was a problem updating your review');
+
+        Logging.Send(LogLevel.ERROR, responseObject);
 
         // Return the error response for the user.
         response.status(responseObject.status).json(responseObject.data);
       });
     })
-    .catch(() => {
+    .catch((error: Error) => {
 
       // Return an error indicating the review wasn't created.
       const responseObject = Connect.setResponse({
         data: {
           errorCode: 'EDIT_REVIEW_FAILED',
           message: 'There was a problem updating your review'
-        }
+        },
+        error: error
       }, 403, 'There was a problem updating your review');
+
+      Logging.Send(LogLevel.ERROR, responseObject);
 
       // Return the error response for the user.
       response.status(401).json(responseObject.data);
@@ -1026,20 +1085,25 @@ export default class ReviewController {
         data: {
           message: 'Review removed successfully'
         }
-      }, 200, 'Review removed successfully');
+      }, 200, `Review ${id} removed successfully`);
+
+      Logging.Send(LogLevel.INFO, responseObject);
         
       // Return the response for the successful update.
       response.status(responseObject.status).json(responseObject.data);
     })
-    .catch(() => {
+    .catch((error: Error) => {
 
       // Return an error indicating the review wasn't created.
       const responseObject = Connect.setResponse({
         data: {
           errorCode: 'REMOVE_REVIEW_FAILED',
           message: 'There was a problem removing your review'
-        }
+        },
+        error: error
       }, 403, 'There was a problem removing your review');
+
+      Logging.Send(LogLevel.INFO, responseObject);
 
       // Return the error response for the user.
       response.status(401).json(responseObject.data);

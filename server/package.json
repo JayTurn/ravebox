@@ -1,7 +1,7 @@
 {
   "name": "RaveboxAPI",
   "private": true,
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Secret",
   "author": "Jay Turnbull",
   "scripts": {
@@ -69,6 +69,7 @@
     "sns-validator": "0.3.4",
     "underscore.string": "3.3.5",
     "winston": "3.2.1",
+    "winston-cloudwatch": "2.3.2",
     "winston-daily-rotate-file": "4.4.2"
   },
   "devDependencies": {

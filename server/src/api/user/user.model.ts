@@ -80,12 +80,6 @@ UserSchema
       'handle': this.handle,
       'oldEmail': this.oldEmail,
       'statistics': this.statistics
-      //'name': this.name,
-      //'phone': this.phone,
-      //'address': this.address,
-      // @todo: avatar
-      //'searchPreferences': this.searchPreferences,
-      //'settings': this.settings,
     };
   });
 

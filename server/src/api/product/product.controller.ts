@@ -5,11 +5,18 @@
 // Modules.
 import Authenticate from '../../models/authentication/authenticate.model';
 import Connect from '../../models/database/connect.model';
-import { Request, Response, Router, NextFunction } from 'express';
+import Logging from '../../shared/logging/Logging.model';
+import {
+  NextFunction,
+  Request,
+  Response,
+  Router
+} from 'express';
 import Product from './product.model';
 import Review from '../review/review.model';
 
 // Enumerators.
+import { LogLevel } from '../../shared/logging/Logging.enum';
 import { Workflow } from '../../shared/enumerators/workflow.enum';
 
 // Interfaces.
@@ -20,7 +27,9 @@ import {
   ProductDetails,
   ProductDetailsDocument
 } from './product.interface';
-import { ResponseObject } from '../../models/database/connect.interface';
+import {
+  ResponseObject
+} from '../../models/database/connect.interface';
 import {
   ReviewDetails,
   ReviewDocument
@@ -111,20 +120,25 @@ export default class ProductController {
           data: {
             product: product.details
           }
-        }, 201, 'Product created successfully');
+        }, 201, `Product ${product._id} created successfully`);
+
+        Logging.Send(LogLevel.INFO, responseObject);
 
         // Return the response for the authenticated user.
         response.status(responseObject.status).json(responseObject.data);
 
       })
-      .catch(() => {
+      .catch((error: Error) => {
         // Attach the private user profile to the response.
         const responseObject = Connect.setResponse({
           data: {
             errorCode: 'PRODUCT_NOT_CREATED',
             message: 'There was a problem creating your product'
-          }
+          },
+          error: error
         }, 401, 'There was a problem creating your product');
+
+        Logging.Send(LogLevel.ERROR, responseObject);
 
         // Return the error response for the user.
         response.status(401).json(responseObject.data);
@@ -156,6 +170,8 @@ export default class ProductController {
       // Return the error response for the user.
       response.status(401).json(responseObject.data);
 
+      Logging.Send(LogLevel.WARNING, responseObject);
+
       next();
     }
 
@@ -174,19 +190,22 @@ export default class ProductController {
         // Return the response for the authenticated user.
         response.status(responseObject.status).json(responseObject.data);
     })
-    .catch(() => {
+    .catch((error: Error) => {
 
       // Attach the error to the response.
       const responseObject = Connect.setResponse({
         data: {
           errorCode: 'PRODUCT_RETRIEVAL_FAILED',
           message: 'There was a problem retrieving the requested product'
-        }
+        },
+        error: error
       }, 401, 'There was a problem retrieving the product');
+
+      Logging.Send(LogLevel.ERROR, responseObject);
 
       // Return the error response for the user.
       response.status(401).json(responseObject.data);
-    })
+    });
   }
 
   /**
@@ -235,14 +254,17 @@ export default class ProductController {
         // Return the response for the authenticated user.
         response.status(responseObject.status).json(responseObject.data);
     })
-    .catch(() => {
+    .catch((error: Error) => {
       // Define the responseObject.
       const responseObject = Connect.setResponse({
           data: {
             errorCode: 'PRODUCT_NAME_SEARCH_FAILED',
             title: `The search couldn't be completed`
-          }
+          },
+          error: error
         }, 404, `The search couldn't be completed`);
+
+      Logging.Send(LogLevel.ERROR, responseObject);
 
       // Return the response.
       response.status(responseObject.status).json(responseObject.data);
@@ -273,6 +295,8 @@ export default class ProductController {
           message: 'There was a problem retrieving this product'
         }
       }, 404, `The product could not be found`);
+
+      Logging.Send(LogLevel.WARNING, responseObject);
 
       // Return the response for the authenticated user.
       response.status(responseObject.status).json(responseObject.data);
@@ -350,15 +374,17 @@ export default class ProductController {
       response.status(responseObject.status).json(responseObject.data);
     })
     .catch((error: Error) => {
-      console.log(error);
 
       // Return an error indicating the product wasn't found.
       const responseObject = Connect.setResponse({
         data: {
           errorCode: 'PRODUCT_RETRIEVAL_ERROR',
           message: 'There was a problem retrieving this product'
-        }
+        },
+        error: error
       }, 404, 'There was a problem retrieving the product');
+
+      Logging.Send(LogLevel.ERROR, responseObject);
 
       // Return the error response for the user.
       response.status(404).json(responseObject.data);
