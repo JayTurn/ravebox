@@ -632,7 +632,7 @@ const AddReviewForm: React.FC<AddReviewFormProps> = (props: AddReviewFormProps) 
             </Grid>
             <Grid item xs={12} lg={6} style={{marginBottom: '1rem'}}>
               <Typography variant='subtitle1' gutterBottom>
-                At ravebox, we're all about honest reviews that get straight to the point. That's why raves are limited to 2 minutes and we encourage you to review products you love <Box component='span' style={{fontWeight: 700}}>and</Box> ones you don't.
+                At ravebox, we're all about honest reviews that get straight to the point. That's why raves are limited to one minute and we encourage you to review products you love <Box component='span' style={{fontWeight: 700}}>and</Box> ones you don't.
               </Typography>
             </Grid>
             <Recommendation 
@@ -686,7 +686,10 @@ const AddReviewForm: React.FC<AddReviewFormProps> = (props: AddReviewFormProps) 
               </Typography>
               <List>
                 <ListItem>
-                  Videos must be less than 2 minutes in length
+                  Videos must be less than one minute in length
+                </ListItem>
+                <ListItem>
+                  Videos are best viewed when recorded in landscape
                 </ListItem>
                 <ListItem>
                   Videos containing nudity or profanity will be removed

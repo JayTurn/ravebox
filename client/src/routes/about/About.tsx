@@ -179,7 +179,7 @@ const About: React.FC<AboutProps> = (props: AboutProps) => {
                 }
               )}
             >
-              <Box component='span' className={classes.heavyTitle}>Every product reviewed,</Box> 2 minutes or less.
+              <Box component='span' className={classes.heavyTitle}>Every product reviewed,</Box> one minute or less.
             </Typography>
             <Typography variant='body1' className={clsx(
                 classes.containerText,
