@@ -39,7 +39,7 @@ export default class Logging {
   public static Send(level: LogLevel, message: ResponseObject): void {
     let code: string = level.toUpperCase();
 
-    // Format the unique code we use for tracking specific events.
+    // Format the unique code we use for tracking specific events..
     if (message.data && message.data.errorCode) {
       code = `${message.data.errorCode}`;
     }
