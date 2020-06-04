@@ -44,7 +44,6 @@ export default class Logging {
       code = `${message.data.errorCode}`;
     }
 
-    /*
     switch (level) {
       case LogLevel.ERROR:
         logger.error({
@@ -65,6 +64,5 @@ export default class Logging {
           title: message.data.title,
         });
     }
-    */
   }
 }
