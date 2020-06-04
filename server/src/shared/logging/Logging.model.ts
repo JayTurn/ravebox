@@ -15,6 +15,7 @@ import { ResponseObject } from '../../models/database/connect.interface';
 // Enumerators.
 import { LogLevel } from './Logging.enum';
 
+/*
 const logger = Winston.createLogger({
   transports: [
     new CloudWatch({
@@ -27,6 +28,7 @@ const logger = Winston.createLogger({
     })
   ]
 });
+*/
 
 /**
  * Logging model.
@@ -44,6 +46,7 @@ export default class Logging {
       code = `${message.data.errorCode}`;
     }
 
+    /*
     switch (level) {
       case LogLevel.ERROR:
         logger.error({
@@ -64,5 +67,6 @@ export default class Logging {
           title: message.data.title,
         });
     }
+    */
   }
 }
