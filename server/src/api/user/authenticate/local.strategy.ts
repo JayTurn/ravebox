@@ -6,11 +6,20 @@
 
 import Authenticate from '../../../models/authentication/authenticate.model';
 import Connect from '../../../models/database/connect.model';
+import Logging from '../../../shared/logging/Logging.model';
 //import * as Jwt from 'jsonwebtoken';
 import * as passport from 'passport';
-import { Request, Response, Router, NextFunction } from 'express';
+import {
+  NextFunction,
+  Request,
+  Response,
+  Router
+} from 'express';
 import { Strategy as LocalStrategy } from 'passport-local';
 import User from '../user.model';
+
+// Enumerators.
+import { LogLevel } from '../../../shared/logging/Logging.enum';
 
 // Interfaces.
 import { ResponseObject } from '../../../models/database/connect.interface';
@@ -66,8 +75,11 @@ export default class LocalController {
           data: {
             errorCode: error.errorCode,
             message: 'Please try to sign up again'
-          }
-        }, 403, error.message);
+          },
+          error: error
+        }, 403, 'Error during sign up');
+
+        Logging.Send(LogLevel.ERROR, responseObject);
 
         // Return the response.
         response.status(responseObject.status).json(responseObject.data);

@@ -4,6 +4,7 @@
 
 // Modules.
 import Connect from '../../models/database/connect.model';
+import Logging from '../../shared/logging/Logging.model';
 import Product from '../product/product.model';
 import {
   Request,
@@ -13,6 +14,7 @@ import {
 import ReviewCommon from '../review/review.common';
 
 // Enumerators.
+import { LogLevel } from '../../shared/logging/Logging.enum';
 import { ResultType } from './search.enum';
 
 // Interfaces.
@@ -136,19 +138,20 @@ export default class SearchController {
       response.status(responseObject.status).json(responseObject.data);
     })
     .catch((error: Error) => {
-      console.log(error);
 
       // Return an error indicating the list of reviews weren't found.
       const responseObject = Connect.setResponse({
         data: {
           errorCode: 'SEARCH_AUTOCOMPLETE_FAILED',
           message: `We experienced a problem finding search results`
-        }
+        },
+        error: error
       }, 404, `We experienced a problem finding search results`);
+
+      Logging.Send(LogLevel.ERROR, responseObject);
 
       // Return the error response for the user.
       response.status(responseObject.status).json(responseObject.data);
-
     });
   }
 
@@ -211,15 +214,16 @@ export default class SearchController {
     })
     .catch((error: Error) => {
 
-      console.log(error);
-
       // Return an error indicating the list of reviews weren't found.
       const responseObject = Connect.setResponse({
         data: {
           errorCode: 'SEARCH_RESULTS_FAILED',
           message: `We experienced a problem finding search results`
-        }
+        },
+        error: error
       }, 404, `We experienced a problem finding search results`);
+
+      Logging.Send(LogLevel.ERROR, responseObject);
 
       // Return the error response for the user.
       response.status(responseObject.status).json(responseObject.data);

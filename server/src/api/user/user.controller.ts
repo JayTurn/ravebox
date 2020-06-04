@@ -8,23 +8,27 @@
 import Authenticate from '../../models/authentication/authenticate.model';
 import Connect from '../../models/database/connect.model';
 import EnvConfig from '../../config/environment/environmentBaseConfig';
-import { Request, Response, Router } from 'express';
 import * as Jwt from 'jsonwebtoken';
-//import * as Mongoose from 'mongoose';
+import LocalController from './authenticate/local.strategy';
+import Logging from '../../shared/logging/Logging.model';
+import {
+  Request,
+  Response,
+  Router
+} from 'express';
 import Review from '../review/review.model';
 import User from './user.model';
 import UserCommon from './user.common';
 import UserStatistics from '../userStatistics/userStatistics.model'
-//import UserNotifications from './userNotifications.model';
-import LocalController from './authenticate/local.strategy';
 import Notifications from '../../shared/notifications/Notifications.model';
 
 // Enumerators.
-import { UserRole } from './user.enum';
 import {
   EmailTemplate,
   ContactList
 } from '../../shared/notifications/Notifications.enum';
+import { LogLevel } from '../../shared/logging/Logging.enum';
+import { UserRole } from './user.enum';
 import { Workflow } from '../../shared/enumerators/workflow.enum';
 
 // Interfaces.
@@ -131,14 +135,17 @@ export default class UserController {
         response.status(responseObject.status).json(responseObject.data);
 
       })
-      .catch(() => {
+      .catch((error: Error) => {
         // Attach the private user profile to the response.
         responseObject = Connect.setResponse({
           data: {
             errorCode: 'USER_NOT_FOUND',
             message: 'Please log in and try again'
-          }
+          },
+          error: error
         }, 401, 'Account not found');
+
+        Logging.Send(LogLevel.ERROR, responseObject);
 
         // Return the error response for the user.
         response.status(401).json(responseObject.data);
@@ -152,6 +159,8 @@ export default class UserController {
           message: 'Please log in and try again'
         }
       }, 401, 'Your session has ended');
+
+      Logging.Send(LogLevel.WARNING, responseObject);
 
       // Return the response for the authenticated user.
       response.status(responseObject.status).json(responseObject.data);
@@ -251,8 +260,18 @@ export default class UserController {
 
             })
             .catch((error: Error) => {
+              // Set the response object.
+              const responseObject = Connect.setResponse({
+                  data: {
+                    errorCode: 'FAILED_SENDING_SIGNUP_EMAIL',
+                    message: `We couldn't send a signup email`
+                  },
+                  error: error
+                }, 422, 'Signup email failed');
+
               // Log the failed email handling.
-              console.log(error);
+              Logging.Send(LogLevel.ERROR, responseObject);
+
             });
 
         // Set CSRF values.
@@ -274,17 +293,24 @@ export default class UserController {
         // Define the responseObject with a Validation error.
         responseObject = Connect.setValidationResponse(error);
 
+        // Log the error.
+        Logging.Send(LogLevel.ERROR, responseObject);
+
         // Return the response.
         return response.status(responseObject.status).json(responseObject.data).end();
       }
 
       // Define the responseObject.
       responseObject = Connect.setResponse({
-          data: {
-            errorCode: 'FAILED',
-            title: 'Please try to sign up again'
-          }
-        }, 422, 'Your sign up was unsuccessful');
+        data: {
+          errorCode: 'FAILED_SIGNUP',
+          title: 'Please try to sign up again'
+        },
+        error: error
+      }, 422, 'Sign up was unsuccessful');
+
+      // Log the error.
+      Logging.Send(LogLevel.ERROR, responseObject);
 
       // Return the response.
       response.status(responseObject.status).json(responseObject.data);
@@ -332,14 +358,17 @@ export default class UserController {
       response.status(responseObject.status).json(responseObject.data);
 
     })
-    .catch(() => {
+    .catch((error: Error) => {
       // Define the responseObject.
       const responseObject = Connect.setResponse({
           data: {
             errorCode: 'FAILED_TO_CHECK_HANDLE',
-            title: `There was a problem checking the availability of this handle. Please try again`
-          }
+            message: `There was a problem checking the availability of this handle. Please try again`
+          }, 
+          error: error
         }, 404, `There was a problem checking the availability of this handle. Please try again`);
+
+        Logging.Send(LogLevel.ERROR, responseObject);
 
       // Return the response.
       response.status(responseObject.status).json(responseObject.data);
@@ -375,15 +404,18 @@ export default class UserController {
       // Return the response.
       response.status(responseObject.status).json(responseObject.data);
     })
-    .catch(() => {
+    .catch((error: Error) => {
 
       // Define the responseObject.
       const responseObject = Connect.setResponse({
           data: {
             errorCode: 'FAILED_TO_UPDATE_PROFILE',
-            title: `There was a problem updating your profile`
-          }
+            message: `There was a problem updating your profile`
+          },
+          error: error
         }, 403, `There was a problem updating your profile`);
+
+      Logging.Send(LogLevel.ERROR, responseObject);
 
       // Return the response.
       response.status(responseObject.status).json(responseObject.data);
@@ -451,14 +483,17 @@ export default class UserController {
       // Return the response.
       response.status(responseObject.status).json(responseObject.data);
     })
-    .catch(() => {
+    .catch((error: Error) => {
       // Define the responseObject.
       const responseObject = Connect.setResponse({
         data: {
           errorCode: 'FAILED_EMAIL_RESET_LOOKUP',
           message: 'Please enter your email and try again'
-        }
+        },
+        error: error
       }, 404, 'We could not reset your password');
+
+      Logging.Send(LogLevel.ERROR, responseObject);
 
       // Return the response.
       response.status(responseObject.status).json(responseObject.data);
@@ -540,14 +575,17 @@ export default class UserController {
       response.status(responseObject.status).json(responseObject.data);
 
     })
-    .catch(() => {
+    .catch((error: Error) => {
       // Define the responseObject.
       const responseObject = Connect.setResponse({
         data: {
           errorCode: 'FAILED_EMAIL_VERIFICATION',
           message: `We couldn't verify your email address`
-        }
+        },
+        error: error
       }, 404, `We couldn't verify your email address`);
+
+      Logging.Send(LogLevel.ERROR, responseObject);
 
       // Return the response.
       response.status(responseObject.status).json(responseObject.data);
@@ -618,15 +656,18 @@ export default class UserController {
           }
         });
       })
-      .catch(() => {
+      .catch((error: Error) => {
 
         // Define the responseObject.
         const responseObject = Connect.setResponse({
           data: {
             errorCode: 'FAILED_PASSWORD_VERIFICATION',
             message: `We couldn't verify your password`
-          }
+          },
+          error: error
         }, 404, `We couldn't verify your password`);
+
+        Logging.Send(LogLevel.ERROR, responseObject);
 
         // Return the response.
         response.status(responseObject.status).json(responseObject.data);
@@ -697,14 +738,17 @@ export default class UserController {
       response.status(responseObject.status).json(responseObject.data);
 
     })
-    .catch(() => {
+    .catch((error: Error) => {
       // Define the responseObject.
       const responseObject = Connect.setResponse({
         data: {
           errorCode: 'FAILED_EMAIL_VERIFICATION',
           message: `We couldn't verify your email address`
-        }
+        },
+        error: error
       }, 404, `We couldn't verify your email address`);
+
+      Logging.Send(LogLevel.ERROR, responseObject);
 
       // Return the response.
       response.status(responseObject.status).json(responseObject.data);
@@ -741,15 +785,18 @@ export default class UserController {
           response.status(responseObject.status).json(responseObject.data);
         });
       })
-      .catch(() => {
+      .catch((error: Error) => {
 
         // Define the responseObject.
         const responseObject = Connect.setResponse({
           data: {
             errorCode: 'FAILED_PASSWORD_VERIFICATION',
             message: `We couldn't verify your password`
-          }
-        }, 404, `We couldn't verify your password`);
+          },
+          error: error
+        }, 404, `Failed to verify the password`);
+
+        Logging.Send(LogLevel.ERROR, responseObject);
 
         // Return the response.
         response.status(responseObject.status).json(responseObject.data);
@@ -803,15 +850,17 @@ export default class UserController {
       response.status(responseObject.status).json(responseObject.data);
 
     })
-    .catch(error => {
-      console.log(error);
+    .catch((error: Error) => {
       // Define the responseObject.
       const responseObject = Connect.setResponse({
         data: {
           errorCode: 'FAILED_PASSWORD_RESET_LINK',
           message: `We couldn't send a password reset link. Please try again`
-        }
+        },
+        error: error
       }, 403, `We couldn't send a password reset link. Please try again`);
+
+      Logging.Send(LogLevel.ERROR, responseObject);
 
       // Return the response.
       response.status(responseObject.status).json(responseObject.data);
@@ -896,14 +945,17 @@ export default class UserController {
         })
       });
     })
-    .catch(() => {
+    .catch((error: Error) => {
       // Define the responseObject.
       const responseObject = Connect.setResponse({
           data: {
             errorCode: 'FAILED_TO_SET_NEW_PASSWORD',
             title: `We couldn't update your password with the token provided`
-          }
+          },
+          error: error
         }, 403, `We couldn't update your password with the token provided`);
+
+      Logging.Send(LogLevel.ERROR, responseObject);
 
       // Return the response.
       return response.status(responseObject.status).json(responseObject.data);
@@ -959,14 +1011,16 @@ export default class UserController {
 
     })
     .catch((error: Error) => {
-      console.log(error);
       // Define the responseObject.
       const responseObject: ResponseObject = Connect.setResponse({
           data: {
             errorCode: 'REVIEW_COUNT_FAILED_FOR_USER',
             title: `We couldn't find results for the requested user`
-          }
+          },
+          error: error
         }, 404, `We couldn't find results for the requested user`);
+      
+      Logging.Send(LogLevel.ERROR, responseObject);
 
       // Return the response.
       response.status(responseObject.status).json(responseObject.data);
@@ -1085,258 +1139,20 @@ export default class UserController {
 
     })
     .catch((error: Error) => {
-      console.log(error);
 
       // Define the responseObject.
       const responseObject: ResponseObject = Connect.setResponse({
           data: {
             errorCode: 'ERROR_LOADING_CHANNEL',
-            title: `We couldn't load the channel for the handle requested`
-          }
+            message: `We couldn't load the channel for the handle requested`
+          },
+          error: error
         }, 404, `We couldn't load the channel for the handle requested`);
+
+      Logging.Send(LogLevel.ERROR, responseObject);
 
       // Return the response.
       response.status(responseObject.status).json(responseObject.data);
     });
   }
-
-  /**
-   * Change the user password.
-   *
-   * @param {object} req
-   *   The request object.
-   * @param {object} res
-   *   The response object.
-   */
-  /*
-  static ChangePassword(req, res) {
-    // Declare the response object
-    let responseObject,
-        // Decode the provided token.
-        decodedToken = User.getPasswordResetToken(req.body.token);
-
-    // If we haven't been provided with a valid decoded token.
-    if (!decodedToken) {
-
-      // Return an error.
-      responseObject = Connect.setResponse({
-        data: {
-          errorCode: 'INVALID_TOKEN',
-          message: 'Please try to reset your password again'
-        }
-      }, 404, 'This password change link is no longer valid');
-
-      // Return the response.
-      return res.status(responseObject.status).json(responseObject.data).end();
-
-    }
-
-    // Find the user based on the decrypted values.
-    User.findOne({
-        '_id': decodedToken.userId,
-        'email': decodedToken.emailAddress
-      })
-      .execAsync()
-      .spread(user => {
-
-        // Set the password on the user and save the object.
-        user.updatePassword(req.body.password, (error, passwordHash, salt) => {
-
-          // If there was an error.
-          if (error) {
-
-            // Return an error.
-            responseObject = Connect.setResponse({
-              data: {
-                errorCode: 'PASSWORD_NOT_CREATED',
-                message: 'Please try to reset your password again'
-              }
-            }, 404, 'Your password could not be changed');
-
-            // Return the response.
-            return res.status(responseObject.status).json(responseObject.data).end();
-
-          }
-
-          // Update the user's password and salt based on the new values.
-          User.findByIdAndUpdate(
-            user._id,
-            {
-              $set: {
-                'password': passwordHash,
-                'salt': salt
-              }
-            },
-            { 'new': true }
-          )
-          .execAsync()
-          .spread(updatedUser => {
-
-            // Generate a new token for the user.
-            let newToken = Authenticate.signToken(updatedUser.id, updatedUser.role[0]),
-                // Decode the token in order to get the expiry.
-                decoded = Jwt.decode(newToken);
-
-            // Set the token expiration on the user object.
-            updatedUser.expires = decoded.exp;
-
-            // Set the response object.
-            responseObject = Connect.setResponse({
-              data: {
-                user: updatedUser.privateProfile
-              }
-            }, 200, 'Password changed successfully');
-
-            // Set CSRF header values.
-            Authenticate.setAuthenticatedResponseHeader(newToken, res);
-
-            // Return the response.
-            res.status(responseObject.status).json(responseObject.data);
-
-          })
-          .catch(error => {
-
-            // Return an error.
-            responseObject = Connect.setResponse({
-              data: {
-                errorCode: 'PASSWORD_NOT_CHANGED',
-                message: 'Please try to reset your password again'
-              }
-            }, 404, 'Your password could not be changed');
-
-            // Return the response.
-            res.status(responseObject.status).json(responseObject.data).end();
-          });
-        });
-      })
-      .catch(error => {
-        console.log(error);
-        // Return an error.
-        responseObject = Connect.setResponse({
-          data: {
-            errorCode: 'INVALID_USER_TOKEN',
-            message: 'Please try to reset your password again'
-          }
-        }, 404, 'This password change link is no longer valid');
-
-        // Return the response.
-        res.status(responseObject.status).json(responseObject.data).end();
-
-      });
-
-  }
-  */
-
-  /**
-   * Log the user out of the application.
-   *
-   * @param {object} req
-   * The request object.
-   *
-   * @param {object} res
-   * The response object.
-   */
-  /*
-  static Logout(req, res) {
-
-    // Remove all authentication tokens for the user.
-    res = Authenticate.removeAuthentication(res);
-
-    let responseObject = Connect.setResponse({
-      data: {
-        authenticated: false
-      }
-    }, 200, 'User is no longer Authenticated');
-
-    // Return the response for the authenticated user.
-    res.status(responseObject.status).json(responseObject.data);
-  }
-  */
-
-  /**
-   * Get current user's state.
-   *
-   * @param {object} req
-   * The request object.
-   *
-   * @param {object} res
-   * The response object.
-   */
-  /*
-  static Validate(req, res) {
-    // Set the response object.
-    let responseObject;
-
-    // If the user object was found.
-    if (req.user) {
-      // Attach the authenticated state to the response.
-      responseObject = Connect.setResponse({
-        data: {
-          authenticated: true
-        }
-      }, 200, 'User is Authenticated');
-    } else {
-      // Attach the error response.
-      responseObject = Connect.setResponse({
-        data: {
-          errorCode: 'USER_NOT_AUTHENTICATED',
-          message: 'You will need to log in again before continuing'
-        }
-      }, 401, 'We could not validate your login');
-
-    }
-
-    // Return the response for the authenticated user.
-    res.status(responseObject.status).json(responseObject.data);
-  }
-  */
-
-  /**
-   * Update a single field for the current user.
-   *
-   * @param {object} req
-   *   The request object.
-   * @param {object} res
-   *   The response object.
-   */
-  /*
-  static UpdateField(req, res) {
-
-    // Declare the responseObject.
-    let responseObject;
-
-    // Dynamically set the path and value of the update query based on the
-    // field data provided.
-    var $set = { $set: {} };
-    $set.$set[req.body.field.path] = req.body.field.value;
-
-    // // Execute the update.
-    User.findByIdAndUpdateAsync(req.user._id, $set, { new: true })
-      .spread(user => {
-
-        // Set the response error.
-        responseObject = Connect.setResponse({
-          data: {
-            profile: user.privateProfile
-          }
-        }, 200, 'The ' + req.body.field.path + ' field on the User has been updated');
-
-        // Return the error response for the list of users.
-        res.status(responseObject.status).json(responseObject.data);
-      })
-      .catch(error => {
-
-        // Set the response error.
-        responseObject = Connect.setResponse({
-          data: {
-            errorCode: 'COULD_NOT_UPDATE_USER_FIELD',
-            message: 'There was an issue saving this user profile field field.'
-          }
-        }, 404, 'The user profile field could not be updated. Please try again.');
-
-        // Return the error response for the list of users.
-        res.status(responseObject.status).json(responseObject.data).end();
-      });
-  }
-  */
 }
