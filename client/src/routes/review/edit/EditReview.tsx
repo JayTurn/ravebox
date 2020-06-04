@@ -32,7 +32,11 @@ import {
   RetrievalStatus
 } from '../../../utils/api/Api.enum';
 
+// Hooks.
+import { useAnalytics } from '../../../components/analytics/Analytics.provider';
+
 // Interfaces.
+import { AnalyticsContextProps } from '../../../components/analytics/Analytics.interface';
 import { EditReviewProps } from './EditReview.interface';
 import {
   Review,
@@ -47,12 +51,35 @@ import { useRetrieveReviewById } from '../../../components/review/useRetrieveRev
  */
 const EditReview: React.FC<EditReviewProps> = (props: EditReviewProps) => {
 
+  // Define the analytics context and a tracking event.
+  const analytics: AnalyticsContextProps = useAnalytics() as AnalyticsContextProps;
+
   const {
     review,
     reviewStatus,
   } = useRetrieveReviewById({id: props.match.params.id, xsrf: props.xsrf});
 
   const [displayProduct, setDisplayProduct] = React.useState<boolean>(false);
+
+  // Create a page viewed state to avoid duplicate views.
+  const [pageViewed, setPageViewed] = React.useState<boolean>(false);
+
+  /**
+   * Set the reviews based on their sub-category groupings.
+   */
+  React.useEffect(() => {
+    // Track the category list page view.
+    if (!pageViewed && review._id) {
+      analytics.trackPageView({
+        properties: {
+          path: props.location.pathname,
+          title: `Edit your rave`
+        }
+      });
+      setPageViewed(true);
+    }
+
+  }, [pageViewed, review]);
 
   /**
    * Toggles the display of the product details.
@@ -76,7 +103,7 @@ const EditReview: React.FC<EditReviewProps> = (props: EditReviewProps) => {
         <React.Fragment>
           {review.product &&
             <Helmet>
-              <title>Edit your {review.product.brand} {review.product.name} review - ravebox</title>
+              <title>Edit your {review.product.brand} {review.product.name} review - Ravebox</title>
               <link rel='canonical' href='https://ravebox.io/about' />
             </Helmet>
           }

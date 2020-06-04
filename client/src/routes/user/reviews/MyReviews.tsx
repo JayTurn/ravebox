@@ -27,9 +27,11 @@ import PageTitle from '../../../components/elements/pageTitle/PageTitle';
 import { RetrievalStatus } from '../../../utils/api/Api.enum';
 
 // Hooks.
+import { useAnalytics } from '../../../components/analytics/Analytics.provider';
 import { useRetrievePrivateReviews } from '../../../components/user/privateReviews/useRetrievePrivateReviews.hook';
 
 // Interfaces.
+import { AnalyticsContextProps } from '../../../components/analytics/Analytics.interface';
 import { MyReviewsProps } from './MyReviews.interface';
 import { PrivateReview } from '../../../components/review/Review.interface';
 
@@ -37,6 +39,9 @@ import { PrivateReview } from '../../../components/review/Review.interface';
  * Route to retrieve the currently authenticated user's reviews.
  */
 const MyReviews: React.FC<MyReviewsProps> = (props: MyReviewsProps) => {
+  // Define the analytics context and a tracking event.
+  const analytics: AnalyticsContextProps = useAnalytics() as AnalyticsContextProps;
+
   // Retieve the reviews for the current user.
   const {
     reviewsStatus,
@@ -45,6 +50,26 @@ const MyReviews: React.FC<MyReviewsProps> = (props: MyReviewsProps) => {
     setReviews: props.setReviews,
     xsrf: props.xsrf
   });
+
+  // Create a page viewed state to avoid duplicate views.
+  const [pageViewed, setPageViewed] = React.useState<boolean>(false);
+
+  /**
+   * Set the reviews based on their sub-category groupings.
+   */
+  React.useEffect(() => {
+    // Track the category list page view.
+    if (!pageViewed) {
+      analytics.trackPageView({
+        properties: {
+          path: props.location.pathname,
+          title: 'My raves'
+        }
+      });
+      setPageViewed(true);
+    }
+
+  }, [pageViewed, props.location.pathname]);
 
   return (
     <Grid container direction='column'>

@@ -32,8 +32,12 @@ import PageTitle from '../../../components/elements/pageTitle/PageTitle';
 // Enumerators.
 import { RetrievalStatus } from '../../../utils/api/Api.enum';
 
+// Hooks.
+import { useAnalytics } from '../../../components/analytics/Analytics.provider';
+
 // Interfaces.
 import { AddReviewProps } from './AddReview.interface';
+import { AnalyticsContextProps } from '../../../components/analytics/Analytics.interface';
 
 // Hooks.
 import { useRetrieveProductById } from '../../../components/product/useRetrieveProductById.hook';
@@ -52,6 +56,9 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
  * AddReview component.
  */
 const AddReview: React.FC<AddReviewProps> = (props: AddReviewProps) => {
+  // Define the analytics context and a tracking event.
+  const analytics: AnalyticsContextProps = useAnalytics() as AnalyticsContextProps;
+
   // Match the large media query size.
   const classes = useStyles(),
         theme = useTheme(),
@@ -63,6 +70,26 @@ const AddReview: React.FC<AddReviewProps> = (props: AddReviewProps) => {
   } = useRetrieveProductById({id: props.match.params.id});
 
   const [displayProduct, setDisplayProduct] = React.useState<boolean>(true);
+
+  // Create a page viewed state to avoid duplicate views.
+  const [pageViewed, setPageViewed] = React.useState<boolean>(false);
+
+  /**
+   * Set the reviews based on their sub-category groupings.
+   */
+  React.useEffect(() => {
+    // Track the category list page view.
+    if (!pageViewed && product.brand) {
+      analytics.trackPageView({
+        properties: {
+          path: props.location.pathname,
+          title: `Post a ${product.brand} ${product.name} review`
+        }
+      });
+      setPageViewed(true);
+    }
+
+  }, [pageViewed, product]);
 
   /**
    * Toggles the display of the product details.
@@ -84,7 +111,7 @@ const AddReview: React.FC<AddReviewProps> = (props: AddReviewProps) => {
       {productStatus === RetrievalStatus.SUCCESS &&
         <React.Fragment>
           <Helmet>
-            <title>Post a {product.brand} {product.name} review - ravebox</title>
+            <title>Post a {product.brand} {product.name} review - Ravebox</title>
           </Helmet>
           <PageTitle title='Post a rave' />
           <Grid container direction='row'>

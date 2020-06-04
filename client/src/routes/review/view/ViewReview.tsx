@@ -95,10 +95,20 @@ const ViewReview: React.FC<ViewReviewProps> = (props: ViewReviewProps) => {
    * On updates, check if we need to track the page view.
    */
   React.useEffect(() => {
-    if (!pageViewed && review && review._id) {
+    if (!pageViewed && review && review._id && review.user && review.product) {
 
       const data: EventObject = formatReviewProperties(review);
 
+      analytics.trackPageView({
+        properties: {
+          path: props.location.pathname,
+          title: `${review.user.handle} reviews ${review.product.brand} ${review.product.name}`
+        },
+        data: data,
+        amplitude: {
+          label: 'view review'
+        }
+      });
       analytics.trackEvent('view review')(data);
 
       setPageViewed(true);
@@ -111,7 +121,7 @@ const ViewReview: React.FC<ViewReviewProps> = (props: ViewReviewProps) => {
         <React.Fragment>
           {props.review.user && props.review.product &&
             <Helmet>
-              <title>{props.review.user.handle} reviews {props.review.product.brand} {props.review.product.name} - ravebox</title>
+              <title>{props.review.user.handle} reviews {props.review.product.brand} {props.review.product.name} - Ravebox</title>
               <link rel='canonical' href={`https://ravebox.io/review/${props.review.url}`} />
             </Helmet>
           }

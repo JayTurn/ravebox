@@ -167,9 +167,18 @@ const Search: React.FC<SearchProps> = (props: SearchProps) => {
         resultCount += lists[i].reviews.length;
       }
 
-      analytics.trackEvent('view search results')({
-        'term': props.match.params.term,
-        'result count': resultCount
+      analytics.trackPageView({
+        properties: {
+          path: props.location.pathname,
+          title: 'Search'
+        },
+        data: {
+          'term': props.match.params.term,
+          'result count': resultCount
+        },
+        amplitude: {
+          label: 'view search results'
+        }
       });
 
       setPageViewed(true);
@@ -188,7 +197,7 @@ const Search: React.FC<SearchProps> = (props: SearchProps) => {
   return (
     <Grid container direction='column' key={props.match.params.term}>
       <Helmet>
-        <title>Search for reviews - ravebox</title>
+        <title>Search for reviews - Ravebox</title>
       </Helmet>
       {loading ? (
         <Grid item xs={12}>

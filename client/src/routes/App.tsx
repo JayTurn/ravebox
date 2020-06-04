@@ -165,7 +165,7 @@ const App: React.FC<AppProps> = (props: AppProps) => {
           <div className={`app`}>
             <Helmet>
               <meta charSet='utf-8' />
-              <title>ravebox</title>
+              <title>Ravebox</title>
               <link rel='canonical' href='https://ravebox.io' />
             </Helmet>
             <ScrollToTop />

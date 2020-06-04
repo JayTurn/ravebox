@@ -176,7 +176,15 @@ const Home: React.FC<HomeProps> = (props: HomeProps) => {
    */
   React.useEffect(() => {
     if (!pageViewed) {
-      analytics.trackEvent('view home')();
+      analytics.trackPageView({
+        properties: {
+          path: '/',
+          title: 'Home'
+        },
+        amplitude: {
+          label: 'view home'
+        }
+      });
       setPageViewed(true);
     }
   }, [pageViewed]);
@@ -215,7 +223,7 @@ const Home: React.FC<HomeProps> = (props: HomeProps) => {
                 }
               )}
             >
-              Everything reviewed in 2 minutes or less.
+              Everything reviewed in one minute or less.
             </Typography>
           </Grid>
           <Grid item xs={12}>

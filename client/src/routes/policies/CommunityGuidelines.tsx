@@ -7,9 +7,7 @@
 import * as React from 'react';
 import clsx from 'clsx';
 import {
-  createStyles,
-  makeStyles,
-  Theme,
+  createStyles, makeStyles, Theme,
   useTheme,
   withStyles
 } from '@material-ui/core/styles';
@@ -23,7 +21,11 @@ import useMediaQuery from '@material-ui/core/useMediaQuery';
 import LinkElement from '../../components/elements/link/Link';
 import PageTitle from '../../components/elements/pageTitle/PageTitle';
 
+// Hooks.
+import { useAnalytics } from '../../components/analytics/Analytics.provider';
+
 // Interfaces.
+import { AnalyticsContextProps } from '../../components/analytics/Analytics.interface';
 import { CommunityGuidelinesProps } from './CommunityGuidelines.interface';
 
 /**
@@ -54,14 +56,39 @@ const useStyles = makeStyles((theme: Theme) =>
  * Community guidelines route component.
  */
 const CommunityGuidelines: React.FC<CommunityGuidelinesProps> = (props: CommunityGuidelinesProps) => {
+  // Define the analytics context and a tracking event.
+  const analytics: AnalyticsContextProps = useAnalytics() as AnalyticsContextProps;
+
   const classes = useStyles();
+
+  // Create a page viewed state to avoid duplicate views.
+  const [pageViewed, setPageViewed] = React.useState<boolean>(false);
+
+  /**
+   * Set the reviews based on their sub-category groupings.
+   */
+  React.useEffect(() => {
+    if (!pageViewed) {
+      analytics.trackPageView({
+        properties: {
+          path: '/policies/community-guidelines',
+          title: 'Community Guidelines'
+        },
+        amplitude: {
+          label: 'view community guidelines'
+        }
+      });
+      setPageViewed(true);
+    }
+  }, [pageViewed, setPageViewed]);
+
   return (
     <Grid
       container
       direction='column'
     >
       <Helmet>
-        <title>Community Guidelines - ravebox</title>
+        <title>Community Guidelines - Ravebox</title>
         <link rel='canonical' href='https://ravebox.io/policies/community-guidelines' />
       </Helmet>
       <PageTitle title='Community guidelines' />

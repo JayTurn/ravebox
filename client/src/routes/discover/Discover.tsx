@@ -177,7 +177,15 @@ const Discover: React.FC<DiscoverProps> = (props: DiscoverProps) => {
    */
   React.useEffect(() => {
     if (!pageViewed) {
-      analytics.trackEvent('view discover')();
+      analytics.trackPageView({
+        properties: {
+          path: '/discover',
+          title: 'Discover'
+        },
+        amplitude: {
+          label: 'view discover'
+        }
+      });
       setPageViewed(true);
     }
   }, [pageViewed]);
@@ -192,7 +200,7 @@ const Discover: React.FC<DiscoverProps> = (props: DiscoverProps) => {
       direction='column'
     >
       <Helmet>
-        <title>Discover reviews - ravebox</title>
+        <title>Discover reviews - Ravebox</title>
         <link rel='canonical' href='https://ravebox.io/discover' />
       </Helmet>
       <PageTitle title='Discover raves' />
