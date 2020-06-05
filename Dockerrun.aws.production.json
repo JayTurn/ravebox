@@ -2,27 +2,21 @@
   "AWSEBDockerrunVersion": 2,
   "volumes": [
     {
-      "name": "server_app",
+      "name": "server",
       "host": {
         "sourcePath": "/var/app/current/server/."
       }
     },
     {
-      "name": "client_app",
+      "name": "client",
       "host": {
         "sourcePath": "/var/app/current/client/."
-      }
-    },
-    {
-      "name": "nginx_conf",
-      "host": {
-        "sourcePath": "/var/app/current/nginx/conf.d"
       }
     }
   ],
   "containerDefinitions": [
     {
-      "name": "api",
+      "name": "node_server",
       "image": "jayturn/node-server:1.3.4",
       "command": ["yarn", "start:staging"],
       "essential": true,
@@ -35,53 +29,27 @@
       ],
       "mountPoints": [
         {
-          "sourceVolume": "server_app",
+          "sourceVolume": "server",
           "containerPath": "/server/app"
         }
       ]
     },
     {
-      "name": "client",
+      "name": "react_client",
       "image": "jayturn/react:1.2.7",
       "command": ["yarn", "start:staging"],
       "essential": true,
       "memoryReservation": 512,
       "portMappings": [
         {
-          "hostPort": 3000,
+          "hostPort": 80,
           "containerPort": 3000
         }
       ],
       "mountPoints": [
         {
-          "sourceVolume": "client_app",
+          "sourceVolume": "client",
           "containerPath": "/client/app"
-        }
-      ]
-    },
-    {
-      "depends_on": [
-        "api",
-        "client"
-      ],
-      "essential": true,
-      "image": "nginx:1.19.0-alpine",
-      "links": [
-        "api",
-        "client"
-      ],
-      "memoryReservation": 128,
-      "mountPoints": [
-        {
-          "sourceVolume": "nginx_conf",
-          "containerPath": "/etc/nginx/nginx.conf"
-        }
-      ],
-      "name": "nginx",
-      "portMappings": [
-        {
-          "hostPort": 80,
-          "containerPort": 80
         }
       ]
     }

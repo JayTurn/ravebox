@@ -45,10 +45,8 @@ const config: Partial<EnvironmentProperties> = {
     lists: [2, 3, 4]
   },
   origins: [
-    'http://localhost:3000'
+    'http://local.ravebox.io'
   ],
-  //domain: 'http://localhost:9000',
-  //liveReloadPort: 9001,
   port: 9000,
   security: {
     secret: 'xVDtwrgYpk1SarMBZULYjnYjJTmNaEJgoyQEWenM',

@@ -73,7 +73,8 @@ app.set('view engine', 'html');
 app.use(cors({
   credentials: true,
   origin: EnvConfig.origins,
-  optionsSuccessStatus: 200
+  optionsSuccessStatus: 200,
+  preflightContinue: true
 }));
 
 app.use(compression());
@@ -103,7 +104,7 @@ app.use(errorHandler());
 app.listen(app.get('port'), () => {
   // Log the app information message.
   //Logs.message('info', `App is running at http://localhost:${ app.get('port') } in ${ app.get('env') } | server`);
-  console.log(`App is running at http://localhost:${ app.get('port') } in ${ app.get('env') } | server`);
+  console.log(`App is running at ${process.env.PUBLIC_PATH}:${ app.get('port') } in ${ app.get('env') } | server`);
 });
 
 module.exports = app;

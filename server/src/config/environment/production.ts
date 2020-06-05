@@ -1,5 +1,5 @@
 /**
- * Staging Environment Configuration Example.
+ * Production Environment Configuration.
  *
  * Override Options:
  *  port - Set a local port for which to start the Express Server.
@@ -25,9 +25,9 @@ const config: Partial<EnvironmentProperties> = {
     }
   },
   aws: {
-    accessKeyId: 'AKIAQZGCV7RFVDNF32PN',
-    secretAccessKey: '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',
-    region: 'ap-southeast-2',
+    accessKeyId: 'AKIAQZGCV7RFYQW3ZDA4',
+    secretAccessKey: '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',
+    region: 'us-east-1',
     signatureVersion: "v4"
   },
   database: {
@@ -36,7 +36,7 @@ const config: Partial<EnvironmentProperties> = {
     secret: 'yVDtwrgYpk1SarMBZULYjnYjJTmNdyem337hdjdf'
   },
   origins: [
-    'http://staging.ravebox.io'
+    'http://ravebox.io',
   ],
   notifications: {
     key: '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',
@@ -44,8 +44,8 @@ const config: Partial<EnvironmentProperties> = {
   },
   port: 9000,
   security: {
-    secret: 'xVDtwrgYpk1SarMBZULYjnYjJTmNaEJgoyQEWenM',
-    csrfSecret: 'xYDtwrgYpk1SarMBZULYjnYjJTmNaEJgoyQEWenM'
+    secret: 'FcHeMhPkRpUrWtZw3y5B8DaGdJfMjQmSpVsXuZx4',
+    csrfSecret: '7DaFcHfMhPmSpUrXuZw3z6B8EbGdJgNjQmTqVsXv'
   },
   s3: {
     video: "ravebox-videos"
