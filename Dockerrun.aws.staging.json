@@ -16,7 +16,7 @@
     {
       "name": "nginx_conf",
       "host": {
-        "sourcePath": "/var/app/current/nginx/conf.d"
+        "sourcePath": "/var/app/current/compose/production/nginx/conf.d"
       }
     }
   ],
