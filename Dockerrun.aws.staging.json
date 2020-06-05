@@ -12,12 +12,6 @@
       "host": {
         "sourcePath": "/var/app/current/client/."
       }
-    },
-    {
-      "name": "nginx_conf",
-      "host": {
-        "sourcePath": "/var/app/current/nginx/."
-      }
     }
   ],
   "containerDefinitions": [
@@ -56,32 +50,6 @@
         {
           "sourceVolume": "client_app",
           "containerPath": "/client/app"
-        }
-      ]
-    },
-    {
-      "depends_on": [
-        "api",
-        "client"
-      ],
-      "essential": true,
-      "image": "nginx:1.19.0-alpine",
-      "links": [
-        "api",
-        "client"
-      ],
-      "memoryReservation": 128,
-      "mountPoints": [
-        {
-          "sourceVolume": "nginx_conf",
-          "containerPath": "/etc/nginx"
-        }
-      ],
-      "name": "nginx",
-      "portMappings": [
-        {
-          "hostPort": 80,
-          "containerPort": 80
         }
       ]
     }
