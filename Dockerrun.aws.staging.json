@@ -16,7 +16,7 @@
     {
       "name": "nginx_conf",
       "host": {
-        "sourcePath": "/var/app/current/compose/production/nginx/conf.d"
+        "sourcePath": "/var/app/current/nginx/."
       }
     }
   ],
@@ -74,7 +74,7 @@
       "mountPoints": [
         {
           "sourceVolume": "nginx_conf",
-          "containerPath": "/etc/nginx/nginx.conf"
+          "containerPath": "/etc/nginx"
         }
       ],
       "name": "nginx",
