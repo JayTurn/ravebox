@@ -63,7 +63,7 @@
       "name": "nginx_proxy",
       "image": "nginx:1.19.0-alpine",
       "essential": true,
-      "memory": "128",
+      "memory": "256",
       "portMappings": [
         {
           "hostPort": 80,
