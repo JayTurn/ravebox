@@ -72,7 +72,7 @@
       ],
       "links": [
         "client",
-        "server"
+        "api"
       ],
       "mountPoints": [
         {
