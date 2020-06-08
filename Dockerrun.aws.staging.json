@@ -77,7 +77,7 @@
       "mountPoints": [
         {
           "sourceVolume": "proxy_config",
-          "containerPath": "/etc/nginx"
+          "containerPath": "/etc/nginx/conf.d"
         }
       ]
     }
