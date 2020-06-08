@@ -101,7 +101,7 @@ app.use((error: Error, request: express.Request, response: express.Response, nex
 
 app.use(cors({
   credentials: true,
-  origin: EnvConfig.origins,
+  origin: EnvConfig.origins[0],
   optionsSuccessStatus: 200,
   preflightContinue: true
 }));
