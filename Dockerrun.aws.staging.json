@@ -12,13 +12,7 @@
       "host": {
         "sourcePath": "/var/app/current/client/."
       }
-    },
-    {
-      "name": "proxy_config",
-      "host": {
-        "sourcePath": "/var/app/current/nginx/."
-      }
-    }
+    } 
   ],
   "containerDefinitions": [
     {
@@ -56,28 +50,6 @@
         {
           "sourceVolume": "client_app",
           "containerPath": "/client/app"
-        }
-      ]
-    },
-    {
-      "name": "nginx_proxy",
-      "image": "nginx:1.19.0-alpine",
-      "essential": true,
-      "memory": "256",
-      "portMappings": [
-        {
-          "hostPort": 80,
-          "containerPort": 80
-        }
-      ],
-      "links": [
-        "client",
-        "api"
-      ],
-      "mountPoints": [
-        {
-          "sourceVolume": "proxy_config",
-          "containerPath": "/etc/nginx/conf.d"
         }
       ]
     }
