@@ -2,23 +2,29 @@
   "AWSEBDockerrunVersion": 2,
   "volumes": [
     {
-      "name": "server",
+      "name": "server_app",
       "host": {
         "sourcePath": "/var/app/current/server/."
       }
     },
     {
-      "name": "client",
+      "name": "client_app",
       "host": {
         "sourcePath": "/var/app/current/client/."
+      }
+    },
+    {
+      "name": "proxy_config",
+      "host": {
+        "sourcePath": "/var/app/current/proxy/production/."
       }
     }
   ],
   "containerDefinitions": [
     {
-      "name": "node_server",
+      "name": "api",
       "image": "jayturn/node-server:1.3.4",
-      "command": ["yarn", "start:staging"],
+      "command": ["yarn", "start:production"],
       "essential": true,
       "memoryReservation": 512,
       "portMappings": [
@@ -29,27 +35,49 @@
       ],
       "mountPoints": [
         {
-          "sourceVolume": "server",
+          "sourceVolume": "server_app",
           "containerPath": "/server/app"
         }
       ]
     },
     {
-      "name": "react_client",
+      "name": "client",
       "image": "jayturn/react:1.2.7",
-      "command": ["yarn", "start:staging"],
+      "command": ["yarn", "start:production"],
       "essential": true,
       "memoryReservation": 512,
       "portMappings": [
         {
-          "hostPort": 80,
+          "hostPort": 3000,
           "containerPort": 3000
         }
       ],
       "mountPoints": [
         {
-          "sourceVolume": "client",
+          "sourceVolume": "client_app",
           "containerPath": "/client/app"
+        }
+      ]
+    },
+    {
+      "name": "nginx_proxy",
+      "image": "nginx:1.19.0-alpine",
+      "essential": true,
+      "memory": "256",
+      "portMappings": [
+        {
+          "hostPort": 80,
+          "containerPort": 80
+        }
+      ],
+      "links": [
+        "client:client",
+        "api:api"
+      ],
+      "mountPoints": [
+        {
+          "sourceVolume": "proxy_config",
+          "containerPath": "/etc/nginx/conf.d/"
         }
       ]
     }

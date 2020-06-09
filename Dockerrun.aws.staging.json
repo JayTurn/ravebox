@@ -16,7 +16,7 @@
     {
       "name": "proxy_config",
       "host": {
-        "sourcePath": "/var/app/current/proxy/."
+        "sourcePath": "/var/app/current/proxy/staging/."
       }
     }
   ],

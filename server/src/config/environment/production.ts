@@ -18,7 +18,7 @@ const dbname: string = process.env.MONGODB_NAME,
 const config: Partial<EnvironmentProperties> = {
   analytics: {
     amplitude: {
-      apiKey: '3118a981446e4ca6ee1caf68a5a67ab7' 
+      apiKey: '979f2e5e3ef95ddec00ffb7a33fec431' 
     },
     google: {
       apiKey: ''
@@ -36,7 +36,7 @@ const config: Partial<EnvironmentProperties> = {
     secret: 'yVDtwrgYpk1SarMBZULYjnYjJTmNdyem337hdjdf'
   },
   origins: [
-    'http://ravebox.io',
+    'https://ravebox.io',
   ],
   notifications: {
     key: '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',
