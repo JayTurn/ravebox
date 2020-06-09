@@ -35,9 +35,6 @@ import { ResponseObject } from './models/database/connect.interface';
  */
 dotenv.config({ path: `.env.${process.env.NODE_ENV}` });
 
-// Create a log directory if it doesn't exist.
-//FileManagement.retrieveDirectoryList(Path.normalize(Path.join(__dirname, '../logs')));
-
 /**
  * Controllers (route handlers).
  */
