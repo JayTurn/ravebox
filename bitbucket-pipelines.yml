@@ -8,7 +8,7 @@ pipelines:
           script:
           - cp Dockerrun.aws.staging.json Dockerrun.aws.json
           - cp robots.staging.txt client/public/robots.txt
-          - zip -r ravebox-staging.zip Dockerrun.aws.json server client
+          - zip --symlinks -r ravebox-staging.zip Dockerrun.aws.json server client proxy
           - rm Dockerrun.aws.json
           - rm client/public/robots.txt
           artifacts:
@@ -22,10 +22,37 @@ pipelines:
             variables:
               AWS_ACCESS_KEY_ID: $AWS_ACCESS_KEY_ID
               AWS_SECRET_ACCESS_KEY: $AWS_SECRET_ACCESS_KEY
-              AWS_DEFAULT_REGION: 'ap-southeast-2'
+              AWS_DEFAULT_REGION: 'us-east-1'
               APPLICATION_NAME: 'ravebox'
               ENVIRONMENT_NAME: 'ravebox-staging'
               ZIP_FILE: 'ravebox-staging.zip'
               S3_BUCKET: 'ravebox-staging-deployment'
+              VERSION_LABEL: 'ravebox-$BITBUCKET_BUILD_NUMBER'
+              WAIT: 'true'
+    v*:
+      - step:
+          name: Package the files for the production environment
+          script:
+          - cp Dockerrun.aws.production.json Dockerrun.aws.json
+          - cp robots.production.txt client/public/robots.txt
+          - zip --symlinks -r ravebox-production.zip Dockerrun.aws.json server client proxy
+          - rm Dockerrun.aws.json
+          - rm client/public/robots.txt
+          artifacts:
+          - ravebox-production.zip
+      - step:
+          name: Deploy the API to AWS
+          caches:
+            - pip
+          script:
+          - pipe: atlassian/aws-elasticbeanstalk-deploy:0.5.2
+            variables:
+              AWS_ACCESS_KEY_ID: $AWS_ACCESS_KEY_ID
+              AWS_SECRET_ACCESS_KEY: $AWS_SECRET_ACCESS_KEY
+              AWS_DEFAULT_REGION: 'us-east-1'
+              APPLICATION_NAME: 'ravebox'
+              ENVIRONMENT_NAME: 'ravebox-blue'
+              ZIP_FILE: 'ravebox-production.zip'
+              S3_BUCKET: 'ravebox-production-deployment'
               VERSION_LABEL: 'ravebox-$BITBUCKET_BUILD_NUMBER'
               WAIT: 'true'

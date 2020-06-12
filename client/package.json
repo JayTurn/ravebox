@@ -70,6 +70,9 @@
     "start-debug:staging": "env-cmd -f .env.staging razzle start --inspect=0.0.0.0:9229",
     "build:staging": "env-cmd -f .env.staging razzle build",
     "serve:staging": "env-cmd -f .env.staging node build/server.js",
+    "start:production": "npm run build:production && npm run serve:production",
+    "build:production": "env-cmd -f .env.production razzle build",
+    "serve:production": "env-cmd -f .env.production node build/server.js",
     "test": "razzle test --env=jsdom",
     "build-css": "node-sass-chokidar src/ -o src/",
     "watch-css": "npm run build-css && node-sass-chokidar src/ -o src/ --watch --recursive"

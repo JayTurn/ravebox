@@ -413,14 +413,16 @@ export default class Authenticate {
 
     // Set the read only JWT.
     response.cookie(JWT, token, {
-      httpOnly: true,
-      expires: expiration
+      domain: '.ravebox.io',
+      expires: expiration,
+      httpOnly: true
     });
 
     // Set the response cookie.
     response.cookie('XSRF-TOKEN', decoded.payload.csrf, {
-      httpOnly: false,
-      expires: expiration
+      domain: '.ravebox.io',
+      expires: expiration,
+      httpOnly: false
     });
 
     return response;

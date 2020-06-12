@@ -5,10 +5,12 @@ import * as express from 'express';
 //import Logs from './shared/logging/logs.model';
 //import * as Http from 'http';
 //import * as Path from 'path';
+import Connect from './models/database/connect.model';
 import * as CookieParser from 'cookie-parser';
 import * as cors from 'cors';
 import * as compression from 'compression';  // compresses requests
 import * as bodyParser from 'body-parser';
+import Logging from './shared/logging/Logging.model';
 import * as logger from 'morgan';
 import * as errorHandler from 'errorhandler';
 //import * as lusca from 'lusca';
@@ -21,14 +23,17 @@ import * as mongoose from 'mongoose';
 import EnvConfig from './config/environment/environmentBaseConfig';
 //import * as passport from 'passport';
 
+// Enumerators.
+import { LogLevel } from './shared/logging/Logging.enum';
+
+// Interfaces.
+import { ResponseObject } from './models/database/connect.interface';
+
 /**
  * Load environment variables from .env file, where API keys and passwords
  * are configured.
  */
 dotenv.config({ path: `.env.${process.env.NODE_ENV}` });
-
-// Create a log directory if it doesn't exist.
-//FileManagement.retrieveDirectoryList(Path.normalize(Path.join(__dirname, '../logs')));
 
 /**
  * Controllers (route handlers).
@@ -70,10 +75,32 @@ app.set('views', path.join(__dirname, '../views'));
 app.engine('html', ejs.renderFile);
 app.set('view engine', 'html');
 
+/**
+ * Log main application errors.
+ */
+app.use((error: Error, request: express.Request, response: express.Response, next: express.NextFunction) => {
+
+  // Return an error indicating the review wasn't created.
+  if (error) {
+    const responseObject = Connect.setResponse({
+      data: {
+        errorCode: 'APP_ERROR',
+        message: 'Application error'
+      },
+      error: error
+    }, 502, 'There was a base application error');
+
+    Logging.Send(LogLevel.ERROR, responseObject);
+  }
+
+  next();
+});
+
 app.use(cors({
   credentials: true,
-  origin: EnvConfig.origins,
-  optionsSuccessStatus: 200
+  origin: EnvConfig.origins[0],
+  optionsSuccessStatus: 200,
+  preflightContinue: true
 }));
 
 app.use(compression());
@@ -103,7 +130,7 @@ app.use(errorHandler());
 app.listen(app.get('port'), () => {
   // Log the app information message.
   //Logs.message('info', `App is running at http://localhost:${ app.get('port') } in ${ app.get('env') } | server`);
-  console.log(`App is running at http://localhost:${ app.get('port') } in ${ app.get('env') } | server`);
+  console.log(`App is running at ${process.env.PUBLIC_PATH}:${ app.get('port') } in ${ app.get('env') } | server`);
 });
 
 module.exports = app;
