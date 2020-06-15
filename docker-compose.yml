@@ -20,7 +20,7 @@ services:
       - 80:80
       - 443:443
     volumes:
-      - ./nginx/:/etc/nginx/conf.d
+      - ./proxy/local/:/etc/nginx/conf.d
   node_server:
     command: yarn start-debug:local
     container_name: api
@@ -65,7 +65,7 @@ services:
       - ./ngrok:/ngrok
   react_client:
     build: client/
-    command: yarn start
+    command: yarn start:local
     container_name: client
     image: jayturn/react:1.2.7
     depends_on:
