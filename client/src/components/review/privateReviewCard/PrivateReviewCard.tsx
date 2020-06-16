@@ -127,6 +127,9 @@ const useStyles = makeStyles((theme: Theme) =>
       color: theme.palette.text.primary,
       textDecoration: 'none'
     },
+    media: {
+      paddingTop: '56.25%'
+    },
     menuIcon: {
       paddingRight: 0,
       paddingBottom: 0,
@@ -262,7 +265,7 @@ const PrivateReviewCard: React.FC<PrivateReviewCardProps> = (props: PrivateRevie
         to={`/review/${props.url}`}
       >
         <CardMedia
-          component='img'
+          className={clsx(classes.media)}
           image={props.thumbnailURL}
           src='/images/placeholder.png'
           title={`${props.product ? props.product.name : ''} review`}

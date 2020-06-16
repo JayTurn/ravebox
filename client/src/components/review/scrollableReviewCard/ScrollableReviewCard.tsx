@@ -88,7 +88,7 @@ const useStyles = makeStyles((theme: Theme) =>
       textDecoration: 'none'
     },
     media: {
-      height: 180
+      paddingTop: '56.25%'
     },
     menuIcon: {
       paddingRight: 0,

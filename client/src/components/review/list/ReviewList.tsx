@@ -148,7 +148,7 @@ const ReviewList: React.FC<ReviewListProps> = (props: ReviewListProps) => {
                   </Grid>
                 </React.Fragment>
               ) : (
-                <Grid container direction='row' spacing={3}>
+                <Grid container direction='row' spacing={largeScreen ? 3 : 0}>
                   {(props.reviews as Array<Review>).map((review: Review) => {
                     return (
                       <Grid item xs={12} sm={6} md={4} lg={3} key={review._id}

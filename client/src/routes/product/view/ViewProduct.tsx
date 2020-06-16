@@ -225,7 +225,10 @@ const ViewProduct: React.FC<ViewProductProps> = (props: ViewProductProps) => {
   }, [pageViewed, product]);
 
   return (
-    <Grid container direction='column'>
+    <Grid
+      container
+      direction='column'
+    >
       {product._id &&
         <React.Fragment>
           <PageTitle title={`${product.brand} ${product.name} reviews`} />
@@ -251,7 +254,7 @@ const ViewProduct: React.FC<ViewProductProps> = (props: ViewProductProps) => {
         </Grid>
       }
       {props.categoryGroup && product.categories &&
-        <React.Fragment>
+        <Grid item xs={12}>
           {product.categories[0] && props.categoryGroup[product.categories[0].key] &&
             <ListByQuery
               context={ScreenContext.PRODUCT_CATEGORY_LIST}
@@ -267,7 +270,7 @@ const ViewProduct: React.FC<ViewProductProps> = (props: ViewProductProps) => {
               }
             />
           }
-        </React.Fragment>
+        </Grid>
       }
     </Grid>
   );
