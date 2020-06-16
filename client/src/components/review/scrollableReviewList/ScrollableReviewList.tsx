@@ -44,6 +44,9 @@ import { formatReviewForTracking } from '../Review.common';
  * Create styles for the review lists.
  */
 const useStyles = makeStyles((theme: Theme) => createStyles({
+  container: {
+    padding: theme.spacing(3, 0)
+  },
   listContainer: {
     width: '800px',
     padding: theme.spacing(0),
@@ -51,7 +54,6 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
   },
   listElement: {
     cursor: 'pointer',
-    marginBottom: theme.spacing(2),
     padding: theme.spacing(0, 1),
     '&:focus': {
       outline: 'none'
@@ -99,14 +101,14 @@ const ScrollableReviewList: React.FC<ScrollableReviewListProps> = (props: Scroll
   }
 
   return (
-    <React.Fragment>
+    <Grid container direction='column' className={clsx(classes.container)}>
       {props.title &&
-        <React.Fragment>
-          {props.title}
-        </React.Fragment>
+        <Grid item xs={12}>
+            {props.title}
+        </Grid>
       }
       {props.retrievalStatus === RetrievalStatus.SUCCESS ? (
-        <React.Fragment>
+        <Grid item xs={12}>
           {props.reviews.length > 0 ? (
             <ScrollMenu
               alignCenter={false}
@@ -130,11 +132,11 @@ const ScrollableReviewList: React.FC<ScrollableReviewListProps> = (props: Scroll
               No reviews found
             </React.Fragment>
           )}
-        </React.Fragment>
+        </Grid>
       ) : (
         <LoadingReviewList columns={1} height={180} count={6} />
       )}
-    </React.Fragment>
+    </Grid>
   );
 }
 

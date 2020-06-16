@@ -27,7 +27,7 @@ pipelines:
               ENVIRONMENT_NAME: 'ravebox-staging'
               ZIP_FILE: 'ravebox-staging.zip'
               S3_BUCKET: 'ravebox-staging-deployment'
-              VERSION_LABEL: 'ravebox-$BITBUCKET_BUILD_NUMBER'
+              VERSION_LABEL: 'ravebox-$BITBUCKET_TAG'
               WAIT: 'true'
     v*:
       - step:
@@ -54,5 +54,5 @@ pipelines:
               ENVIRONMENT_NAME: 'ravebox-blue'
               ZIP_FILE: 'ravebox-production.zip'
               S3_BUCKET: 'ravebox-production-deployment'
-              VERSION_LABEL: 'ravebox-$BITBUCKET_BUILD_NUMBER'
+              VERSION_LABEL: 'ravebox-$BITBUCKET_TAG'
               WAIT: 'true'

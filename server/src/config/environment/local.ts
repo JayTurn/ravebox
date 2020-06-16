@@ -15,7 +15,7 @@ import { EnvironmentProperties } from './environmentConfig.interface';
 
 // Define the dbname and uri to be set in the config.
 const dbname: string = process.env.MONGODB_NAME,
-      uri = `${process.env.MONGODB_URI}/${process.env.MONGODB_NAME}`;
+      uri = `${process.env.MONGODB_URI}/${process.env.MONGODB_NAME}?retryWrites=true&w=majority`;
 
 const config: Partial<EnvironmentProperties> = {
   analytics: {

@@ -78,6 +78,9 @@ import { ViewProductProps } from './ViewProduct.interface';
  */
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
+    container: {
+      flexWrap: 'nowrap'
+    },
     listContainer: {
       padding: 0
     },
@@ -226,6 +229,7 @@ const ViewProduct: React.FC<ViewProductProps> = (props: ViewProductProps) => {
 
   return (
     <Grid
+      className={clsx(classes.container)}
       container
       direction='column'
     >
