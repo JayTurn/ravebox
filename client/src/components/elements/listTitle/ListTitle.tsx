@@ -42,8 +42,7 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
   },
   scrollableTitle: {
     color: theme.palette.primary.main,
-    fontSize: '1rem',
-    marginTop: theme.spacing(2)
+    fontSize: '1rem'
   }
 }));
 

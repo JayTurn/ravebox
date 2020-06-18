@@ -15,7 +15,7 @@ import { EnvironmentProperties } from './environmentConfig.interface';
 
 // Define the dbname and uri to be set in the config.
 const dbname: string = process.env.MONGODB_NAME,
-      uri = `${process.env.MONGODB_URI}/${process.env.MONGODB_NAME}`;
+      uri = `${process.env.MONGODB_URI}/${process.env.MONGODB_NAME}?retryWrites=true&w=majority`;
 
 const config: Partial<EnvironmentProperties> = {
   analytics: {
@@ -45,7 +45,10 @@ const config: Partial<EnvironmentProperties> = {
     lists: [2, 3, 4]
   },
   origins: [
-    'http://local.ravebox.io'
+    'http://local.ravebox.io',
+    'http://localhost',
+    'http://127.0.0.1',
+    'http://0.0.0.0'
   ],
   port: 9000,
   security: {

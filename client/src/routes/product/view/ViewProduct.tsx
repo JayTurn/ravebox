@@ -78,6 +78,9 @@ import { ViewProductProps } from './ViewProduct.interface';
  */
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
+    container: {
+      flexWrap: 'nowrap'
+    },
     listContainer: {
       padding: 0
     },
@@ -121,7 +124,7 @@ const setCategoryQueries: (
  * 
  * @param { ViewProductProps } props - the product details properties.
  */
-const frontloadReviewDetails = async (props: ViewProductProps) => {
+const frontloadViewProduct = async (props: ViewProductProps) => {
 
   // Format the api request path.
   const {
@@ -225,7 +228,11 @@ const ViewProduct: React.FC<ViewProductProps> = (props: ViewProductProps) => {
   }, [pageViewed, product]);
 
   return (
-    <Grid container direction='column'>
+    <Grid
+      className={clsx(classes.container)}
+      container
+      direction='column'
+    >
       {product._id &&
         <React.Fragment>
           <PageTitle title={`${product.brand} ${product.name} reviews`} />
@@ -251,7 +258,7 @@ const ViewProduct: React.FC<ViewProductProps> = (props: ViewProductProps) => {
         </Grid>
       }
       {props.categoryGroup && product.categories &&
-        <React.Fragment>
+        <Grid item xs={12}>
           {product.categories[0] && props.categoryGroup[product.categories[0].key] &&
             <ListByQuery
               context={ScreenContext.PRODUCT_CATEGORY_LIST}
@@ -267,7 +274,7 @@ const ViewProduct: React.FC<ViewProductProps> = (props: ViewProductProps) => {
               }
             />
           }
-        </React.Fragment>
+        </Grid>
       }
     </Grid>
   );
@@ -307,7 +314,7 @@ export default withRouter(connect(
   mapStateToProps,
   mapDispatchToProps
 )(frontloadConnect(
-  frontloadReviewDetails,
+  frontloadViewProduct,
   {
     noServerRender: false,     
     onMount: true,

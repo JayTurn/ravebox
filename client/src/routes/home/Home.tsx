@@ -95,6 +95,9 @@ const useStyles = makeStyles((theme: Theme) =>
       fontSize: '2.5rem',
       marginTop: theme.spacing(6),
     },
+    container: {
+      flexWrap: 'nowrap'
+    },
     containerPadding: {
       paddingLeft: theme.spacing(2),
       paddingRight: theme.spacing(2)
@@ -194,6 +197,7 @@ const Home: React.FC<HomeProps> = (props: HomeProps) => {
    */
   return (
     <Grid
+      className={clsx(classes.container)}
       container
       direction='column'
     >

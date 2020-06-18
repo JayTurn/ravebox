@@ -26,9 +26,6 @@ import EnvConfig from './config/environment/environmentBaseConfig';
 // Enumerators.
 import { LogLevel } from './shared/logging/Logging.enum';
 
-// Interfaces.
-import { ResponseObject } from './models/database/connect.interface';
-
 /**
  * Load environment variables from .env file, where API keys and passwords
  * are configured.
