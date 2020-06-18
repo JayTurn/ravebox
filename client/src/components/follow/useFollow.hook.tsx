@@ -76,7 +76,21 @@ export function useFollow(params: FollowParams) {
 
   const {id, followType, profile, updateProfile} = {...params};
 
+  const [follows, setFollows] = React.useState<Following | null>(profile ? profile.following : null);
+
   const [following, setFollowing] = React.useState<boolean>(isFollowing(id)(followType)(profile ? profile.following : undefined));
+
+  // If the profile hasn't loaded yet, update it when it's available.
+  React.useEffect(() => {
+    if (!follows && profile) {
+      setFollows(profile.following);
+      setFollowing(isFollowing(id)(followType)(profile.following));
+    };
+  }, [follows, profile]);
+
+  /**
+   * Update the following state if the user profile is updated.
+   */
 
   /**
    * Performs the request to update the follows state for this item.
