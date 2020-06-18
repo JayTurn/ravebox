@@ -26,9 +26,6 @@ import EnvConfig from './config/environment/environmentBaseConfig';
 // Enumerators.
 import { LogLevel } from './shared/logging/Logging.enum';
 
-// Interfaces.
-import { ResponseObject } from './models/database/connect.interface';
-
 /**
  * Load environment variables from .env file, where API keys and passwords
  * are configured.
@@ -96,9 +93,16 @@ app.use((error: Error, request: express.Request, response: express.Response, nex
   next();
 });
 
+
 app.use(cors({
   credentials: true,
-  origin: EnvConfig.origins[0],
+  origin: function(origin: string, callback: Function) {
+    if (EnvConfig.origins.indexOf(origin) !== -1) {
+      callback(null, true);
+    } else {
+      callback(new Error(`${origin} not an accepted request origin`));
+    }
+  },
   optionsSuccessStatus: 200,
   preflightContinue: true
 }));

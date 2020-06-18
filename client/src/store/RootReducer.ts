@@ -12,6 +12,7 @@ import * as H from 'history';
 import ChannelReducer from './channel/Reducer';
 import DiscoverReducer from './discover/Reducer';
 import NavigationReducer from './navigation/Reducer';
+import ProductReducer from './product/Reducer';
 import ReviewReducer from './review/Reducer';
 import UserReducer from './user/Reducer';
 import XsrfReducer from './xsrf/Reducer';
@@ -24,6 +25,7 @@ const RootReducer = (history: H.History) =>
     channel: ChannelReducer,
     discover: DiscoverReducer,
     navigation: NavigationReducer,
+    product: ProductReducer,
     review: ReviewReducer,
     user: UserReducer,
     xsrf: XsrfReducer

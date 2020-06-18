@@ -124,7 +124,7 @@ const setCategoryQueries: (
  * 
  * @param { ViewProductProps } props - the product details properties.
  */
-const frontloadReviewDetails = async (props: ViewProductProps) => {
+const frontloadViewProduct = async (props: ViewProductProps) => {
 
   // Format the api request path.
   const {
@@ -314,7 +314,7 @@ export default withRouter(connect(
   mapStateToProps,
   mapDispatchToProps
 )(frontloadConnect(
-  frontloadReviewDetails,
+  frontloadViewProduct,
   {
     noServerRender: false,     
     onMount: true,
