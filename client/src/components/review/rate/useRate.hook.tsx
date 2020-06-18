@@ -1,4 +1,3 @@
-
 /**
  * useRating.hook.ts
  * Handles common functions for the rating component.

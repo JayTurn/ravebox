@@ -159,7 +159,8 @@ export default class FollowController {
           }, {
             channels: channels
           }, {
-            upsert: false
+            new: true,
+            upsert: true
           });
         }
       })
