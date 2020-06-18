@@ -48,6 +48,9 @@ const syncLoadAssets = () => {
 syncLoadAssets();
 
 const serverRender = async (url: string, context: any, extractor: ChunkExtractor) => {
+  if (url === '/index.html') {
+    url = '/';
+  }
   const markup: string = await frontloadServerRender(() => (
     renderToString(
       <ChunkExtractorManager extractor={extractor}>
