@@ -93,16 +93,9 @@ app.use((error: Error, request: express.Request, response: express.Response, nex
   next();
 });
 
-
 app.use(cors({
   credentials: true,
-  origin: function(origin: string, callback: Function) {
-    if (EnvConfig.origins.indexOf(origin) !== -1) {
-      callback(null, true);
-    } else {
-      callback(new Error(`${origin} not an accepted request origin`));
-    }
-  },
+  origin: EnvConfig.origins[0],
   optionsSuccessStatus: 200,
   preflightContinue: true
 }));
