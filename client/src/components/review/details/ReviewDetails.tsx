@@ -33,6 +33,7 @@ import {
 } from '../../../store/review/Actions';
 
 // Components.
+import FollowButton from '../../follow/button/FollowButton';
 import ListByQuery from '../listByQuery/ListByQuery';
 import ListTitle from '../../elements/listTitle/ListTitle';
 import ProductPreview from '../../product/preview/ProductPreview';
@@ -45,6 +46,9 @@ import ReviewDescription from '../description/ReviewDescription';
 import ReviewLinks from '../link/ReviewLinks';
 
 // Enumerators.
+import {
+  FollowType
+} from '../../follow/FollowType.enum';
 import {
   PresentationType,
   ReviewListType
@@ -80,6 +84,9 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
   },
   fixedContainer: {
     width: '100%'
+  },
+  followRow: {
+    paddingRight: theme.spacing(2)
   },
   contentPadding: {
     padding: theme.spacing(0, 2)
@@ -117,6 +124,12 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
     padding: theme.spacing(1, 2, 2),
     backgroundColor: 'rgba(100, 106, 240, 0.1)',
     boxShadow: '0 1px 1px inset rgba(100,106,240, 0.2)'
+  },
+  profileRowContainer: {
+    justifyContent: 'flex-end'
+  },
+  profileRow: {
+    flexGrow: 1
   },
   publicProfileContainer: {
     paddingTop: theme.spacing(3),
@@ -307,14 +320,35 @@ const ReviewDetails: React.FC<ReviewDetailsProps> = (props: ReviewDetailsProps) 
                     classes.publicProfileContainer
                   )}
                 >
-                  <Grid item xs={12} className={clsx(
-                      classes.columnLarge,
-                    )}
-                  >
-                    <PublicProfilePreview {...review.user} />
-                  </Grid>
-                  <Grid item xs={12} className={clsx(classes.recommendationContainer)}>
-                    <RecommendationChip recommended={review.recommended} />
+                  <Grid item xs={12}>
+                    <Grid container direction='row' className={clsx(
+                        classes.profileRowContainer
+                      )}
+                    >
+                      <Grid item className={clsx(
+                          classes.profileRow
+                        )}
+                      >
+                        <Grid item xs={12} className={clsx(
+                            classes.columnLarge,
+                          )}
+                        >
+                          <PublicProfilePreview {...review.user} />
+                        </Grid>
+                        <Grid item xs={12} className={clsx(classes.recommendationContainer)}>
+                          <RecommendationChip recommended={review.recommended} />
+                        </Grid>
+                      </Grid>
+                      <Grid item className={clsx(
+                          classes.followRow
+                        )}
+                      >
+                        <FollowButton
+                          id={review.user._id}
+                          followType={FollowType.CHANNEL}
+                        />
+                      </Grid>
+                    </Grid>
                   </Grid>
                   {review.description && largeScreen &&
                     <Grid item xs={12} className={clsx(

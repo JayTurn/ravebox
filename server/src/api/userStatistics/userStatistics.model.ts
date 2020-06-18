@@ -16,6 +16,10 @@ const Schema = Mongoose.Schema;
 
 // Create the user statistics schema to be the base for the model.
 const UserStatisticsSchema = new Schema<UserStatisticsDocument>({
+  followers: {
+    type: Number,
+    default: 0
+  },
   reviews: {
     type: Array
   },

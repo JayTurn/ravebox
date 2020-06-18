@@ -85,6 +85,54 @@ export default class UserStatisticsCommon {
   }
 
   /**
+   * Increments the follower count.
+   *
+   * @param { string } userId - the id of the user statistic to increment.
+   * @param { number } value - the number to be incremented.
+   */
+  static IncrementFollowers(userId: string, value: number): void {
+    UserStatistics.findOne({
+      user: userId
+    })
+    .then((statistics: UserStatisticsDocument) => {
+      let query;
+      if (statistics.followers) {
+
+        query = {
+          $inc: {
+            followers: value
+          }
+        };
+      } else {
+        query = {
+          followers: 1
+        }
+      }
+
+      UserStatistics.findOneAndUpdate({
+        user: userId
+      }, query, {
+        upsert: true
+      })
+      .catch((error: Error) => {
+        throw error;
+      });
+    })
+    .catch((error: Error) => {
+      // Log the error for updating the user's statistics.
+      const responseObject = Connect.setResponse({
+        data: {
+          errorCode: 'FAILED_TO_INCREMENT_FOLLOW_COUNT',
+          message: `We couldn't increment the follower count`
+        },
+        error: error
+      }, 401, `Failed to increment the follower count`);
+
+      Logging.Send(LogLevel.ERROR, responseObject);
+    });
+  }
+
+  /**
    * Adds a review rating.
    *
    * @param { string } reviewId - the id of the review to be rated.

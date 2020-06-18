@@ -8,6 +8,7 @@
 import Authenticate from '../../models/authentication/authenticate.model';
 import Connect from '../../models/database/connect.model';
 import EnvConfig from '../../config/environment/environmentBaseConfig';
+import Follow from '../follow/follow.model';
 import * as Jwt from 'jsonwebtoken';
 import LocalController from './authenticate/local.strategy';
 import Logging from '../../shared/logging/Logging.model';
@@ -35,6 +36,9 @@ import { Workflow } from '../../shared/enumerators/workflow.enum';
 import {
   AuthenticatedUserRequest
 } from '../../models/authentication/authentication.interface';
+import {
+  FollowDocument
+} from '../follow/follow.interface';
 import { ResponseObject } from '../../models/database/connect.interface';
 import {
   ProfileSettings,
@@ -123,6 +127,10 @@ export default class UserController {
       User.findOne({
         _id: request.auth._id
       })
+      .populate({
+        path: 'following',
+        model: 'Follow'
+      })
       .then((user: UserDetailsDocument) => {
         // Attach the private user profile to the response.
         responseObject = Connect.setResponse({
@@ -180,9 +188,11 @@ export default class UserController {
 
     // Create a new user from the request data.
     const newUserStatistics: UserStatisticsDocument = new UserStatistics(),
+          newFollow: FollowDocument = new Follow(),
           newUser: UserDetailsDocument = new User({
             ...userDetails,
-            statistics: newUserStatistics._id
+            statistics: newUserStatistics._id,
+            following: newFollow._id
           });
         //leadConversion = false;
         //mailchimp = new Mailchimp(EnvConfig.mailchimp.apiKey);
@@ -190,6 +200,10 @@ export default class UserController {
     // Update the new user statistics with the user id.
     newUserStatistics.user = newUser._id;
     newUserStatistics.save();
+
+    // Update the new follow document with the user id.
+    newFollow.user = newUser._id;
+    newFollow.save();
 
     // Set the provider type.
     newUser.provider = EnvConfig.providers[0];
@@ -1155,4 +1169,5 @@ export default class UserController {
       response.status(responseObject.status).json(responseObject.data);
     });
   }
+
 }

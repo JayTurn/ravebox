@@ -4,6 +4,7 @@
 import { Router } from 'express';
 
 // Route Controllers.
+import FollowController from '../api/follow/follow.controller';
 import ReviewController from '../api/review/review.controller';
 import ReviewStatisticsController from '../api/reviewStatistics/reviewStatistics.controller';
 import ProductController from '../api/product/product.controller';
@@ -34,6 +35,8 @@ export default class RoutesController {
     // Instantiate the router to be pass to classes for route registration.
     this.router = Router();
 
+    // Register the follow routes.
+    FollowController.createRoutes(this.router, this.apiPath);
     // Register the product routes.
     ProductController.createRoutes(this.router, this.apiPath);
     // Register the review routes.
@@ -44,15 +47,5 @@ export default class RoutesController {
     SearchController.createRoutes(this.router, this.apiPath);
     // Register the user routes.
     UserController.createRoutes(this.router, this.apiPath);
-    // Register the healthy status routes.
-    //HealthController.createRoutes(this.router, this.apiPath);
-    // Register the instrument routes.
-    //InstrumentController.createRoutes(this.router, this.apiPath);
-    // Register the reinforcement routes.
-    //ReinforcementController.createRoutes(this.router, this.apiPath);
-    // Register the simulation routes.
-    //SimulationController.createRoutes(this.router, this.apiPath);
-    // Register the statistics routes.
-    //StatisticsController.createRoutes(this.router, this.apiPath);
   }
 }

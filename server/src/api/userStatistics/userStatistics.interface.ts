@@ -16,6 +16,7 @@ import {
  * User statistics document model interface.
  */
 export interface UserStatisticsDocument extends Mongoose.Document {
+  followers: number;
   user: string;
   reviews: Array<Reviewed>;
 }
@@ -24,6 +25,7 @@ export interface UserStatisticsDocument extends Mongoose.Document {
  * User statistics.
  */
 export interface UserStatistics {
+  followers: number;
   user: string;
   reviews: Array<Reviewed>;
 }

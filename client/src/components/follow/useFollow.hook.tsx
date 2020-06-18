@@ -1,0 +1,126 @@
+/**
+ * useFollow.hook.ts
+ * Handles common functions for following items.
+ */
+
+// Modules.
+import API from '../../utils/api/Api.model';
+import Cookies from 'universal-cookie';
+import * as React from 'react';
+
+// Enumerators.
+import {
+  FollowType
+} from './FollowType.enum';
+import {
+  RequestType,
+  RetrievalStatus
+} from '../../utils/api/Api.enum';
+
+// Hooks.
+import { useIsMounted } from '../../utils/safety/useIsMounted.hook';
+
+// Interfaces.
+import {
+  Following,
+  FollowParams,
+  FollowResponse
+} from './Follow.interface';
+import {
+  PrivateProfile
+} from '../user/User.interface';
+
+/**
+ * Checks if the id exists in the list of followed ids.
+ *
+ * @param { string } id - the id of the item to be followed.
+ * @param { Array<string> } list - the list of currently followed items.
+ *
+ * @return boolean
+ */
+const isFollowing: (
+  id: string
+) => (
+  followType: FollowType
+) => (
+  following?: Following
+) => boolean = (
+  id: string
+) => (
+  followType: FollowType
+) => (
+  following?: Following
+): boolean => {
+  let isFollowing: boolean = false;
+
+  if (!following) {
+    return isFollowing;
+  }
+
+  // Update the isFollowing flag based on finding the id in the existing
+  // list of followed items.
+  switch (followType) {
+    case FollowType.CHANNEL:
+      isFollowing = following.channels.indexOf(id) >= 0;
+      break;
+    default:
+  }
+
+  return isFollowing;
+}
+
+/**
+ * Follow hook to handle state updates.
+ */
+export function useFollow(params: FollowParams) {
+
+  const {id, followType, profile, updateProfile} = {...params};
+
+  const [following, setFollowing] = React.useState<boolean>(isFollowing(id)(followType)(profile ? profile.following : undefined));
+
+  /**
+   * Performs the request to update the follows state for this item.
+   */
+  const updateFollowState: (
+  ) => void = (
+  ): void => {
+    // Retrieve the xsrf token if it exists.
+    const cookies: Cookies = new Cookies();
+    const xsrf: string = cookies.get('XSRF-TOKEN');
+
+    // Perform the API request to follow.
+    API.requestAPI<FollowResponse>(`follow/${followType}/${id}`, {
+      headers: {
+        'x-xsrf-token': xsrf || ''
+      },
+      method: RequestType.GET,
+    })
+    .then((response: FollowResponse) => {
+      if (response.following) {
+        const updatedState: boolean = isFollowing(id)(followType)(response.following);
+
+        setFollowing(updatedState);
+
+        if (profile) {
+          // Update the user's profile to reflect the changes.
+          const updatedProfile: PrivateProfile = {
+            ...profile,
+            following: {...response.following}
+          };
+
+          if (updateProfile) {
+            updateProfile(updatedProfile);
+          }
+        }
+      }
+    })
+    .catch((error: Error) => {
+      console.log(error);
+    });
+  }
+
+  return {
+    following,
+    updateFollowState
+  }
+}
