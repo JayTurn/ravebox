@@ -147,7 +147,7 @@ export default class FollowController {
           // If the channel was found we need to remove it.
           if (index >= 0) {
             channels = channels.filter((value: string) => {
-              return value === channel._id;
+              return value.toString() !== channel._id.toString();
             });
 
           } else {
@@ -160,7 +160,7 @@ export default class FollowController {
             channels: channels
           }, {
             new: true,
-            upsert: true
+            upsert: false
           });
         }
       })

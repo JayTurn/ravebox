@@ -80,6 +80,10 @@ export function useFollow(params: FollowParams) {
 
   const [following, setFollowing] = React.useState<boolean>(isFollowing(id)(followType)(profile ? profile.following : undefined));
 
+  // Set a form submission state, used to inform the user their form has been
+  // submitted and to prevent duplicate submissions.
+  const [submitting, setSubmitting] = React.useState(false);
+
   // If the profile hasn't loaded yet, update it when it's available.
   React.useEffect(() => {
     if (!follows && profile) {
@@ -98,6 +102,15 @@ export function useFollow(params: FollowParams) {
   const updateFollowState: (
   ) => void = (
   ): void => {
+
+    // Don't do anything if we're already submitting.
+    if (submitting) {
+      return;
+    }
+
+    // Set the submission state.
+    setSubmitting(true)
+
     // Retrieve the xsrf token if it exists.
     const cookies: Cookies = new Cookies();
     const xsrf: string = cookies.get('XSRF-TOKEN');
@@ -115,6 +128,8 @@ export function useFollow(params: FollowParams) {
 
         setFollowing(updatedState);
 
+        setSubmitting(false);
+
         if (profile) {
           // Update the user's profile to reflect the changes.
           const updatedProfile: PrivateProfile = {
@@ -130,11 +145,14 @@ export function useFollow(params: FollowParams) {
     })
     .catch((error: Error) => {
       console.log(error);
+      setSubmitting(false);
     });
   }
 
   return {
     following,
+    setFollowing,
+    submitting,
     updateFollowState
   }
 }

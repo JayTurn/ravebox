@@ -53,11 +53,14 @@ const FollowButton: React.FC<FollowButtonProps> = (props: FollowButtonProps) => 
   // Initialize the follow hook.
   const {
     following,
+    setFollowing,
+    submitting,
     updateFollowState
   } = useFollow({
     id: props.id,
     followType: props.followType,
-    profile: props.profile
+    profile: props.profile,
+    updateProfile: props.update
   });
 
   /**
@@ -76,6 +79,7 @@ const FollowButton: React.FC<FollowButtonProps> = (props: FollowButtonProps) => 
       <StyledButton
         title={following ? 'Following' : 'Follow'}
         clickAction={updateFollowState}
+        submitting={submitting}
         variant={following ? 'outlined' : 'contained'}
       />
     </Box>

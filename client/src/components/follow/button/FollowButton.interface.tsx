@@ -16,4 +16,5 @@ export interface FollowButtonProps {
   id: string;
   followType: FollowType;
   profile?: PrivateProfile;
+  update?: (profile: PrivateProfile) => void;
 }
