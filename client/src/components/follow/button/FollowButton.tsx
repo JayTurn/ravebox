@@ -72,7 +72,7 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
   },
   popoverText: {
     fontSize: '.9rem'
-  },
+  }
 }));
 
 /**
