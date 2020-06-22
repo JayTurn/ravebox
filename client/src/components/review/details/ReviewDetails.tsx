@@ -320,6 +320,12 @@ const ReviewDetails: React.FC<ReviewDetailsProps> = (props: ReviewDetailsProps) 
                     {review && review.product && review.user &&
                       <Grid item>
                         <ShareButton
+                          config={{
+                            params: {
+                              title: `${review.product.brand} ${review.product.name} rave posted by ${review.user.handle}`,
+                              url: `${process.env.RAZZLE_PUBLIC_URL}/review/${review.url}`
+                            }
+                          }}
                           title={`${review.product.brand} ${review.product.name} rave posted by ${review.user.handle}`}
                           url={`${process.env.RAZZLE_PUBLIC_URL}/review/${review.url}`}
                         />

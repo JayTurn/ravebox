@@ -12,7 +12,7 @@ import { WebShareInterface } from 'react-web-share-api';
 /**
  * Share component properties interface.
  */
-export interface ShareButtonProps extends WebShareInterface {
+export interface ShareButtonProps {
   title: string;
   description?: string;
   image?: string;

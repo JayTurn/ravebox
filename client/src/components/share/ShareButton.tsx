@@ -114,7 +114,7 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
     fontSize: '.9rem'
   },
   shareContainer: {
-    justifyContent: 'space-between',
+    justifyContent: 'flex-start',
     padding: theme.spacing(1, 0)
   },
   shareItem: {
@@ -140,24 +140,19 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
 /**
  * Webshare button.
  */
-const ShareButton = (props: ShareButtonProps) => {
+const ShareButton: React.StatelessComponent<WebShareInterface & ShareButtonProps> = ({
+  share,
+  isSupported,
+  title,
+  url,
+  image
+}) => {
   // Use the custom styles.
   const classes = useStyles();
 
   const [anchorEl, setAnchorEl] = React.useState<HTMLButtonElement | null>(null);
 
   const [open, setOpen] = React.useState<boolean>(false);
-
-  /**
-   * Handles the web share button.
-   */
-  const handleMobileShare: (
-    e: React.MouseEvent<HTMLButtonElement>
-  ) => void = (
-    e: React.MouseEvent<HTMLButtonElement>
-  ): void => {
-    props.share();
-  };
 
   /**
    * Handles the desktop share button.
@@ -192,7 +187,7 @@ const ShareButton = (props: ShareButtonProps) => {
           className={clsx(
             classes.iconButton
           )}
-          onClick={props.isSupported ? handleMobileShare : handleDesktopShare}
+          onClick={isSupported ? share : handleDesktopShare}
         >
           <ShareRoundedIcon className={clsx(classes.icon)} />
         </IconButton>
@@ -209,7 +204,7 @@ const ShareButton = (props: ShareButtonProps) => {
           Share
         </Typography>
       </Grid>
-      {!props.isSupported &&
+      {!isSupported &&
         <Popover
           anchorEl={anchorEl}
           anchorOrigin={{
@@ -248,73 +243,73 @@ const ShareButton = (props: ShareButtonProps) => {
               >
                 <Grid item>
                   <TwitterShareButton
-                    url={props.url}
-                    title={props.title}
+                    url={url}
+                    title={title}
                   >
                     <TwitterIcon size={32} round />
                   </TwitterShareButton>
                 </Grid>
                 <Grid item>
                   <LinkedinShareButton
-                    url={props.url}
+                    url={url}
                   >
                     <LinkedinIcon size={32} round />
                   </LinkedinShareButton>
                 </Grid>
                 <Grid item>
                   <FacebookShareButton
-                    url={props.url}
-                    quote={props.title}
+                    url={url}
+                    quote={title}
                   >
                     <FacebookIcon size={32} round />
                   </FacebookShareButton>
                 </Grid>
                 <Grid item>
                   <RedditShareButton
-                    url={props.url}
-                    title={props.title}
+                    url={url}
+                    title={title}
                   >
                     <RedditIcon size={32} round />
                   </RedditShareButton>
                 </Grid>
                 <Grid item>
                   <TumblrShareButton
-                    url={props.url}
-                    title={props.title}
+                    url={url}
+                    title={title}
                   >
                     <TumblrIcon size={32} round />
                   </TumblrShareButton>
                 </Grid>
                 <Grid item>
                   <WeiboShareButton
-                    url={props.url}
-                    title={props.title}
-                    image={props.image ? props.image : ''}
+                    url={url}
+                    title={title}
+                    image={image ? image : ''}
                   >
                     <WeiboIcon size={32} round />
                   </WeiboShareButton>
                 </Grid>
                 <Grid item>
                   <WhatsappShareButton
-                    url={props.url}
+                    url={url}
                     separator=':: '
-                    title={props.title}
+                    title={title}
                   >
                     <WhatsappIcon size={32} round />
                   </WhatsappShareButton>
                 </Grid>
                 <Grid item>
                   <TelegramShareButton
-                    url={props.url}
-                    title={props.title}
+                    url={url}
+                    title={title}
                   >
                     <TelegramIcon size={32} round />
                   </TelegramShareButton>
                 </Grid>
                 <Grid item>
                   <EmailShareButton
-                    url={props.url}
-                    subject={props.title}
+                    url={url}
+                    subject={title}
                   >
                     <EmailIcon size={32} round />
                   </EmailShareButton>
