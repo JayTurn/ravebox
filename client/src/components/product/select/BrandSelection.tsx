@@ -12,7 +12,6 @@ import { useTheme } from '@material-ui/core/styles';
 
 // Components.
 import Input from '../../forms/input/Input';
-import StyledButton from '../../elements/buttons/StyledButton';
 
 // Hooks.
 import { useValidation } from '../../forms/validation/useValidation.hook';

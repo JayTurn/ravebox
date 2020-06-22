@@ -48,6 +48,7 @@ const Channel = loadable(() => import('./user/channel/Channel'));
 const CommunityGuidelines = loadable(() => import('./policies/CommunityGuidelines'));
 const Discover = loadable(() => import('./discover/Discover'));
 const EditReview = loadable(() => import('./review/edit/EditReview'));
+const Following = loadable(() => import('./user/following/Following'));
 const Home = loadable(() => import('./home/Home'));
 const Login = loadable(() => import('./user/login/Login'));
 const MobileNavigation = loadable(() => import('../components/navigation/mobile/MobileNavigation'));
@@ -215,9 +216,12 @@ const App: React.FC<AppProps> = (props: AppProps) => {
                       <Route exact={true} path="/user/signup">
                         <Signup />
                       </Route>
-                      <Route exact={true} path="/user/reviews">
+                      <PrivateRoute exact={true} path="/user/reviews">
                         <MyReviews />
-                      </Route>
+                      </PrivateRoute>
+                      <PrivateRoute exact={true} path="/user/following">
+                        <Following />
+                      </PrivateRoute>
                       <Route exact={true} path="/user/channel/:handle">
                         <Channel />
                       </Route>

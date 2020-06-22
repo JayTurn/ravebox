@@ -476,7 +476,9 @@ const AddReviewForm: React.FC<AddReviewFormProps> = (props: AddReviewFormProps) 
    * Submits the review for creation.
    */
   const submit: (
+    e: React.MouseEvent<HTMLButtonElement>
   ) => Promise<void> = async (
+    e: React.MouseEvent<HTMLButtonElement>
   ): Promise<void> => {
 
     // Don't do anything if we're already submitting.
@@ -591,7 +593,9 @@ const AddReviewForm: React.FC<AddReviewFormProps> = (props: AddReviewFormProps) 
    * Navigate to your raves.
    */
   const navigateToMyRaves: (
+    e: React.MouseEvent<HTMLButtonElement>
   ) => void = (
+    e: React.MouseEvent<HTMLButtonElement>
   ): void => {
     props.history.push('/user/reviews');
   }

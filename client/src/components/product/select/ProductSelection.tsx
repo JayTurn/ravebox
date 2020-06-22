@@ -205,7 +205,9 @@ const ProductSelection: React.FC<ProductSelectionProps> = (props: ProductSelecti
    * Updates the selected value for the product.
    */
   const updateProductName: (
+    e: React.MouseEvent<HTMLButtonElement>
   ) => void = (
+    e: React.MouseEvent<HTMLButtonElement>
   ): void => {
     // Set an empty list of options.
     setOptions([]);

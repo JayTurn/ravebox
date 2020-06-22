@@ -30,7 +30,6 @@ import ChangeProfile from '../changeProfile/ChangeProfile';
 import ChangePassword from '../changePassword/ChangePassword';
 import Input from '../../forms/input/Input'; 
 import PaddedDivider from '../../elements/dividers/PaddedDivider';
-import StyledButton from '../../elements/buttons/StyledButton';
 import useMediaQuery from '@material-ui/core/useMediaQuery';
 
 // Enumerators.

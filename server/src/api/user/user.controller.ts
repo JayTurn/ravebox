@@ -74,6 +74,9 @@ export default class UserController {
     // Validate the existing of a user handle.
     router.get(`${path}/handle/:id`, UserController.HandleAvailability);
 
+    // Retrieves the raves a user is following.
+    router.get(`${path}/following`, Authenticate.isAuthenticated, UserController.RetrieveFollowing);
+
     // Attempt to reset the user's password.
     router.patch(`${path}/password/new`, UserController.SetNewPassword);
 
@@ -378,7 +381,7 @@ export default class UserController {
           data: {
             errorCode: 'FAILED_TO_CHECK_HANDLE',
             message: `There was a problem checking the availability of this handle. Please try again`
-          }, 
+          },
           error: error
         }, 404, `There was a problem checking the availability of this handle. Please try again`);
 
@@ -1033,7 +1036,7 @@ export default class UserController {
           },
           error: error
         }, 404, `We couldn't find results for the requested user`);
-      
+
       Logging.Send(LogLevel.ERROR, responseObject);
 
       // Return the response.
@@ -1140,7 +1143,7 @@ export default class UserController {
         i++;
 
       } while (i < reviews.length);
-      
+
       // Set the response object.
       responseObject = Connect.setResponse({
         data: {
@@ -1170,4 +1173,145 @@ export default class UserController {
     });
   }
 
+  /**
+   * Retrieves the list of reviews a user is following.
+   *
+   * @param {object} req
+   * The request object.
+   *
+   * @param {object} res
+   * The response object.
+   */
+  static RetrieveFollowing(request: AuthenticatedUserRequest, response: Response): void {
+    const id: string = request.auth._id;
+
+    if (!id) {
+      // Define the responseObject.
+      const responseObject: ResponseObject = Connect.setResponse({
+          data: {
+            errorCode: 'USER_ID_NOT_PROVIDED_FOR_FOLLOWING',
+            message: `You must be logged in to retrieve your followed raves`
+          },
+          error: new Error('ID not provided for request.')
+        }, 403, `You must be logged in to retrieve your followed raves`);
+
+      Logging.Send(LogLevel.ERROR, responseObject);
+
+      // Return the response.
+      response.status(responseObject.status).json(responseObject.data);
+
+      return;
+    }
+
+    // Request the list of users currently followed.
+    User.findOne({
+      _id: id
+    })
+    .populate({
+      path: 'following',
+      model: 'Follow'
+    })
+    .then((userDocument: UserDetailsDocument) => {
+
+      if (userDocument.following.channels) {
+        return userDocument.following.channels;
+      } else {
+        return [];
+      }
+    })
+    .then((users: Array<string>) => {
+      if (users.length <= 0) {
+        // Return the updated list of followers.
+        const responseObject: ResponseObject = Connect.setResponse({
+          data: {
+            reviews: []
+          }
+        }, 200, 'No followed raves found');
+
+        // Return the response.
+        response.status(responseObject.status).json(responseObject.data);
+        return;
+      }
+
+      Review.find({
+        user: {
+          $in: users
+        },
+        published: Workflow.PUBLISHED
+      })
+      .populate({
+        path: 'product',
+        model: 'Product',
+      })
+      .populate({
+        path: 'statistics',
+        model: 'ReviewStatistic'
+      })
+      .populate({
+        path: 'user',
+        model: 'User'
+      })
+      .populate({
+        path: 'user.userStatistics',
+        model: 'UserStatistic'
+      })
+      .sort({
+        created: -1
+      })
+      .then((reviews: Array<ReviewDocument>) => {
+
+        const publicReviews: Array<ReviewDetails> = [];
+
+        if (reviews.length > 0) {
+          // If we have a list of reviews, loop through and populate the channel
+          // reviews.
+          let i = 0;
+
+          do {
+            // Curate the reviews with reduced details and statistics.
+            const current: ReviewDocument = reviews[i];
+            const reviewDetails: ReviewDetails = {
+              ...current.details,
+              product: current.product.details,
+              user: current.user.publicProfile
+            };
+
+            publicReviews.push({...reviewDetails});
+
+            i++;
+
+          } while (i < reviews.length);
+        }
+
+        // Return the updated list of followers.
+        const responseObject: ResponseObject = Connect.setResponse({
+          data: {
+            reviews: publicReviews
+          }
+        }, 200, 'Reviews returned successfully');
+
+        // Return the response.
+        response.status(responseObject.status).json(responseObject.data);
+      })
+      .catch((error: Error) => {
+        throw error;
+      })
+
+    })
+    .catch((error: Error) => {
+      // Define the responseObject.
+      const responseObject: ResponseObject = Connect.setResponse({
+        data: {
+          errorCode: 'ERROR_RETRIEVING_FOLLOWED_REVIEWS',
+          message: `We encountered a problem when attempting to retrieve the raves you're following`
+        },
+        error: error
+      }, 404, `We encountered a problem when attempting to retrieve the raves you're following`);
+
+      Logging.Send(LogLevel.ERROR, responseObject);
+
+      // Return the response.
+      response.status(responseObject.status).json(responseObject.data);
+    });
+  }
 }

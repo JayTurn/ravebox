@@ -165,7 +165,9 @@ const ChangeProfile: React.FC<ChangeProfileProps> = (props: ChangeProfileProps) 
    * Performs the settings update.
    */
   const submitProfile: (
+    e: React.MouseEvent<HTMLButtonElement>
   ) => Promise<void> = async (
+    e: React.MouseEvent<HTMLButtonElement>
   ): Promise<void> => {
     // Don't do anything if we're already submitting.
     if (submitting) {

@@ -158,7 +158,11 @@ const ChangePassword: React.FC<ChangePasswordProps> = (props: ChangePasswordProp
   /**
    * Verifies the current password for the user.
    */
-  const verifyPassword: () => void = (): void => {
+  const verifyPassword: (
+    e: React.MouseEvent<HTMLButtonElement>
+  ) => void = (
+    e: React.MouseEvent<HTMLButtonElement>
+  ): void => {
     // Don't do anything if we're already submitting.
     if (submitting) {
       return;
@@ -210,7 +214,9 @@ const ChangePassword: React.FC<ChangePasswordProps> = (props: ChangePasswordProp
    * Performs the password update.
    */
   const updatePassword: (
+    e: React.MouseEvent<HTMLButtonElement>
   ) => Promise<void> = async (
+    e: React.MouseEvent<HTMLButtonElement>
   ): Promise<void> => {
     // Don't do anything if we're already submitting.
     if (submitting) {

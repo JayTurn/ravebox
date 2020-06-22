@@ -298,7 +298,9 @@ const EditReviewForm: React.FC<EditReviewFormProps> = (props: EditReviewFormProp
    * Submits the edited review.
    */
   const submit: (
+    e: React.MouseEvent<HTMLButtonElement>
   ) => Promise<void> = async (
+    e: React.MouseEvent<HTMLButtonElement>
   ): Promise<void> => {
 
     // Don't do anything if we're already submitting.
@@ -512,7 +514,9 @@ const EditReviewForm: React.FC<EditReviewFormProps> = (props: EditReviewFormProp
                   { review.videoURL &&
                     <Grid item xs={12} lg={6} style={{marginTop: '1rem', marginBottom: '3rem', width: '100%'}}>
                       <StyledButton
-                        clickAction={() => editVideo(false)}
+                        clickAction={(
+                          e: React.MouseEvent<HTMLButtonElement>
+                        ) => editVideo(false)}
                         color='primary'
                         size='large'
                         title={'Cancel'}
@@ -527,7 +531,9 @@ const EditReviewForm: React.FC<EditReviewFormProps> = (props: EditReviewFormProp
                   </Grid>
                   <Grid item xs={12} lg={6} style={{marginBottom: '3rem', width: '100%'}}>
                     <StyledButton
-                      clickAction={() => editVideo(true)}
+                      clickAction={(
+                        e: React.MouseEvent<HTMLButtonElement>
+                      ) => editVideo(true)}
                       color='primary'
                       size='large'
                       title={review.videoURL ? 'Upload new video' : 'Upload'}

@@ -26,6 +26,7 @@ import ListItem from '@material-ui/core/ListItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
 import { NavLink } from 'react-router-dom';
+import PageviewRoundedIcon from '@material-ui/icons/PageviewRounded';
 import * as React from 'react';
 import SubscriptionsRoundedIcon from '@material-ui/icons/SubscriptionsRounded';
 import Typography from '@material-ui/core/Typography';
@@ -214,7 +215,7 @@ const SideNavigation: React.FC<SideNavigationProps> = (props: SideNavigationProp
               [classes.listButtonIconClosed]: !props.expanded,
               [classes.listButtonIconActive]: activePath === '/discover'
             })}>
-              <SubscriptionsRoundedIcon />
+              <PageviewRoundedIcon />
             </ListItemIcon>
             <ListItemText disableTypography className={clsx({
               [classes.listButtonTextOpen]: props.expanded,
@@ -228,6 +229,35 @@ const SideNavigation: React.FC<SideNavigationProps> = (props: SideNavigationProp
             </ListItemText>
           </NavLink>
         </ListItem>
+        {props.profile &&
+          <ListItem button alignItems='center' className={clsx(classes.listButton, {
+            [classes.listButtonOpen]: props.expanded,
+            [classes.listButtonClosed]: !props.expanded,
+          })}>
+            <NavLink to='/user/following' className={clsx(classes.linkStyle, {
+              [classes.linkStyleOpen]: props.expanded,
+              [classes.linkStyleClosed]: !props.expanded
+            })}>
+              <ListItemIcon className={clsx({
+                [classes.listButtonIconOpen]: props.expanded,
+                [classes.listButtonIconClosed]: !props.expanded,
+                [classes.listButtonIconActive]: activePath === '/user/following'
+              })}>
+                <SubscriptionsRoundedIcon />
+              </ListItemIcon>
+              <ListItemText disableTypography className={clsx({
+                [classes.listButtonTextOpen]: props.expanded,
+                [classes.listButtonTextClosed]: !props.expanded
+              })}>
+                <Typography variant='subtitle2' className={clsx({
+                  [classes.listButtonTypographyOpen]: props.expanded,
+                  [classes.listButtonTypographyClosed]: !props.expanded,
+                  [classes.listButtonTextActive]: activePath === '/user/following'
+                })}>Following</Typography>
+              </ListItemText>
+            </NavLink>
+          </ListItem>
+        }
         <ListItem button alignItems='center' className={clsx(classes.listButton, {
           [classes.listButtonOpen]: props.expanded,
           [classes.listButtonClosed]: !props.expanded,

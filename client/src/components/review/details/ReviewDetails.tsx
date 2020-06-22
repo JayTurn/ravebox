@@ -345,6 +345,7 @@ const ReviewDetails: React.FC<ReviewDetailsProps> = (props: ReviewDetailsProps) 
                       >
                         <FollowButton
                           id={review.user._id}
+                          handle={review.user.handle}
                           followType={FollowType.CHANNEL}
                         />
                       </Grid>

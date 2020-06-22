@@ -168,7 +168,9 @@ const ChangeEmail: React.FC<ChangeEmailProps> = (props: ChangeEmailProps) => {
    * Performs the contact settings update.
    */
   const submitContact: (
+    e: React.MouseEvent<HTMLButtonElement>
   ) => Promise<void> = async (
+    e: React.MouseEvent<HTMLButtonElement>
   ): Promise<void> => {
     // Don't do anything if we're already submitting.
     if (submitting) {

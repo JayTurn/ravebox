@@ -65,7 +65,7 @@ services:
       - ./ngrok:/ngrok
   react_client:
     build: client/
-    command: yarn start:local
+    command: yarn start
     container_name: client
     image: jayturn/react:1.2.8
     depends_on:

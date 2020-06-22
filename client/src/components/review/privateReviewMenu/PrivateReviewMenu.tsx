@@ -194,14 +194,22 @@ const PrivateReviewMenu: React.FC<PrivateReviewMenuProps> = (props: PrivateRevie
   /**
    * Closes the confirmation dialog.
    */
-  const closeConfirmation: () => void = (): void => {
+  const closeConfirmation: (
+    e: React.MouseEvent<HTMLButtonElement>
+  ) => void = (
+    e: React.MouseEvent<HTMLButtonElement>
+  ): void => {
     setOpenConfirmation(false);
   }
 
   /**
    * Handles the removal of a review.
    */
-  const remove: () => void = (): void => {
+  const remove: (
+    e: React.MouseEvent<HTMLButtonElement>
+  ) => void = (
+    e: React.MouseEvent<HTMLButtonElement>
+  ): void => {
     // Don't do anything if we're already submitting.
     if (submitting) {
       return;

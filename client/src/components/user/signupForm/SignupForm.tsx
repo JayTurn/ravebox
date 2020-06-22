@@ -177,7 +177,9 @@ const SignupForm: React.FC<SignupFormProps> = (props: SignupFormProps) => {
    * Submits the signup form.
    */
   const submit: (
+    e: React.MouseEvent<HTMLButtonElement>
   ) => Promise<void> = async (
+    e: React.MouseEvent<HTMLButtonElement>
   ): Promise<void> => {
 
     // Don't do anything if we're already submitting.
