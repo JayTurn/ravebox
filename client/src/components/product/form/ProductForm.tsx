@@ -247,7 +247,9 @@ const ProductForm: React.FC<ProductFormProps> = (
    * Submits the product for creation.
    */
   const submit: (
+    e: React.MouseEvent<HTMLButtonElement>
   ) => Promise<void> = async (
+    e: React.MouseEvent<HTMLButtonElement>
   ): Promise<void> => {
 
     // Don't do anything if we're already submitting.

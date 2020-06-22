@@ -33,7 +33,15 @@ export default combineReducers<UserStore, UserAction>({
    *
    * @return APIImageConfig
    */
-  profile: (state: PrivateProfile = {_id: '', email: '', emailVerified: false, handle: ''}, action: UserAction) => {
+  profile: (state: PrivateProfile = {
+    _id: '', 
+    email: '', 
+    emailVerified: false,
+    following: {
+      channels: []
+    },
+    handle: ''
+  }, action: UserAction) => {
     // Update the configuration based on the redux action triggered.
     switch (action.type) {
       case UserVerb.LOGIN:
@@ -42,7 +50,15 @@ export default combineReducers<UserStore, UserAction>({
         return action.payload;
       case UserVerb.LOGOUT:
         // Remove the payload item from the list of watched items.
-        return {_id: '', email: '', emailVerified: false, handle: ''};
+        return {
+          _id: '', 
+          email: '', 
+          emailVerified: false, 
+          following: {
+            channels: []
+          },
+          handle: ''
+        };
       default:
         return state;
     }

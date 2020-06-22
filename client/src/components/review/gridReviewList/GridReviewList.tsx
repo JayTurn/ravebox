@@ -22,7 +22,6 @@ import { withRouter } from 'react-router';
 // Components.
 import LoadingReviewList from '../../elements/loadingReviewList/LoadingReviewList';
 import ReviewCard from '../../review/reviewCard/ReviewCard';
-import StyledButton from '../../elements/buttons/StyledButton';
 
 // Enumerators.
 import { RetrievalStatus } from '../../../utils/api/Api.enum';

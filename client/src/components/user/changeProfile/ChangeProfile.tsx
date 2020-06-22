@@ -69,7 +69,15 @@ const ChangeProfile: React.FC<ChangeProfileProps> = (props: ChangeProfileProps) 
   const { enqueueSnackbar } = useSnackbar();
 
   // Define the settings to be updated upon save.
-  const [settings, updateSettings] = React.useState<PrivateProfile>({_id: '', email: '', emailVerified: false, handle: ''});
+  const [settings, updateSettings] = React.useState<PrivateProfile>({
+    _id: '',
+    email: '',
+    emailVerified: false,
+    following: {
+      channels: []
+    },
+    handle: ''
+  });
 
   // Form error messages to be displayed if fields haven't been validated
   // and prevents submissions to the api.
@@ -157,7 +165,9 @@ const ChangeProfile: React.FC<ChangeProfileProps> = (props: ChangeProfileProps) 
    * Performs the settings update.
    */
   const submitProfile: (
+    e: React.MouseEvent<HTMLButtonElement>
   ) => Promise<void> = async (
+    e: React.MouseEvent<HTMLButtonElement>
   ): Promise<void> => {
     // Don't do anything if we're already submitting.
     if (submitting) {

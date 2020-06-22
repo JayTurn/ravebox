@@ -131,7 +131,9 @@ const PasswordResetForm: React.FC<PasswordResetFormProps> = (props: PasswordRese
    * Updates the password using the token and new password value.
    */
   const submitPassword: (
+    e: React.MouseEvent<HTMLButtonElement>
   ) => Promise<void> = async (
+    e: React.MouseEvent<HTMLButtonElement>
   ): Promise<void> => {
 
     // Don't do anything if we're already submitting.

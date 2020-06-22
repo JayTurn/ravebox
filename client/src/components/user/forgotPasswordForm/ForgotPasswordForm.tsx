@@ -127,7 +127,9 @@ const ForgotPasswordForm: React.FC<ForgotPasswordFormProps> = (props: ForgotPass
    * @method getRequestToken
    */
   const submitReset: (
+    e: React.MouseEvent<HTMLButtonElement>
   ) => Promise<void> = async (
+    e: React.MouseEvent<HTMLButtonElement>
   ): Promise<void> => {
 
     // Don't do anything if we're already submitting.

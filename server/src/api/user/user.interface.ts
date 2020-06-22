@@ -10,6 +10,10 @@ import * as Mongoose from 'mongoose';
 import { UserRole } from './user.enum';
 
 // Interfaces.
+import {
+  FollowDocument,
+  Following
+} from '../follow/follow.interface';
 import { ReviewDetails } from '../review/review.interface';
 import {
   UserStatistics,
@@ -24,6 +28,7 @@ export interface UserDetailsDocument extends Mongoose.Document {
   emailVerified: boolean;
   encryptPassword: Function;
   expires: number;
+  following: FollowDocument;
   handle: string;
   _id: string;
   links: Array<LinkDetails>;
@@ -46,6 +51,7 @@ export interface PrivateUserDetails {
   email: string;
   emailVerified: boolean;
   expires: number;
+  following?: Following;
   statistics?: UserStatistics;
 }
 

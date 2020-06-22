@@ -68,7 +68,15 @@ const ChangeEmail: React.FC<ChangeEmailProps> = (props: ChangeEmailProps) => {
   const { enqueueSnackbar } = useSnackbar();
 
   // Define the settings to be updated upon save.
-  const [settings, updateSettings] = React.useState<PrivateProfile>({_id: '', email: '', emailVerified: false, handle: ''});
+  const [settings, updateSettings] = React.useState<PrivateProfile>({
+    _id: '', 
+    email: '', 
+    emailVerified: false, 
+    following: {
+      channels: []
+    },
+    handle: ''
+  });
 
   // Form error messages to be displayed if fields haven't been validated
   // and prevents submissions to the api.
@@ -160,7 +168,9 @@ const ChangeEmail: React.FC<ChangeEmailProps> = (props: ChangeEmailProps) => {
    * Performs the contact settings update.
    */
   const submitContact: (
+    e: React.MouseEvent<HTMLButtonElement>
   ) => Promise<void> = async (
+    e: React.MouseEvent<HTMLButtonElement>
   ): Promise<void> => {
     // Don't do anything if we're already submitting.
     if (submitting) {

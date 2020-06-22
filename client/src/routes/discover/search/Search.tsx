@@ -189,7 +189,9 @@ const Search: React.FC<SearchProps> = (props: SearchProps) => {
    * Navigates to the discover screen.
    */
   const navigateToAlternative: (
+    e: React.MouseEvent<HTMLButtonElement>
   ) => void = (
+    e: React.MouseEvent<HTMLButtonElement>
   ): void => {
     props.history.push('/discover');
   }

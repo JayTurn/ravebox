@@ -94,7 +94,9 @@ const ReviewList: React.FC<ReviewListProps> = (props: ReviewListProps) => {
    * Navigates to the post a review screen.
    */
   const postReview: (
+    e: React.MouseEvent<HTMLButtonElement>
   ) => void = (
+    e: React.MouseEvent<HTMLButtonElement>
   ): void => {
     props.history.push('/product/add');
   }

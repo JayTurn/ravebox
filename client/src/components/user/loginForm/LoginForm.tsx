@@ -153,7 +153,9 @@ const LoginForm: React.FC<LoginFormProps> = (props: LoginFormProps) => {
    * @method getRequestToken
    */
   const authenticate: (
+    e: React.MouseEvent<HTMLButtonElement>
   ) => Promise<void> = async (
+    e: React.MouseEvent<HTMLButtonElement>
   ): Promise<void> => {
 
     // Don't do anything if we're already submitting.

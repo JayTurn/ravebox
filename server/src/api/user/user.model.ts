@@ -35,6 +35,10 @@ const UserSchema = new Schema({
     type: Boolean,
     default: false
   },
+  following: {
+    type: Schema.Types.ObjectId, 
+    ref: 'Follow'
+  },
   handle: {
     type: String
   },
@@ -77,6 +81,7 @@ UserSchema
       'email': this.email,
       'emailVerified': this.emailVerified,
       'expires': this.expires,
+      'following': this.following,
       'handle': this.handle,
       'oldEmail': this.oldEmail,
       'statistics': this.statistics

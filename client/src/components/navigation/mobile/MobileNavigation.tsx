@@ -18,6 +18,7 @@ import ListItem from '@material-ui/core/ListItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
 import { NavLink } from 'react-router-dom';
+import PageviewRoundedIcon from '@material-ui/icons/PageviewRounded';
 import SubscriptionsRoundedIcon from '@material-ui/icons/SubscriptionsRounded';
 import SwipeableDrawer from '@material-ui/core/SwipeableDrawer';
 import Typography from '@material-ui/core/Typography';
@@ -204,7 +205,7 @@ const MobileNavigation: React.FC<MobileNavigationProps> = (props: MobileNavigati
                 classes.listButtonIconOpen,
                 {[classes.listButtonIconActive]: activePath === '/discover'}
               )}>
-                <SubscriptionsRoundedIcon />
+                <PageviewRoundedIcon />
               </ListItemIcon>
               <ListItemText disableTypography className={clsx(
                 classes.listButtonTextOpen,
@@ -216,6 +217,26 @@ const MobileNavigation: React.FC<MobileNavigationProps> = (props: MobileNavigati
               </ListItemText>
             </NavLink>
           </ListItem>
+          {props.profile &&
+            <ListItem button className={clsx(classes.listButton, classes.listButtonOpen)}>
+              <NavLink to='/user/following' className={clsx(classes.linkStyle, classes.linkStyleOpen)} onClick={toggleDrawer}>
+                <ListItemIcon className={clsx(
+                  classes.listButtonIconOpen,
+                  {[classes.listButtonIconActive]: activePath === '/user/following'}
+                )}>
+                  <SubscriptionsRoundedIcon />
+                </ListItemIcon>
+                <ListItemText disableTypography className={clsx(
+                  classes.listButtonTextOpen,
+                  {[classes.listButtonTextActive]: activePath === '/user/following'}
+                )}>
+                  <Typography variant='subtitle2' className={clsx(
+                    classes.listButtonTypographyOpen
+                  )}>Following</Typography>
+                </ListItemText>
+              </NavLink>
+            </ListItem>
+          }
           <ListItem button className={clsx(classes.listButton, classes.listButtonOpen)}>
             <NavLink to='/product/add' className={clsx(classes.linkStyle, classes.linkStyleOpen)} onClick={toggleDrawer}>
               <ListItemIcon className={clsx(

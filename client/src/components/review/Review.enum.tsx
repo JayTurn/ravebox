@@ -26,6 +26,7 @@ export enum ScreenContext {
   CATEGORY_LIST = 'category list',
   CHANNEL = 'channel',
   DISCOVER = 'discover',
+  FOLLOWING = 'following',
   HOME = 'home',
   MY_REVIEWS = 'my reviews',
   PRODUCT = 'product',
