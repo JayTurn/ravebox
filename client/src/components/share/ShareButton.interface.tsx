@@ -12,9 +12,8 @@ import { WebShareInterface } from 'react-web-share-api';
 /**
  * Share component properties interface.
  */
-export interface ShareButtonProps {
+export interface ShareButtonProps extends RouteComponentProps {
   title: string;
   description?: string;
   image?: string;
-  url: string;
 }

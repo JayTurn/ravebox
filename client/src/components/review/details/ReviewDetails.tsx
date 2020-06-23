@@ -20,7 +20,7 @@ import {
 } from '@material-ui/core/styles';
 import Grid from '@material-ui/core/Grid';
 import * as React from 'react';
-import Share from '../../share/Share';
+import ShareButton from '../../share/ShareButton';
 import SponsoredChip from '../sponsoredChip/SponsoredChip';
 import ThumbUpRoundedIcon from '@material-ui/icons/ThumbUpRounded';
 import ThumbDownRoundedIcon from '@material-ui/icons/ThumbDownRounded';
@@ -128,6 +128,7 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
     boxShadow: '0 1px 1px inset rgba(100,106,240, 0.2)'
   },
   profileRowContainer: {
+    flexWrap: 'nowrap',
     justifyContent: 'flex-end'
   },
   profileRow: {
@@ -318,9 +319,9 @@ const ReviewDetails: React.FC<ReviewDetailsProps> = (props: ReviewDetailsProps) 
                         <Rate review={review} token={token} acceptance={ratingAcceptance}/>
                       </Grid>
                     }
-                    {review && review.product && review.user && navigator &&
+                    {review && review.product && review.user &&
                       <Grid item>
-                        <Share
+                        <ShareButton
                           title={`${review.product.brand} ${review.product.name} rave posted by ${review.user.handle}`}
                           image={`${review.thumbnailURL}`}
                         />

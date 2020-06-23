@@ -66,7 +66,7 @@ import Popover from '@material-ui/core/Popover';
 import * as React from 'react';
 import ShareRoundedIcon from '@material-ui/icons/ShareRounded';
 import Typography from '@material-ui/core/Typography';
-import webShare, { WebShareInterface } from 'react-web-share-api';
+import { withRouter } from 'react-router';
 
 // Interfaces.
 import { ShareButtonProps } from './ShareButton.interface';
@@ -138,21 +138,50 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
 }));
 
 /**
+ * Determines if we can share using the navigator object.
+ */
+const isSupported: (
+) => boolean = (
+): boolean => {
+  if (!navigator) {
+    return false;
+  }
+
+  return (navigator as any).share !== undefined;
+}
+
+/**
  * Webshare button.
  */
-const ShareButton: React.StatelessComponent<WebShareInterface & ShareButtonProps> = ({
-  share,
-  isSupported,
-  title,
-  url,
-  image
-}) => {
+const ShareButton: React.FC<ShareButtonProps> = (props: ShareButtonProps) => {
   // Use the custom styles.
   const classes = useStyles();
 
   const [anchorEl, setAnchorEl] = React.useState<HTMLButtonElement | null>(null);
 
   const [open, setOpen] = React.useState<boolean>(false);
+
+  const path: string = `${process.env.RAZZLE_ASSETS_MANIFEST}/${props.location.pathname}`;
+
+  const handleNavigatorShare: (
+    e: React.MouseEvent<HTMLButtonElement>
+  ) => void = (
+    e: React.MouseEvent<HTMLButtonElement>
+  ): void => {
+    try {
+      (navigator as any).share({
+        title: props.title,
+        url: path
+      })
+      .then(() => {
+      })
+      .catch((error: Error) => {
+        console.log(error);
+      });
+    } catch {
+      console.log('Failed to share via navigator');
+    }
+  }
 
   /**
    * Handles the desktop share button.
@@ -166,6 +195,8 @@ const ShareButton: React.StatelessComponent<WebShareInterface & ShareButtonProps
     setAnchorEl(e.currentTarget);
     setOpen(true);
   };
+
+  const navigatorSupported: boolean = isSupported();
 
   /**
    * Handles the closing of the popover message.
@@ -187,7 +218,7 @@ const ShareButton: React.StatelessComponent<WebShareInterface & ShareButtonProps
           className={clsx(
             classes.iconButton
           )}
-          onClick={isSupported ? share : handleDesktopShare}
+          onClick={navigatorSupported ? handleNavigatorShare : handleDesktopShare}
         >
           <ShareRoundedIcon className={clsx(classes.icon)} />
         </IconButton>
@@ -204,7 +235,7 @@ const ShareButton: React.StatelessComponent<WebShareInterface & ShareButtonProps
           Share
         </Typography>
       </Grid>
-      {!isSupported &&
+      {!navigatorSupported &&
         <Popover
           anchorEl={anchorEl}
           anchorOrigin={{
@@ -243,73 +274,73 @@ const ShareButton: React.StatelessComponent<WebShareInterface & ShareButtonProps
               >
                 <Grid item>
                   <TwitterShareButton
-                    url={url}
-                    title={title}
+                    url={path}
+                    title={props.title}
                   >
                     <TwitterIcon size={32} round />
                   </TwitterShareButton>
                 </Grid>
                 <Grid item>
                   <LinkedinShareButton
-                    url={url}
+                    url={path}
                   >
                     <LinkedinIcon size={32} round />
                   </LinkedinShareButton>
                 </Grid>
                 <Grid item>
                   <FacebookShareButton
-                    url={url}
-                    quote={title}
+                    url={path}
+                    quote={props.title}
                   >
                     <FacebookIcon size={32} round />
                   </FacebookShareButton>
                 </Grid>
                 <Grid item>
                   <RedditShareButton
-                    url={url}
-                    title={title}
+                    url={path}
+                    title={props.title}
                   >
                     <RedditIcon size={32} round />
                   </RedditShareButton>
                 </Grid>
                 <Grid item>
                   <TumblrShareButton
-                    url={url}
-                    title={title}
+                    url={path}
+                    title={props.title}
                   >
                     <TumblrIcon size={32} round />
                   </TumblrShareButton>
                 </Grid>
                 <Grid item>
                   <WeiboShareButton
-                    url={url}
-                    title={title}
-                    image={image ? image : ''}
+                    url={path}
+                    title={props.title}
+                    image={props.image ? props.image : ''}
                   >
                     <WeiboIcon size={32} round />
                   </WeiboShareButton>
                 </Grid>
                 <Grid item>
                   <WhatsappShareButton
-                    url={url}
+                    url={path}
                     separator=':: '
-                    title={title}
+                    title={props.title}
                   >
                     <WhatsappIcon size={32} round />
                   </WhatsappShareButton>
                 </Grid>
                 <Grid item>
                   <TelegramShareButton
-                    url={url}
-                    title={title}
+                    url={path}
+                    title={props.title}
                   >
                     <TelegramIcon size={32} round />
                   </TelegramShareButton>
                 </Grid>
                 <Grid item>
                   <EmailShareButton
-                    url={url}
-                    subject={title}
+                    url={path}
+                    subject={props.title}
                   >
                     <EmailIcon size={32} round />
                   </EmailShareButton>
@@ -349,4 +380,4 @@ const ShareButton: React.StatelessComponent<WebShareInterface & ShareButtonProps
   )
 };
 
-export default webShare<ShareButtonProps>()(ShareButton);
+export default withRouter(ShareButton);
