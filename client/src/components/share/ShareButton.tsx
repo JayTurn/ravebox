@@ -143,11 +143,15 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
 const isSupported: (
 ) => boolean = (
 ): boolean => {
-  if (!navigator) {
+  if (typeof navigator === 'undefined') {
     return false;
   }
 
-  return (navigator as any).share !== undefined;
+  if ((navigator as any).share) {
+    return true;
+  } else {
+    return false;
+  }
 }
 
 /**
@@ -163,23 +167,27 @@ const ShareButton: React.FC<ShareButtonProps> = (props: ShareButtonProps) => {
 
   const path: string = `${process.env.RAZZLE_ASSETS_MANIFEST}/${props.location.pathname}`;
 
+  const navigatorSupported: boolean = isSupported();
+
   const handleNavigatorShare: (
     e: React.MouseEvent<HTMLButtonElement>
   ) => void = (
     e: React.MouseEvent<HTMLButtonElement>
   ): void => {
-    try {
-      (navigator as any).share({
-        title: props.title,
-        url: path
-      })
-      .then(() => {
-      })
-      .catch((error: Error) => {
-        console.log(error);
-      });
-    } catch {
-      console.log('Failed to share via navigator');
+    if (isSupported()) {
+      try {
+        (navigator as any).share({
+          title: props.title,
+          url: path
+        })
+        .then(() => {
+        })
+        .catch((error: Error) => {
+          console.log(error);
+        });
+      } catch {
+        console.log('Failed to share via navigator');
+      }
     }
   }
 
@@ -195,8 +203,6 @@ const ShareButton: React.FC<ShareButtonProps> = (props: ShareButtonProps) => {
     setAnchorEl(e.currentTarget);
     setOpen(true);
   };
-
-  const navigatorSupported: boolean = isSupported();
 
   /**
    * Handles the closing of the popover message.
