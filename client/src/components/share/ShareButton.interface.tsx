@@ -6,9 +6,6 @@
 // Modules.
 import { RouteComponentProps } from 'react-router';
 
-// Interfaces.
-import { WebShareInterface } from 'react-web-share-api';
-
 /**
  * Share component properties interface.
  */
