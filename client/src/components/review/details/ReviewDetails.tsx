@@ -20,7 +20,6 @@ import {
 } from '@material-ui/core/styles';
 import Grid from '@material-ui/core/Grid';
 import * as React from 'react';
-import ShareButton from '../../share/ShareButton';
 import ThumbUpRoundedIcon from '@material-ui/icons/ThumbUpRounded';
 import ThumbDownRoundedIcon from '@material-ui/icons/ThumbDownRounded';
 import Typography from '@material-ui/core/Typography';
@@ -319,16 +318,6 @@ const ReviewDetails: React.FC<ReviewDetailsProps> = (props: ReviewDetailsProps) 
                     }
                     {review && review.product && review.user &&
                       <Grid item>
-                        <ShareButton
-                          config={{
-                            params: {
-                              title: `${review.product.brand} ${review.product.name} rave posted by ${review.user.handle}`,
-                              url: `${process.env.RAZZLE_PUBLIC_URL}/review/${review.url}`
-                            }
-                          }}
-                          title={`${review.product.brand} ${review.product.name} rave posted by ${review.user.handle}`}
-                          url={`${process.env.RAZZLE_PUBLIC_URL}/review/${review.url}`}
-                        />
                       </Grid>
                     }
                   </Grid>
