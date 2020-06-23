@@ -70,6 +70,8 @@ const PublicProfilePreview: React.FC<PublicProfilePreviewProps> = (props: Public
     retrievalStatus
   } = useRetrievePublicProfileStatistics({ id: props._id });
 
+  const firstLetter: string = props.handle.substr(0,1);
+
   return (
     <Grid container direction='row' className={classes.container} alignItems='center'>
       <Grid item>
@@ -78,7 +80,7 @@ const PublicProfilePreview: React.FC<PublicProfilePreviewProps> = (props: Public
           title={`View ${props.handle}'s channel`}
           to={`/user/channel/${props.handle}`}
         >
-          <Avatar alt={props.handle} className={classes.avatarIcon}>j</Avatar>
+          <Avatar alt={props.handle} className={classes.avatarIcon}>{firstLetter}</Avatar>
         </NavLink>
       </Grid>
       <Grid item className={classes.handleContainer}>

@@ -21,6 +21,7 @@ import {
 import Grid from '@material-ui/core/Grid';
 import * as React from 'react';
 import Share from '../../share/Share';
+import SponsoredChip from '../sponsoredChip/SponsoredChip';
 import ThumbUpRoundedIcon from '@material-ui/icons/ThumbUpRounded';
 import ThumbDownRoundedIcon from '@material-ui/icons/ThumbDownRounded';
 import Typography from '@material-ui/core/Typography';
@@ -317,7 +318,7 @@ const ReviewDetails: React.FC<ReviewDetailsProps> = (props: ReviewDetailsProps) 
                         <Rate review={review} token={token} acceptance={ratingAcceptance}/>
                       </Grid>
                     }
-                    {review && review.product && review.user &&
+                    {review && review.product && review.user && navigator &&
                       <Grid item>
                         <Share
                           title={`${review.product.brand} ${review.product.name} rave posted by ${review.user.handle}`}
@@ -349,7 +350,16 @@ const ReviewDetails: React.FC<ReviewDetailsProps> = (props: ReviewDetailsProps) 
                           <PublicProfilePreview {...review.user} />
                         </Grid>
                         <Grid item xs={12} className={clsx(classes.recommendationContainer)}>
-                          <RecommendationChip recommended={review.recommended} />
+                          <Grid container direction='row' spacing={1}>
+                            <Grid item>
+                              <RecommendationChip recommended={review.recommended} />
+                            </Grid>
+                            {review.sponsored &&
+                              <Grid item>
+                                <SponsoredChip />
+                              </Grid>
+                            }
+                          </Grid>
                         </Grid>
                       </Grid>
                       <Grid item className={clsx(

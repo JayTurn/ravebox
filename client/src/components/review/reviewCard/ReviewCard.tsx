@@ -4,7 +4,7 @@
  */
 
 // Modules.
-import * as React from 'react';
+import Avatar from '@material-ui/core/Avatar';
 import Box from '@material-ui/core/Box';
 import Card from '@material-ui/core/Card';
 import CardActionArea from '@material-ui/core/CardActionArea';
@@ -25,11 +25,13 @@ import IconButton from '@material-ui/core/IconButton';
 import MoreVertIcon from '@material-ui/icons/MoreVert';
 import { NavLink } from 'react-router-dom';
 import PlayArrowRoundedIcon from '@material-ui/icons/PlayArrowRounded';
+import * as React from 'react';
 import Typography from '@material-ui/core/Typography';
 import useMediaQuery from '@material-ui/core/useMediaQuery';
 
 // Components.
 import LinkElement from '../../elements/link/Link';
+import ReviewCardProfile from '../reviewCardProfile/ReviewCardProfile';
 
 // Hooks.
 import { useAnalytics } from '../../analytics/Analytics.provider';
@@ -64,6 +66,15 @@ const StyledCardHeader = withStyles(theme => ({
  */
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
+    avatarIcon: {
+      backgroundColor: theme.palette.common.white,
+      border: `1px solid ${theme.palette.grey.A200}`,
+      color: theme.palette.grey.A700,
+      fontSize: '.9rem',
+      fontWeight: 600,
+      height: theme.spacing(4),
+      width: theme.spacing(4)
+    },
     brandText: {
       display: 'block',
       fontSize: '.9rem',
@@ -128,7 +139,7 @@ const useStyles = makeStyles((theme: Theme) =>
       }
     },
     reviewLinkIcon: {
-      fontSize: 30
+      fontSize: 27
     },
     textContent: {
       //borderLeft: `3px solid ${theme.palette.secondary.main}`,
@@ -141,13 +152,22 @@ const useStyles = makeStyles((theme: Theme) =>
       padding: theme.spacing(2, 0)
     },
     title: {
-      fontSize: '1rem',
+      fontSize: '.95rem',
       overflow: 'hidden',
       textOverflow: 'ellipsis',
       whiteSpace: 'nowrap'
+    },
+    titleContainer: {
+      padding: theme.spacing(1, 0, 0)
+    },
+    userStatisticsText: {
     }
   }),
 );
+
+/**
+ * Returns the statistics for display in the profile.
+ */
 
 /**
  * Review card for public display.
@@ -175,6 +195,8 @@ const ReviewCard: React.FC<ReviewCardProps> = (props: ReviewCardProps) => {
     analytics.trackEvent('select review')(data);
   }
 
+  const firstLetter: string = props.user ? props.user.handle.substr(0,1) : 'r';
+
   return (
     <Card className={clsx(
       classes.cardContainer,
@@ -189,21 +211,28 @@ const ReviewCard: React.FC<ReviewCardProps> = (props: ReviewCardProps) => {
         })}
         style={{maxWidth: '100%'}}
         title={
-          <Grid container direction='row' style={{flexWrap: 'nowrap', maxWidth: '100%'}}>
-            <Grid item style={{flexGrow: 1, minWidth: 0}}>
+          <Grid
+            container
+            direction='column'
+          >
+            {props.user &&
+              <ReviewCardProfile
+                context={props.context}  
+                review={{...props}}
+                user={props.user}
+                url={props.url}
+              />
+            }
+            <Grid item xs={12} className={clsx(classes.titleContainer)}>
               <NavLink
                 className={classes.linkText}
                 onClick={handleNavigation}
                 to={`/review/${props.url}`}
               >
-                {props.user &&
-                  <Typography variant='body2' className={classes.title}>
-                    <Box component='span' className={classes.handleText}>{props.user.handle}</Box> {props.title} 
-                  </Typography>
-                }
+                <Typography variant='body2' className={classes.title}>
+                  {props.title} 
+                </Typography>
               </NavLink>
-            </Grid>
-            <Grid item style={{flexGrow: 0}}>
             </Grid>
           </Grid>
         }
