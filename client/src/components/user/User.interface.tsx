@@ -23,4 +23,23 @@ export interface PrivateProfile {
 export interface PublicProfile {
   _id: string;
   handle: string;
+  statistics?: ProfileStatistics;
+}
+
+/**
+ * Interfacts for public profile statistics.
+ */
+export interface ProfileStatistics {
+  followers: number;
+  reviews: Array<ProfileReviewStatistics>;
+}
+
+export interface ProfileReviewStatistics {
+  review: string;
+  watchCount: number;
+}
+
+export interface ProfilePresentationStatistics {
+  followers: string;
+  raves: string;
 }

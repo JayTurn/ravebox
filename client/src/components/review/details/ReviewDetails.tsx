@@ -20,6 +20,8 @@ import {
 } from '@material-ui/core/styles';
 import Grid from '@material-ui/core/Grid';
 import * as React from 'react';
+import ShareButton from '../../share/ShareButton';
+import SponsoredChip from '../sponsoredChip/SponsoredChip';
 import ThumbUpRoundedIcon from '@material-ui/icons/ThumbUpRounded';
 import ThumbDownRoundedIcon from '@material-ui/icons/ThumbDownRounded';
 import Typography from '@material-ui/core/Typography';
@@ -126,6 +128,7 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
     boxShadow: '0 1px 1px inset rgba(100,106,240, 0.2)'
   },
   profileRowContainer: {
+    flexWrap: 'nowrap',
     justifyContent: 'flex-end'
   },
   profileRow: {
@@ -137,7 +140,8 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
     backgroundColor: theme.palette.common.white,
     //boxShadow: `0 1px 1px inset rgba(0,0,0,0.05)`
   },
-  ratingContainerLarge: {
+  ratingContainer: {
+    flexGrow: 1
   },
   recommendationContainer: {
     padding: theme.spacing(2, 1, 3, 2)
@@ -159,7 +163,8 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
     margin: 0
   },
   reviewTitleContainer: {
-    borderBottom: `1px solid rgba(0,0,0,0.1)`
+    borderBottom: `1px solid rgba(0,0,0,0.1)`,
+    alignItems: 'baseline'
   },
   reviewTitleContainerLarge: {
     alignItems: 'center',
@@ -308,8 +313,18 @@ const ReviewDetails: React.FC<ReviewDetailsProps> = (props: ReviewDetailsProps) 
                       </Grid>
                     </Grid>
                     {review &&
-                      <Grid item className={classes.ratingContainerLarge}>
+                      <Grid item className={clsx({
+                        [classes.ratingContainer]: !largeScreen
+                      })}>
                         <Rate review={review} token={token} acceptance={ratingAcceptance}/>
+                      </Grid>
+                    }
+                    {review && review.product && review.user &&
+                      <Grid item>
+                        <ShareButton
+                          title={`${review.product.brand} ${review.product.name} rave posted by ${review.user.handle}`}
+                          image={`${review.thumbnailURL}`}
+                        />
                       </Grid>
                     }
                   </Grid>
@@ -336,7 +351,16 @@ const ReviewDetails: React.FC<ReviewDetailsProps> = (props: ReviewDetailsProps) 
                           <PublicProfilePreview {...review.user} />
                         </Grid>
                         <Grid item xs={12} className={clsx(classes.recommendationContainer)}>
-                          <RecommendationChip recommended={review.recommended} />
+                          <Grid container direction='row' spacing={1}>
+                            <Grid item>
+                              <RecommendationChip recommended={review.recommended} />
+                            </Grid>
+                            {review.sponsored &&
+                              <Grid item>
+                                <SponsoredChip />
+                              </Grid>
+                            }
+                          </Grid>
                         </Grid>
                       </Grid>
                       <Grid item className={clsx(

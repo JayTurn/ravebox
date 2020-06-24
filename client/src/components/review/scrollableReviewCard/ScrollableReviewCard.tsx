@@ -33,6 +33,7 @@ import useMediaQuery from '@material-ui/core/useMediaQuery';
 
 // Components.
 import LinkElement from '../../elements/link/Link';
+import ReviewCardProfile from '../reviewCardProfile/ReviewCardProfile';
 
 // Enumerators.
 import { ReviewListType } from '../listByQuery/ListByQuery.enum';
@@ -125,10 +126,13 @@ const useStyles = makeStyles((theme: Theme) =>
       }
     },
     title: {
-      fontSize: '1rem',
+      fontSize: '.95rem',
       overflow: 'hidden',
       textOverflow: 'ellipsis',
       whiteSpace: 'nowrap'
+    },
+    titleContainer: {
+      padding: theme.spacing(1, 0, 0)
     }
   }),
 );
@@ -191,23 +195,30 @@ const ScrollableReviewCard: React.FC<ScrollableReviewCardProps> = (props: Scroll
         className={clsx(classes.cardHeaderContent)}
         style={{maxWidth: '100%'}}
         title={
-            <Grid container direction='row' style={{flexWrap: 'nowrap', maxWidth: '100%'}}>
-              <Grid item style={{flexGrow: 1, minWidth: 0}}>
-                {props.user &&
-                  <NavLink
-                    className={classes.linkText}
-                    onClick={handleClick}
-                    to={`/review/${props.url}`} 
-                  >
-                    <Typography variant='body2' className={classes.title}>
-                      <Box component='span' className={classes.handleText}>{props.user.handle}</Box> {props.title} 
-                    </Typography>
-                  </NavLink>
-                }
-              </Grid>
-              <Grid item style={{flexGrow: 0}}>
-              </Grid>
+          <Grid
+            container
+            direction='column'
+          >
+            {props.user &&
+              <ReviewCardProfile
+                context={props.context}  
+                review={{...props}}
+                user={props.user}
+                url={props.url}
+              />
+            }
+            <Grid item xs={12} className={clsx(classes.titleContainer)}>
+              <NavLink
+                className={classes.linkText}
+                onClick={handleNavigation}
+                to={`/review/${props.url}`}
+              >
+                <Typography variant='body2' className={classes.title}>
+                  {props.title} 
+                </Typography>
+              </NavLink>
             </Grid>
+          </Grid>
         }
       />
       <CardMedia
