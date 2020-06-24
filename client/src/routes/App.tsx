@@ -156,6 +156,14 @@ const App: React.FC<AppProps> = (props: AppProps) => {
     updateXsrf: props.updateXsrf
   });
 
+  const [appClasses, setAppClasses] = React.useState<string>('app loading');
+
+  React.useEffect(() => {
+    setTimeout(() => {
+      setAppClasses('app');
+    }, 200)
+  }, [appClasses]);
+
   /**
    * Renders the application.
    */
@@ -164,7 +172,7 @@ const App: React.FC<AppProps> = (props: AppProps) => {
       <CssBaseline />
       <StyledSnackbar>
         <AnalyticsProvider>
-          <div className={`app`}>
+          <div className={appClasses}>
             <Helmet>
               <meta charSet='utf-8' />
               <title>Ravebox</title>
