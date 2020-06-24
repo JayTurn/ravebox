@@ -1,0 +1,23 @@
+/**
+ * ScreenTransition.scss
+ * Styles for the screen transition component.
+ */
+
+.screen-transition {
+  animation: fading 1.1s infinite linear;
+  left: calc(50vw - 30px);
+  position: absolute;
+  top: calc(50vh - 30px);
+}
+
+@keyframes fading {
+  0% {
+    opacity: 0.8;
+  }
+  50% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0.8;
+  }
+}

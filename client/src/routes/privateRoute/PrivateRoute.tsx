@@ -17,6 +17,9 @@ import {
   logout
 } from '../../store/user/Actions';
 
+// Components.
+import ScreenTransition from '../../components/placeholders/screenTransition/ScreenTransition';
+
 // Enumerators.
 import { RetrievalStatus } from '../../utils/api/Api.enum';
 
@@ -55,7 +58,7 @@ const PrivateRoute: React.FC<PrivateRouteProps> = (
               {props.children}
             </React.Fragment>
           ) : (
-            <Typography variant='h3'>Loading...</Typography>
+            <ScreenTransition />
           )}
         </React.Fragment>
       )}
