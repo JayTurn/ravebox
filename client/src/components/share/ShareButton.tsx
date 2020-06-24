@@ -68,8 +68,18 @@ import ShareRoundedIcon from '@material-ui/icons/ShareRounded';
 import Typography from '@material-ui/core/Typography';
 import { withRouter } from 'react-router';
 
+// Hooks.
+import { useAnalytics } from '../analytics/Analytics.provider';
+
 // Interfaces.
+import {
+  AnalyticsContextProps,
+  EventObject
+} from '../analytics/Analytics.interface';
 import { ShareButtonProps } from './ShareButton.interface';
+
+// Utilities.
+import { formatReviewProperties } from '../review/Review.common';
 
 /**
  * Share button styles.
@@ -158,6 +168,9 @@ const isSupported: (
  * Webshare button.
  */
 const ShareButton: React.FC<ShareButtonProps> = (props: ShareButtonProps) => {
+  // Define the analytics context and a tracking event.
+  const analytics: AnalyticsContextProps = useAnalytics() as AnalyticsContextProps;
+
   // Use the custom styles.
   const classes = useStyles();
 
@@ -168,6 +181,9 @@ const ShareButton: React.FC<ShareButtonProps> = (props: ShareButtonProps) => {
   const path: string = `${process.env.RAZZLE_ASSETS_MANIFEST}/${props.location.pathname}`;
 
   const navigatorSupported: boolean = isSupported();
+
+  const [eventData, setEventData] = React.useState<EventObject>(
+          formatReviewProperties({...props.review}));
 
   const handleNavigatorShare: (
     e: React.MouseEvent<HTMLButtonElement>
@@ -181,6 +197,7 @@ const ShareButton: React.FC<ShareButtonProps> = (props: ShareButtonProps) => {
           url: path
         })
         .then(() => {
+          trackShare('native');
         })
         .catch((error: Error) => {
           console.log(error);
@@ -202,6 +219,7 @@ const ShareButton: React.FC<ShareButtonProps> = (props: ShareButtonProps) => {
     // Trigger the display of the minimum duration message.
     setAnchorEl(e.currentTarget);
     setOpen(true);
+    trackShare('web');
   };
 
   /**
@@ -212,6 +230,21 @@ const ShareButton: React.FC<ShareButtonProps> = (props: ShareButtonProps) => {
   ): void => {
     setOpen(false);
     setAnchorEl(null)
+  }
+
+  /**
+   * Tracks the share event.
+   */
+  const trackShare: (
+    shareType: string
+  ) => void = (
+    shareType: string
+  ): void => {
+    const data: EventObject = {...eventData};
+
+    data['share type'] = shareType;
+
+    analytics.trackEvent('share review')(data);
   }
 
   return (

@@ -324,6 +324,7 @@ const ReviewDetails: React.FC<ReviewDetailsProps> = (props: ReviewDetailsProps) 
                         <ShareButton
                           title={`${review.product.brand} ${review.product.name} rave posted by ${review.user.handle}`}
                           image={`${review.thumbnailURL}`}
+                          review={{...props.review}}
                         />
                       </Grid>
                     }

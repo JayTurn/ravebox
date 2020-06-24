@@ -60,7 +60,8 @@ export const formatReviewProperties: (
   };
 
   if (review.user) {
-    data['reviewer'] = review.user.handle;
+    data['reviewer id'] = review.user._id;
+    data['reviewer handle'] = review.user.handle;
   }
 
   if (review.product) {

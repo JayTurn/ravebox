@@ -35,9 +35,14 @@ import {
 import StyledButton from '../../elements/buttons/StyledButton';
 
 // Hooks.
+import { useAnalytics } from '../../analytics/Analytics.provider';
 import { useFollow } from '../useFollow.hook';
 
 // Interfaces.
+import {
+  AnalyticsContextProps,
+  EventObject
+} from '../../analytics/Analytics.interface';
 import { FollowButtonProps } from './FollowButton.interface';
 import { PrivateProfile } from '../../user/User.interface';
 
@@ -79,6 +84,8 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
  * Follow button component.
  */
 const FollowButton: React.FC<FollowButtonProps> = (props: FollowButtonProps) => {
+  // Define the analytics context and a tracking event.
+  const analytics: AnalyticsContextProps = useAnalytics() as AnalyticsContextProps;
 
   // Use the custom styles.
   const classes = useStyles();
@@ -108,12 +115,22 @@ const FollowButton: React.FC<FollowButtonProps> = (props: FollowButtonProps) => 
   ) => void = (
     e: React.MouseEvent<HTMLButtonElement>
   ): void => {
+    // Capture the current follow state before we update.
+    const follow: boolean = !following;
+
     if (props.profile) {
+
+      // Update the follow state.
       updateFollowState();
+
+      // Record the follow event.
+      trackFollow(follow)(true);
+
     } else {
       // Trigger the display of the minimum duration message.
       setAnchorEl(e.currentTarget);
       setOpen(true);
+      trackFollow(follow)(false);
     }
   };
 
@@ -138,6 +155,34 @@ const FollowButton: React.FC<FollowButtonProps> = (props: FollowButtonProps) => 
     props.history.push('/user/login');
     setOpen(false);
     setAnchorEl(null)
+  }
+
+  /**
+   * Tracks the follow event.
+   */
+  const trackFollow: (
+    follow: boolean
+  ) => (
+    authenticated: boolean
+  ) => void = (
+    follow: boolean
+  ) => (
+    authenticated: boolean
+  ): void => {
+    const data: EventObject = {
+      'reviewer handle': props.handle,
+      'reviewer id': props.id
+    };
+
+    if (authenticated) {
+      if (follow) {
+        analytics.trackEvent('follow reviewer')(data);  
+      } else {
+        analytics.trackEvent('unfollow reviewer')(data);  
+      }
+    } else {
+      analytics.trackEvent('attempted follow reviewer')(data);  
+    }
   }
 
   return (
