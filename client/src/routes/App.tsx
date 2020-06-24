@@ -161,7 +161,7 @@ const App: React.FC<AppProps> = (props: AppProps) => {
   React.useEffect(() => {
     setTimeout(() => {
       setAppClasses('app');
-    }, 200)
+    }, 700)
   }, [appClasses]);
 
   /**
