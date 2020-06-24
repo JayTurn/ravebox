@@ -122,6 +122,7 @@ const ViewReview: React.FC<ViewReviewProps> = (props: ViewReviewProps) => {
           {props.review.user && props.review.product &&
             <Helmet>
               <title>{props.review.user.handle} reviews {props.review.product.brand} {props.review.product.name} - Ravebox</title>
+              <meta name='description' content={`Watch the ${props.review.product.brand} ${props.review.product.name} review video created and shared by ${props.review.user.handle} on Ravebox.`} />
               <link rel='canonical' href={`https://ravebox.io/review/${props.review.url}`} />
             </Helmet>
           }

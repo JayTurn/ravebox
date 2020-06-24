@@ -137,6 +137,7 @@ const About: React.FC<AboutProps> = (props: AboutProps) => {
     >
       <Helmet>
         <title>About Ravebox - Ravebox</title>
+        <meta name='description' content={`Share short video reviews of products and connect with people you can count on for recommendations and advice on Ravebox.`} />
         <link rel='canonical' href='https://ravebox.io/about' />
       </Helmet>
       <Grid item xs={12} className={clsx(

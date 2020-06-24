@@ -168,6 +168,7 @@ const App: React.FC<AppProps> = (props: AppProps) => {
             <Helmet>
               <meta charSet='utf-8' />
               <title>Ravebox</title>
+              <meta name='description' content='Discover authentic video reviews of products and experiences, upload and share your own with friends on Ravebox.' />
               <link rel='canonical' href='https://ravebox.io' />
             </Helmet>
             <ScrollToTop />

@@ -201,6 +201,7 @@ const Discover: React.FC<DiscoverProps> = (props: DiscoverProps) => {
     >
       <Helmet>
         <title>Discover reviews - Ravebox</title>
+        <meta name='description' content={`Discover authentic reviews for ${categoryList[0].label}, ${categoryList[1].label.replace('&', 'and')}, ${categoryList[2].label} and ${categoryList[3].label}, shared by everday people with real product experiences.`} />
         <link rel='canonical' href='https://ravebox.io/discover' />
       </Helmet>
       <PageTitle title='Discover raves' />

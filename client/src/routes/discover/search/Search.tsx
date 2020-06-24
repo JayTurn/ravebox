@@ -200,6 +200,7 @@ const Search: React.FC<SearchProps> = (props: SearchProps) => {
     <Grid container direction='column' key={props.match.params.term}>
       <Helmet>
         <title>Search for reviews - Ravebox</title>
+        <meta name='description' content={`Search for product reviews, videos uploaded by everyday people sharing real experiences.`} />
       </Helmet>
       {loading ? (
         <Grid item xs={12}>

@@ -66,6 +66,7 @@ const Login: React.FC<LoginProps> = (props: LoginProps) => {
       >
         <Helmet>
           <title>Log in - ravebox</title>
+          <meta name='description' content={`Log in to Ravebox and start sharing your video reviews of products and unique experiences.`} />
           <link rel='canonical' href='https://ravebox.io/user/login' />
         </Helmet>
         <AccessType selected={AccessOptions.LOGIN} />

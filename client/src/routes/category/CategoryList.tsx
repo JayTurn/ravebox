@@ -238,6 +238,7 @@ const CategoryList: React.FC<CategoryListProps> = (props: CategoryListProps) => 
           <PageTitle title={`${category.label}`} />
           <Helmet>
             <title>{category.label} reviews - Ravebox</title>
+            <meta name='description' content={`Find video reviews for ${category.label}, created by everyday people sharing real experiences.`} />
             <link rel='canonical' href='https://ravebox.io/about' />
           </Helmet>
         </React.Fragment>
