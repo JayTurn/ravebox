@@ -305,40 +305,32 @@ const Home: React.FC<HomeProps> = (props: HomeProps) => {
           </Grid>
         </Grid>
       </Grid>
-      <Grid item xs={12}>
-        {props.categoryGroup && props.categoryGroup[queries[2]] &&
-          <ListByQuery
-            context={ScreenContext.HOME}
-            listType={ReviewListType.CATEGORY}
-            presentationType={largeScreen ? PresentationType.GRID : PresentationType.SCROLLABLE}
-            reviews={props.categoryGroup[queries[2]]}
-            title={
-              <ListTitle
-                presentationType={largeScreen ? PresentationType.GRID : PresentationType.SCROLLABLE} 
-                title={`${categoryList[2].label} raves`}
-                url={`/categories/${categoryList[2].key}`}
-              />
-            }
-          />
+      {queries.map((query: string, index: number) => {
+        if (index < 2) {
+          return;
         }
-      </Grid>
-      <Grid item xs={12}>
-        {props.categoryGroup && props.categoryGroup[queries[3]] &&
-          <ListByQuery
-            context={ScreenContext.HOME}
-            listType={ReviewListType.CATEGORY}
-            presentationType={largeScreen ? PresentationType.GRID : PresentationType.SCROLLABLE}
-            reviews={props.categoryGroup[queries[3]]}
-            title={
-              <ListTitle
-                presentationType={largeScreen ? PresentationType.GRID : PresentationType.SCROLLABLE} 
-                title={`${categoryList[3].label} raves`}
-                url={`/categories/${categoryList[3].key}`}
-              />
-            }
-          />
+        if (!props.categoryGroup || !props.categoryGroup[queries[index]]) {
+          return;
         }
-      </Grid>
+
+        return (
+          <Grid item xs={12} key={query}>
+            <ListByQuery
+              context={ScreenContext.HOME}
+              listType={ReviewListType.CATEGORY}
+              presentationType={largeScreen ? PresentationType.GRID : PresentationType.SCROLLABLE}
+              reviews={props.categoryGroup[queries[index]]}
+              title={
+                <ListTitle
+                  presentationType={largeScreen ? PresentationType.GRID : PresentationType.SCROLLABLE} 
+                  title={`${categoryList[index].label} raves`}
+                  url={`/categories/${categoryList[index].key}`}
+                />
+              }
+            />
+          </Grid>
+        );
+      })}
     </Grid>
   );
 }
