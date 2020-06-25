@@ -49,7 +49,7 @@ export default class Video {
     const client: S3 = new S3({
       accessKeyId: EnvConfig.aws.accessKeyId,
       secretAccessKey: EnvConfig.aws.secretAccessKey,
-      region: EnvConfig.aws.region,
+      region: 'ap-southeast-2',
       signatureVersion: EnvConfig.aws.signatureVersion
     }); 
     
