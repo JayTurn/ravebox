@@ -577,7 +577,7 @@ const AddReviewForm: React.FC<AddReviewFormProps> = (props: AddReviewFormProps) 
         setSubmitting(false)
       });
 
-      request.open('POST', response.presigned.url);
+      request.open('POST', `${response.presigned.url}?${new Date().getTime()}`);
 
       request.send(data);
 
