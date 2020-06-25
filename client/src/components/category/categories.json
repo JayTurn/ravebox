@@ -52,14 +52,20 @@
       "label": "Hi-Fi & Home Audio",
       "key": "hifi_and_home_audio"
     }, {
-      "label": "Phones & Accessories",
+      "label": "Home Cinema, TV & Video",
+      "key": "home_cinema_tv_and_video"
+    }, {
+      "label": "Mobile Phones & Accessories",
       "key": "phones_and_accessories"
     }, {
       "label": "Portable Sound & Vision",
       "key": "portable_sound_and_vision"
     }, {
-      "label": "Home Cinema, TV & Video",
-      "key": "home_cinema_tv_and_video"
+      "label": "Smart speakers & assistants",
+      "key": "smart__speakers_and_assistants"
+    }, {
+      "label": "Software & Applications",
+      "key": "software_and_applications"
     }, {
       "label": "Wearable Technology",
       "key": "wearable_technology"
@@ -100,17 +106,20 @@
         "key": "scrubs_and_body_treatments"
       }]
     }, {
-      "label": "Perfumes & Fragrances",
-      "key": "perfumes_and_fragrances",
+      "label": "Beauty Tools & Accessories",
+      "key": "beauty_tools_and_accessories",
       "children": [{
-        "label": "Women's Fragrances",
-        "key": "womens_fragrances"
+        "label": "Make-up Bags",
+        "key": "makeup_bags"
       }, {
-        "label": "Men's Fragrances",
-        "key": "mens_fragrances"
+        "label": "Cotton Balls Pads & Swabs",
+        "key": "cotton_balls_pads_and_swabs"
       }, {
-        "label": "Non-Binary Fragrances",
-        "key": "non_binary_fragrances"
+        "label": "Makeup Brushes & Tools",
+        "key": "makeup_brushes_and_tools"
+      }, {
+        "label": "Skin Care Tools",
+        "key": "skin_care_tools"
       }]
     }, {
       "label": "Hair Care",
@@ -179,6 +188,19 @@
         "key": "nail_tools_and_accessories"
       }]
     }, {
+      "label": "Perfumes & Fragrances",
+      "key": "perfumes_and_fragrances",
+      "children": [{
+        "label": "Women's Fragrances",
+        "key": "womens_fragrances"
+      }, {
+        "label": "Men's Fragrances",
+        "key": "mens_fragrances"
+      }, {
+        "label": "Non-Binary Fragrances",
+        "key": "non_binary_fragrances"
+      }]
+    }, {
       "label": "Skin Care",
       "key": "skin_care",
       "children": [{
@@ -199,22 +221,6 @@
       }, {
         "label": "Sun Skin Care",
         "key": "sun_skin_care"
-      }]
-    }, {
-      "label": "Beauty Tools & Accessories",
-      "key": "beauty_tools_and_accessories",
-      "children": [{
-        "label": "Make-up Bags",
-        "key": "makeup_bags"
-      }, {
-        "label": "Cotton Balls Pads & Swabs",
-        "key": "cotton_balls_pads_and_swabs"
-      }, {
-        "label": "Makeup Brushes & Tools",
-        "key": "makeup_brushes_and_tools"
-      }, {
-        "label": "Skin Care Tools",
-        "key": "skin_care_tools"
       }]
     }]
   }, {
@@ -253,6 +259,52 @@
       "key": "locations"
     }]
   }, {
+    "label": "Outdoor Recreation",
+    "key": "outdoor_recreation",
+    "children": [{
+      "label": "Boating & Water Sports",
+      "key": "boating_and_water_sports"
+    }, {
+      "label": "Camping & Hiking",
+      "key": "camping_and_hiking"
+    }, {
+      "label": "Climbing",
+      "key": "climbing"
+    }, {
+      "label": "Cycling",
+      "key": "cycling"
+    }, {
+      "label": "Equestrian",
+      "key": "equestrian"
+    }, {
+      "label": "Fishing",
+      "key": "fishing"
+    }, {
+      "label": "Golf",
+      "key": "golf"
+    }, {
+      "label": "Hang Gliding & Skydiving",
+      "key": "hang_gliding_and_skydiving"
+    }, {
+      "label": "Inline & Rollerskating",
+      "key": "inline_and_rollerskating"
+    }, {
+      "label": "Kite Buggying",
+      "key": "kite_buggying"
+    }, {
+      "label": "Outdoor Games",
+      "key": "outdoor_games"
+    }, {
+      "label": "Riding Scooters",
+      "key": "riding_scooters"
+    }, {
+      "label": "Skateboarding",
+      "key": "skateboarding"
+    }, {
+      "label": "Winter Sports & Activities",
+      "key": "winter_sports_and_activities"
+    }]
+  }, {
     "label": "Home",
     "key": "home",
     "children": [{
@@ -264,6 +316,9 @@
     }, {
       "label": "Cookware",
       "key": "cookware"
+    }, {
+      "label": "Furniture",
+      "key": "furniture"
     }, {
       "label": "Home Brewing & Wine Making",
       "key": "home_brewing_and_wine_making"
@@ -313,6 +368,31 @@
       }, {
         "label": "Thermometers & Meteorological Instruments",
         "key": "thermometers_and_meteorological_instruments"
+      }]
+  }, {
+    "label": "Hardware",
+    "key": "hardware",
+      "children": [{
+        "label": "Building Materials",
+        "key": "building_materials"
+      }, {
+        "label": "Fencing & Barriers",
+        "key": "fencing_and_barriers"
+      }, {
+        "label": "Hardware Accessories",
+        "key": "hardware_accessories"
+      }, {
+        "label": "Plumbing",
+        "key": "plumbing"
+      }, {
+        "label": "Power & Electrical Supplies",
+        "key": "power_and_electrical_supplies"
+      }, {
+        "label": "Tool Accessories",
+        "key": "tool_accessories"
+      }, {
+        "label": "Tools",
+        "key": "tools"
       }]
   }, {
     "label": "Musical Instruments",
