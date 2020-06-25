@@ -578,6 +578,7 @@ const AddReviewForm: React.FC<AddReviewFormProps> = (props: AddReviewFormProps) 
       });
 
       request.open('POST', `${response.presigned.url}?${new Date().getTime()}`);
+      request.setRequestHeader('Access-Control-Allow-Origin', process.env.RAZZLE_PUBLIC_PATH || '');
 
       request.send(data);
 
