@@ -115,7 +115,7 @@ const useStyles = makeStyles((theme: Theme) =>
       color: theme.palette.primary.main,
       backgroundColor: theme.palette.common.white,
       borderRadius: 12,
-      boxShadow: `0 0 0 2px inset ${theme.palette.primary.main}`,
+      border: `2px solid ${theme.palette.primary.main}`,
       fontSize: '.8rem',
       fontWeight: 700,
       padding: theme.spacing(1, 2),
