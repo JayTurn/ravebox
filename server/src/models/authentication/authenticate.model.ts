@@ -256,7 +256,7 @@ export default class Authenticate {
   static AddUserToRequest(request: Request, response: Response, next: NextFunction): void {
     // Retrieve the token passed by the client.
     if (_.isUndefined(request.cookies[JWT])) {
-      next();
+      return next();
     }
 
     // Validate the authorization header in the request.
