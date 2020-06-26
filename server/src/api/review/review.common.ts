@@ -45,6 +45,7 @@ export default class ReviewCommon {
    */
   static PublishReview(publishMessage: ReviewPublishedSNS): void {
 
+    console.log('PUBLISH_REVIEW');
       // Retrieve the review with the product and user details populated so
       // we can send a notification email.
       Review.findOne({
@@ -69,17 +70,19 @@ export default class ReviewCommon {
         .then(() => {
 
           // Send a notification to the user informing them of their review
+          console.log('NOTIFICATION_ADD_TO_LIST');
           Notifications.AddEmailToList(
             reviewDocument.user.email,
             reviewDocument.user.handle,
             ContactList.REVIEWERS)
             .then((email: string) => {
+              console.log('NOTIFICATION_SEND_EMAIL');
               Notifications.SendTransactionalEmail(
                 {email: email, name: 'N/A'},
                 EmailTemplate.REVIEW_PUBLISHED,
                 {
                   productTitle: reviewDocument.product.name,
-                  reviewLink: `${process.env.PUBLIC_CLIENT}/${reviewDocument.url}`,
+                  reviewLink: `${process.env.PUBLIC_CLIENT}/review/${reviewDocument.url}`,
                   reviewTitle: reviewDocument.title
                 }
               );
