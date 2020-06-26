@@ -748,7 +748,7 @@ const AddReviewForm: React.FC<AddReviewFormProps> = (props: AddReviewFormProps) 
                   Great news, we've sucessfully uploaded your new rave!
                 </Box>
                 <Box component='p'>
-                  We need to review your video before it goes live but rest assured, we'll notify you as soon as it is live.
+                  We need to process your video before it goes live but rest assured, we'll notify you as soon as it is live.
                 </Box>
               </Typography>
             </Grid>

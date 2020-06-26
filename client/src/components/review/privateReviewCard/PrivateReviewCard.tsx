@@ -89,12 +89,15 @@ const useStyles = makeStyles((theme: Theme) =>
     cardHeaderContentLarge: {
       padding: 0
     },
+    disableNavigate: {
+      cursor: 'auto'
+    },
     divider: {
       marginBottom: theme.spacing(1),
       marginTop: theme.spacing(1)
     },
     draftCard: {
-      backgroundColor: `rgba(255,255,255,0.75)`,
+      backgroundColor: `rgba(0,0,0,0.1)`,
       height: '100%',
       position: 'absolute',
       width: '100%',
@@ -129,6 +132,10 @@ const useStyles = makeStyles((theme: Theme) =>
     },
     media: {
       paddingTop: '56.25%'
+    },
+    mediaLink: {
+      position: 'relative',
+      display: 'block'
     },
     menuIcon: {
       paddingRight: 0,
@@ -194,8 +201,14 @@ const PrivateReviewCard: React.FC<PrivateReviewCardProps> = (props: PrivateRevie
    * Tracks the review card navigation event.
    */
   const handleNavigation: (
+    e: React.SyntheticEvent
   ) => void = (
+    e: React.SyntheticEvent
   ): void => {
+    if (props.published !== Workflow.PUBLISHED) {
+      e.preventDefault();
+      return;
+    }
 
     // Format the review for tracking.
     const data: EventObject = formatReviewForTracking(props.context)(props);
@@ -207,26 +220,6 @@ const PrivateReviewCard: React.FC<PrivateReviewCardProps> = (props: PrivateRevie
   return (
     <Card className={clsx(classes.cardContainer)}
     >
-      {props.published === Workflow.DRAFT &&
-        <Box className={classes.draftCard}>
-          <Grid
-            alignItems='center'
-            container
-            direction='column'
-            className={classes.draftCardContainer}
-          >
-            <Grid
-              className={classes.draftCardContent}
-              item
-              xs={12}
-            >
-              <Typography variant='body1' className={classes.draftCardText}>
-                Awaiting review
-              </Typography>
-            </Grid>
-          </Grid>
-        </Box>
-      }
       <StyledCardHeader
         className={clsx(classes.cardHeaderContent, {
           [classes.cardHeaderContentLarge]: largeScreen
@@ -236,7 +229,12 @@ const PrivateReviewCard: React.FC<PrivateReviewCardProps> = (props: PrivateRevie
           <Grid container direction='row' style={{flexWrap: 'nowrap', maxWidth: '100%'}}>
             <Grid item style={{flexGrow: 1, minWidth: 0}}>
               <NavLink
-                className={classes.linkText}
+                className={clsx(
+                  classes.linkText,
+                  {
+                    [classes.disableNavigate]: props.published !== Workflow.PUBLISHED
+                  }
+                )}
                 onClick={handleNavigation}
                 to={`/review/${props.url}`}
               >
@@ -260,10 +258,36 @@ const PrivateReviewCard: React.FC<PrivateReviewCardProps> = (props: PrivateRevie
         }
       />
       <NavLink
-        className={classes.linkText}
+        className={clsx(
+          classes.linkText,
+          classes.mediaLink,
+          {
+            [classes.disableNavigate]: props.published !== Workflow.PUBLISHED
+          }
+        )}
         onClick={handleNavigation}
         to={`/review/${props.url}`}
       >
+        {props.published === Workflow.DRAFT &&
+          <Box className={classes.draftCard}>
+            <Grid
+              alignItems='center'
+              container
+              direction='column'
+              className={classes.draftCardContainer}
+            >
+              <Grid
+                className={classes.draftCardContent}
+                item
+                xs={12}
+              >
+                <Typography variant='body1' className={classes.draftCardText}>
+                  Processing...
+                </Typography>
+              </Grid>
+            </Grid>
+          </Box>
+        }
         <CardMedia
           className={clsx(classes.media)}
           image={props.thumbnailURL}
@@ -279,7 +303,12 @@ const PrivateReviewCard: React.FC<PrivateReviewCardProps> = (props: PrivateRevie
           {props.product &&
             <Grid item style={{flexGrow: 1, minWidth: 0}}>
               <NavLink
-                className={classes.linkText}
+                className={clsx(
+                  classes.linkText,
+                  {
+                    [classes.disableNavigate]: props.published !== Workflow.PUBLISHED
+                  }
+                )}
                 onClick={handleNavigation}
                 to={`/review/${props.url}`}
               >
@@ -289,17 +318,26 @@ const PrivateReviewCard: React.FC<PrivateReviewCardProps> = (props: PrivateRevie
               </NavLink>
             </Grid>
           }
-          <Grid item style={{flexGrow: 0, marginLeft: theme.spacing(1)}}>
-            <NavLink
-              className={classes.linkText}
-              onClick={handleNavigation}
-              to={`/review/${props.url}`}
-            >
-              <IconButton className={classes.reviewLinkButton}>
-                <PlayArrowRoundedIcon color='secondary' className={classes.reviewLinkIcon} />
-              </IconButton>
-            </NavLink>
-          </Grid>
+          {props.published === Workflow.PUBLISHED &&
+            <Grid item style={{flexGrow: 0, marginLeft: theme.spacing(1)}}>
+              <NavLink
+                className={clsx(
+                  classes.linkText,
+                  {
+                    [classes.disableNavigate]: props.published !== Workflow.PUBLISHED
+                  }
+                )}
+                onClick={handleNavigation}
+                to={`/review/${props.url}`}
+              >
+                <IconButton className={clsx(
+                  classes.reviewLinkButton
+                )}>
+                  <PlayArrowRoundedIcon color='secondary' className={classes.reviewLinkIcon} />
+                </IconButton>
+              </NavLink>
+            </Grid>
+          }
         </Grid>
       </CardContent>
     </Card>
