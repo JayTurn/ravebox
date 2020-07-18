@@ -67,6 +67,7 @@ const Signup: React.FC<SignupProps> = (props: SignupProps) => {
       >
         <Helmet>
           <title>Sign up to ravebox - ravebox</title>
+          <meta name='description' content={`Create an account on Ravebox to share your video reviews of products and experiences.`} />
           <link rel='canonical' href='https://ravebox.io/about' />
         </Helmet>
         <AccessType selected={AccessOptions.SIGNUP} />

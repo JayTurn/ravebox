@@ -1,2 +1,6 @@
+# All Group
 User-agent: *
-Disallow: /
+Disallow: /product/add/
+Disallow: /user/reviews
+Disallow: /account/
+Disallow: /policies/

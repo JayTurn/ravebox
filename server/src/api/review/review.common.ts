@@ -45,6 +45,7 @@ export default class ReviewCommon {
    */
   static PublishReview(publishMessage: ReviewPublishedSNS): void {
 
+    console.log('PUBLISH_REVIEW');
       // Retrieve the review with the product and user details populated so
       // we can send a notification email.
       Review.findOne({
@@ -69,17 +70,19 @@ export default class ReviewCommon {
         .then(() => {
 
           // Send a notification to the user informing them of their review
+          console.log('NOTIFICATION_ADD_TO_LIST');
           Notifications.AddEmailToList(
             reviewDocument.user.email,
             reviewDocument.user.handle,
             ContactList.REVIEWERS)
             .then((email: string) => {
+              console.log('NOTIFICATION_SEND_EMAIL');
               Notifications.SendTransactionalEmail(
                 {email: email, name: 'N/A'},
                 EmailTemplate.REVIEW_PUBLISHED,
                 {
                   productTitle: reviewDocument.product.name,
-                  reviewLink: `${process.env.PUBLIC_CLIENT}/${reviewDocument.url}`,
+                  reviewLink: `${process.env.PUBLIC_CLIENT}/review/${reviewDocument.url}`,
                   reviewTitle: reviewDocument.title
                 }
               );
@@ -170,44 +173,46 @@ export default class ReviewCommon {
 
     let i = 0;
 
-    do {
-      // Capture the public details for the review and the categories.
-      const currentReview: ReviewDocument = reviews[i],
-            categories: Array<string> = currentReview.product.categories.map(
-              (category: Category) => category.key);
-
-      // Loop through the reviews and appened it to the relevant group. 
-      let j = 0;
-      
+    if (reviews.length > 0) {
       do {
-        const currentQuery: string = queries[j];
+        // Capture the public details for the review and the categories.
+        const currentReview: ReviewDocument = reviews[i],
+              categories: Array<string> = currentReview.product.categories.map(
+                (category: Category) => category.key);
 
-        const index: number = categories.indexOf(currentQuery); 
+        // Loop through the reviews and appened it to the relevant group. 
+        let j = 0;
+        
+        do {
+          const currentQuery: string = queries[j];
 
-        // If we have found a match for the category, add it to the review group.
-        if (index >= 0 ) {
-          if (reviewGroup[currentQuery]) {
-            reviewGroup[currentQuery].push({
-              ...currentReview.details,
-              product: currentReview.product.details,
-              user: currentReview.user.publicProfile
-            });
-          } else {
-            reviewGroup[currentQuery] = [{
-              ...currentReview.details,
-              product: currentReview.product.details,
-              user: currentReview.user.publicProfile
-            }];
+          const index: number = categories.indexOf(currentQuery); 
+
+          // If we have found a match for the category, add it to the review group.
+          if (index >= 0 ) {
+            if (reviewGroup[currentQuery]) {
+              reviewGroup[currentQuery].push({
+                ...currentReview.details,
+                product: currentReview.product.details,
+                user: currentReview.user.publicProfile
+              });
+            } else {
+              reviewGroup[currentQuery] = [{
+                ...currentReview.details,
+                product: currentReview.product.details,
+                user: currentReview.user.publicProfile
+              }];
+            }
+
+            break;
           }
 
-          break;
-        }
+          j++;
+        } while (j < queries.length);
 
-        j++;
-      } while (j < queries.length);
-
-      i++;
-    } while (i < reviews.length);
+        i++;
+      } while (i < reviews.length);
+    }
 
     return reviewGroup;
   }

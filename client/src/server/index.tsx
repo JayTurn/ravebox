@@ -104,6 +104,7 @@ const server = express()
              ${helmet.title.toString()}
              <meta name="viewport" content="width=device-width, initial-scale=1">
              <link href="https://fonts.googleapis.com/css2?family=Muli:ital,wght@0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet" crossorigin>
+             <link href="/css/loading.css" rel="stylesheet">
              <link rel="shortcut icon" href="/favicon.ico">
              ${helmet.meta.toString()}
              ${helmet.link.toString()}
@@ -113,6 +114,15 @@ const server = express()
            <body ${helmet.bodyAttributes.toString()}>
              <div id="root" class="loader">${markup}</div>
              ${extractor.getScriptTags()}
+             ${process.env.RAZZLE_ENVIRONMENT === 'production' ?
+               `<script>
+                window.fwSettings={
+                'widget_id':51000000451
+                };
+                !function(){if("function"!=typeof window.FreshworksWidget){var n=function(){n.q.push(arguments)};n.q=[],window.FreshworksWidget=n}}() 
+              </script>
+              <script type='text/javascript' src='https://aus-widget.freshworks.com/widgets/51000000451.js' async defer></script>`
+             : ''}
            </body>
            <script>
              window.__PRELOADED_STATE__ = ${Serialize(storeState)}

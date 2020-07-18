@@ -158,6 +158,7 @@ const Channel: React.FC<ChannelProps> = (props: ChannelProps) => {
                 <Grid item xs={12}>
                   <Helmet>
                     <title>{props.channel.profile.handle} reviews - ravebox</title>
+                    <meta name='description' content={`Watch video reviews of products and experiences created and shared by ${props.channel.profile.handle} on Ravebox`} />
                     <link rel='canonical' href={`https://ravebox.io/user/channel/${props.channel.profile.handle}`} />
                   </Helmet>
                   <ChannelTitle

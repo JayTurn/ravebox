@@ -296,10 +296,10 @@ export default class UserStatisticsCommon {
       })
       .then((statistics: UserStatisticsDocument) => {
         if (!statistics) {
-          next();
+          return next();
         } else {
           request.userStatistics = statistics;
-          next();
+          return next();
         }
       })
     }

@@ -82,7 +82,7 @@ const ReviewLinks: React.FC<ReviewLinksProps> = (
             classes.header
           )}
         >
-          Buy and support {props.handle}
+          Where to buy?
         </Typography>
       </Grid>
       <Grid
