@@ -227,7 +227,7 @@ const Home: React.FC<HomeProps> = (props: HomeProps) => {
                 }
               )}
             >
-              Everything reviewed in one minute or less.
+              Everything reviewed in 3 minutes or less.
             </Typography>
           </Grid>
           <Grid item xs={12}>
