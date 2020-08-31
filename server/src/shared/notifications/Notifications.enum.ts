@@ -12,7 +12,8 @@ export enum EmailTemplate {
   REVIEW_PROCESSING_FAILED = 3,
   REVIEW_PUBLISHED = 4,
   EMAIL_VERIFICATION = 5,
-  PASSWORD_RESET = 6
+  PASSWORD_RESET = 6,
+  INVITATION_REQUEST = 9
 }
 
 /**
@@ -20,5 +21,6 @@ export enum EmailTemplate {
  */
 export enum ContactList {
   ALL = 2,
-  REVIEWERS = 2
+  REVIEWERS = 3,
+  REQUESTED_INVITE = 4
 }

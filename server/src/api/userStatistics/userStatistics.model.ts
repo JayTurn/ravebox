@@ -20,6 +20,10 @@ const UserStatisticsSchema = new Schema<UserStatisticsDocument>({
     type: Number,
     default: 0
   },
+  invited: {
+    type: Array,
+    default: []
+  },
   reviews: {
     type: Array
   },

@@ -5,7 +5,8 @@
 
 // User roles.
 export enum UserRole {
-  USER = 'user'
+  USER = 'user',
+  ADMIN = 'admin'
 }
 
 // User types.

@@ -50,6 +50,8 @@ const Discover = loadable(() => import('./discover/Discover'));
 const EditReview = loadable(() => import('./review/edit/EditReview'));
 const Following = loadable(() => import('./user/following/Following'));
 const Home = loadable(() => import('./home/Home'));
+const InvitationRequest = loadable(() => import('./invitation/InvitationRequest/InvitationRequest'));
+const InvitationRequestSuccess = loadable(() => import('./invitation/InvitationRequestSuccess/InvitationRequestSuccess'));
 const Login = loadable(() => import('./user/login/Login'));
 const MobileNavigation = loadable(() => import('../components/navigation/mobile/MobileNavigation'));
 const MyReviews = loadable(() => import('./user/reviews/MyReviews'));
@@ -219,11 +221,20 @@ const App: React.FC<AppProps> = (props: AppProps) => {
                       <Route exact={true} path="/policies/terms">
                         <TermsOfService />
                       </Route>
+                      <Route exact={true} path="/apply">
+                        <InvitationRequest />
+                      </Route>
+                      <Route exact={true} path="/apply/success">
+                        <InvitationRequestSuccess />
+                      </Route>
                       <Route exact={true} path="/user/login">
                         <Login />
                       </Route>
-                      <Route exact={true} path="/user/signup">
+                      <Route exact={true} path="/user/signup/:invitation">
                         <Signup />
+                      </Route>
+                      <Route exact={true} path="/user/signup">
+                        <Redirect to='/apply' />
                       </Route>
                       <PrivateRoute exact={true} path="/user/reviews">
                         <MyReviews />

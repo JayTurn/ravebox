@@ -94,7 +94,7 @@ const useStyles = makeStyles((theme: Theme) =>
     },
     container: {
       maxWidth: '100%',
-      overflow: 'hidden'
+      overflowX: 'hidden'
     },
     containerPadding: {
       paddingLeft: theme.spacing(2),

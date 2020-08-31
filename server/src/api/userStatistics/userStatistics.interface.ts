@@ -19,6 +19,7 @@ export interface UserStatisticsDocument extends Mongoose.Document {
   followers: number;
   user: string;
   reviews: Array<Reviewed>;
+  invited?: Array<string>;
 }
 
 /**
@@ -28,6 +29,7 @@ export interface UserStatistics {
   followers: number;
   user: string;
   reviews: Array<Reviewed>;
+  invited?: Array<string>;
 }
 
 /**

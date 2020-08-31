@@ -10,6 +10,7 @@ import Connect from '../../models/database/connect.model';
 import EnvConfig from '../../config/environment/environmentBaseConfig';
 import Follow from '../follow/follow.model';
 import * as Jwt from 'jsonwebtoken';
+import Invitation from '../invitation/invitation.model';
 import LocalController from './authenticate/local.strategy';
 import Logging from '../../shared/logging/Logging.model';
 import {
@@ -28,6 +29,7 @@ import {
   EmailTemplate,
   ContactList
 } from '../../shared/notifications/Notifications.enum';
+import { InvitationStatus } from '../invitation/invitation.enum';
 import { LogLevel } from '../../shared/logging/Logging.enum';
 import { UserRole } from './user.enum';
 import { Workflow } from '../../shared/enumerators/workflow.enum';
@@ -39,6 +41,7 @@ import {
 import {
   FollowDocument
 } from '../follow/follow.interface';
+import { InvitationDetailsDocument } from '../invitation/invitation.interface';
 import { ResponseObject } from '../../models/database/connect.interface';
 import {
   ProfileSettings,
@@ -48,6 +51,7 @@ import {
 } from './user.interface';
 import {
   ProfileStatistics,
+  UserStatistics as UserStats,
   UserStatisticsDocument
 } from '../userStatistics/userStatistics.interface'
 import {
@@ -187,138 +191,233 @@ export default class UserController {
    *   The response object.
    */
   public static SignUp(request: Request, response: Response): void {
-    const userDetails: SignupDetails = request.body;
+    const userDetails: SignupDetails = {
+      email: request.body.email,
+      handle: request.body.handle,
+      password: request.body.password,
+      provider: EnvConfig.providers[0]
+    };
 
-    // Create a new user from the request data.
-    const newUserStatistics: UserStatisticsDocument = new UserStatistics(),
-          newFollow: FollowDocument = new Follow(),
-          newUser: UserDetailsDocument = new User({
-            ...userDetails,
-            statistics: newUserStatistics._id,
-            following: newFollow._id
-          });
-        //leadConversion = false;
-        //mailchimp = new Mailchimp(EnvConfig.mailchimp.apiKey);
+    // Capture the invitation id.
+    const invitation: string = request.body.invitationId;
 
-    // Update the new user statistics with the user id.
-    newUserStatistics.user = newUser._id;
-    newUserStatistics.save();
-
-    // Update the new follow document with the user id.
-    newFollow.user = newUser._id;
-    newFollow.save();
-
-    // Set the provider type.
-    newUser.provider = EnvConfig.providers[0];
-
-    // Set the role based on what was provided.
-    /*
-    if (request.body.role) {
-      newUser.role = (request.body.role === EnvConfig.roles[0] ||
-        request.body.role === EnvConfig.roles[1]) ? [request.body.role] : EnvConfig.roles[0];
-    }
-    */
-
-    newUser.role = [UserRole.USER];
-
-    // Ensure the user doesn't already exist.
-    User.findOne({
-      'email': newUser.email
+    // Check to make sure the invitation is valid.
+    Invitation.findOne({
+      _id: invitation,
+      status: InvitationStatus.WAITING
     })
-    .then((user: UserDetailsDocument) => {
-      if (user) {
-        // Set the response object.
-        const responseObject = Connect.setResponse({
-            data: {
-              errorCode: 'EXISTS',
-              title: 'User with this email already exists'
-            }
-          }, 422, 'An account with this email already exists');
-
-        // Return the response.
-        return response.status(responseObject.status).json(responseObject.data);
+    .then((invitationDetails: InvitationDetailsDocument) => {
+      // Exit if we don't have any invitation details.
+      if (!invitationDetails) {
+        throw new Error(`We couldn't validate your invitation`);
       }
 
-      // Save the new user entry.
-      newUser.save()
-        .then((user: UserDetailsDocument) => {
-          // Generate a token for the user.
-          const token: string = Authenticate.signToken(user.id, user.role[0]),
-              // Decode the token in order to get the expiry.
-              decoded: string | {[key: string]: any} = Jwt.decode(token, {
-                complete: true,
-                json: true
+      return invitationDetails;
+    })
+    .then((invitationDetails: InvitationDetailsDocument) => {
+
+      // Create a new user from the request data.
+      const newUserStatistics: UserStatisticsDocument = new UserStatistics(),
+            newFollow: FollowDocument = new Follow(),
+            newUser: UserDetailsDocument = new User({
+              ...userDetails,
+              statistics: newUserStatistics._id,
+              following: newFollow._id
+            });
+
+      // Update the new user statistics with the user id.
+      newUserStatistics.user = newUser._id;
+      newUserStatistics.save();
+
+      // Update the new follow document with the user id.
+      newFollow.user = newUser._id;
+      newFollow.save();
+
+      // Set the provider type.
+      newUser.provider = EnvConfig.providers[0];
+
+      newUser.role = [UserRole.USER];
+
+      // Ensure the user doesn't already exist.
+      User.findOne({
+        'email': newUser.email
+      })
+      .then((user: UserDetailsDocument) => {
+        if (user) {
+          // Set the response object.
+          const responseObject = Connect.setResponse({
+              data: {
+                errorCode: 'EXISTS',
+                title: 'User with this email already exists'
+              }
+            }, 422, 'An account with this email already exists');
+
+          // Return the response.
+          return response.status(responseObject.status).json(responseObject.data);
+        }
+
+        // Save the new user entry.
+        newUser.save()
+          .then((user: UserDetailsDocument) => {
+            // Generate a token for the user.
+            const token: string = Authenticate.signToken(user.id, user.role[0]),
+                // Decode the token in order to get the expiry.
+                decoded: string | {[key: string]: any} = Jwt.decode(token, {
+                  complete: true,
+                  json: true
+                });
+
+            // Set the token expiration on the user object.
+            user.expires = (decoded.payload.exp as number);
+
+            // Set the response object.
+            const responseObject: ResponseObject = Connect.setResponse({
+              data: {
+                user: user.privateProfile
+                //lead: leadConversion
+              }
+            }, 201, 'Account created successfully');
+
+            // Send a welcome email to the user.
+            Notifications.AddEmailToList(
+              user.email,
+              user.handle,
+              ContactList.ALL
+            )
+              .then((email: string) => {
+                Notifications.SendTransactionalEmail(
+                  {email: email, name: user.handle},
+                  EmailTemplate.SIGNUP
+                );
+
+                UserCommon.SendEmailVerification(user);
+
+              })
+              .catch((error: Error) => {
+                // Set the response object.
+                const responseObject = Connect.setResponse({
+                    data: {
+                      errorCode: 'FAILED_SENDING_SIGNUP_EMAIL',
+                      message: `We couldn't send a signup email`
+                    },
+                    error: error
+                  }, 422, 'Signup email failed');
+
+                // Log the failed email handling.
+                Logging.Send(LogLevel.ERROR, responseObject);
+
               });
 
-          // Set the token expiration on the user object.
-          user.expires = (decoded.payload.exp as number);
+            Invitation.updateOne({
+              _id: invitationDetails._id
+            }, {
+              status: InvitationStatus.ADDED
+            }, {new: true, upsert: false}
+            ).then(() => {
+              // Retrieve the referring user and add this one to their list of
+              // successful invites.
+              User.findById(
+                invitationDetails.invitedBy
+              )
+              .populate({
+                path: 'statistics',
+                model: 'UserStatistic'
+              })
+              .then((invitedUserDetails: UserDetailsDocument) => {
+                // Update the user statistics with the added user.
+                const userStats: UserStats = {...invitedUserDetails.statistics};
 
-          // Set the response object.
-          const responseObject: ResponseObject = Connect.setResponse({
-            data: {
-              user: user.privateProfile
-              //lead: leadConversion
-            }
-          }, 201, 'Account created successfully');
+                let invited: Array<string>;
 
-          // Send a welcome email to the user.
-          Notifications.AddEmailToList(
-            user.email,
-            user.handle,
-            ContactList.ALL
-          )
-            .then((email: string) => {
-              Notifications.SendTransactionalEmail(
-                {email: email, name: user.handle},
-                EmailTemplate.SIGNUP
-              );
+                if (userStats.invited) {
+                  invited = [...userStats.invited];
 
-              UserCommon.SendEmailVerification(user);
+                  invited.push(user._id);
+                } else {
+                  invited = [user._id]
+                }
 
+                UserStatistics.updateOne({
+                  user: invitedUserDetails._id
+                }, {
+                  $set: {
+                    invited: invited
+                  }
+                }, {new: true, upsert: false})
+                .catch((error: Error) => {
+                  // Set the response object.
+                  const responseObject = Connect.setResponse({
+                      data: {
+                        errorCode: 'FAILED_TO_UPDATE_INVITED_LIST',
+                        message: `We couldn't send a signup email`
+                      },
+                      error: error
+                    }, 422, `Failed to update list of invited users for ${invitedUserDetails._id}`);
+
+                  // Log the failed email handling.
+                  Logging.Send(LogLevel.ERROR, responseObject);
+                });
+              });
             })
             .catch((error: Error) => {
               // Set the response object.
               const responseObject = Connect.setResponse({
                   data: {
-                    errorCode: 'FAILED_SENDING_SIGNUP_EMAIL',
-                    message: `We couldn't send a signup email`
+                    errorCode: 'FAILED_UPDATING_INVITATION_STATUS',
+                    message: `Invitation ${invitationDetails._id} failed to update`
                   },
                   error: error
-                }, 422, 'Signup email failed');
+                }, 422, `Invitation ${invitationDetails._id} failed to update`);
 
               // Log the failed email handling.
               Logging.Send(LogLevel.ERROR, responseObject);
-
             });
 
-        // Set CSRF values.
-        Authenticate.setAuthenticatedResponseHeader(token, response);
+          // Set CSRF values.
+          Authenticate.setAuthenticatedResponseHeader(token, response);
 
-        // Return the response.
-        response.status(responseObject.status).json(responseObject.data);
+          // Return the response.
+          response.status(responseObject.status).json(responseObject.data);
+        })
+        .catch((error: Error) => {
+          throw error;
+        })
       })
       .catch((error: Error) => {
-        throw error;
-      })
-    })
-    .catch((error: Error) => {
-      // Declare the responseObject.
-      let responseObject: ResponseObject;
+        // Declare the responseObject.
+        let responseObject: ResponseObject;
 
-      // If this is a validation error.
-      if (error.name === 'ValidationError') {
-        // Define the responseObject with a Validation error.
-        responseObject = Connect.setValidationResponse(error);
+        // If this is a validation error.
+        if (error.name === 'ValidationError') {
+          // Define the responseObject with a Validation error.
+          responseObject = Connect.setValidationResponse(error);
+
+          // Log the error.
+          Logging.Send(LogLevel.ERROR, responseObject);
+
+          // Return the response.
+          return response.status(responseObject.status).json(responseObject.data).end();
+        }
+
+        // Define the responseObject.
+        responseObject = Connect.setResponse({
+          data: {
+            errorCode: 'FAILED_SIGNUP',
+            title: 'Please try to sign up again'
+          },
+          error: error
+        }, 422, 'Sign up was unsuccessful');
 
         // Log the error.
         Logging.Send(LogLevel.ERROR, responseObject);
 
         // Return the response.
-        return response.status(responseObject.status).json(responseObject.data).end();
-      }
-
+        response.status(responseObject.status).json(responseObject.data);
+      });
+    })
+    .catch((error: Error) => {
       // Define the responseObject.
-      responseObject = Connect.setResponse({
+      const responseObject: ResponseObject = Connect.setResponse({
         data: {
           errorCode: 'FAILED_SIGNUP',
           title: 'Please try to sign up again'

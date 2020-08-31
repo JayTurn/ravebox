@@ -5,6 +5,7 @@
 
 // Modules.
 import * as React from 'react';
+import AccountBoxRoundedIcon from '@material-ui/icons/AccountBoxRounded';
 import { bindActionCreators, Dispatch, AnyAction } from 'redux';
 import Box from '@material-ui/core/Box';
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
@@ -199,6 +200,7 @@ const MobileNavigation: React.FC<MobileNavigationProps> = (props: MobileNavigati
               </ListItemText>
             </NavLink>
           </ListItem>
+          {/*
           <ListItem button className={clsx(classes.listButton, classes.listButtonOpen)}>
             <NavLink to='/discover' className={clsx(classes.linkStyle, classes.linkStyleOpen)} onClick={toggleDrawer}>
               <ListItemIcon className={clsx(
@@ -217,44 +219,66 @@ const MobileNavigation: React.FC<MobileNavigationProps> = (props: MobileNavigati
               </ListItemText>
             </NavLink>
           </ListItem>
-          {props.profile &&
+          */}
+          {props.profile ? (
+            <React.Fragment>
+              <ListItem button className={clsx(classes.listButton, classes.listButtonOpen)}>
+                <NavLink to='/user/following' className={clsx(classes.linkStyle, classes.linkStyleOpen)} onClick={toggleDrawer}>
+                  <ListItemIcon className={clsx(
+                    classes.listButtonIconOpen,
+                    {[classes.listButtonIconActive]: activePath === '/user/following'}
+                  )}>
+                    <SubscriptionsRoundedIcon />
+                  </ListItemIcon>
+                  <ListItemText disableTypography className={clsx(
+                    classes.listButtonTextOpen,
+                    {[classes.listButtonTextActive]: activePath === '/user/following'}
+                  )}>
+                    <Typography variant='subtitle2' className={clsx(
+                      classes.listButtonTypographyOpen
+                    )}>Following</Typography>
+                  </ListItemText>
+                </NavLink>
+              </ListItem>
+              <ListItem button className={clsx(classes.listButton, classes.listButtonOpen)}>
+                <NavLink to='/product/add' className={clsx(classes.linkStyle, classes.linkStyleOpen)} onClick={toggleDrawer}>
+                  <ListItemIcon className={clsx(
+                    classes.listButtonIconOpen,
+                    {[classes.listButtonIconActive]: activePath === '/product/add'}
+                  )}>
+                    <VideocamRoundedIcon />
+                  </ListItemIcon>
+                  <ListItemText disableTypography className={clsx(
+                    classes.listButtonTextOpen,
+                    {[classes.listButtonTextActive]: activePath === '/product/add'}
+                  )}>
+                    <Typography variant='subtitle2' className={clsx(
+                      classes.listButtonTypographyOpen
+                    )}>Rave</Typography>
+                  </ListItemText>
+                </NavLink>
+              </ListItem>
+            </React.Fragment>
+          ) : (
             <ListItem button className={clsx(classes.listButton, classes.listButtonOpen)}>
-              <NavLink to='/user/following' className={clsx(classes.linkStyle, classes.linkStyleOpen)} onClick={toggleDrawer}>
+              <NavLink to='/product/add' className={clsx(classes.linkStyle, classes.linkStyleOpen)} onClick={toggleDrawer}>
                 <ListItemIcon className={clsx(
                   classes.listButtonIconOpen,
-                  {[classes.listButtonIconActive]: activePath === '/user/following'}
+                  {[classes.listButtonIconActive]: activePath === '/product/add'}
                 )}>
-                  <SubscriptionsRoundedIcon />
+                  <AccountBoxRoundedIcon />
                 </ListItemIcon>
                 <ListItemText disableTypography className={clsx(
                   classes.listButtonTextOpen,
-                  {[classes.listButtonTextActive]: activePath === '/user/following'}
+                  {[classes.listButtonTextActive]: activePath === '/product/add'}
                 )}>
                   <Typography variant='subtitle2' className={clsx(
                     classes.listButtonTypographyOpen
-                  )}>Following</Typography>
+                  )}>Rave</Typography>
                 </ListItemText>
               </NavLink>
             </ListItem>
-          }
-          <ListItem button className={clsx(classes.listButton, classes.listButtonOpen)}>
-            <NavLink to='/product/add' className={clsx(classes.linkStyle, classes.linkStyleOpen)} onClick={toggleDrawer}>
-              <ListItemIcon className={clsx(
-                classes.listButtonIconOpen,
-                {[classes.listButtonIconActive]: activePath === '/product/add'}
-              )}>
-                <VideocamRoundedIcon />
-              </ListItemIcon>
-              <ListItemText disableTypography className={clsx(
-                classes.listButtonTextOpen,
-                {[classes.listButtonTextActive]: activePath === '/product/add'}
-              )}>
-                <Typography variant='subtitle2' className={clsx(
-                  classes.listButtonTypographyOpen
-                )}>Rave</Typography>
-              </ListItemText>
-            </NavLink>
-          </ListItem>
+          )}
           <ListItem button className={clsx(classes.listButton, classes.listButtonOpen)}>
             <NavLink to='/about' className={clsx(classes.linkStyle, classes.linkStyleOpen)} onClick={toggleDrawer}>
               <ListItemIcon className={clsx(

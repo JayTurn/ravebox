@@ -16,6 +16,7 @@ const dbname: string = process.env.MONGODB_NAME,
       uri = `${process.env.MONGODB_URI}/${process.env.MONGODB_NAME}?retryWrites=true&w=majority`;
 
 const config: Partial<EnvironmentProperties> = {
+  admin: '5f4b0ee1d24e0f00703a4ea6',
   analytics: {
     amplitude: {
       apiKey: '3118a981446e4ca6ee1caf68a5a67ab7' 

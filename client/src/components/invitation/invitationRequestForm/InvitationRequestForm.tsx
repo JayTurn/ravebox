@@ -1,17 +1,21 @@
 /**
- * SignupForm.tsx
- * Signup form component.
+ * InvitationRequestForm.tsx
+ * Invitation request form component to accept new requests.
  */
 
 // Modules.
 import {
   AnyAction,
   bindActionCreators,
-  Dispatch
+  Dispatch,
 } from 'redux';
+import API from '../../../utils/api/Api.model';
+import Box from '@material-ui/core/Box';
+import Button from '@material-ui/core/Button';
+import CircularProgress from '@material-ui/core/CircularProgress';
 import clsx from 'clsx';
-import Cookies from 'universal-cookie';
 import { connect } from 'react-redux';
+import Cookies from 'universal-cookie';
 import {
   createStyles,
   makeStyles,
@@ -22,8 +26,8 @@ import {
 import Grid from '@material-ui/core/Grid';
 import * as React from 'react';
 import Typography from '@material-ui/core/Typography';
-import useMediaQuery from '@material-ui/core/useMediaQuery';
 import { withRouter } from 'react-router';
+import useMediaQuery from '@material-ui/core/useMediaQuery';
 
 // Actions.
 import {
@@ -33,13 +37,9 @@ import { add } from '../../../store/xsrf/Actions';
 
 // Components.
 import ErrorMessages from '../../forms/errorMessages/ErrorMessages';
-import Input from '../../forms/input/Input'; 
-import LinkElement from '../../elements/link/Link';
-import API from '../../../utils/api/Api.model';
+import Input from '../../forms/input/Input';
+import Link from '../../elements/link/Link';
 import StyledButton from '../../elements/buttons/StyledButton';
-
-// Enumerators.
-import { StyleType } from '../../elements/link/Link.enum';
 
 // Hooks.
 import { useAnalytics } from '../../../components/analytics/Analytics.provider';
@@ -51,19 +51,14 @@ import {
   EventObject
 } from '../../../components/analytics/Analytics.interface';
 import { InputData } from '../../forms/input/Input.interface';
-import { SignupFormProps, SignupFormResponse } from './SignupForm.interface';
-import { PrivateProfile } from '../User.interface';
+import {
+  InvitationRequestFormResponse,
+  InvitationRequestFormProps
+} from './InvitationRequestForm.interface';
 import { ValidationSchema } from '../../forms/validation/Validation.interface';
 
 // Validation rules.
-import {
-  isEmail,
-  allowedCharacters,
-  isPassword,
-  isRequired,
-  handleAvailable,
-  minLength
-} from '../../forms/validation/ValidationRules';
+import { isRequired, isEmail } from '../../forms/validation/ValidationRules';
 
 /**
  * Create styles for the login form.
@@ -72,35 +67,26 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
   fieldPadding: {
     padding: theme.spacing(1, 2)
   },
+  desktopFieldPadding: {
+    padding: theme.spacing(1, 2)
+  }
 }));
 
 /**
- * Signup form validation schema.
+ * Invitation request validation schema.
  */
-const signupValidation: ValidationSchema = {
-  handle: {
-    errorMessage: '',
-    rules: [
-      isRequired,
-      minLength(3),
-      allowedCharacters(/^[A-Za-z0-9-_]+$/),
-      handleAvailable
-    ]
-  },
+const invitationRequestValidation: ValidationSchema = {
   email: {
     errorMessage: '',
     rules: [isRequired, isEmail]
-  },
-  password: {
-    errorMessage: '',
-    rules: [isRequired, isPassword]
   }
 };
 
 /**
- * Signup form for new accounts.
+ * Invitation request form component.
  */
-const SignupForm: React.FC<SignupFormProps> = (props: SignupFormProps) => {
+const InvitationRequestForm: React.FC<InvitationRequestFormProps> = (props: InvitationRequestFormProps) => {
+
   // Define the analytics context and a tracking event.
   const analytics: AnalyticsContextProps = useAnalytics() as AnalyticsContextProps;
 
@@ -111,11 +97,8 @@ const SignupForm: React.FC<SignupFormProps> = (props: SignupFormProps) => {
 
   // Define the base state for the signup form.
   const [values, setValues] = React.useState({
-    handle: '',
-    email: props.invitation.email,
-    invitationId: props.invitation._id,
-    invitedBy: props.invitation.invitedBy,
-    password: ''
+    email: '',
+    existingChannel: ''
   });
 
   // Form error messages to be displayed if fields haven't been validated
@@ -132,7 +115,7 @@ const SignupForm: React.FC<SignupFormProps> = (props: SignupFormProps) => {
     validateField,
     validateAllFields
   } = useValidation({
-    validation: signupValidation
+    validation: invitationRequestValidation
   });
 
   /**
@@ -151,22 +134,7 @@ const SignupForm: React.FC<SignupFormProps> = (props: SignupFormProps) => {
 
     // Validate the field if it has rules associated with it.
     if (validation[data.key]) {
-      const properties: EventObject = {
-        'form': 'sign up',
-        'handle': data.key === 'handle' ? data.value : values.handle,
-      };
-
-      if (values.email) {
-        properties['email'] = values.email;
-      } else {
-        if (data.key === 'email') {
-          properties['email'] = data.value;
-        }
-      } 
-      validateField(data.key)(data.value)({
-        name: `add ${data.key}`,
-        properties: {...properties} 
-      });
+      validateField(data.key)(data.value);
     }
 
     setValues({
@@ -176,7 +144,7 @@ const SignupForm: React.FC<SignupFormProps> = (props: SignupFormProps) => {
   }
 
   /**
-   * Submits the signup form.
+   * Submits the invitation request form.
    */
   const submit: (
     e: React.MouseEvent<HTMLButtonElement>
@@ -204,11 +172,11 @@ const SignupForm: React.FC<SignupFormProps> = (props: SignupFormProps) => {
     // Set the submission state.
     setSubmitting(true)
 
-    API.requestAPI<SignupFormResponse>('user/signup', {
+    API.requestAPI<InvitationRequestFormResponse>('invitation', {
       method: 'POST',
       body: JSON.stringify(values)
     })
-    .then((response: SignupFormResponse) => {
+    .then((response: InvitationRequestFormResponse) => {
       // Present any errors that were returned in the response.
       if (response.errorCode) {
         setSubmitting(false);
@@ -216,89 +184,70 @@ const SignupForm: React.FC<SignupFormProps> = (props: SignupFormProps) => {
         return;
       }
 
-      // Track the new user.
-      analytics.addUser(response.user._id)({
-        'handle': values.handle,
-        'email': values.email
-      });
-
       // Track the signup event.
-      analytics.trackEvent('create account')({
-        'handle': values.handle,
-        'email': values.email
+      analytics.trackEvent('request invite')({
+        'email': values.email,
+        'existing channel': values.existingChannel
       });
 
-      if (props.addXsrf && props.login) {
-        // Retrieve the xsrf cookie to be set on the header for future requests. 
-        const cookies: Cookies = new Cookies();
-        const xsrf: string = cookies.get('XSRF-TOKEN');
+      // Set the submission state.
+      setSubmitting(false);
 
-        if (xsrf) {
-          props.addXsrf(xsrf);
-          props.login(response.user);
-          props.history.push('/');
-        }
-
-        // Set the submission state.
-        setSubmitting(false);
-      }
+      props.history.push('/apply/success');
     });
   }
 
-  return(
+  /**
+   * Displays the user login prompt.
+   * @method render
+   *
+   * @return React.ReactNode
+   */
+  return (
     <form noValidate autoComplete="off">
       <Grid
         container
         direction='column'
         alignItems='stretch'
       >
-        <Grid item xs={12} md={6} lg={5} className={clsx(classes.fieldPadding)}
+        <Grid item xs={12} md={6} lg={5} className={clsx(classes.fieldPadding, {
+            [classes.desktopFieldPadding]: desktop
+          })}
         >
           <Input
-            handleBlur={updateForm}
-            helperText='This is the name people will know you by on ravebox. Must only contain alphanumeric characters, hyphens and underscores.'
-            name='handle'
-            type='text'
-            title="Handle" 
-            validation={validation.handle}
-          />
-        </Grid>
-        <Grid item xs={12} md={6} lg={5} className={clsx(classes.fieldPadding)}
-        >
-          <Input
-            defaultValue={values.email}
             handleBlur={updateForm}
             name='email'
+            required={true}
             type='email'
-            title="Email" 
+            title="Email"
             validation={validation.email}
           />
         </Grid>
-        <Grid item xs={12} md={6} lg={5} className={clsx(classes.fieldPadding)}
+        <Grid item xs={12} md={6} lg={5} className={clsx(classes.fieldPadding, {
+            [classes.desktopFieldPadding]: desktop
+          })}
         >
           <Input
             handleBlur={updateForm}
-            name='password'
-            type='password'
-            title="Password" 
-            helperText='Must be at least 8 charactrs in length and include an uppercase letter, a number and a special character'
-            validation={validation.password}
+            helperText={`If you have a social media profile that contains product reviews you've created in the past, provide a link here.`}
+            name='existingChannel'
+            prefix='https://'
+            type='text'
+            title="Link to previous reviews"
           />
         </Grid>
-        <Grid item xs={12} md={6} lg={5} className={clsx(classes.fieldPadding)}
-        >
-          <Typography variant='subtitle1'>
-            By clicking Sign Up, you are indicating that you have read and acknowledge the <LinkElement title='Terms of Service' path='/policies/terms' styleType={StyleType.STANDARD_PRIMARY} /> and <LinkElement title='Privacy policy' path='/policies/privacy-policy' styleType={StyleType.STANDARD_PRIMARY} />.
-          </Typography>
-        </Grid>
-        <Grid item xs={12} md={6} lg={5} className={clsx(classes.fieldPadding)}
+        <Grid item xs={12} md={6} lg={5} className={clsx(classes.fieldPadding, {
+            [classes.desktopFieldPadding]: desktop
+          })}
         >
           <ErrorMessages errors={formErrorMessages} />
         </Grid>
-        <Grid item xs={12} md={6} lg={5} className={clsx(classes.fieldPadding)}
+        <Grid item xs={12} md={6} lg={5} className={clsx(classes.fieldPadding, {
+            [classes.desktopFieldPadding]: desktop
+          })}
         >
           <StyledButton
-            title='Sign up'
+            title='Join waitlist'
             clickAction={submit}
             submitting={submitting}
           />
@@ -316,16 +265,19 @@ const SignupForm: React.FC<SignupFormProps> = (props: SignupFormProps) => {
 const mapDispatchToProps = (dispatch: Dispatch<AnyAction>) =>
   bindActionCreators(
     {
-      addXsrf: add,
-      login: login
+      //addXsrf: add,
+      //login: login
     },
     dispatch
   );
 
 /**
- * Maps the user store properties to the signup component.
+ * Maps the user store properties to the login component.
  */
-const mapStatetoProps = (state: any, ownProps: SignupFormProps): SignupFormProps => {
+const mapStatetoProps = (
+  state: any,
+  ownProps: InvitationRequestFormProps
+): InvitationRequestFormProps => {
   return {
     ...ownProps,
   };
@@ -334,4 +286,4 @@ const mapStatetoProps = (state: any, ownProps: SignupFormProps): SignupFormProps
 export default withRouter(connect(
   mapStatetoProps,
   mapDispatchToProps
-)(SignupForm));
+)(InvitationRequestForm));

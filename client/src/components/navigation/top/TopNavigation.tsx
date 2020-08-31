@@ -31,7 +31,7 @@ import MenuIcon from '@material-ui/icons/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 import { NavLink, useLocation } from 'react-router-dom';
 import * as React from 'react';
-import SearchRoundedIcon from '@material-ui/icons/SearchRounded';
+//import SearchRoundedIcon from '@material-ui/icons/SearchRounded';
 import Slide from '@material-ui/core/Slide';
 import Toolbar from '@material-ui/core/Toolbar';
 import useMediaQuery from '@material-ui/core/useMediaQuery';
@@ -46,7 +46,7 @@ import { toggleSide } from '../../../store/navigation/Actions';
 // Components.
 import Logo from '../../logo/Logo';
 import ProfileMenu from '../../user/profileMenu/ProfileMenu';
-import SearchField from '../../search/field/SearchField';
+//import SearchField from '../../search/field/SearchField';
 
 // Interfaces.
 import {
@@ -224,7 +224,7 @@ const TopNavigation: React.FC<TopNavigationProps> = (props: TopNavigationProps) 
   const toggleSearchField: (
   ) => void = (
   ): void => {
-    setSearchBar(!searchBar);
+    //setSearchBar(!searchBar);
   }
 
   /**
@@ -256,7 +256,7 @@ const TopNavigation: React.FC<TopNavigationProps> = (props: TopNavigationProps) 
                 }
               </Grid>
               <Grid item xs={4}>
-                <SearchField />
+              {/*<SearchField />*/}
               </Grid>
               <Grid item xs={4} style={{textAlign: 'right'}}>
                 {props.profile ? (
@@ -278,7 +278,7 @@ const TopNavigation: React.FC<TopNavigationProps> = (props: TopNavigationProps) 
                       disableElevation
                       variant='contained'
                     >
-                      <NavLink to="/user/signup" activeClassName="active" className={classes.linksInverse}>Sign up</NavLink>
+                      <NavLink to="/apply" activeClassName="active" className={classes.linksInverse}>Join waitlist</NavLink>
                     </Button>
                   </React.Fragment>
                 )}
@@ -291,7 +291,7 @@ const TopNavigation: React.FC<TopNavigationProps> = (props: TopNavigationProps) 
           {searchBar ? (
             <StyledMobileAppBar position='sticky' color='inherit'>
               <Toolbar disableGutters={true} style={{minHeight: '50px'}}>
-                <SearchField toggleSearchField={toggleSearchField} />
+              {/*<SearchField toggleSearchField={toggleSearchField} />*/}
               </Toolbar>
             </StyledMobileAppBar>
           ) : (
@@ -315,12 +315,14 @@ const TopNavigation: React.FC<TopNavigationProps> = (props: TopNavigationProps) 
                     </LogoButton>
                   }
                   <div style={{flexGrow: 1}} />
+                  {/*
                   <MenuIconButton
                     style={{padding: theme.spacing(1), marginTop: theme.spacing(0.5)}}
                     onClick={e => toggleSearchField()}
                   >
                     <SearchRoundedIcon />
                   </MenuIconButton>
+                  */}
                   {props.profile ? (
                     <React.Fragment>
                       <ProfileMenu />
@@ -339,7 +341,7 @@ const TopNavigation: React.FC<TopNavigationProps> = (props: TopNavigationProps) 
                         disableElevation
                         variant='contained'
                       >
-                        <NavLink to="/user/signup" activeClassName="active" className={classes.linksInverse}>Sign up</NavLink>
+                        <NavLink to="/apply" activeClassName="active" className={classes.linksInverse}>Join waitlist</NavLink>
                       </Button>
                     </React.Fragment>
                   )}

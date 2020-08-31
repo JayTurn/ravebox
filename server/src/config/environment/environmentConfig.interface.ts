@@ -7,6 +7,7 @@
 import { UserRole } from '../../api/user/user.enum';
 
 export interface EnvironmentProperties {
+  admin: string;
   analytics: AnalyticsProperties;
   authenticationTimeout: string;
   aws: AWSProperties;

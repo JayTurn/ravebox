@@ -114,7 +114,7 @@ const ReviewLinks: React.FC<ReviewLinksProps> = (
               {item.path &&
                 <Grid>
                   <Typography variant='body1'>
-                    <Link href={`https://${item.path}`} title={item.info}>{item.path}</Link>
+                    <Link href={`https://${item.path}`} title={item.info}>{`https://${item.path}`} target='_blank'</Link>
                   </Typography>
                 </Grid>
               }
