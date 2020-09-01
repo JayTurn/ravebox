@@ -78,6 +78,9 @@ const useStyles = makeStyles((theme: Theme) =>
     },
     primaryContainerTitle: {
     },
+    reducedBottomMargin: {
+      paddingBottom: theme.spacing(6)
+    },
     secondaryContainer: {
       backgroundColor: theme.palette.secondary.dark,
     },
@@ -119,7 +122,8 @@ const ContentBlock: React.FC<ContentBlockProps> = (props: ContentBlockProps) => 
             [classes.whiteContainer]: props.background === ColorStyle.WHITE,
             [classes.primaryContainer]: props.background === ColorStyle.PRIMARY,
             [classes.secondaryContainer]: props.background === ColorStyle.SECONDARY,
-            [classes.containerLarge]: largeScreen
+            [classes.containerLarge]: largeScreen,
+            [classes.reducedBottomMargin]: props.reducedBottomMargin
           }
         )}
       >
@@ -160,7 +164,7 @@ const ContentBlock: React.FC<ContentBlockProps> = (props: ContentBlockProps) => 
                 [classes.whiteContainerText]: props.background === ColorStyle.WHITE,
                 [classes.primaryContainerText]: props.background === ColorStyle.PRIMARY,
                 [classes.secondaryContainerText]: props.background === ColorStyle.SECONDARY,
-                [classes.containerTextLarge]: largeScreen
+                [classes.containerTextLarge]: largeScreen,
               }
             )}
           >

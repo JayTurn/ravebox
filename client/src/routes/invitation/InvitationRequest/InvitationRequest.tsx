@@ -156,6 +156,7 @@ const InvitationRequest: React.FC<InvitationRequestProps> = (props: InvitationRe
         />
         <ContentBlock
           background={ColorStyle.WHITE}
+          reducedBottomMargin={true}
           title={
             <React.Fragment>
               <Box component='span' className={clsx(

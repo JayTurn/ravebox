@@ -15,4 +15,5 @@ export interface ContentBlockProps {
   title?: React.ReactElement;
   bodyFirst?: React.ReactElement;
   bodySecond?: React.ReactElement;
+  reducedBottomMargin?: boolean;
 }
