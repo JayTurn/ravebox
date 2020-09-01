@@ -43,6 +43,12 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
     fontSize: '.9rem',
     margin: theme.spacing(1, 0, 1)
   },
+  linkText: {
+    display: 'block',
+    whiteSpace: 'nowrap',
+    textOverflow: 'ellipsis',
+    overflow: 'hidden'
+  },
   promoContainer: {
     marginBottom: theme.spacing(1)
   },
@@ -112,9 +118,16 @@ const ReviewLinks: React.FC<ReviewLinksProps> = (
                 </Grid>
               }
               {item.path &&
-                <Grid>
+                <Grid item xs={12}>
                   <Typography variant='body1'>
-                    <Link href={`https://${item.path}`} title={item.info}>{`https://${item.path}`} target='_blank'</Link>
+                    <Link
+                      className={clsx(classes.linkText)}
+                      href={`https://${item.path}`}
+                      title={item.info} 
+                      target='_blank'
+                    >
+                      {`https://${item.path}`}
+                    </Link>
                   </Typography>
                 </Grid>
               }

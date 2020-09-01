@@ -64,10 +64,18 @@ import { isRequired, isEmail } from '../../forms/validation/ValidationRules';
  * Create styles for the login form.
  */
 const useStyles = makeStyles((theme: Theme) => createStyles({
+  buttonPadding: {
+    padding: theme.spacing(1, 2),
+  },
   fieldPadding: {
-    padding: theme.spacing(1, 2)
+    padding: theme.spacing(1, 2),
+    width: '100%'
   },
   desktopFieldPadding: {
+    padding: theme.spacing(1, 2),
+    width: '100%'
+  },
+  desktopButtonPadding: {
     padding: theme.spacing(1, 2)
   }
 }));
@@ -208,7 +216,7 @@ const InvitationRequestForm: React.FC<InvitationRequestFormProps> = (props: Invi
       <Grid
         container
         direction='column'
-        alignItems='stretch'
+        alignItems='center'
       >
         <Grid item xs={12} md={6} lg={5} className={clsx(classes.fieldPadding, {
             [classes.desktopFieldPadding]: desktop
@@ -242,8 +250,8 @@ const InvitationRequestForm: React.FC<InvitationRequestFormProps> = (props: Invi
         >
           <ErrorMessages errors={formErrorMessages} />
         </Grid>
-        <Grid item xs={12} md={6} lg={5} className={clsx(classes.fieldPadding, {
-            [classes.desktopFieldPadding]: desktop
+        <Grid item xs={12} md={6} lg={5} className={clsx(classes.buttonPadding, {
+            [classes.desktopButtonPadding]: desktop
           })}
         >
           <StyledButton

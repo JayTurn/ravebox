@@ -1,6 +1,6 @@
 /**
- * Login.tsx
- * Login route component.
+ * Signup.tsx
+ * Signup route component.
  */
 
 // Modules.
