@@ -15,6 +15,7 @@ import { InputProps } from './Input.interface';
  * Input function component for handling form field inputs.
  */
 const Input: React.FC<InputProps> = (props: InputProps) => {
+  const [firstTouch, setFirstTouch] = React.useState<boolean>(props.allowAutocomplete || false);
 
   /**
    * Called for each change event.
@@ -27,6 +28,13 @@ const Input: React.FC<InputProps> = (props: InputProps) => {
   ): void => {
     if (props.handleChange) {
       props.handleChange(fieldEvent);
+    }
+    if (firstTouch) {
+      props.handleBlur({
+        key: props.name,
+        value: fieldEvent.target.value
+      });
+      setFirstTouch(false);
     }
   }
 
@@ -52,6 +60,7 @@ const Input: React.FC<InputProps> = (props: InputProps) => {
 
   return (
     <TextField
+      autoFocus={props.autoFocus}
       defaultValue={props.defaultValue}
       error={props.validation && props.validation.errorMessage !== ''}
       fullWidth={true}

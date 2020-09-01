@@ -236,6 +236,7 @@ const LoginForm: React.FC<LoginFormProps> = (props: LoginFormProps) => {
           })}
         >
           <Input
+            allowAutocomplete={true}
             handleBlur={updateForm}
             name='email'
             type='email'
@@ -248,6 +249,7 @@ const LoginForm: React.FC<LoginFormProps> = (props: LoginFormProps) => {
           })}
         >
           <Input
+            allowAutocomplete={true}
             handleBlur={updateForm}
             name='password'
             type='password'

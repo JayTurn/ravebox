@@ -26,6 +26,7 @@ import { UserDetailsDocument } from '../../api/user/user.interface';
 import { ResponseObject } from '../database/connect.interface';
 
 const JWT = 'ravebox';
+const CSRF = 'XSRF-TOKEN';
 
 /**
  * Validate the CSRF Token matches the header, cookie and JWT.
@@ -45,7 +46,7 @@ const validateCSRF = (token: string, request: Request): string => {
   const expires: number = (decoded.payload.exp as number) * 1000;
   const csrf: string = decoded.payload.csrf as string;
   const csrfHeader: string | Array<string> = request.headers['x-xsrf-token'];
-  const csrfCookie: string | Array<string> = request.cookies['XSRF-TOKEN'];
+  const csrfCookie: string | Array<string> = request.cookies[CSRF];
 
   // Check the JWT hasn't expired.
   if (expires <= Date.now()) {
@@ -99,7 +100,7 @@ const isAuthenticatedJWT: ExpressJwt.RequestHandler = ExpressJwt({
     let token = '';
 
     // If the token doesn't exist, return an undefined token.
-    if (_.isUndefined(req.cookies[JWT])) {
+    if (_.isUndefined(req.cookies[JWT]) || _.isUndefined(req.cookies[CSRF])) {
       return token;
     }
 
@@ -164,7 +165,7 @@ export default class Authenticate {
       (request: Request, response: Response, next: NextFunction): void => {
 
         // Retrieve the token passed by the client.
-        if (_.isUndefined(request.cookies[JWT])) {
+        if (_.isUndefined(request.cookies[JWT]) || _.isUndefined(request.cookies[CSRF])) {
           // Trigger the next middleware without attaching the user.
           return next();
         }
@@ -230,7 +231,7 @@ export default class Authenticate {
    */
   static isAuthenticated(request: Request, response: Response, next: NextFunction): void {
     // Retrieve the token passed by the client.
-    if (_.isUndefined(request.cookies[JWT])) {
+    if (_.isUndefined(request.cookies[JWT]) || _.isUndefined(request.cookies[CSRF])) {
       // Define an error response to be returned.
       const responseObject = Connect.setResponse({
             data: {
@@ -255,7 +256,7 @@ export default class Authenticate {
    */
   static AddUserToRequest(request: Request, response: Response, next: NextFunction): void {
     // Retrieve the token passed by the client.
-    if (_.isUndefined(request.cookies[JWT])) {
+    if (_.isUndefined(request.cookies[JWT]) || _.isUndefined(request.cookies[CSRF])) {
       return next();
     }
 

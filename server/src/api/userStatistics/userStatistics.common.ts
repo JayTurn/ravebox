@@ -133,6 +133,54 @@ export default class UserStatisticsCommon {
   }
 
   /**
+   * Increments the raves count.
+   *
+   * @param { string } userId - the id of the user statistic to increment.
+   * @param { number } value - the number to be incremented.
+   */
+  static IncrementRavesCount(userId: string, value: number): void {
+    UserStatistics.findOne({
+      user: userId
+    })
+    .then((statistics: UserStatisticsDocument) => {
+      let query;
+      if (statistics.ravesCount) {
+
+        query = {
+          $inc: {
+            ravesCount: value
+          }
+        };
+      } else {
+        query = {
+          ravesCount: 1
+        }
+      }
+
+      UserStatistics.findOneAndUpdate({
+        user: userId
+      }, query, {
+        upsert: true
+      })
+      .catch((error: Error) => {
+        throw error;
+      });
+    })
+    .catch((error: Error) => {
+      // Log the error for updating the user's statistics.
+      const responseObject = Connect.setResponse({
+        data: {
+          errorCode: 'FAILED_TO_INCREMENT_RAVES_COUNT',
+          message: `We couldn't increment the raves count`
+        },
+        error: error
+      }, 401, `Failed to increment the raves count`);
+
+      Logging.Send(LogLevel.ERROR, responseObject);
+    });
+  }
+
+  /**
    * Adds a review rating.
    *
    * @param { string } reviewId - the id of the review to be rated.

@@ -24,6 +24,10 @@ const UserStatisticsSchema = new Schema<UserStatisticsDocument>({
     type: Array,
     default: []
   },
+  ravesCount: {
+    type: Number,
+    default: 0
+  },
   reviews: {
     type: Array
   },

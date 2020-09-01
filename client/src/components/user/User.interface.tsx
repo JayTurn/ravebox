@@ -31,6 +31,7 @@ export interface PublicProfile {
  */
 export interface ProfileStatistics {
   followers: number;
+  ravesCount: number;
   reviews: Array<ProfileReviewStatistics>;
 }
 

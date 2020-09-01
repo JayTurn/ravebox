@@ -15,6 +15,7 @@ import { ValidationRules } from '../validation/Validation.interface';
  * Input interface.
  */
 export interface InputProps extends BaseTextFieldProps {
+  allowAutocomplete?: boolean;
   defaultValue?: string;
   handleChange?: (fieldEvent: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
   handleBlur: (data: InputData) => void;

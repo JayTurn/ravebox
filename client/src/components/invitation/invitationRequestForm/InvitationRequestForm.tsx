@@ -142,7 +142,18 @@ const InvitationRequestForm: React.FC<InvitationRequestFormProps> = (props: Invi
 
     // Validate the field if it has rules associated with it.
     if (validation[data.key]) {
-      validateField(data.key)(data.value);
+      const properties: EventObject = {
+        'form': 'waitlist'
+      };
+
+      if (data.key === 'email') {
+        properties['email'] = data.value;
+      }
+
+      validateField(data.key)(data.value)({
+        name: `add ${data.key}`,
+        properties: {...properties}
+      });
     }
 
     setValues({
@@ -193,7 +204,7 @@ const InvitationRequestForm: React.FC<InvitationRequestFormProps> = (props: Invi
       }
 
       // Track the signup event.
-      analytics.trackEvent('request invite')({
+      analytics.trackEvent('join waitlist')({
         'email': values.email,
         'existing channel': values.existingChannel
       });

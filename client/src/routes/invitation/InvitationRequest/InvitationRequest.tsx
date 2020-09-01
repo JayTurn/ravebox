@@ -94,6 +94,9 @@ const InvitationRequest: React.FC<InvitationRequestProps> = (props: InvitationRe
         properties: {
           path: props.location.pathname,
           title: 'Apply to join'
+        },
+        amplitude: {
+          label: 'view join waitlist'
         }
       });
       setPageViewed(true);
