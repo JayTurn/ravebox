@@ -45,7 +45,7 @@
       "image": "jayturn/react:1.2.9",
       "command": ["yarn", "start:staging"],
       "essential": true,
-      "memoryReservation": 768,
+      "memoryReservation": 512,
       "portMappings": [
         {
           "hostPort": 3000,
