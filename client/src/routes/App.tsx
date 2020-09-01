@@ -160,17 +160,29 @@ const App: React.FC<AppProps> = (props: AppProps) => {
 
   const [appClasses, setAppClasses] = React.useState<string>('app loading');
 
+  const [selectedTheme, setSelectedTheme] = React.useState<Theme>(DesktopRaveboxTheme);
+
+  const [chooseTheme, setChooseTheme] = React.useState<number>(-1);
+
   React.useEffect(() => {
+    if (chooseTheme < 0) {
+      if (largeScreen) {
+        setSelectedTheme(DesktopRaveboxTheme);
+      } else {
+        setSelectedTheme(RaveboxTheme);
+      }
+      setChooseTheme(1);
+    }
     setTimeout(() => {
       setAppClasses('app');
-    }, 700)
-  }, [appClasses]);
+    }, 700);
+  }, [appClasses, chooseTheme]);
 
   /**
    * Renders the application.
    */
   return (
-    <ThemeProvider theme={largeScreen ? DesktopRaveboxTheme : RaveboxTheme}>
+    <ThemeProvider theme={selectedTheme}>
       <CssBaseline />
       <StyledSnackbar>
         <AnalyticsProvider>

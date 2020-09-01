@@ -261,20 +261,38 @@ const MobileNavigation: React.FC<MobileNavigationProps> = (props: MobileNavigati
             </React.Fragment>
           ) : (
             <ListItem button className={clsx(classes.listButton, classes.listButtonOpen)}>
-              <NavLink to='/product/add' className={clsx(classes.linkStyle, classes.linkStyleOpen)} onClick={toggleDrawer}>
+              {/*
+                <NavLink to='/product/add' className={clsx(classes.linkStyle, classes.linkStyleOpen)} onClick={toggleDrawer}>
+                  <ListItemIcon className={clsx(
+                    classes.listButtonIconOpen,
+                    {[classes.listButtonIconActive]: activePath === '/product/add'}
+                  )}>
+                    <VideocamRoundedIcon />
+                  </ListItemIcon>
+                  <ListItemText disableTypography className={clsx(
+                    classes.listButtonTextOpen,
+                    {[classes.listButtonTextActive]: activePath === '/product/add'}
+                  )}>
+                    <Typography variant='subtitle2' className={clsx(
+                      classes.listButtonTypographyOpen
+                    )}>Rave</Typography>
+                  </ListItemText>
+                </NavLink>
+              */}
+              <NavLink to='/apply' className={clsx(classes.linkStyle, classes.linkStyleOpen)} onClick={toggleDrawer}>
                 <ListItemIcon className={clsx(
                   classes.listButtonIconOpen,
-                  {[classes.listButtonIconActive]: activePath === '/product/add'}
+                  {[classes.listButtonIconActive]: activePath === '/apply'}
                 )}>
                   <AccountBoxRoundedIcon />
                 </ListItemIcon>
                 <ListItemText disableTypography className={clsx(
                   classes.listButtonTextOpen,
-                  {[classes.listButtonTextActive]: activePath === '/product/add'}
+                  {[classes.listButtonTextActive]: activePath === '/apply'}
                 )}>
                   <Typography variant='subtitle2' className={clsx(
                     classes.listButtonTypographyOpen
-                  )}>Rave</Typography>
+                  )}>Join</Typography>
                 </ListItemText>
               </NavLink>
             </ListItem>

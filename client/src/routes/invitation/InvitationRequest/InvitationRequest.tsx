@@ -176,7 +176,7 @@ const InvitationRequest: React.FC<InvitationRequestProps> = (props: InvitationRe
           }
         />
       </Grid>
-      <Grid item xs={12} alignItems='center' className={clsx(classes.formBackground)}>
+      <Grid item xs={12} className={clsx(classes.formBackground)}>
         <Typography variant='h2' className={clsx(classes.formTitle)}>
           Join the Ravebox waitlist
         </Typography>
