@@ -53,6 +53,13 @@ const useStyles = makeStyles((theme: Theme) =>
       backgroundColor: theme.palette.common.white,
       padding: theme.spacing(0, 0, 6)
     },
+    formTitle: {
+      color: theme.palette.primary.main,
+      fontSize: '2rem',
+      fontWeight: 600,
+      marginBottom: theme.spacing(6),
+      textAlign: 'center'
+    },
     heavy: {
       fontWeight: 700
     },
@@ -169,6 +176,9 @@ const InvitationRequest: React.FC<InvitationRequestProps> = (props: InvitationRe
         />
       </Grid>
       <Grid item xs={12} alignItems='center' className={clsx(classes.formBackground)}>
+        <Typography variant='h2' className={clsx(classes.formTitle)}>
+          Join the Ravebox waitlist
+        </Typography>
         <InvitationRequestForm />
       </Grid>
     </div>
