@@ -38,11 +38,14 @@ const useStyles = makeStyles((theme: Theme) =>
     buttonContainer: {
       marginTop: theme.spacing(4)
     },
+    columnContainer: {
+      flexWrap: 'nowrap'
+    },
     container: {
       padding: theme.spacing(4, 2, 6),
     },
     containerLarge: {
-      padding: theme.spacing(12, 12, 16)
+      padding: theme.spacing(8, 4, 12)
     },
     containerText: {
       fontSize: '1.4rem',
@@ -97,6 +100,33 @@ const useStyles = makeStyles((theme: Theme) =>
 );
 
 /**
+ * Sets the button style type based on the background.
+ *
+ * @param { ColorStyle } colorStyle - the color style used.
+ *
+ * @return StyleType
+ */
+const setButtonStyle: (
+  colorStyle: ColorStyle
+) => StyleType = (
+  colorStyle: ColorStyle
+): StyleType => {
+  let styleType: StyleType = StyleType.BUTTON_PRIMARY;
+
+  switch (colorStyle) {
+    case ColorStyle.PRIMARY:
+      styleType = StyleType.BUTTON_PRIMARY_INVERSE;
+      break;
+    case ColorStyle.SECONDARY:
+      styleType = StyleType.BUTTON_SECONDARY_INVERSE
+      break;
+    default:
+  }
+
+  return styleType;
+}
+
+/**
  * Renders the content block.
  */
 const ContentBlock: React.FC<ContentBlockProps> = (props: ContentBlockProps) => {
@@ -108,6 +138,9 @@ const ContentBlock: React.FC<ContentBlockProps> = (props: ContentBlockProps) => 
         theme = useTheme(),
         largeScreen = useMediaQuery(theme.breakpoints.up('sm'));
 
+  // Define the button style to be used if it exists.
+  const buttonStyle: StyleType = setButtonStyle(props.background);
+
   /**
    * Render the JSX elements.
    */
@@ -115,6 +148,7 @@ const ContentBlock: React.FC<ContentBlockProps> = (props: ContentBlockProps) => 
     <Grid
       container
       direction='column'
+      className={classes.columnContainer}
     >
       <Grid item xs={12} className={clsx(
           classes.container,
@@ -127,50 +161,68 @@ const ContentBlock: React.FC<ContentBlockProps> = (props: ContentBlockProps) => 
           }
         )}
       >
-        {props.title &&
-          <React.Fragment>
-            <Typography variant='h1' className={clsx(
-                classes.containerTitle,
-                {
-                  [classes.whiteContainerText]: props.background === ColorStyle.WHITE,
-                  [classes.primaryContainerText]: props.background === ColorStyle.PRIMARY,
-                  [classes.secondaryContainerText]: props.background === ColorStyle.SECONDARY,
-                  [classes.containerTitleLarge]: largeScreen
-                }
+        <Grid
+          container
+          direction='column'
+          alignItems='center'
+        >
+          <Grid item xs={12} md={9}>
+            {props.title &&
+              <Typography variant='h1' className={clsx(
+                  classes.containerTitle,
+                  {
+                    [classes.whiteContainerText]: props.background === ColorStyle.WHITE,
+                    [classes.primaryContainerText]: props.background === ColorStyle.PRIMARY,
+                    [classes.secondaryContainerText]: props.background === ColorStyle.SECONDARY,
+                    [classes.containerTitleLarge]: largeScreen
+                  }
+                )}
+              >
+                {props.title}
+              </Typography>
+            }
+            {props.bodyFirst &&
+              <Typography variant='body1' className={clsx(
+                  classes.containerText,
+                  {
+                    [classes.whiteContainerText]: props.background === ColorStyle.WHITE,
+                    [classes.primaryContainerText]: props.background === ColorStyle.PRIMARY,
+                    [classes.secondaryContainerText]: props.background === ColorStyle.SECONDARY,
+                    [classes.containerTextLarge]: largeScreen
+                  }
+                )}
+              >
+                {props.bodyFirst}
+              </Typography>
+            }
+            {props.bodySecond &&
+              <Typography variant='body1' className={clsx(
+                  classes.containerText,
+                  {
+                    [classes.whiteContainerText]: props.background === ColorStyle.WHITE,
+                    [classes.primaryContainerText]: props.background === ColorStyle.PRIMARY,
+                    [classes.secondaryContainerText]: props.background === ColorStyle.SECONDARY,
+                    [classes.containerTextLarge]: largeScreen,
+                  }
+                )}
+              >
+                {props.bodySecond}
+              </Typography>
+            }
+          </Grid>
+          {props.action &&
+            <Grid item xs={12} className={clsx(
+                classes.buttonContainer
               )}
             >
-              {props.title}
-            </Typography>
-          </React.Fragment>
-        }
-        {props.bodyFirst &&
-          <Typography variant='body1' className={clsx(
-              classes.containerText,
-              {
-                [classes.whiteContainerText]: props.background === ColorStyle.WHITE,
-                [classes.primaryContainerText]: props.background === ColorStyle.PRIMARY,
-                [classes.secondaryContainerText]: props.background === ColorStyle.SECONDARY,
-                [classes.containerTextLarge]: largeScreen
-              }
-            )}
-          >
-            {props.bodyFirst}
-          </Typography>
-        }
-        {props.bodySecond &&
-          <Typography variant='body1' className={clsx(
-              classes.containerText,
-              {
-                [classes.whiteContainerText]: props.background === ColorStyle.WHITE,
-                [classes.primaryContainerText]: props.background === ColorStyle.PRIMARY,
-                [classes.secondaryContainerText]: props.background === ColorStyle.SECONDARY,
-                [classes.containerTextLarge]: largeScreen,
-              }
-            )}
-          >
-            {props.bodySecond}
-          </Typography>
-        }
+              <LinkElement
+                path={props.action.path}
+                styleType={buttonStyle}
+                title={props.action.title}
+              />
+            </Grid>
+          }
+        </Grid>
       </Grid>
     </Grid>
   );

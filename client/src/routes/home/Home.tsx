@@ -10,6 +10,7 @@ import {
   Dispatch,
 } from 'redux';
 import API from '../../utils/api/Api.model';
+import Box from '@material-ui/core/Box';
 import clsx from 'clsx';
 import { connect } from 'react-redux';
 import {
@@ -33,11 +34,13 @@ import {
 } from '../../store/review/Actions';
 
 // Components.
+import ContentBlock from '../../components/elements/contentBlock/ContentBlock';
 import Logo from '../../components/logo/Logo';
 import ListByQuery from '../../components/review/listByQuery/ListByQuery';
 import ListTitle from '../../components/elements/listTitle/ListTitle';
 
 // Enumerators.
+import { ColorStyle } from '../../components/elements/contentBlock/ContentBlock.enum';
 import {
   PresentationType,
   ReviewListType
@@ -101,6 +104,9 @@ const useStyles = makeStyles((theme: Theme) =>
     containerPadding: {
       paddingLeft: theme.spacing(2),
       paddingRight: theme.spacing(2)
+    },
+    heavy: {
+      fontWeight: 700
     },
     introContainer: {
       backgroundColor: theme.palette.common.white,
@@ -227,14 +233,14 @@ const Home: React.FC<HomeProps> = (props: HomeProps) => {
                 }
               )}
             >
-              Everything reviewed in 3 minutes or less.
+              Make raves. Tell it your way. 
             </Typography>
           </Grid>
           <Grid item xs={12}>
             <LinkElement
-              path={'/product/add'}
+              path={'/about'}
               styleType={StyleType.BUTTON_PRIMARY}
-              title='Post a rave'
+              title='What is Ravebox?'
             />
           </Grid>
         </Grid>
@@ -273,7 +279,33 @@ const Home: React.FC<HomeProps> = (props: HomeProps) => {
           />
         }
       </Grid>
-      <Grid item xs={12} className={clsx(
+      <ContentBlock
+        background={ColorStyle.SECONDARY}
+        title={
+          <React.Fragment>
+            <Box component='span' className={clsx(
+              classes.heavy
+            )}>Where it's ok to talk about products.</Box>
+          </React.Fragment>
+        }
+        bodyFirst={
+          <React.Fragment>
+            Keep all of your product conversations and recommendations in one place.
+          </React.Fragment>
+        }
+        bodySecond={
+          <React.Fragment>
+            <Box component='span' className={clsx(
+              classes.heavy
+            )}>...Where people want to hear about them.</Box>
+          </React.Fragment>
+        }
+        action={{
+          path: '/apply',
+          title: 'Join waitlist'
+        }}
+      />
+    {/*<Grid item xs={12} className={clsx(
           classes.aboutContainer,
           {
             [classes.aboutContainerLarge]: largeScreen
@@ -304,7 +336,7 @@ const Home: React.FC<HomeProps> = (props: HomeProps) => {
             />
           </Grid>
         </Grid>
-      </Grid>
+      </Grid>*/}
       {queries.map((query: string, index: number) => {
         if (index < 2) {
           return;

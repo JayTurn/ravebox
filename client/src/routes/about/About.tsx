@@ -20,7 +20,11 @@ import Typography from '@material-ui/core/Typography';
 import * as React from 'react';
 import useMediaQuery from '@material-ui/core/useMediaQuery';
 
+// Components.
+import ContentBlock from '../../components/elements/contentBlock/ContentBlock';
+
 // Enumerators.
+import { ColorStyle } from '../../components/elements/contentBlock/ContentBlock.enum';
 import { StyleType } from '../../components/elements/link/Link.enum';
 
 // Hooks.
@@ -63,7 +67,7 @@ const useStyles = makeStyles((theme: Theme) =>
     containerTitleLarge: {
       fontSize: '2.5rem'
     },
-    heavyTitle: {
+    heavy: {
       fontWeight: 700
     },
     primaryHighlight: {
@@ -140,185 +144,102 @@ const About: React.FC<AboutProps> = (props: AboutProps) => {
         <meta name='description' content={`Share short video reviews of products and connect with people you can count on for recommendations and advice on Ravebox.`} />
         <link rel='canonical' href='https://ravebox.io/about' />
       </Helmet>
-      <Grid item xs={12} className={clsx(
-          classes.container,
-          classes.whiteContainer,
-          {
-            [classes.containerLarge]: largeScreen
-          }
-        )}
-      >
-        <Typography variant='h1' className={clsx(
-            classes.containerTitle,
-            classes.whiteContainerText,
-            {
-              [classes.containerTitleLarge]: largeScreen
-            }
-          )}
-        >
-          Discover and share <Box component='span' className={classes.primaryHighlight}>real</Box> product experiences.</Typography>
-      </Grid>
-      <Grid item xs={12} className={clsx(
-          classes.container,
-          classes.primaryContainer,
-          {
-            [classes.containerLarge]: largeScreen
-          }
-        )}
-      >
-        <Grid
-          container
-          direction='column'
-          alignItems='center'
-        >
-          <Grid item xs={12} md={9}>
-            <Typography variant='h2' className={clsx(
-                classes.containerTitle,
-                classes.primaryContainerText,
-                {
-                  [classes.containerTitleLarge]: largeScreen
-                }
-              )}
-            >
-              <Box component='span' className={classes.heavyTitle}>Every product reviewed,</Box> 3 minutes or less.
-            </Typography>
-            <Typography variant='body1' className={clsx(
-                classes.containerText,
-                classes.primaryContainerText,
-                {
-                  [classes.containerTextLarge]: largeScreen
-                }
-              )}
-            >
-              Raves are kept short so you can find a broad range of product experiences and recommendations in one place.
-            </Typography>
-            <Typography variant='body1' className={clsx(
-                classes.containerText,
-                classes.primaryContainerText,
-                {
-                  [classes.containerTextLarge]: largeScreen
-                }
-              )}
-            >
-              Learn, compare and discover.
-            </Typography>
-          </Grid>
-          <Grid item xs={12} className={clsx(
-              classes.buttonContainer
-            )}
-          >
-            <LinkElement
-              path={'/discover'}
-              styleType={StyleType.BUTTON_PRIMARY_INVERSE}
-              title='Find products'
-            />
-          </Grid>
-        </Grid>
-      </Grid>
-      <Grid item xs={12} className={clsx(
-          classes.container,
-          classes.whiteContainer,
-          {
-            [classes.containerLarge]: largeScreen
-          }
-        )}
-      >
-        <Grid
-          container
-          direction='column'
-          alignItems='center'
-        >
-          <Grid item xs={12} md={9}>
-            <Typography variant='h2' className={clsx(
-                classes.containerTitle,
-                classes.whiteContainerText,
-                {
-                  [classes.containerTitleLarge]: largeScreen
-                }
-              )}
-            >
-              <Box component='span' className={classes.heavyTitle}>Come for the products</Box>. Stay for the people.
-            </Typography>
-            <Typography variant='body1' className={clsx(
-                classes.containerText,
-                classes.whiteContainerText,
-                {
-                  [classes.containerTextLarge]: largeScreen
-                }
-              )}
-            >
-              Raves are more than product reviews, they’re personal experiences. Discover ravers that talk about products in  a way you can relate to.
-            </Typography>
-            <Typography variant='body1' className={clsx(
-                classes.containerText,
-                classes.whiteContainerText,
-                {
-                  [classes.containerTextLarge]: largeScreen
-                }
-              )}
-            >
-              Follow ravers for advice and recommendations.
-            </Typography>
-          </Grid>
-        </Grid>
-      </Grid>
-      <Grid item xs={12} className={clsx(
-          classes.container,
-          classes.secondaryContainer,
-          {
-            [classes.containerLarge]: largeScreen
-          }
-        )}
-      >
-        <Grid
-          container
-          direction='column'
-          alignItems='center'
-        >
-          <Grid item xs={12} md={9}>
-            <Typography variant='h2' className={clsx(
-                classes.containerTitle,
-                classes.secondaryContainerText,
-                {
-                  [classes.containerTitleLarge]: largeScreen
-                }
-              )}
-            >
-              <Box component='span' className={classes.heavyTitle}>If you've experienced it,</Box> you can rave about it
-            </Typography>
-            <Typography variant='body1' className={clsx(
-                classes.containerText,
-                classes.secondaryContainerText,
-                {
-                  [classes.containerTextLarge]: largeScreen
-                }
-              )}
-            >
-              There's no limit to what you can review and how you share your story. We’ll help you build a community that counts on you for authentic experiences and advice.
-            </Typography>
-            <Typography variant='body1' className={clsx(
-                classes.containerText,
-                classes.secondaryContainerText,
-                {
-                  [classes.containerTextLarge]: largeScreen
-                }
-              )}
-            >
-              Anyone can become a raver.
-            </Typography>
-          </Grid>
-          <Grid item xs={12} className={clsx(
-              classes.buttonContainer
-            )}
-          >
-            <LinkElement
-              path={'/product/add'}
-              styleType={StyleType.BUTTON_SECONDARY_INVERSE}
-              title='Post a rave'
-            />
-          </Grid>
-        </Grid>
-      </Grid>
+      <ContentBlock
+        background={ColorStyle.WHITE}
+        title={
+          <React.Fragment>
+            Ravebox is where you come to talk about your experiences with products.
+          </React.Fragment>
+        }
+        bodyFirst={
+          <React.Fragment>
+            Everyone is here to discover and compare products through the videos you share. 
+          </React.Fragment>
+        }
+        bodySecond={
+          <React.Fragment>
+            <Box component='span' className={clsx(
+              classes.heavy
+            )}>We call them raves</Box>.
+          </React.Fragment>
+        }
+        action={{
+          path: '/apply',
+          title: 'Interested?'
+        }}
+      />
+      <ContentBlock
+        background={ColorStyle.PRIMARY}
+        title={
+          <React.Fragment>
+            A <Box component='span' className={clsx(
+              classes.heavy
+            )}>rave</Box> is a short video talking about your unique experience with a product.
+          </React.Fragment>
+        }
+        bodyFirst={
+          <React.Fragment>
+            People watch your raves to find out why you tried a product, how you used it and whether or not it improved your life in some way. 
+          </React.Fragment>
+        }
+        bodySecond={
+          <React.Fragment>
+            Share promo codes and links so people can support you.
+          </React.Fragment>
+        }
+        action={{
+          path: '/apply',
+          title: 'How about now?'
+        }}
+      />
+      <ContentBlock
+        background={ColorStyle.WHITE}
+        title={
+          <React.Fragment>
+            <Box component='span' className={clsx(
+              classes.heavy
+            )}>Your raves are discovered </Box> when people search for products.
+          </React.Fragment>
+        }
+        bodyFirst={
+          <React.Fragment>
+            When someone searches for a product they will find every rave that talks about it. Including yours.
+          </React.Fragment>
+        }
+        bodySecond={
+          <React.Fragment>
+            The more raves a product has, the better chance your rave has to be seen.
+          </React.Fragment>
+        }
+        action={{
+          path: '/apply',
+          title: 'Still reading?'
+        }}
+      />
+      <ContentBlock
+        background={ColorStyle.SECONDARY}
+        title={
+          <React.Fragment>
+            <Box component='span' className={clsx(
+              classes.heavy
+            )}>Every rave you create</Box> can be found on your channel.
+          </React.Fragment>
+        }
+        bodyFirst={
+          <React.Fragment>
+            Everyone can find and follow your product recommendations and advice in one place.
+          </React.Fragment>
+        }
+        bodySecond={
+          <React.Fragment>
+            No need to hide your product conversations, it's why people are here.
+          </React.Fragment>
+        }
+        action={{
+          path: '/apply',
+          title: 'Join waitlist'
+        }}
+      />
     </Grid>
   );
 }
