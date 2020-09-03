@@ -231,9 +231,6 @@ const ChangeEmail: React.FC<ChangeEmailProps> = (props: ChangeEmailProps) => {
       direction='column'
     >
       <Grid item xs={12} md={6} style={{marginBottom: 40}}>
-        <Typography variant='h2' color='textPrimary'>Contact details</Typography>
-        <Typography variant='subtitle1' color='textPrimary'>Where we send important information for your account</Typography>
-        <PaddedDivider />
         {props.profile && settings._id &&
           <Input
             defaultValue={props.profile.email}

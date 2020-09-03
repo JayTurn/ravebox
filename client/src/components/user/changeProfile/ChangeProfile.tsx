@@ -228,9 +228,6 @@ const ChangeProfile: React.FC<ChangeProfileProps> = (props: ChangeProfileProps) 
       direction='column'
     >
       <Grid item xs={12} md={6} style={{marginBottom: 40}}>
-        <Typography variant='h2' color='textPrimary'>Profile</Typography>
-        <Typography variant='subtitle1' color='textPrimary'>Change information others can see on your profile</Typography>
-        <PaddedDivider />
         {props.profile && settings._id &&
           <Input
             defaultValue={props.profile.handle}
