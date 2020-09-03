@@ -36,6 +36,7 @@ const config: EnvironmentProperties = require(__dirname + '/' + process.env.ENVI
  * EnvConfig Class.
  */
 class EnvConfig implements EnvironmentProperties {
+  public admin = '';
   // Node environment.
   public analytics: AnalyticsProperties = {
     amplitude: {

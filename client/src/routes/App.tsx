@@ -50,6 +50,8 @@ const Discover = loadable(() => import('./discover/Discover'));
 const EditReview = loadable(() => import('./review/edit/EditReview'));
 const Following = loadable(() => import('./user/following/Following'));
 const Home = loadable(() => import('./home/Home'));
+const InvitationRequest = loadable(() => import('./invitation/InvitationRequest/InvitationRequest'));
+const InvitationRequestSuccess = loadable(() => import('./invitation/InvitationRequestSuccess/InvitationRequestSuccess'));
 const Login = loadable(() => import('./user/login/Login'));
 const MobileNavigation = loadable(() => import('../components/navigation/mobile/MobileNavigation'));
 const MyReviews = loadable(() => import('./user/reviews/MyReviews'));
@@ -158,17 +160,29 @@ const App: React.FC<AppProps> = (props: AppProps) => {
 
   const [appClasses, setAppClasses] = React.useState<string>('app loading');
 
+  const [selectedTheme, setSelectedTheme] = React.useState<Theme>(DesktopRaveboxTheme);
+
+  const [chooseTheme, setChooseTheme] = React.useState<number>(-1);
+
   React.useEffect(() => {
+    if (chooseTheme < 0) {
+      if (largeScreen) {
+        setSelectedTheme(DesktopRaveboxTheme);
+      } else {
+        setSelectedTheme(RaveboxTheme);
+      }
+      setChooseTheme(1);
+    }
     setTimeout(() => {
       setAppClasses('app');
-    }, 700)
-  }, [appClasses]);
+    }, 700);
+  }, [appClasses, chooseTheme]);
 
   /**
    * Renders the application.
    */
   return (
-    <ThemeProvider theme={largeScreen ? DesktopRaveboxTheme : RaveboxTheme}>
+    <ThemeProvider theme={selectedTheme}>
       <CssBaseline />
       <StyledSnackbar>
         <AnalyticsProvider>
@@ -219,11 +233,20 @@ const App: React.FC<AppProps> = (props: AppProps) => {
                       <Route exact={true} path="/policies/terms">
                         <TermsOfService />
                       </Route>
+                      <Route exact={true} path="/apply">
+                        <InvitationRequest />
+                      </Route>
+                      <Route exact={true} path="/apply/success">
+                        <InvitationRequestSuccess />
+                      </Route>
                       <Route exact={true} path="/user/login">
                         <Login />
                       </Route>
-                      <Route exact={true} path="/user/signup">
+                      <Route exact={true} path="/user/signup/:invitation">
                         <Signup />
+                      </Route>
+                      <Route exact={true} path="/user/signup">
+                        <Redirect to='/apply' />
                       </Route>
                       <PrivateRoute exact={true} path="/user/reviews">
                         <MyReviews />

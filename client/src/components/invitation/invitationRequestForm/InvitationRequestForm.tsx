@@ -1,6 +1,6 @@
 /**
- * UserLogin.tsx
- * Login component to prompt the user for login.
+ * InvitationRequestForm.tsx
+ * Invitation request form component to accept new requests.
  */
 
 // Modules.
@@ -37,7 +37,7 @@ import { add } from '../../../store/xsrf/Actions';
 
 // Components.
 import ErrorMessages from '../../forms/errorMessages/ErrorMessages';
-import Input from '../../forms/input/Input'; 
+import Input from '../../forms/input/Input';
 import Link from '../../elements/link/Link';
 import StyledButton from '../../elements/buttons/StyledButton';
 
@@ -51,11 +51,10 @@ import {
   EventObject
 } from '../../../components/analytics/Analytics.interface';
 import { InputData } from '../../forms/input/Input.interface';
-import { PrivateProfile } from '../User.interface';
 import {
-  LoginFormResponse, 
-  LoginFormProps
-} from './LoginForm.interface';
+  InvitationRequestFormResponse,
+  InvitationRequestFormProps
+} from './InvitationRequestForm.interface';
 import { ValidationSchema } from '../../forms/validation/Validation.interface';
 
 // Validation rules.
@@ -65,32 +64,36 @@ import { isRequired, isEmail } from '../../forms/validation/ValidationRules';
  * Create styles for the login form.
  */
 const useStyles = makeStyles((theme: Theme) => createStyles({
+  buttonPadding: {
+    padding: theme.spacing(1, 2),
+  },
   fieldPadding: {
-    padding: theme.spacing(1, 2)
+    padding: theme.spacing(1, 2),
+    width: '100%'
   },
   desktopFieldPadding: {
+    padding: theme.spacing(1, 2),
+    width: '100%'
+  },
+  desktopButtonPadding: {
     padding: theme.spacing(1, 2)
   }
 }));
 
 /**
- * Login form validation schema.
+ * Invitation request validation schema.
  */
-const loginValidation: ValidationSchema = {
+const invitationRequestValidation: ValidationSchema = {
   email: {
     errorMessage: '',
     rules: [isRequired, isEmail]
-  },
-  password: {
-    errorMessage: '',
-    rules: [isRequired]
   }
 };
 
 /**
- * Login form component.
+ * Invitation request form component.
  */
-const LoginForm: React.FC<LoginFormProps> = (props: LoginFormProps) => {
+const InvitationRequestForm: React.FC<InvitationRequestFormProps> = (props: InvitationRequestFormProps) => {
 
   // Define the analytics context and a tracking event.
   const analytics: AnalyticsContextProps = useAnalytics() as AnalyticsContextProps;
@@ -103,7 +106,7 @@ const LoginForm: React.FC<LoginFormProps> = (props: LoginFormProps) => {
   // Define the base state for the signup form.
   const [values, setValues] = React.useState({
     email: '',
-    password: ''
+    existingChannel: ''
   });
 
   // Form error messages to be displayed if fields haven't been validated
@@ -120,7 +123,7 @@ const LoginForm: React.FC<LoginFormProps> = (props: LoginFormProps) => {
     validateField,
     validateAllFields
   } = useValidation({
-    validation: loginValidation
+    validation: invitationRequestValidation
   });
 
   /**
@@ -139,7 +142,18 @@ const LoginForm: React.FC<LoginFormProps> = (props: LoginFormProps) => {
 
     // Validate the field if it has rules associated with it.
     if (validation[data.key]) {
-      validateField(data.key)(data.value);
+      const properties: EventObject = {
+        'form': 'waitlist'
+      };
+
+      if (data.key === 'email') {
+        properties['email'] = data.value;
+      }
+
+      validateField(data.key)(data.value)({
+        name: `add ${data.key}`,
+        properties: {...properties}
+      });
     }
 
     setValues({
@@ -149,10 +163,9 @@ const LoginForm: React.FC<LoginFormProps> = (props: LoginFormProps) => {
   }
 
   /**
-   * Requests the authentication token.
-   * @method getRequestToken
+   * Submits the invitation request form.
    */
-  const authenticate: (
+  const submit: (
     e: React.MouseEvent<HTMLButtonElement>
   ) => Promise<void> = async (
     e: React.MouseEvent<HTMLButtonElement>
@@ -167,21 +180,22 @@ const LoginForm: React.FC<LoginFormProps> = (props: LoginFormProps) => {
     const errors: Array<string> = await validateAllFields(
       values as Record<string, string>);
 
-    // If we have errors, exist and trigger the error message.
+    // If we have any errors, set the messages on the form and prevent the
+    // submission.
     if (errors.length > 0) {
       setFormErrorMessages(errors);
+      setSubmitting(false)
       return;
     }
 
     // Set the submission state.
     setSubmitting(true)
 
-    //const instance: UserLogin = this;
-    API.requestAPI<LoginFormResponse>('user/login', {
+    API.requestAPI<InvitationRequestFormResponse>('invitation', {
       method: 'POST',
       body: JSON.stringify(values)
     })
-    .then((response: LoginFormResponse) => {
+    .then((response: InvitationRequestFormResponse) => {
       // Present any errors that were returned in the response.
       if (response.errorCode) {
         setSubmitting(false);
@@ -189,32 +203,16 @@ const LoginForm: React.FC<LoginFormProps> = (props: LoginFormProps) => {
         return;
       }
 
-      // Register the login event.
-      analytics.trackUser(response.user._id);
-      analytics.trackEvent('log in')({
-        'handle': response.user.handle,
-        'email': response.user.email
+      // Track the signup event.
+      analytics.trackEvent('join waitlist')({
+        'email': values.email,
+        'existing channel': values.existingChannel
       });
 
-      if (props.addXsrf && props.login) {
-        // Retrieve the xsrf cookie to be set on the header for future requests. 
-        const cookies: Cookies = new Cookies();
-        const xsrf: string = cookies.get('XSRF-TOKEN');
-
-        if (xsrf) {
-          props.addXsrf(xsrf);
-          props.login(response.user);
-          props.history.push('/');
-        }
-
-        // Set the submission state.
-        setSubmitting(false);
-      }
-    })
-    .catch(() => {
-      // Present any errors that were returned in the response.
+      // Set the submission state.
       setSubmitting(false);
-      setFormErrorMessages([`Something went wrong. Please try to log in again`])
+
+      props.history.push('/apply/success');
     });
   }
 
@@ -229,16 +227,16 @@ const LoginForm: React.FC<LoginFormProps> = (props: LoginFormProps) => {
       <Grid
         container
         direction='column'
-        alignItems='stretch'
+        alignItems='center'
       >
         <Grid item xs={12} md={6} lg={5} className={clsx(classes.fieldPadding, {
             [classes.desktopFieldPadding]: desktop
           })}
         >
           <Input
-            allowAutocomplete={true}
             handleBlur={updateForm}
             name='email'
+            required={true}
             type='email'
             title="Email"
             validation={validation.email}
@@ -249,21 +247,13 @@ const LoginForm: React.FC<LoginFormProps> = (props: LoginFormProps) => {
           })}
         >
           <Input
-            allowAutocomplete={true}
             handleBlur={updateForm}
-            name='password'
-            type='password'
-            title="Password" 
-            validation={validation.password}
+            helperText={`If you have a social media profile that contains product reviews you've created in the past, provide a link here.`}
+            name='existingChannel'
+            prefix='https://'
+            type='text'
+            title="Link to previous reviews"
           />
-          <Box style={{marginTop: 10}}>
-            <Link 
-              variant='subtitle2'
-              color='primary'
-              title='Forgot your password?'
-              path='/user/reset'
-            />
-          </Box>
         </Grid>
         <Grid item xs={12} md={6} lg={5} className={clsx(classes.fieldPadding, {
             [classes.desktopFieldPadding]: desktop
@@ -271,13 +261,13 @@ const LoginForm: React.FC<LoginFormProps> = (props: LoginFormProps) => {
         >
           <ErrorMessages errors={formErrorMessages} />
         </Grid>
-        <Grid item xs={12} md={6} lg={5} className={clsx(classes.fieldPadding, {
-            [classes.desktopFieldPadding]: desktop
+        <Grid item xs={12} md={6} lg={5} className={clsx(classes.buttonPadding, {
+            [classes.desktopButtonPadding]: desktop
           })}
         >
           <StyledButton
-            title='Log in'
-            clickAction={authenticate}
+            title='Join waitlist'
+            clickAction={submit}
             submitting={submitting}
           />
         </Grid>
@@ -294,8 +284,8 @@ const LoginForm: React.FC<LoginFormProps> = (props: LoginFormProps) => {
 const mapDispatchToProps = (dispatch: Dispatch<AnyAction>) =>
   bindActionCreators(
     {
-      addXsrf: add,
-      login: login
+      //addXsrf: add,
+      //login: login
     },
     dispatch
   );
@@ -303,7 +293,10 @@ const mapDispatchToProps = (dispatch: Dispatch<AnyAction>) =>
 /**
  * Maps the user store properties to the login component.
  */
-const mapStatetoProps = (state: any, ownProps: LoginFormProps): LoginFormProps => {
+const mapStatetoProps = (
+  state: any,
+  ownProps: InvitationRequestFormProps
+): InvitationRequestFormProps => {
   return {
     ...ownProps,
   };
@@ -312,4 +305,4 @@ const mapStatetoProps = (state: any, ownProps: LoginFormProps): LoginFormProps =
 export default withRouter(connect(
   mapStatetoProps,
   mapDispatchToProps
-)(LoginForm));
+)(InvitationRequestForm));

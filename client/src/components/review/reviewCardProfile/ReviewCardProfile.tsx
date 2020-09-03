@@ -92,14 +92,18 @@ const formatStatistics: (
     return result;
   }
 
-  const ravesCount: string = CountIdentifier(statistics.reviews && statistics.reviews.length > 0 ? statistics.reviews.length : 1)('rave');
+  const ravesCount: string = CountIdentifier(statistics.ravesCount)('rave');
 
   result += ravesCount;
 
   if (statistics.followers > 0) {
     const followerCount: string = CountIdentifier(statistics.followers)('follower');
 
-    result += ` | ${followerCount}`;
+    if (statistics.ravesCount > 0) {
+      result += ` | `;
+    }
+
+    result += `${followerCount}`;
   }
 
   return result;

@@ -17,6 +17,7 @@ import ReviewCommon from './review.common';
 import ReviewStatistics from '../reviewStatistics/reviewStatistics.model';
 import * as S3 from 'aws-sdk/clients/s3';
 import User from '../user/user.model';
+import UserStatisticsCommon from '../userStatistics/userStatistics.common';
 import Video from '../../shared/video/Video.model';
 
 // Enumerators.
@@ -196,6 +197,9 @@ export default class ReviewController {
 
         newReview.save()
           .then((review: ReviewDocument) => {
+
+            // Increment the raves count in the user statistics.
+            UserStatisticsCommon.IncrementRavesCount(request.auth._id, 1);
 
             // Set the response object.
             const responseObject: ResponseObject = Connect.setResponse({
@@ -1079,6 +1083,9 @@ export default class ReviewController {
       upsert: false
     })
     .then(() => {
+
+      // Decrement the raves count.
+      UserStatisticsCommon.IncrementRavesCount(userId, -1);
 
       // Set the response object.
       const responseObject = Connect.setResponse({

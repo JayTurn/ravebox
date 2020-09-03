@@ -128,7 +128,7 @@ const ProfileMenu: React.FC<ProfileMenuProps> = (props: ProfileMenuProps) => {
 
     // Remove the cookies from the application.
     const cookies: Cookies = new Cookies();
-    cookies.remove('XSRF-TOKEN');
+    cookies.remove('XSRF-TOKEN', {path: '/', domain: '.ravebox.io'});
 
     if (props.removeXsrf) {
       // Remove the tokens and user from the redux store.

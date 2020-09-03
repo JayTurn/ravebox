@@ -53,7 +53,7 @@ export default class Logging {
         });
         break;
       case LogLevel.WARNING:
-        logger.warning({
+        logger.warn({
           code: code,
           title: message.data.title,
           message: message.data.message

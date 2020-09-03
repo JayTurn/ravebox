@@ -5,17 +5,12 @@ import { Router } from 'express';
 
 // Route Controllers.
 import FollowController from '../api/follow/follow.controller';
+import InvitationController from '../api/invitation/invitation.controller';
 import ReviewController from '../api/review/review.controller';
 import ReviewStatisticsController from '../api/reviewStatistics/reviewStatistics.controller';
 import ProductController from '../api/product/product.controller';
 import SearchController from '../api/search/search.controller';
 import UserController from '../api/user/user.controller';
-//import EvaluationController from '../api/execution/evaluation.controller';
-//import HealthController from '../api/health/health.controller';
-//import InstrumentController from '../api/instrument/instrument.controller';
-//import ReinforcementController from '../api/statistics/reinforcement.controller';
-//import SimulationController from '../api/simulation/simulation.controller';
-//import StatisticsController from '../api/statistics/statistics.controller';
 
 /**
  * RoutesController class.
@@ -37,6 +32,8 @@ export default class RoutesController {
 
     // Register the follow routes.
     FollowController.createRoutes(this.router, this.apiPath);
+    // Register the invitation routes.
+    InvitationController.createRoutes(this.router, this.apiPath);
     // Register the product routes.
     ProductController.createRoutes(this.router, this.apiPath);
     // Register the review routes.

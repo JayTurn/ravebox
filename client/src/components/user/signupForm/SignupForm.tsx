@@ -112,7 +112,9 @@ const SignupForm: React.FC<SignupFormProps> = (props: SignupFormProps) => {
   // Define the base state for the signup form.
   const [values, setValues] = React.useState({
     handle: '',
-    email: '',
+    email: props.invitation.email,
+    invitationId: props.invitation._id,
+    invitedBy: props.invitation.invitedBy,
     password: ''
   });
 
@@ -264,6 +266,7 @@ const SignupForm: React.FC<SignupFormProps> = (props: SignupFormProps) => {
         <Grid item xs={12} md={6} lg={5} className={clsx(classes.fieldPadding)}
         >
           <Input
+            defaultValue={values.email}
             handleBlur={updateForm}
             name='email'
             type='email'
