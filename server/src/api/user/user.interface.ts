@@ -22,6 +22,7 @@ import {
 
 export interface UserDetailsDocument extends Mongoose.Document {
   about: string;
+  avatar: string;
   authenticate: Function;
   createSalt: Function;
   email: string;
@@ -36,7 +37,6 @@ export interface UserDetailsDocument extends Mongoose.Document {
   password: string;
   provider: string;
   privateProfile: PrivateUserDetails;
-  profileImage: string;
   publicProfile: PublicUserDetails;
   role: Array<UserRole>;
   salt: string;
@@ -46,6 +46,7 @@ export interface UserDetailsDocument extends Mongoose.Document {
 
 export interface PrivateUserDetails {
   _id: string;
+  avatar: string;
   handle: string;
   role: Array<UserRole>;
   email: string;
@@ -57,6 +58,7 @@ export interface PrivateUserDetails {
 
 export interface PublicUserDetails {
   about?: string;
+  avatar: string;
   _id: string;
   handle: string;
   links?: Array<LinkDetails>;
@@ -80,6 +82,7 @@ export interface SignupDetails {
 }
 
 export interface ProfileSettings {
+  avatar: string;
   handle: string;
 }
 

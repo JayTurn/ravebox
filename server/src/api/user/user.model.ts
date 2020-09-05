@@ -23,6 +23,9 @@ const UserSchema = new Schema({
   about: {
     type: String
   },
+  avatar: {
+    type: String
+  },
   created: {
     type: Date,
     default: Date.now
@@ -52,9 +55,6 @@ const UserSchema = new Schema({
   password: {
     type: String,
   },
-  profileImage: {
-    type: String
-  },
   provider: {
     type: String,
   },
@@ -77,6 +77,7 @@ UserSchema
   .get(function() {
     return {
       '_id': this._id,
+      'avatar': this.avatar,
       'role': this.role,
       'email': this.email,
       'emailVerified': this.emailVerified,
@@ -94,6 +95,7 @@ UserSchema
   .get(function() {
     return {
       '_id': this._id,
+      'avatar': this.avatar,
       'handle': this.handle,
       'statistics': this.statistics
     };
