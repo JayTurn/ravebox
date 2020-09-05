@@ -9,6 +9,7 @@ import {
   bindActionCreators,
   Dispatch
 } from 'redux';
+import API from '../../../../utils/api/Api.model';
 import clsx from 'clsx';
 import { connect } from 'react-redux';
 import {
@@ -17,6 +18,7 @@ import {
   Theme,
   useTheme
 } from '@material-ui/core/styles';
+import Fade from '@material-ui/core/Fade';
 import Grid from '@material-ui/core/Grid';
 import * as React from 'react';
 import Typography from '@material-ui/core/Typography';
@@ -31,14 +33,19 @@ import {
 import ChangeProfile from '../../changeProfile/ChangeProfile';
 
 // Enumerators.
-import { RetrievalStatus } from '../../../../utils/api/Api.enum';
+import {
+  RequestType,
+  RetrievalStatus
+} from '../../../../utils/api/Api.enum';
 
 // Hooks.
 import { useUpdateSettings } from '../useUpdateSettings.hook';
 
 // Interfaces.
 import { PrivateProfile } from '../../User.interface';
-import { ProfileSettingsProps } from './ProfileSettings.interface';
+import {
+  ProfileSettingsProps
+} from './ProfileSettings.interface';
 
 /**
  * Create styles for the page title.
@@ -66,23 +73,36 @@ const ProfileSettings: React.FC<ProfileSettingsProps> = (props: ProfileSettingsP
     updateProfile: props.update
   });
 
+
+  /**
+   * Handles the updating of the metadata file to trigger the image upload.
+   */
+  const uploadMetadata: (
+    filename: string
+  ) => void = (
+    filename: string
+  ): void => {
+  }
+
   return (
     <React.Fragment>
       {profileStatus === RetrievalStatus.SUCCESS &&
-        <form noValidate autoComplete="off">
-          {props.profile && props.update &&
-            <Grid container direction='column' style={{padding: theme.spacing(0, 2)}}>
-              <Typography
-                className={clsx(classes.descriptionText)}
-                color='textPrimary'
-                variant='h3'
-              >
-                Change information others can see on your profile
-              </Typography>
-              <ChangeProfile />
-            </Grid>
-          }
-        </form>
+        <Fade in={true}>
+          <form noValidate autoComplete="off">
+            {props.profile && props.update &&
+              <Grid container direction='column' style={{padding: theme.spacing(0, 2)}}>
+                <Typography
+                  className={clsx(classes.descriptionText)}
+                  color='textPrimary'
+                  variant='h3'
+                >
+                  Change information others can see on your profile
+                </Typography>
+                <ChangeProfile />
+              </Grid>
+            }
+          </form>
+        </Fade>
       }
     </React.Fragment>
   );
@@ -106,6 +126,7 @@ const mapDispatchToProps = (dispatch: Dispatch<AnyAction>) =>
  *
  */
 function mapStatetoProps(state: any, ownProps: ProfileSettingsProps) {
+  const xsrfToken: string = state.xsrf ? state.xsrf.token : undefined;
   let profile: PrivateProfile | undefined = state.user ? state.user.profile : undefined;
 
   if (profile && !profile._id) {
@@ -114,7 +135,8 @@ function mapStatetoProps(state: any, ownProps: ProfileSettingsProps) {
 
   return {
     ...ownProps,
-    profile
+    profile,
+    xsrf: xsrfToken
   };
 }
 

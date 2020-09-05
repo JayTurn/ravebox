@@ -39,6 +39,12 @@ import { CountIdentifier } from '../../../utils/display/numeric/Numeric';
  */
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
+    avatar: {
+      fontSize: '.9rem',
+      fontWeight: 600,
+      height: theme.spacing(4.5),
+      width: theme.spacing(4.5)
+    },
     avatarIcon: {
       backgroundColor: theme.palette.common.white,
       border: `1px solid ${theme.palette.grey.A200}`,
@@ -160,7 +166,11 @@ const ReviewCardProfile: React.FC<ReviewCardProfileProps> = (props: ReviewCardPr
               onClick={handleNavigation}
               to={`/review/${props.url}`}
             >
-              <Avatar alt={props.user.handle} className={classes.avatarIcon}>{firstLetter}</Avatar>
+              {props.user.avatar ? (
+                <Avatar alt={props.user.handle} className={classes.avatar} src={`${process.env.RAZZLE_CDN}${props.user.avatar}`}></Avatar>
+              ) : (
+                <Avatar alt={props.user.handle} className={classes.avatarIcon}>{firstLetter}</Avatar>
+              )}
             </NavLink>
           </Grid>
           <Grid item style={{flexGrow: 1, minWidth: 0, marginLeft: theme.spacing(1)}}>

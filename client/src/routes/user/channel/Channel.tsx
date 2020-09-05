@@ -90,6 +90,7 @@ const frontloadReviewDetails = async (props: ChannelProps) => {
         const channelDetails = {
           profile: {
             _id: response.channel.profile._id,
+            avatar: response.channel.profile.avatar,
             handle: response.channel.profile.handle,
             ravesCount: CountIdentifier(response.channel.reviews ? response.channel.reviews.length : 0)('rave')
           },
@@ -162,6 +163,7 @@ const Channel: React.FC<ChannelProps> = (props: ChannelProps) => {
                     <link rel='canonical' href={`https://ravebox.io/user/channel/${props.channel.profile.handle}`} />
                   </Helmet>
                   <ChannelTitle
+                    avatar={props.channel.profile.avatar}
                     handle={props.channel.profile.handle}
                     ravesCount={props.channel.profile.ravesCount || ''} />
                 </Grid>

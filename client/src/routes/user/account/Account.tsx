@@ -19,6 +19,7 @@ import {
   useTheme,
   withStyles
 } from '@material-ui/core/styles';
+import Fade from '@material-ui/core/Fade';
 import Grid from '@material-ui/core/Grid';
 import { Helmet } from 'react-helmet';
 import * as React from 'react';
@@ -208,13 +209,13 @@ const Account: React.FC<AccountProps> = (props: AccountProps) => {
         </AccessTabs>
         <Grid item xs={12} className={clsx(classes.formContainer)}>
           {selectedSetting === SettingsScreen.PROFILE &&
-            <ProfileSettings />  
+              <ProfileSettings />  
           }
           {selectedSetting === SettingsScreen.CONTACT &&
-            <ContactSettings />
+              <ContactSettings />
           }
           {selectedSetting === SettingsScreen.SECURITY &&
-            <SecuritySettings />
+              <SecuritySettings />
           }
         </Grid>
       </Grid>

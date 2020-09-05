@@ -11,6 +11,7 @@ import { Following } from '../follow/Follow.interface';
  */
 export interface PrivateProfile {
   _id: string;
+  avatar?: string;
   email: string;
   emailVerified: boolean;
   following: Following;  
@@ -22,6 +23,7 @@ export interface PrivateProfile {
  */
 export interface PublicProfile {
   _id: string;
+  avatar?: string;
   handle: string;
   statistics?: ProfileStatistics;
 }

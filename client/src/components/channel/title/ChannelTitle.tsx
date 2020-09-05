@@ -27,6 +27,12 @@ import { ChannelTitleProps } from './ChannelTitle.interface';
  * Create styles for the channel title.
  */
 const useStyles = makeStyles((theme: Theme) => createStyles({
+  avatar: {
+    fontSize: '1.2rem',
+    fontWeight: 600,
+    height: theme.spacing(7),
+    width: theme.spacing(7)
+  },
   avatarIcon: {
     backgroundColor: theme.palette.primary.main,
     fontSize: '1.2rem',
@@ -75,7 +81,11 @@ const ChannelTitle: React.FC<ChannelTitleProps> = (props: ChannelTitleProps) => 
       <Grid item xs={12}>
         <Grid container direction='row' className={classes.container} alignItems='center'>
           <Grid item>
-            <Avatar alt={props.handle} className={classes.avatarIcon}>j</Avatar>
+            {props.avatar ? (
+              <Avatar alt={props.handle} className={classes.avatar} src={props.avatar}/>
+            ) : (
+              <Avatar alt={props.handle} className={classes.avatarIcon}>j</Avatar>
+            )}
           </Grid>
           <Grid item className={classes.handleContainer}>
             <Typography variant='h1' className={classes.handleText}>{props.handle}</Typography>

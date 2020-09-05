@@ -13,6 +13,7 @@ import { PrivateProfile } from '../../User.interface';
 export interface ProfileSettingsProps {
   profile?: PrivateProfile;
   update?: (profile: PrivateProfile) => {};
+  xsrf?: string;
 }
 
 /**

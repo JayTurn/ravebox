@@ -22,3 +22,14 @@ export interface ChangeProfileProps {
 export interface ChangeProfileResponse extends APIResponse {
   user: PrivateProfile;
 }
+
+/**
+ * Interface for the image upload metadata.
+ */
+export interface PresignedImageResponse {
+  presigned: {
+    url: string;
+    fields: any;
+  },
+  path: string;
+}

@@ -17,6 +17,7 @@ import {
   Theme,
   useTheme
 } from '@material-ui/core/styles';
+import Fade from '@material-ui/core/Fade';
 import Grid from '@material-ui/core/Grid';
 import * as React from 'react';
 import Typography from '@material-ui/core/Typography';
@@ -69,20 +70,22 @@ const SecuritySettings: React.FC<SecuritySettingsProps> = (props: SecuritySettin
   return (
     <React.Fragment>
       {profileStatus === RetrievalStatus.SUCCESS &&
-        <form noValidate autoComplete="off">
-          {props.profile && props.update &&
-            <Grid container direction='column' style={{padding: theme.spacing(0, 2)}}>
-              <Typography
-                className={clsx(classes.descriptionText)}
-                color='textPrimary'
-                variant='h3'
-              >
-                Protecting your account
-              </Typography>
-              <ChangePassword />
-            </Grid>
-          }
-        </form>
+        <Fade in={true}>
+          <form noValidate autoComplete="off">
+            {props.profile && props.update &&
+              <Grid container direction='column' style={{padding: theme.spacing(0, 2)}}>
+                <Typography
+                  className={clsx(classes.descriptionText)}
+                  color='textPrimary'
+                  variant='h3'
+                >
+                  Protecting your account
+                </Typography>
+                <ChangePassword />
+              </Grid>
+            }
+          </form>
+        </Fade>
       }
     </React.Fragment>
   );

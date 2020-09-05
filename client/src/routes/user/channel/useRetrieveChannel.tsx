@@ -93,6 +93,7 @@ export function useRetrieveChannel(params: RetrieveChannelParams) {
             const channelDetails = {
               profile: {
                 _id: response.channel.profile._id,
+                avatar: `${process.env.RAZZLE_CDN}${response.channel.profile.avatar}`,
                 handle: response.channel.profile.handle,
                 ravesCount: CountIdentifier(response.channel.reviews ? response.channel.reviews.length : 0)('rave')
               },
