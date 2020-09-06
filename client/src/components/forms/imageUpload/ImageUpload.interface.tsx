@@ -15,6 +15,7 @@ import {
 export interface ImageUploadProps {
   id: string;
   buttonTitle: string;
+  maxFileSize?: number;
   path: string;
   requestPath: ImageUploadPaths;
   update: (path: string) => void;
@@ -46,6 +47,7 @@ export interface ImageData {
   fileType: string;
   fileName: string;
   fileLastModified: number;
+  maxFileSize: number;
 }
 
 /**

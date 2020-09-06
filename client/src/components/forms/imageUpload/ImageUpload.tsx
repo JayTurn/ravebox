@@ -20,6 +20,7 @@ import {
 import Cropper from 'react-easy-crop';
 import Fade from '@material-ui/core/Fade';
 import Grid from '@material-ui/core/Grid';
+import LinearProgress from '@material-ui/core/LinearProgress';
 import Modal from '@material-ui/core/Modal';
 import * as React from 'react';
 import Typography from '@material-ui/core/Typography';
@@ -31,6 +32,7 @@ import StyledButton from '../../elements/buttons/StyledButton';
 
 // Enumerators.
 import { RequestType } from '../../../utils/api/Api.enum';
+import { ImageUploadState } from './ImageUpload.enum';
 
 // Interfaces.
 import {
@@ -85,6 +87,10 @@ const useStyles = makeStyles((theme: Theme) =>
     modalContent: {
       outline: 0
     },
+    progressContainer: {
+      marginTop: theme.spacing(2),
+      width: '100%'
+    },
     zone: {
       borderRadius: theme.shape.borderRadius * 2,
       '&:hover': {
@@ -98,6 +104,24 @@ const useStyles = makeStyles((theme: Theme) =>
     zoneNoFile: { },
   })
 );
+
+/**
+ * Creates a random string to cache bust images.
+ */
+const randomString:(
+  filename: string
+) => string = (
+  filename: string
+): string => {
+  const random: string = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
+
+  const indexBreak: number = filename.lastIndexOf('.');
+
+  const name: string = filename.substring(0, indexBreak);
+  const extension: string = filename.substring(indexBreak + 1);
+
+  return `${name}-${random}.${extension}`;
+}
 
 /**
  * Crops the image based on the parameters provided.
@@ -147,10 +171,15 @@ const cropImage: (
 
       return BrowserImageCompression.canvasToFile(
         canvasEl,
-        'image/jpeg',
-        'test',
-        4374534
+        imageData.fileType,
+        imageData.fileName,
+        imageData.fileLastModified
       );
+    })
+    .then((imageFile: File | Blob) => {
+      return BrowserImageCompression(imageFile, {
+        maxSizeMB: imageData.maxFileSize
+      });
     })
     .then((imageFile: File | Blob) => {
       let image: File;
@@ -180,7 +209,13 @@ const ImageUpload: React.FC<ImageUploadProps> = (props: ImageUploadProps) => {
   const [imageData, setImageData] = React.useState<ImageData>({
     fileType: 'image/jpeg',
     fileName: '',
-    fileLastModified: 0
+    fileLastModified: 0,
+    maxFileSize: props.maxFileSize ? props.maxFileSize : 0.2
+  });
+
+  const [uploadProgress, setUploadProgress] = React.useState({
+    completion: 0,
+    state: ImageUploadState.WAITING
   });
 
   const [cropHeight, setCropHeight] = React.useState<number>(0);
@@ -200,8 +235,6 @@ const ImageUpload: React.FC<ImageUploadProps> = (props: ImageUploadProps) => {
 
   const [croppingImage, setCroppingImage] = React.useState<boolean>(false);
 
-  // Retrieve the user's first letter of their name.
-  //const firstLetter: string = props.handle.substr(0,1);
 
   // Retrieve the dropzone properties.
   const {
@@ -224,7 +257,7 @@ const ImageUpload: React.FC<ImageUploadProps> = (props: ImageUploadProps) => {
     file: File
   ): Promise<string> => {
     let compressedFile: File | Blob = await BrowserImageCompression(file, {
-      maxSizeMB: 2,
+      maxSizeMB: props.maxFileSize || 0.5,
       maxWidthOrHeight: 1920
     });
 
@@ -253,7 +286,7 @@ const ImageUpload: React.FC<ImageUploadProps> = (props: ImageUploadProps) => {
         setCropHeight(height * ratio);
         setImageData({
           ...imageData,
-          fileName: file.name,
+          fileName: randomString(file.name),
           fileLastModified: file.lastModified
         });
 
@@ -296,6 +329,10 @@ const ImageUpload: React.FC<ImageUploadProps> = (props: ImageUploadProps) => {
   ) => void = (
   ): void => {
     setCroppingImage(false);
+    setUploadProgress({
+      state: ImageUploadState.WAITING,
+      completion: 0
+    });
   }
 
   /**
@@ -319,6 +356,12 @@ const ImageUpload: React.FC<ImageUploadProps> = (props: ImageUploadProps) => {
   const saveCroppedImage: (
   ) => void = async (
   ): Promise<void> => {
+
+    // Set the upload state on the image.
+    setUploadProgress({
+      state: ImageUploadState.SUBMITTED,
+      completion: 0
+    });
 
     let imageFile: File = await cropImage(imageSrc)(croppedArea)(imageData);
 
@@ -353,14 +396,12 @@ const ImageUpload: React.FC<ImageUploadProps> = (props: ImageUploadProps) => {
 
         if (e.loaded) {
           console.log(`Progress: ${progress}`);
-          /*
           setUploadProgress({
-            state: FileUploadState.SUBMITTED,
+            state: ImageUploadState.SUBMITTED,
             completion: progress
           });
           // Set the submission state.
-          setSubmitting(false)
-          */
+          //setSubmitting(false)
         }
       });
 
@@ -377,16 +418,21 @@ const ImageUpload: React.FC<ImageUploadProps> = (props: ImageUploadProps) => {
         // Update the profile with the newly cropped image.
         props.update(response.path);
 
+        setUploadProgress({
+          completion: 0,
+          state: ImageUploadState.WAITING,
+        });
+
       });
 
       // Add an event listener for the upload error.
       request.upload.addEventListener('error', (e: Event) => {
           console.log(`Error: ${e}`);
-        /*
         setUploadProgress({
           ...uploadProgress,
-          state: FileUploadState.WAITING
+          state: ImageUploadState.WAITING
         });
+        /*
         setFormErrorMessages(['Video upload failed']);
         // Set the submission state.
         setSubmitting(false)
@@ -412,6 +458,7 @@ const ImageUpload: React.FC<ImageUploadProps> = (props: ImageUploadProps) => {
       {croppingImage ? (
         <Modal
           className={clsx(classes.modal)}
+          disableBackdropClick={true}
           open={croppingImage}
           onClose={handleClose}
           BackdropComponent={Backdrop}
@@ -439,25 +486,36 @@ const ImageUpload: React.FC<ImageUploadProps> = (props: ImageUploadProps) => {
                 />
               </Box>
             </Box>
-            <Grid
-              container
-              className={clsx(classes.buttonContainer)}
-              justify='space-between'
-            >
-              <Grid item>
-                <StyledButton
-                  clickAction={handleClose}
-                  title={`Cancel`}
-                  variant='outlined'
-                />
+            {uploadProgress.state === ImageUploadState.SUBMITTED ? (
+              <Grid container>
+                <Grid
+                  item
+                  className={clsx(classes.progressContainer)}
+                >
+                  <LinearProgress color='primary' />
+                </Grid>
               </Grid>
-              <Grid item>
-                <StyledButton
-                  clickAction={saveCroppedImage}
-                  title={`Save`}
-                />
+            ) : (
+              <Grid
+                container
+                className={clsx(classes.buttonContainer)}
+                justify='space-between'
+              >
+                <Grid item>
+                  <StyledButton
+                    clickAction={handleClose}
+                    title={`Cancel`}
+                    variant='outlined'
+                  />
+                </Grid>
+                <Grid item>
+                  <StyledButton
+                    clickAction={saveCroppedImage}
+                    title={`Save`}
+                  />
+                </Grid>
               </Grid>
-            </Grid>
+            )}
           </Box>
         </Modal>
       ): (

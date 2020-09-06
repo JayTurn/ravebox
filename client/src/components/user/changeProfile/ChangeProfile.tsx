@@ -19,6 +19,7 @@ import {
   withStyles
 } from '@material-ui/core/styles';
 import Grid from '@material-ui/core/Grid';
+import Skeleton from '@material-ui/lab/Skeleton';
 import Typography from '@material-ui/core/Typography';
 import useMediaQuery from '@material-ui/core/useMediaQuery';
 import { VariantType, useSnackbar } from 'notistack';
@@ -115,6 +116,7 @@ const ChangeProfile: React.FC<ChangeProfileProps> = (props: ChangeProfileProps) 
   // Define the settings to be updated upon save.
   const [settings, updateSettings] = React.useState<PrivateProfile>({
     _id: '',
+    avatar: '',
     email: '',
     emailVerified: false,
     following: {
@@ -137,6 +139,8 @@ const ChangeProfile: React.FC<ChangeProfileProps> = (props: ChangeProfileProps) 
   // submitted and to prevent duplicate submissions.
   const [submitting, setSubmitting] = React.useState(false);
 
+  const [updatingAvatar, setUpdatingAvatar] = React.useState<boolean>(false);
+
   // Retrieve the user's first letter of their name.
   const firstLetter: string = props.profile ? props.profile.handle.substr(0,1) : 'R';
 
@@ -156,13 +160,6 @@ const ChangeProfile: React.FC<ChangeProfileProps> = (props: ChangeProfileProps) 
     if (!settings._id && props.profile) {
       updateSettings({...props.profile});
     }
-
-    if (settings._id && props.profile) {
-      if (settings.avatar !== props.profile.avatar) {
-        submitProfile();
-      }
-    }
-
   }, [props.profile, settings, updateSettings]);
 
   /**
@@ -232,6 +229,8 @@ const ChangeProfile: React.FC<ChangeProfileProps> = (props: ChangeProfileProps) 
       ...settings,
       avatar: path
     });
+    setUpdatingAvatar(true);
+    submitProfile(path);
   }
 
   const handleSubmit: (
@@ -245,7 +244,9 @@ const ChangeProfile: React.FC<ChangeProfileProps> = (props: ChangeProfileProps) 
    * Performs the settings update.
    */
   const submitProfile: (
+    updatedAvatar?: string
   ) => Promise<void> = async (
+    updatedAvatar?: string
   ): Promise<void> => {
     // Don't do anything if we're already submitting.
     if (submitting) {
@@ -268,7 +269,9 @@ const ChangeProfile: React.FC<ChangeProfileProps> = (props: ChangeProfileProps) 
     }
 
     // Set the submission state.
-    setSubmitting(true)
+    if (!updatedAvatar) {
+      setSubmitting(true)
+    }
 
     API.requestAPI<ChangeProfileResponse>('user/update/profile', {
       headers: {
@@ -277,7 +280,7 @@ const ChangeProfile: React.FC<ChangeProfileProps> = (props: ChangeProfileProps) 
       method: RequestType.PATCH,
       body: JSON.stringify({
         handle: settings.handle,
-        avatar: settings.avatar ? settings.avatar : ''
+        avatar: updatedAvatar ? updatedAvatar : props.profile ? props.profile.avatar : ''
       })
     })
     .then((response: ChangeProfileResponse) => {
@@ -288,20 +291,27 @@ const ChangeProfile: React.FC<ChangeProfileProps> = (props: ChangeProfileProps) 
         return;
       }
 
-      if (props.update) {
-        props.update(response.user);
-      }
+      setTimeout(() => {
+
+        if (props.update) {
+          props.update(response.user);
+        }
+
+        setUpdatingAvatar(false);
+      }, updatedAvatar ? 5000 : 0);
 
       // Set the submission state.
       setSubmitting(false);
 
       // Display the success message to the user.
       enqueueSnackbar('Profile updated successfully', { variant: 'success' });
+
     })
     .catch((error: Error) => {
       console.log(error);
       // Set the submission state.
       setSubmitting(false);
+      setUpdatingAvatar(false);
     });
   }
 
@@ -319,18 +329,31 @@ const ChangeProfile: React.FC<ChangeProfileProps> = (props: ChangeProfileProps) 
               alignItems='center'
             >
               <Grid item>
-                {props.profile.avatar ? (
-                  <Avatar
-                    alt={props.profile.handle}
-                    className={classes.avatar}
-                    src={props.profile.avatar}
+                {updatingAvatar ? (
+                  <Skeleton
+                    animation='pulse'
+                    height={theme.spacing(8)}
+                    variant='circle'
+                    width={theme.spacing(8)}
                   />
-                ): (
-                  <Avatar
-                    alt={props.profile.handle}
-                    className={classes.avatarIcon}
-                  >{firstLetter}</Avatar>
-                  )}
+                ) : (
+                  <React.Fragment>
+                    {props.profile.avatar ? (
+                      <Avatar
+                        alt={props.profile.handle}
+                        className={clsx(
+                          classes.avatar
+                        )}
+                        src={props.profile.avatar}
+                      />
+                    ): (
+                      <Avatar
+                        alt={props.profile.handle}
+                        className={classes.avatarIcon}
+                      >{firstLetter}</Avatar>
+                    )}
+                  </React.Fragment>
+                )}
               </Grid>
               <Grid item className={clsx({
                 [classes.avatarButtonColumn]: !largeScreen,
@@ -339,6 +362,7 @@ const ChangeProfile: React.FC<ChangeProfileProps> = (props: ChangeProfileProps) 
                 <ImageUpload
                   id={props.profile._id}
                   buttonTitle='Change profile photo'
+                  maxFileSize={0.1}
                   path={props.profile.avatar || ''} 
                   requestPath={ImageUploadPaths.AVATAR}
                   update={updateAvatar} 
