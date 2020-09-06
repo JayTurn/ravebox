@@ -23,7 +23,7 @@ export interface Review {
   recommended: Recommended;
   sponsored: boolean;
   statistics?: ReviewStatistics;
-  thumbnailURL?: string;
+  thumbnail?: string;
   title: string;
   url: string;
   user?: PublicProfile;

@@ -31,6 +31,7 @@ const config: Partial<EnvironmentProperties> = {
     region: 'us-east-1',
     signatureVersion: "v4"
   },
+  CDN: 'https://dqz6on0g0ssla.cloudfront.net/',
   database: {
     name: dbname,
     uri: uri,

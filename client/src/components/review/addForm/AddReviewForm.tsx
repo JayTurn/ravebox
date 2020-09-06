@@ -36,6 +36,7 @@ import { withRouter } from 'react-router';
 // Components.
 import Input from '../../forms/input/Input';
 import FileUpload from '../../forms/fileUpload/FileUpload';
+import ImageUpload from '../../forms/imageUpload/ImageUpload';
 import Recommendation from '../recommendation/Recommendation';
 import AddReviewLink from '../addReviewLink/AddReviewLink';
 import Sponsored from '../sponsored/Sponsored';

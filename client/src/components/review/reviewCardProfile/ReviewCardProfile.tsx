@@ -167,7 +167,7 @@ const ReviewCardProfile: React.FC<ReviewCardProfileProps> = (props: ReviewCardPr
               to={`/review/${props.url}`}
             >
               {props.user.avatar ? (
-                <Avatar alt={props.user.handle} className={classes.avatar} src={`${process.env.RAZZLE_CDN}${props.user.avatar}`}></Avatar>
+                <Avatar alt={props.user.handle} className={classes.avatar} src={`${props.user.avatar}`}></Avatar>
               ) : (
                 <Avatar alt={props.user.handle} className={classes.avatarIcon}>{firstLetter}</Avatar>
               )}

@@ -45,6 +45,7 @@ export interface EditReviewFormRequest {
   links: Array<ReviewLink>;
   recommended: Recommended;
   sponsored: boolean;
+  thumbnail?: string;
   title: string;
   videoSize?: number;
   videoTitle?: string;

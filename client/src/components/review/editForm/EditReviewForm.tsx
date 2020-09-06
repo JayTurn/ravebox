@@ -26,11 +26,13 @@ import { connect } from 'react-redux';
 import { withRouter } from 'react-router';
 import { bindActionCreators, Dispatch, AnyAction } from 'redux';
 import Typography from '@material-ui/core/Typography';
+import useMediaQuery from '@material-ui/core/useMediaQuery';
 import { VariantType, useSnackbar } from 'notistack';
 
 // Components.
 import Input from '../../forms/input/Input';
 import FileUpload from '../../forms/fileUpload/FileUpload';
+import ImageUpload from '../../forms/imageUpload/ImageUpload';
 import RaveVideo from '../../raveVideo/RaveVideo';
 import Recommendation from '../recommendation/Recommendation';
 import AddReviewLink from '../addReviewLink/AddReviewLink';
@@ -39,11 +41,12 @@ import StyledButton from '../../elements/buttons/StyledButton';
 import PaddedDivider from '../../elements/dividers/PaddedDivider';
 
 // Enumerators.
+import { FileUploadState } from '../../forms/fileUpload/FileUpload.enum';
+import { ImageUploadPaths } from '../../forms/imageUpload/ImageUpload.enum';
+import { Recommended } from '../recommendation/Recommendation.enum';
 import {
   RequestType
 } from '../../../utils/api/Api.enum';
-import { Recommended } from '../recommendation/Recommendation.enum';
-import { FileUploadState } from '../../forms/fileUpload/FileUpload.enum';
 
 // Hooks.
 import { useValidation } from '../../forms/validation/useValidation.hook';
@@ -113,7 +116,8 @@ const reviewValidation: ValidationSchema = {
  */
 const EditReviewForm: React.FC<EditReviewFormProps> = (props: EditReviewFormProps) => {
   const classes = useStyles(),
-        theme = useTheme();
+        theme = useTheme(),
+        largeScreen = useMediaQuery(theme.breakpoints.up('md'));
   // Register the snackbar for success updates.
   const { enqueueSnackbar } = useSnackbar();
 
@@ -128,6 +132,7 @@ const EditReviewForm: React.FC<EditReviewFormProps> = (props: EditReviewFormProp
     }],
     _id: '',
     sponsored: false,
+    thumbnail: '',
     title: '',
     recommended: Recommended.RECOMMENDED,
     url: ''
@@ -261,6 +266,18 @@ const EditReviewForm: React.FC<EditReviewFormProps> = (props: EditReviewFormProp
   }
 
   /**
+   * Updates the poster image and submits the updated review.
+   *
+   * @param { string } path - the path to the poster image.
+   */
+  const updatePoster: (
+    path: string
+  ) => void = (
+    path: string
+  ): void => {
+  }
+
+  /**
    * Handles the updating of the metadata file to trigger the video processing.
    */
   const uploadMetadata: (
@@ -333,6 +350,7 @@ const EditReviewForm: React.FC<EditReviewFormProps> = (props: EditReviewFormProp
       links: review.links,
       _id: review._id,
       sponsored: review.sponsored,
+      thumbnail: review.thumbnail,
       title: review.title,
       recommended: review.recommended
     };
@@ -445,6 +463,22 @@ const EditReviewForm: React.FC<EditReviewFormProps> = (props: EditReviewFormProp
                   required={true}
                   type='text'
                   title="Title"
+                />
+              </Grid>
+              <Grid item xs={12} lg={6} style={{marginBottom: '1.5rem', width: '100%'}}>
+                <Box>
+                  <img src={review.thumbnail} alt={`${review.title} poster image`} />
+                </Box>
+              </Grid>
+              <Grid item xs={12} lg={6} style={{marginBottom: '1.5rem', width: '100%'}}>
+                <ImageUpload 
+                  aspectRatio={4/3}
+                  id={review._id}
+                  buttonTitle='Change rave poster'
+                  maxFileSize={0.2}
+                  path={review.thumbnail || ''} 
+                  requestPath={ImageUploadPaths.RAVE_POSTER}
+                  update={updatePoster} 
                 />
               </Grid>
               <Recommendation 

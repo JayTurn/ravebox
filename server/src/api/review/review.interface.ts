@@ -44,6 +44,7 @@ export interface ReviewDocument extends Mongoose.Document {
   recommended: Recommended;
   sponsored: Array<string>;
   statistics: ReviewStatisticsDocument;
+  thumbnail: string;
   thumbnails: Array<string>;
   title: string;
   url: string;
@@ -90,6 +91,7 @@ export interface ReviewRequestBody {
   product: string;
   recommended: Recommended;
   sponsored: boolean;
+  thumbnail: string;
   title: string;
   videoTitle: string;
   videoSize: string;

@@ -54,6 +54,12 @@ const ReviewSchema = new Schema<ReviewDocument>({
   links: {
     type: Array
   },
+  thumbnail: {
+    type: String
+  },
+  thumbnails: {
+    type: Array
+  },
   title: {
     type: String
   },
@@ -67,9 +73,6 @@ const ReviewSchema = new Schema<ReviewDocument>({
   },
   video: {
     type: Object
-  },
-  thumbnails: {
-    type: Array
   }
 });
 
@@ -116,8 +119,12 @@ ReviewSchema
       videoURL = this.video.egressEndpoints.HLS;
     }
 
-    if (this.thumbnails && this.thumbnails.length > 0) {
-      thumbnailURL = this.thumbnails[0];
+    if (this.thumbnail) {
+      thumbnailURL = this.thumbnail;
+    } else {
+      if (this.thumbnails && this.thumbnails.length > 0) {
+        thumbnailURL = this.thumbnails[0];
+      }
     }
 
     return {
@@ -128,7 +135,7 @@ ReviewSchema
       'product': this.product,
       'recommended': this.recommended,
       'sponsored': this.sponsored,
-      'thumbnailURL': thumbnailURL,
+      'thumbnail': thumbnailURL,
       'title': this.title,
       'url': this.url,
       'user': this.user,
@@ -148,8 +155,12 @@ ReviewSchema
       videoURL = this.video.egressEndpoints.DASH;
     }
 
-    if (this.thumbnails && this.thumbnails.length > 0) {
-      thumbnailURL = this.thumbnails[0];
+    if (this.thumbnail) {
+      thumbnailURL = this.thumbnail;
+    } else {
+      if (this.thumbnails && this.thumbnails.length > 0) {
+        thumbnailURL = this.thumbnails[0];
+      }
     }
 
     return {
@@ -158,7 +169,7 @@ ReviewSchema
       'published': this.published,
       'product': this.product,
       'recommended': this.recommended,
-      'thumbnailURL': thumbnailURL,
+      'thumbnail': thumbnailURL,
       'title': this.title,
       'url': this.url,
       'user': this.user,

@@ -533,7 +533,7 @@ export default class UserController {
       const responseObject: ResponseObject = Connect.setResponse({
         data: {
           presigned: requestData,
-          path: storagePath
+          path: `${EnvConfig.CDN}${storagePath}`
         }
       }, 200, `${userId}: Presigned image request successful`);
 

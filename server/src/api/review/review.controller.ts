@@ -10,6 +10,7 @@ import { DocumentQuery } from 'mongoose';
 import EnvConfig from '../../config/environment/environmentBaseConfig';
 import * as http from 'http';
 import * as https from 'https';
+import Images from '../../shared/images/Images.model';
 import Logging from '../../shared/logging/Logging.model';
 import Product from '../product/product.model';
 import Review from './review.model';
@@ -91,6 +92,13 @@ export default class ReviewController {
       `${path}/edit/:id`,
       Authenticate.isAuthenticated,
       ReviewController.Update
+    );
+
+    // Create a presigned request URL for uploading a profile image.
+    router.post(
+      `${path}/image/request`,
+      Authenticate.isAuthenticated,
+      ReviewController.CreateImageRequest
     );
 
     // Retrieve a list of reviews from the same product.
@@ -181,6 +189,7 @@ export default class ReviewController {
       sponsored: reviewDetails.sponsored,
       statistics: newReviewStatistics._id,
       title: reviewDetails.title,
+      thumbnail: reviewDetails.thumbnail,
       user: request.auth._id
     });
 
@@ -234,6 +243,66 @@ export default class ReviewController {
           // Return the error response for the user.
           response.status(401).json(responseObject.data);
         });
+  }
+
+  /**
+   * Performs a request to POST the image metadata.
+   *
+   * @param {object} req
+   * The request object.
+   *
+   * @param {object} res
+   * The response object.
+   */
+  static CreateImageRequest(request: AuthenticatedUserRequest, response: Response): void {
+    const imageTitle: string = request.body.imageTitle,
+          imageSize: string = request.body.imageSize,
+          imageType: string = request.body.imageType,
+          reviewId: string = request.body.id;
+
+    if (!imageTitle || !imageSize || !imageType || !reviewId) {
+      return;
+    }
+
+    // Define the path to be stored in the database.
+    const storagePath = `images/reviews/${reviewId}/${imageTitle}`;
+
+    // Create a presigned request for the new image file.
+    Images.CreatePresignedImageRequest(
+      imageTitle,
+      imageSize,
+      imageType,
+      `images/reviews/${reviewId}`
+    ).then((requestData: S3.PresignedPost) => {
+      // Set the response object.
+      const responseObject: ResponseObject = Connect.setResponse({
+        data: {
+          presigned: requestData,
+          path: `${EnvConfig.CDN}${storagePath}`
+        }
+      }, 200, `${reviewId}: Presigned image request successful`);
+
+      Logging.Send(LogLevel.INFO, responseObject);
+
+      // Return the response for the authenticated user.
+      response.status(responseObject.status).json(responseObject.data);
+
+    })
+    .catch((error: Error) => {
+      // Return an error indicating the review wasn't created.
+      const responseObject = Connect.setResponse({
+        data: {
+          errorCode: 'REVIEW_NOT_UPDATED',
+          message: 'There was a problem updating your review'
+        },
+        error: error
+      }, 401, 'There was a problem updating your review');
+
+      Logging.Send(LogLevel.ERROR, responseObject);
+
+      // Return the error response for the user.
+      response.status(responseObject.status).json(responseObject.data);
+    });
   }
 
   /**
@@ -962,6 +1031,7 @@ export default class ReviewController {
           links = request.body.links,
           recommended = request.body.recommended,
           sponsored = request.body.sponsored,
+          thumbnail = request.body.thumbnail,
           title = request.body.title,
           userId = request.auth._id,
           videoSize = request.body.videoSize,
@@ -976,6 +1046,7 @@ export default class ReviewController {
       links: links,
       recommended: recommended,
       sponsored: sponsored,
+      thumbnail: thumbnail,
       title: title
     }, {
       new: true,

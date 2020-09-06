@@ -85,7 +85,7 @@ const PublicProfilePreview: React.FC<PublicProfilePreviewProps> = (props: Public
           to={`/user/channel/${props.handle}`}
         >
           {props.avatar ? (
-            <Avatar alt={props.handle} className={classes.avatar} src={`${process.env.RAZZLE_CDN}${props.avatar}`}/>
+            <Avatar alt={props.handle} className={classes.avatar} src={props.avatar}/>
           ): (
             <Avatar alt={props.handle} className={classes.avatarIcon}>{firstLetter}</Avatar>
           )}

@@ -462,7 +462,8 @@ const ImageUpload: React.FC<ImageUploadProps> = (props: ImageUploadProps) => {
       body: JSON.stringify({
         imageTitle: imageFile.name,
         imageSize: imageFile.size,
-        imageType: imageFile.type
+        imageType: imageFile.type,
+        id: props.id
       })
     })
     .then((response: PresignedImageResponse) => {
@@ -560,10 +561,10 @@ const ImageUpload: React.FC<ImageUploadProps> = (props: ImageUploadProps) => {
             >
               <Box className={clsx(classes.cropImage)}>
                 <Cropper
-                  aspect={1}
+                  aspect={props.aspectRatio ? props.aspectRatio : 1}
                   image={imageSrc}
                   crop={crop}
-                  cropShape='round'
+                  cropShape={props.circleCrop ? 'round' : 'rect'}
                   onCropChange={setCrop}
                   onCropComplete={updateCrop}
                   onZoomChange={setZoom}

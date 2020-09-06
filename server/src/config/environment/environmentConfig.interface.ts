@@ -11,6 +11,7 @@ export interface EnvironmentProperties {
   analytics: AnalyticsProperties;
   authenticationTimeout: string;
   aws: AWSProperties;
+  CDN: string;
   database?: DatabaseProperties;
   elasticsearch: ElasticsearchProperties;
   env: string;

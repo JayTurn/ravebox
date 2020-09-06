@@ -33,6 +33,7 @@ const config: Partial<EnvironmentProperties> = {
     region: 'ap-southeast-2',
     signatureVersion: "v4"
   },
+  CDN: 'https://d3jb681o407t0s.cloudfront.net/',
   elasticsearch: {
     url: 'http://127.0.0.1:9200'
   },
