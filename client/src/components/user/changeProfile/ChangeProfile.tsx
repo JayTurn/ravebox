@@ -9,6 +9,7 @@ import API from '../../../utils/api/Api.model';
 import Avatar from '@material-ui/core/Avatar';
 import { bindActionCreators, Dispatch, AnyAction } from 'redux';
 import Box from '@material-ui/core/Box';
+import CircularProgress from '@material-ui/core/CircularProgress';
 import clsx from 'clsx';
 import { connect } from 'react-redux';
 import {
@@ -77,12 +78,20 @@ const useStyles = makeStyles((theme: Theme) =>
       height: theme.spacing(8),
       width: theme.spacing(8)
     },
+    avatarWrapper: {
+      position: 'relative'
+    },
     avatarButtonColumn: {
       marginTop: theme.spacing(2)
     },
     avatarButtonRow: {
       marginLeft: theme.spacing(2)
-    }
+    },
+    loadingAvatar: {
+      position: 'absolute',
+      top: theme.spacing(-0.5),
+      left: theme.spacing(-0.5),
+    },
   })
 );
 
@@ -298,13 +307,14 @@ const ChangeProfile: React.FC<ChangeProfileProps> = (props: ChangeProfileProps) 
         }
 
         setUpdatingAvatar(false);
+
+        // Set the submission state.
+        setSubmitting(false);
+
+        // Display the success message to the user.
+        enqueueSnackbar('Profile updated successfully', { variant: 'success' });
+
       }, updatedAvatar ? 5000 : 0);
-
-      // Set the submission state.
-      setSubmitting(false);
-
-      // Display the success message to the user.
-      enqueueSnackbar('Profile updated successfully', { variant: 'success' });
 
     })
     .catch((error: Error) => {
@@ -329,31 +339,29 @@ const ChangeProfile: React.FC<ChangeProfileProps> = (props: ChangeProfileProps) 
               alignItems='center'
             >
               <Grid item>
-                {updatingAvatar ? (
-                  <Skeleton
-                    animation='pulse'
-                    height={theme.spacing(8)}
-                    variant='circle'
-                    width={theme.spacing(8)}
-                  />
-                ) : (
-                  <React.Fragment>
-                    {props.profile.avatar ? (
-                      <Avatar
-                        alt={props.profile.handle}
-                        className={clsx(
-                          classes.avatar
-                        )}
-                        src={props.profile.avatar}
-                      />
-                    ): (
-                      <Avatar
-                        alt={props.profile.handle}
-                        className={classes.avatarIcon}
-                      >{firstLetter}</Avatar>
-                    )}
-                  </React.Fragment>
-                )}
+                <Box className={clsx(classes.avatarWrapper)}>
+                  {props.profile.avatar ? (
+                    <Avatar
+                      alt={props.profile.handle}
+                      className={clsx(
+                        classes.avatar
+                      )}
+                      src={props.profile.avatar}
+                    />
+                  ): (
+                    <Avatar
+                      alt={props.profile.handle}
+                      className={classes.avatarIcon}
+                    >{firstLetter}</Avatar>
+                  )}
+                  {updatingAvatar && 
+                    <CircularProgress
+                      size={theme.spacing(9)}
+                      className={clsx(classes.loadingAvatar)}
+                      color='secondary'
+                    />
+                  }
+                </Box>
               </Grid>
               <Grid item className={clsx({
                 [classes.avatarButtonColumn]: !largeScreen,
