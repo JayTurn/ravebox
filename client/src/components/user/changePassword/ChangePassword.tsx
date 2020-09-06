@@ -287,9 +287,6 @@ const ChangePassword: React.FC<ChangePasswordProps> = (props: ChangePasswordProp
       direction='column'
     >
       <Grid item xs={12} md={6} style={{marginBottom: 40}}>
-        <Typography variant='h2' color='textPrimary'>Security</Typography>
-        <Typography variant='subtitle1' color='textPrimary'>Protecting your account</Typography>
-        <PaddedDivider style={{marginBottom: 20}}/>
         {props.profile &&
           <React.Fragment>
             <Grid item xs={12} style={{marginBottom: 20}}>

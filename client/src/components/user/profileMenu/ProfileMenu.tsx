@@ -11,6 +11,7 @@ import {
   bindActionCreators,
   Dispatch
 } from 'redux';
+import Avatar from '@material-ui/core/Avatar';
 import { connect } from 'react-redux';
 import Cookies from 'universal-cookie';
 import {
@@ -87,13 +88,28 @@ const StyledMenu = withStyles({
 ));
 
 /**
+ * Create the theme styles to be used for the display.
+ */
+const useStyles = makeStyles((theme: Theme) =>
+  createStyles({
+    avatar: {
+      fontWeight: 600,
+      height: theme.spacing(4.5),
+      width: theme.spacing(4.5)
+    }
+  })
+);
+
+/**
  * Renders profile options for authenticated users.
  */
 const ProfileMenu: React.FC<ProfileMenuProps> = (props: ProfileMenuProps) => {
   // Define the menu anchor.
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
 
-  const theme = useTheme();
+  // Define the style classes.
+  const classes = useStyles(),
+        theme = useTheme();
 
   // Match the large media query size.
   const largeScreen = useMediaQuery(theme.breakpoints.up('md'));
@@ -171,7 +187,11 @@ const ProfileMenu: React.FC<ProfileMenuProps> = (props: ProfileMenuProps) => {
     <React.Fragment>
       {largeScreen ? (
         <ProfileIconButton onClick={handleClick}>
-          <AccountCircleSharpIcon color='primary' fontSize='large'/>
+          {props.profile && props.profile.avatar ? (
+            <Avatar alt={`Expand menu`} className={classes.avatar} src={`${props.profile.avatar}`}></Avatar>
+          ): (
+            <AccountCircleSharpIcon color='primary' fontSize='large'/>
+          )}
         </ProfileIconButton>
       ) : (
         <MobileProfileIconButton onClick={handleClick}>

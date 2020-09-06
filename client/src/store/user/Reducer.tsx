@@ -46,8 +46,16 @@ export default combineReducers<UserStore, UserAction>({
     switch (action.type) {
       case UserVerb.LOGIN:
       case UserVerb.UPDATE:
+        const retrievedProfile: PrivateProfile = {
+          ...action.payload
+        };
+
+        if (retrievedProfile.avatar) {
+          retrievedProfile.avatar = `${process.env.RAZZLE_CDN}${retrievedProfile.avatar}`;
+        }
+
         // Append the new value to the list of watched items.
-        return action.payload;
+        return retrievedProfile;
       case UserVerb.LOGOUT:
         // Remove the payload item from the list of watched items.
         return {

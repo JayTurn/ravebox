@@ -4,6 +4,11 @@
  */
 
 // Modules.
+import {
+  AnyAction,
+  bindActionCreators,
+  Dispatch
+} from 'redux';
 import Box from '@material-ui/core/Box';
 import clsx from 'clsx';
 import {
@@ -12,12 +17,14 @@ import {
   Theme,
   useTheme
 } from '@material-ui/core/styles';
+import { connect } from 'react-redux';
 import Divider from '@material-ui/core/Divider';
 import Grid from '@material-ui/core/Grid';
+import Tab from '@material-ui/core/Tab';
+import Tabs from '@material-ui/core/Tabs';
 import Typography from '@material-ui/core/Typography';
 import * as React from 'react';
-import { connect } from 'react-redux';
-import { bindActionCreators, Dispatch, AnyAction } from 'redux';
+import useMediaQuery from '@material-ui/core/useMediaQuery';
 
 // Actions.
 import {
@@ -30,10 +37,10 @@ import ChangeProfile from '../changeProfile/ChangeProfile';
 import ChangePassword from '../changePassword/ChangePassword';
 import Input from '../../forms/input/Input'; 
 import PaddedDivider from '../../elements/dividers/PaddedDivider';
-import useMediaQuery from '@material-ui/core/useMediaQuery';
 
 // Enumerators.
 import { RetrievalStatus } from '../../../utils/api/Api.enum';
+import { SettingsScreen } from './Settings.enum';
 
 // Hooks.
 import { useUpdateSettings } from './useUpdateSettings.hook';
@@ -69,6 +76,7 @@ const settingsValidation: ValidationSchema = {
     ]
   }
 };
+
 
 /**
  * Renders profile settings for authenticated users.

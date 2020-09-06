@@ -29,6 +29,10 @@ import { PublicProfilePreviewProps } from './PublicProfilePreview.interface';
  * Styles for the public profile preview.
  */
 const useStyles = makeStyles((theme: Theme) => createStyles({
+  avatar: {
+    height: theme.spacing(5),
+    width: theme.spacing(5)
+  },
   avatarIcon: {
     backgroundColor: theme.palette.primary.main,
     fontSize: '.9rem',
@@ -80,7 +84,11 @@ const PublicProfilePreview: React.FC<PublicProfilePreviewProps> = (props: Public
           title={`View ${props.handle}'s channel`}
           to={`/user/channel/${props.handle}`}
         >
-          <Avatar alt={props.handle} className={classes.avatarIcon}>{firstLetter}</Avatar>
+          {props.avatar ? (
+            <Avatar alt={props.handle} className={classes.avatar} src={`${process.env.RAZZLE_CDN}${props.avatar}`}/>
+          ): (
+            <Avatar alt={props.handle} className={classes.avatarIcon}>{firstLetter}</Avatar>
+          )}
         </NavLink>
       </Grid>
       <Grid item className={classes.handleContainer}>

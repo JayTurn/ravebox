@@ -25,6 +25,7 @@ export interface ChannelProps extends RouteComponentProps<ChannelParams> {
 export interface ChannelDetails {
   profile?: {
     _id: string;
+    avatar?: string;
     handle: string;
     ravesCount: string;
   };

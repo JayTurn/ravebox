@@ -42,7 +42,7 @@
     },
     {
       "name": "client",
-      "image": "jayturn/react:1.2.9",
+      "image": "jayturn/react:1.3.0",
       "command": ["yarn", "start:staging"],
       "essential": true,
       "memoryReservation": 512,

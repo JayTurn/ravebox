@@ -10,6 +10,7 @@ import Connect from '../../models/database/connect.model';
 import EnvConfig from '../../config/environment/environmentBaseConfig';
 import Follow from '../follow/follow.model';
 import * as Jwt from 'jsonwebtoken';
+import Images from '../../shared/images/Images.model';
 import Invitation from '../invitation/invitation.model';
 import LocalController from './authenticate/local.strategy';
 import Logging from '../../shared/logging/Logging.model';
@@ -19,6 +20,7 @@ import {
   Router
 } from 'express';
 import Review from '../review/review.model';
+import * as S3 from 'aws-sdk/clients/s3';
 import User from './user.model';
 import UserCommon from './user.common';
 import UserStatistics from '../userStatistics/userStatistics.model'
@@ -77,6 +79,13 @@ export default class UserController {
 
     // Validate the existing of a user handle.
     router.get(`${path}/handle/:id`, UserController.HandleAvailability);
+
+    // Create a metadata file for a review an upload to S3.
+    router.post(
+      `${path}/image/request`,
+      Authenticate.isAuthenticated,
+      UserController.CreateImageRequest
+    );
 
     // Retrieves the raves a user is following.
     router.get(`${path}/following`, Authenticate.isAuthenticated, UserController.RetrieveFollowing);
@@ -492,6 +501,66 @@ export default class UserController {
   }
 
   /**
+   * Performs a request to POST the image metadata.
+   *
+   * @param {object} req
+   * The request object.
+   *
+   * @param {object} res
+   * The response object.
+   */
+  static CreateImageRequest(request: AuthenticatedUserRequest, response: Response): void {
+    const imageTitle: string = request.body.imageTitle,
+          imageSize: string = request.body.imageSize,
+          imageType: string = request.body.imageType,
+          userId: string = request.auth._id;
+
+    if (!imageTitle || !imageSize || !imageType || !userId) {
+      return;
+    }
+
+    // Define the path to be stored in the database.
+    const storagePath = `images/avatars/${userId}/${imageTitle}`;
+
+    // Create a presigned request for the new image file.
+    Images.CreatePresignedImageRequest(
+      imageTitle,
+      imageSize,
+      imageType,
+      `images/avatars/${userId}`
+    ).then((requestData: S3.PresignedPost) => {
+      // Set the response object.
+      const responseObject: ResponseObject = Connect.setResponse({
+        data: {
+          presigned: requestData,
+          path: storagePath
+        }
+      }, 200, `${userId}: Presigned image request successful`);
+
+      Logging.Send(LogLevel.INFO, responseObject);
+
+      // Return the response for the authenticated user.
+      response.status(responseObject.status).json(responseObject.data);
+
+    })
+    .catch((error: Error) => {
+      // Return an error indicating the review wasn't created.
+      const responseObject = Connect.setResponse({
+        data: {
+          errorCode: 'REVIEW_NOT_UPDATED',
+          message: 'There was a problem updating your review'
+        },
+        error: error
+      }, 401, 'There was a problem updating your review');
+
+      Logging.Send(LogLevel.ERROR, responseObject);
+
+      // Return the error response for the user.
+      response.status(responseObject.status).json(responseObject.data);
+    });
+  }
+
+  /**
    * Get current user handler.
    *
    * @param {object} req
@@ -506,7 +575,10 @@ export default class UserController {
     // Find the user and update the profile settings.
     User.findByIdAndUpdate(
       request.auth._id,
-      { handle: settings.handle },
+      {
+        handle: settings.handle,
+        avatar: settings.avatar
+      },
       { new: true, upsert: false }
     )
     .then((user: UserDetailsDocument) => {
