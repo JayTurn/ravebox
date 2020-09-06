@@ -527,26 +527,6 @@ const ImageUpload: React.FC<ImageUploadProps> = (props: ImageUploadProps) => {
           >
             {props.buttonTitle}
           </Button>
-        {/*
-        <Grid item xs={12}>
-          <Grid container alignItems='center'>
-            <Grid item>
-              {props.path ? (
-                <Avatar
-                  alt={props.handle}
-                  className={classes.avatarIcon}
-                  src={props.path}
-                />
-              ): (
-                <Avatar
-                  alt={props.handle}
-                  className={classes.avatarIcon}
-                >{firstLetter}</Avatar>
-              )}
-            </Grid>
-          </Grid>
-        </Grid>
-        */}
         </Grid>
       )}
       {errors.length > 0 &&
@@ -567,14 +547,6 @@ const ImageUpload: React.FC<ImageUploadProps> = (props: ImageUploadProps) => {
 function mapStatetoProps(state: any, ownProps: ImageUploadProps) {
   // Retrieve the xsrf token to be submitted with the request.
   const xsrfToken: string = state.xsrf ? state.xsrf.token : undefined;
-
-  /*
-  let profile: PrivateProfile | undefined = state.user ? state.user.profile : undefined;
-
-  if (profile && !profile._id) {
-    profile = undefined;
-  }
-  */
 
   return {
     ...ownProps,
