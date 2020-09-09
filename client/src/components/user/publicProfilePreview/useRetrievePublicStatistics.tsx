@@ -23,6 +23,9 @@ import {
   RetrievePublicProfileStatisticsParams
 } from './PublicProfilePreview.interface';
 
+// Utilities.
+import { CountIdentifier } from '../../../utils/display/numeric/Numeric';
+
 /**
  * Returns user statistics.
  */
@@ -37,10 +40,12 @@ export function useRetrievePublicProfileStatistics(params: RetrievePublicProfile
   const [retrieved, setRetrieved] = React.useState(RetrievalStatus.REQUESTED); 
 
   // Define the public profile statistics to be returned.
-  const [profileStatistics, setProfileStatistics] = React.useState<PublicProfileStatistics>({
-    ravesCount: '',
-    subscriberCount: '' 
-  });
+  //const [profileStatistics, setProfileStatistics] = React.useState<PublicProfileStatistics>({
+    //ravesCount: '',
+    //subscriberCount: '' 
+  //});
+  // Define the public profile statistics to be returned.
+  const [profileStatistics, setProfileStatistics] = React.useState<string>('');
 
   /**
    * Handle state updates based on the presence of a user id.
@@ -64,19 +69,23 @@ export function useRetrievePublicProfileStatistics(params: RetrievePublicProfile
         // Set the review and update the retrieval state.
         if (setProfileStatistics) {
 
-          let ravesCount: string = '';
+          let result: string = '';
 
-          // Format the rave count text.
-          if (response.statistics.ravesCount > 0) {
-            ravesCount = response.statistics.ravesCount < 2 ?
-              `1 rave` :
-              `${response.statistics.ravesCount} raves`;
+          const ravesCount: string = CountIdentifier(response.statistics.ravesCount)('rave');
+
+          result += ravesCount;
+
+          if (response.statistics.followers > 0) {
+            const followerCount: string = CountIdentifier(response.statistics.followers)('follower');
+
+            if (response.statistics.ravesCount > 0) {
+              result += ` | `;
+            }
+
+            result += `${followerCount}`;
           }
 
-          setProfileStatistics({
-            ...profileStatistics,
-            ravesCount: ravesCount
-          });
+          setProfileStatistics(result);
 
           setRetrieved(RetrievalStatus.SUCCESS);
         } else {

@@ -6,5 +6,5 @@
 export interface ChannelTitleProps {
   avatar?: string;
   handle: string;
-  ravesCount: string;
+  statistics: string;
 }

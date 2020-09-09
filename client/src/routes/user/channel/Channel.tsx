@@ -71,6 +71,42 @@ const useStyles = makeStyles((theme: Theme) =>
 );
 
 /**
+ * Formats the raves count and followers into a statistics string.
+ *
+ * @param { number } ravesCount - the number of raves.
+ * @param { number } followers - the number of followers.
+ *
+ * @return string
+ */
+const retrieveStatistics: (
+  ravesCount: number
+) => (
+  followersCount: number
+) => string = (
+  ravesCount: number
+) => (
+  followersCount: number
+): string => {
+    let statistics: string = '';
+
+    const raves: string = CountIdentifier(ravesCount)('rave');
+
+    statistics += ravesCount;
+
+    if (followersCount > 0) {
+      const followers: string = CountIdentifier(followersCount)('follower');
+
+      if (ravesCount > 0) {
+        statistics += ` | `;
+      }
+
+      statistics += `${followers}`;
+    }
+
+  return statistics;
+}
+
+/**
  * Loads the channel from the api before rendering the component the first time.
  * 
  * @param { ReviewDetailsProps } props - the review details properties.
@@ -87,12 +123,18 @@ const frontloadReviewDetails = async (props: ChannelProps) => {
     if (response.channel && props.updateActive) {
 
       if (response.channel.profile) {
+        const statistics: string = retrieveStatistics(
+          response.channel.profile.statistics.ravesCount
+        )(response.channel.profile.statistics.followers); 
+
         const channelDetails = {
           profile: {
             _id: response.channel.profile._id,
             avatar: response.channel.profile.avatar,
+            followers: response.channel.profile.statistics.followers,
             handle: response.channel.profile.handle,
-            ravesCount: CountIdentifier(response.channel.reviews ? response.channel.reviews.length : 0)('rave')
+            ravesCount: response.channel.profile.statistics.ravesCount,
+            statistics: statistics
           },
           reviews: response.channel.reviews
         };
@@ -165,7 +207,7 @@ const Channel: React.FC<ChannelProps> = (props: ChannelProps) => {
                   <ChannelTitle
                     avatar={props.channel.profile.avatar}
                     handle={props.channel.profile.handle}
-                    ravesCount={props.channel.profile.ravesCount || ''} />
+                    statistics={props.channel.profile.statistics || ''} />
                 </Grid>
               }
               {props.channel.reviews && props.channel.reviews.length > 0 &&

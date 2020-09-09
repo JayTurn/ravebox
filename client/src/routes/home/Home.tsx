@@ -124,7 +124,12 @@ const useStyles = makeStyles((theme: Theme) =>
       textAlign: 'center'
     },
     introTextLarge: {
-      fontSize: '2.5rem'
+      fontSize: '2.5rem',
+      marginTop: theme.spacing(10),
+      marginBottom: theme.spacing(10),
+    },
+    tempCategorySmall: {
+      marginBottom: theme.spacing(-2.5)
     }
   })
 );
@@ -233,7 +238,7 @@ const Home: React.FC<HomeProps> = (props: HomeProps) => {
                 }
               )}
             >
-              Make raves. Tell it your way. 
+              Make raves.
             </Typography>
           </Grid>
           <Grid item xs={12}>
@@ -245,6 +250,26 @@ const Home: React.FC<HomeProps> = (props: HomeProps) => {
           </Grid>
         </Grid>
       </Grid>
+      <Grid item xs={12} className={clsx({
+        [classes.tempCategorySmall]: !largeScreen
+      })}>
+        {props.categoryGroup && props.categoryGroup[queries[0]] &&
+          <ListByQuery
+            context={ScreenContext.HOME}
+            listType={ReviewListType.CATEGORY}
+            presentationType={PresentationType.GRID}
+            reviews={props.categoryGroup[queries[0]]}
+            title={
+              <ListTitle
+                title={`Latest raves`}
+                url={`/categories/${categoryList[0].key}`}
+                presentationType={PresentationType.GRID} 
+              />
+            }
+          />
+        }
+      </Grid>
+      {/*
       <Grid item xs={12}>
         {props.categoryGroup && props.categoryGroup[queries[0]] &&
           <ListByQuery
@@ -279,6 +304,7 @@ const Home: React.FC<HomeProps> = (props: HomeProps) => {
           />
         }
       </Grid>
+      */}
       <ContentBlock
         background={ColorStyle.SECONDARY}
         title={
@@ -338,6 +364,7 @@ const Home: React.FC<HomeProps> = (props: HomeProps) => {
         </Grid>
       </Grid>*/}
       {queries.map((query: string, index: number) => {
+        /*
         if (index < 2) {
           return;
         }
@@ -362,6 +389,7 @@ const Home: React.FC<HomeProps> = (props: HomeProps) => {
             />
           </Grid>
         );
+        */
       })}
     </Grid>
   );

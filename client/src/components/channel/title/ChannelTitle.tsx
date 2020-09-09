@@ -89,8 +89,8 @@ const ChannelTitle: React.FC<ChannelTitleProps> = (props: ChannelTitleProps) => 
           </Grid>
           <Grid item className={classes.handleContainer}>
             <Typography variant='h1' className={classes.handleText}>{props.handle}</Typography>
-            {props.ravesCount &&
-              <Typography variant='body1' className={classes.raveCount}>{props.ravesCount}</Typography>
+            {props.statistics &&
+              <Typography variant='body1' className={classes.raveCount}>{props.statistics}</Typography>
             }
           </Grid>
         </Grid>

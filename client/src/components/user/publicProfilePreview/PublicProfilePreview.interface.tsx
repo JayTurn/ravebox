@@ -29,7 +29,7 @@ export interface RetrievePublicProfileStatisticsParams {
 export interface PublicProfileStatisticsResponse {
   statistics: {
     ravesCount: number;
-    subscriberCount: number;
+    followers: number;
   };
 }
 
@@ -38,5 +38,5 @@ export interface PublicProfileStatisticsResponse {
  */
 export interface PublicProfileStatistics {
   ravesCount: string;
-  subscriberCount: string;
+  followers: string;
 }

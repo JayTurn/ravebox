@@ -27,7 +27,9 @@ export interface ChannelDetails {
     _id: string;
     avatar?: string;
     handle: string;
-    ravesCount: string;
+    ravesCount: number;
+    followers: number;
+    statistics?: string;
   };
   reviews?: Array<Review>;
 }
@@ -60,5 +62,16 @@ export interface RetrieveChannelParams {
  * Response interface for a channel request.
  */
 export interface ChannelResponse extends APIResponse {
-  channel: ChannelDetails;
+  channel: {
+    profile?: {
+      _id: string;
+      avatar?: string;
+      handle: string;
+      statistics: {
+        ravesCount: number;
+        followers: number;
+      }
+    };
+    reviews?: Array<Review>;
+  };
 }

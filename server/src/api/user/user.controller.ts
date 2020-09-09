@@ -1175,22 +1175,20 @@ export default class UserController {
       return;
     }
 
-    // Create a user statistics object to be returned.
-    const userStatistics: ProfileStatistics = {
-      ravesCount: 0
-    };
-
-    Review.countDocuments({
-      user: userId,
-      published: Workflow.PUBLISHED
+    User.findById(userId)
+    .populate({
+      path: 'statistics',
+      model: 'UserStatistic'
     })
-    .then((count: number) => {
-      userStatistics.ravesCount = count;
+    .then((userDetails: UserDetailsDocument) => {
 
       // Set the response object.
       const responseObject: ResponseObject = Connect.setResponse({
         data: {
-          statistics: userStatistics
+          statistics: {
+            ravesCount: userDetails.statistics.ravesCount,
+            followers: userDetails.statistics.followers
+          }
         }
       }, 200, 'User profile statistics returned successfully');
 
@@ -1202,7 +1200,7 @@ export default class UserController {
       // Define the responseObject.
       const responseObject: ResponseObject = Connect.setResponse({
           data: {
-            errorCode: 'REVIEW_COUNT_FAILED_FOR_USER',
+            errorCode: 'USER_STATISTICS_FAILED_FOR_USER',
             title: `We couldn't find results for the requested user`
           },
           error: error

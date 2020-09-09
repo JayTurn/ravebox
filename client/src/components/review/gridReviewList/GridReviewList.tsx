@@ -35,7 +35,7 @@ import { GridReviewListProps } from './GridReviewList.interface';
  */
 const useStyles = makeStyles((theme: Theme) => createStyles({
   container: {
-    padding: theme.spacing(2, 0, 4),
+    padding: theme.spacing(3.5, 0, 2.5),
     flexWrap: 'nowrap'
   },
   divider: {
@@ -79,7 +79,7 @@ const GridReviewList: React.FC<GridReviewListProps> = (props: GridReviewListProp
                   [classes.listContainer]: largeScreen
                 })}
               >
-                <Grid container direction='row' spacing={3}>
+                <Grid container direction='row' spacing={largeScreen ? 3 : 0}>
                   {(props.reviews as Array<Review>).map((review: Review) => {
                     return (
                       <Grid item xs={12} sm={6} md={4} lg={3} key={review._id}
