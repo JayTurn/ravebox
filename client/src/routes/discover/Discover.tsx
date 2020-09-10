@@ -25,6 +25,7 @@ import { Helmet } from 'react-helmet';
 import * as React from 'react';
 import Typography from '@material-ui/core/Typography';
 import useMediaQuery from '@material-ui/core/useMediaQuery';
+import { withRouter } from 'react-router';
 
 // Actions.
 import {
@@ -179,7 +180,7 @@ const Discover: React.FC<DiscoverProps> = (props: DiscoverProps) => {
     if (!pageViewed) {
       analytics.trackPageView({
         properties: {
-          path: '/discover',
+          path: `${props.location.pathname}${props.location.search}`,
           title: 'Discover'
         },
         amplitude: {
@@ -261,7 +262,7 @@ const mapDispatchToProps = (dispatch: Dispatch<AnyAction>) =>
     dispatch
   );
 
-export default connect(
+export default withRouter(connect(
     mapStatetoProps,
     mapDispatchToProps
 )(frontloadConnect(
@@ -269,5 +270,5 @@ export default connect(
     noServerRender: false,
     onMount: true,
     onUpdate: false
-  }
-)(Discover));
+  })(Discover)
+));

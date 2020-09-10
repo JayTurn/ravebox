@@ -169,7 +169,7 @@ const Search: React.FC<SearchProps> = (props: SearchProps) => {
 
       analytics.trackPageView({
         properties: {
-          path: props.location.pathname,
+          path: `${props.location.pathname}${props.location.search}`,
           title: 'Search'
         },
         data: {

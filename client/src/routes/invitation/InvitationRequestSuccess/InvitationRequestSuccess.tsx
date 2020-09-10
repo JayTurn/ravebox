@@ -89,7 +89,7 @@ const InvitationRequestSuccess: React.FC<InvitationRequestSuccessProps> = (
     if (!pageViewed) {
       analytics.trackPageView({
         properties: {
-          path: props.location.pathname,
+          path: `${props.location.pathname}${props.location.search}`,
           title: 'Applied to join waitlist'
         }
       });

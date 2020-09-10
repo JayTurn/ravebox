@@ -44,7 +44,7 @@ const AddProduct: React.FC<AddProductProps> = (props: AddProductProps) => {
     if (!pageViewed) {
       analytics.trackPageView({
         properties: {
-          path: props.location.pathname,
+          path: `${props.location.pathname}${props.location.search}`,
           title: 'Add a new product'
         }
       });

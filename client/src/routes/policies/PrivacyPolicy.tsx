@@ -6,6 +6,7 @@
 // Modules.
 import * as React from 'react';
 import clsx from 'clsx';
+import { connect } from 'react-redux';
 import {
   createStyles,
   makeStyles,
@@ -18,6 +19,7 @@ import { Helmet } from 'react-helmet';
 import Link from '@material-ui/core/Link';
 import Typography from '@material-ui/core/Typography';
 import useMediaQuery from '@material-ui/core/useMediaQuery';
+import { withRouter } from 'react-router';
 
 // Components.
 import LinkElement from '../../components/elements/link/Link';
@@ -72,7 +74,7 @@ const PrivacyPolicy: React.FC<PrivacyPolicyProps> = (props: PrivacyPolicyProps) 
     if (!pageViewed) {
       analytics.trackPageView({
         properties: {
-          path: '/policies/privacy-policy',
+          path: `${props.location.pathname}${props.location.search}`,
           title: 'Privacy policy'
         },
         amplitude: {
@@ -223,4 +225,16 @@ const PrivacyPolicy: React.FC<PrivacyPolicyProps> = (props: PrivacyPolicyProps) 
   );
 }
 
-export default PrivacyPolicy;
+/**
+ * Map the redux state to the discover properties.
+ *
+ */
+function mapStateToProps(state: any, ownProps: PrivacyPolicyProps) {
+  return {
+    ...ownProps
+  };
+}
+
+export default withRouter(connect(
+    mapStateToProps
+)(PrivacyPolicy));

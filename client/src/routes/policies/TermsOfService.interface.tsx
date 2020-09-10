@@ -3,8 +3,11 @@
  * Interfaces for the terms route.
  */
 
+// Modules.
+import { RouteComponentProps } from 'react-router';
+
 /**
  * Terms of service component properties.
  */
-export interface TermsOfServiceProps {}
+export interface TermsOfServiceProps extends RouteComponentProps { }
 

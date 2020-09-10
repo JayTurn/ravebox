@@ -26,6 +26,7 @@ import * as React from 'react';
 import LinkElement from '../../components/elements/link/Link';
 import Typography from '@material-ui/core/Typography';
 import useMediaQuery from '@material-ui/core/useMediaQuery';
+import { withRouter } from 'react-router';
 
 // Actions.
 import {
@@ -192,7 +193,7 @@ const Home: React.FC<HomeProps> = (props: HomeProps) => {
     if (!pageViewed) {
       analytics.trackPageView({
         properties: {
-          path: '/',
+          path: `${props.location.pathname}${props.location.search}`,
           title: 'Home'
         },
         amplitude: {
@@ -421,7 +422,7 @@ const mapDispatchToProps = (dispatch: Dispatch<AnyAction>) =>
     dispatch
   );
 
-export default connect(
+export default withRouter(connect(
     mapStatetoProps,
     mapDispatchToProps
 )(frontloadConnect(
@@ -431,4 +432,4 @@ export default connect(
     onUpdate: false
   }
 )(Home)
-);
+));

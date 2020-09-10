@@ -92,7 +92,7 @@ const InvitationRequest: React.FC<InvitationRequestProps> = (props: InvitationRe
     if (!pageViewed) {
       analytics.trackPageView({
         properties: {
-          path: props.location.pathname,
+          path: `${props.location.pathname}${props.location.search}`,
           title: 'Apply to join'
         },
         amplitude: {

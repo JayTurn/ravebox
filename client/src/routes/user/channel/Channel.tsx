@@ -182,7 +182,7 @@ const Channel: React.FC<ChannelProps> = (props: ChannelProps) => {
     if (!pageViewed && props.channel && props.channel.profile) {
       analytics.trackPageView({
         properties: {
-          path: props.location.pathname,
+          path: `${props.location.pathname}${props.location.search}`,
           title: `${props.channel.profile.handle} reviews`
         }
       });

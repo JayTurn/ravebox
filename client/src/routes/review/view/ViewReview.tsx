@@ -101,7 +101,7 @@ const ViewReview: React.FC<ViewReviewProps> = (props: ViewReviewProps) => {
 
       analytics.trackPageView({
         properties: {
-          path: props.location.pathname,
+          path: `${props.location.pathname}${props.location.search}`,
           title: `${review.user.handle} reviews ${review.product.brand} ${review.product.name}`
         },
         data: data,
