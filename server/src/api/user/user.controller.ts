@@ -52,7 +52,6 @@ import {
   UserDetailsDocument
 } from './user.interface';
 import {
-  ProfileStatistics,
   UserStatistics as UserStats,
   UserStatisticsDocument
 } from '../userStatistics/userStatistics.interface'
