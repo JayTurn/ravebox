@@ -1,15 +1,15 @@
-FROM node:13.12.0-alpine3.11
+FROM node:14.10.0-alpine3.12
 
 ADD ./package.json /client/package.json
 WORKDIR /client
 
-RUN apk --no-cache add --virtual native-deps \
+RUN apk --no-cache add --update --virtual native-deps \
       g++ \
       gcc \
       git \
       make \
       openssh \
-      python \
+      python3 \
     && apk update && apk upgrade \
     && yarn global add typescript node-sass \
     && yarn install --force \

@@ -261,7 +261,7 @@ const Home: React.FC<HomeProps> = (props: HomeProps) => {
             reviews={props.categoryGroup[queries[0]]}
             title={
               <ListTitle
-                title={`Latest raves`}
+                title={`Featured raves`}
                 url={`/categories/${categoryList[0].key}`}
                 presentationType={PresentationType.GRID} 
               />

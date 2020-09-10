@@ -34,6 +34,8 @@ export const AnalyticsProvider = (
   // Create a state for the amplitude instance.
   const [Amplitude, setAmplitude] = React.useState<AmplitudeClient | null>(null);
 
+  let ReactPixel: any;
+
   /**
    * Initializes the amplitude client if it doesn't exist already.
    */
@@ -50,6 +52,16 @@ export const AnalyticsProvider = (
 
         // Initialize google analytics.
         ReactGA.initialize(`${process.env.RAZZLE_GA_KEY}`);
+
+        if (process.env.RAZZLE_ENVIRONMENT !== 'local') {
+          ReactPixel = require('react-facebook-pixel');
+
+          // Initialize facebook pixel.
+          ReactPixel.default.init(`${process.env.RAZZLE_FB_KEY}`, undefined, {
+            autoConfig: true,
+            debug: false
+          });
+        }
 
         resolve(amplitudeInstance);
       } else {
@@ -156,14 +168,26 @@ export const AnalyticsProvider = (
       if (page.amplitude) {
         trackEvent(page.amplitude.label)(page.data);
       }
+
       ReactGA.pageview(page.properties.path, undefined, page.properties.title);
+
+      if (process.env.RAZZLE_ENVIRONMENT !== 'local' && ReactPixel) {
+        ReactPixel.default.pageView();
+      }
+
     } else {
       initialize()
         .then((instance: AmplitudeClient) => {
           if (page.amplitude) {
             trackEvent(page.amplitude.label)(page.data);
           }
+
           ReactGA.pageview(page.properties.path, undefined, page.properties.title);
+
+          if (process.env.RAZZLE_ENVIRONMENT !== 'local' && ReactPixel) {
+            ReactPixel.default.pageView();
+          }
+
         });
     }
       

@@ -16,9 +16,9 @@ import ExpandLessRoundedIcon from '@material-ui/icons/ExpandLessRounded';
 import ExpandMoreRoundedIcon from '@material-ui/icons/ExpandMoreRounded';
 import Grid from '@material-ui/core/Grid';
 import IconButton from '@material-ui/core/IconButton';
-import MuiExpansionPanel from '@material-ui/core/ExpansionPanel';
-import MuiExpansionPanelSummary from '@material-ui/core/ExpansionPanelSummary';
-import MuiExpansionPanelDetails from '@material-ui/core/ExpansionPanelDetails';
+import Accordion from '@material-ui/core/Accordion';
+import AccordionSummary from '@material-ui/core/AccordionSummary';
+import AccordionDetails from '@material-ui/core/AccordionDetails';
 import * as React from 'react';
 import Typography from '@material-ui/core/Typography';
 import useMediaQuery from '@material-ui/core/useMediaQuery';
@@ -61,7 +61,7 @@ const ExpansionPanel = withStyles({
   },
   expanded: {
   }
-})(MuiExpansionPanel);
+})(Accordion);
 
 /**
  * Styled expansion panel summary.
@@ -79,7 +79,7 @@ const ExpansionPanelSummary = withStyles(theme => ({
     marginBottom: `0px !important`,
     marginTop: `0px !important`
   },
-}))(MuiExpansionPanelSummary);
+}))(AccordionSummary);
 
 /**
  * Styled expansion panel details.
@@ -89,7 +89,7 @@ const ExpansionPanelDetails = withStyles({
     flexDirection: 'column',
     padding: `0 0 8px`
   }
-})(MuiExpansionPanelDetails);
+})(AccordionDetails);
 
 /*
  * Renders the description component for a review.

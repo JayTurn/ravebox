@@ -15,7 +15,7 @@ import Fade from '@material-ui/core/Fade';
 import Grid from '@material-ui/core/Grid';
 import * as React from 'react';
 import Typography from '@material-ui/core/Typography';
-import { useDropzone } from 'react-dropzone';
+import { useDropzone, FileRejection } from 'react-dropzone';
 import VideocamIcon from '@material-ui/icons/Videocam';
 
 // Interfaces.
@@ -87,11 +87,11 @@ const FileUpload: React.FC<FileUploadProps> = (props: FileUploadProps) => {
   // Retrieve the dropzone properties.
   const {
     acceptedFiles,
+    fileRejections,
     getRootProps,
     getInputProps,
     inputRef,
     isDragActive,
-    rejectedFiles,
   } = useDropzone({
     accept: 'video/*'
   });
@@ -113,9 +113,9 @@ const FileUpload: React.FC<FileUploadProps> = (props: FileUploadProps) => {
   })
 
   // Handle rejected file types.
-  rejectedFiles.map((file: File) => {
+  fileRejections.map((fileRejection: FileRejection) => {
     if (errors.length <= 0) {
-      setErrors([`"${file.name}" is not an accepted video file`]);
+      setErrors([`"${fileRejection.file.name}" is not an accepted video file`]);
     }
   });
 
