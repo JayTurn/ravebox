@@ -24,7 +24,7 @@ import LinearProgress from '@material-ui/core/LinearProgress';
 import Modal from '@material-ui/core/Modal';
 import * as React from 'react';
 import Typography from '@material-ui/core/Typography';
-import { useDropzone } from 'react-dropzone';
+import { useDropzone, FileRejection } from 'react-dropzone';
 import VideocamIcon from '@material-ui/icons/Videocam';
 
 // Components.
@@ -279,11 +279,11 @@ const ImageUpload: React.FC<ImageUploadProps> = (props: ImageUploadProps) => {
   // Retrieve the dropzone properties.
   const {
     acceptedFiles,
+    fileRejections,
     getRootProps,
     getInputProps,
     inputRef,
     isDragActive,
-    rejectedFiles,
   } = useDropzone({
     accept: 'image/*'
   });
@@ -383,9 +383,9 @@ const ImageUpload: React.FC<ImageUploadProps> = (props: ImageUploadProps) => {
    *
    * @param { File } file - the rejected file.
    */
-  rejectedFiles.map((file: File) => {
+  fileRejections.map((fileRejection: FileRejection) => {
     if (errors.length <= 0) {
-      setErrors([`"${file.name}" is not an accepted image file`]);
+      setErrors([`"${fileRejection.file.name}" is not an accepted image file`]);
     }
   });
 
@@ -462,7 +462,8 @@ const ImageUpload: React.FC<ImageUploadProps> = (props: ImageUploadProps) => {
       body: JSON.stringify({
         imageTitle: imageFile.name,
         imageSize: imageFile.size,
-        imageType: imageFile.type
+        imageType: imageFile.type,
+        id: props.id
       })
     })
     .then((response: PresignedImageResponse) => {
@@ -560,10 +561,10 @@ const ImageUpload: React.FC<ImageUploadProps> = (props: ImageUploadProps) => {
             >
               <Box className={clsx(classes.cropImage)}>
                 <Cropper
-                  aspect={1}
+                  aspect={props.aspectRatio ? props.aspectRatio : 1}
                   image={imageSrc}
                   crop={crop}
-                  cropShape='round'
+                  cropShape={props.circleCrop ? 'round' : 'rect'}
                   onCropChange={setCrop}
                   onCropComplete={updateCrop}
                   onZoomChange={setZoom}

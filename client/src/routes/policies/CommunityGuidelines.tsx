@@ -6,6 +6,7 @@
 // Modules.
 import * as React from 'react';
 import clsx from 'clsx';
+import { connect } from 'react-redux';
 import {
   createStyles, makeStyles, Theme,
   useTheme,
@@ -16,6 +17,7 @@ import { Helmet } from 'react-helmet';
 import Link from '@material-ui/core/Link';
 import Typography from '@material-ui/core/Typography';
 import useMediaQuery from '@material-ui/core/useMediaQuery';
+import { withRouter } from 'react-router';
 
 // Components.
 import LinkElement from '../../components/elements/link/Link';
@@ -71,7 +73,7 @@ const CommunityGuidelines: React.FC<CommunityGuidelinesProps> = (props: Communit
     if (!pageViewed) {
       analytics.trackPageView({
         properties: {
-          path: '/policies/community-guidelines',
+          path: `${props.location.pathname}${props.location.search}`,
           title: 'Community Guidelines'
         },
         amplitude: {
@@ -165,4 +167,16 @@ const CommunityGuidelines: React.FC<CommunityGuidelinesProps> = (props: Communit
   );
 }
 
-export default CommunityGuidelines;
+/**
+ * Map the redux state to the discover properties.
+ *
+ */
+function mapStateToProps(state: any, ownProps: CommunityGuidelinesProps) {
+  return {
+    ...ownProps
+  };
+}
+
+export default withRouter(connect(
+    mapStateToProps,
+)(CommunityGuidelines));

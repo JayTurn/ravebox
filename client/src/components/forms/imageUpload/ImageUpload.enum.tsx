@@ -8,7 +8,7 @@
  */
 export enum ImageUploadPaths {
   AVATAR = 'user/image/request',
-  RAVE_POSTER = 'review/poster/request'
+  RAVE_POSTER = 'review/image/request'
 }
 
 /**

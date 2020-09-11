@@ -370,6 +370,7 @@ const ChangeProfile: React.FC<ChangeProfileProps> = (props: ChangeProfileProps) 
                 <ImageUpload
                   id={props.profile._id}
                   buttonTitle='Change profile photo'
+                  circleCrop={true}
                   maxFileSize={0.1}
                   path={props.profile.avatar || ''} 
                   requestPath={ImageUploadPaths.AVATAR}

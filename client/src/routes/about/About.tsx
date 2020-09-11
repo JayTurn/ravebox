@@ -6,6 +6,7 @@
 // Modules.
 import Box from '@material-ui/core/Box';
 import clsx from 'clsx';
+import { connect } from 'react-redux';
 import {
   createStyles,
   makeStyles,
@@ -19,6 +20,7 @@ import LinkElement from '../../components/elements/link/Link';
 import Typography from '@material-ui/core/Typography';
 import * as React from 'react';
 import useMediaQuery from '@material-ui/core/useMediaQuery';
+import { withRouter } from 'react-router';
 
 // Components.
 import ContentBlock from '../../components/elements/contentBlock/ContentBlock';
@@ -120,7 +122,7 @@ const About: React.FC<AboutProps> = (props: AboutProps) => {
     if (!pageViewed) {
       analytics.trackPageView({
         properties: {
-          path: '/about',
+          path: `${props.location.pathname}${props.location.search}`,
           title: 'About Ravebox'
         },
         amplitude: {
@@ -244,4 +246,16 @@ const About: React.FC<AboutProps> = (props: AboutProps) => {
   );
 }
 
-export default About;
+/**
+ * Map the redux state to the discover properties.
+ *
+ */
+function mapStateToProps(state: any, ownProps: AboutProps) {
+  return {
+    ...ownProps
+  };
+}
+
+export default withRouter(connect(
+  mapStateToProps
+)(About));

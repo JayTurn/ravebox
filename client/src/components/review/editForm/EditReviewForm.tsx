@@ -7,6 +7,7 @@
 import API from '../../../utils/api/Api.model';
 import Box from '@material-ui/core/Box';
 import Button from '@material-ui/core/Button';
+import clsx from 'clsx';
 import Cookies from 'universal-cookie';
 import {
   createStyles,
@@ -22,15 +23,18 @@ import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
 import LinearProgress from '@material-ui/core/LinearProgress';
 import * as React from 'react';
+import Skeleton from '@material-ui/lab/Skeleton';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router';
 import { bindActionCreators, Dispatch, AnyAction } from 'redux';
 import Typography from '@material-ui/core/Typography';
+import useMediaQuery from '@material-ui/core/useMediaQuery';
 import { VariantType, useSnackbar } from 'notistack';
 
 // Components.
 import Input from '../../forms/input/Input';
 import FileUpload from '../../forms/fileUpload/FileUpload';
+import ImageUpload from '../../forms/imageUpload/ImageUpload';
 import RaveVideo from '../../raveVideo/RaveVideo';
 import Recommendation from '../recommendation/Recommendation';
 import AddReviewLink from '../addReviewLink/AddReviewLink';
@@ -39,11 +43,12 @@ import StyledButton from '../../elements/buttons/StyledButton';
 import PaddedDivider from '../../elements/dividers/PaddedDivider';
 
 // Enumerators.
+import { FileUploadState } from '../../forms/fileUpload/FileUpload.enum';
+import { ImageUploadPaths } from '../../forms/imageUpload/ImageUpload.enum';
+import { Recommended } from '../recommendation/Recommendation.enum';
 import {
   RequestType
 } from '../../../utils/api/Api.enum';
-import { Recommended } from '../recommendation/Recommendation.enum';
-import { FileUploadState } from '../../forms/fileUpload/FileUpload.enum';
 
 // Hooks.
 import { useValidation } from '../../forms/validation/useValidation.hook';
@@ -81,6 +86,12 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
     paddingLeft: theme.spacing(2),
     paddingRight: theme.spacing(2),
   },
+  poster: {
+    maxWidth: '100%'
+  },
+  posterWrapper: {
+    maxWidth: 400
+  },
   progressNumber: {
     border: `2px solid ${theme.palette.primary.dark}`,
     borderRadius: 50,
@@ -113,7 +124,8 @@ const reviewValidation: ValidationSchema = {
  */
 const EditReviewForm: React.FC<EditReviewFormProps> = (props: EditReviewFormProps) => {
   const classes = useStyles(),
-        theme = useTheme();
+        theme = useTheme(),
+        largeScreen = useMediaQuery(theme.breakpoints.up('md'));
   // Register the snackbar for success updates.
   const { enqueueSnackbar } = useSnackbar();
 
@@ -128,6 +140,7 @@ const EditReviewForm: React.FC<EditReviewFormProps> = (props: EditReviewFormProp
     }],
     _id: '',
     sponsored: false,
+    thumbnail: '',
     title: '',
     recommended: Recommended.RECOMMENDED,
     url: ''
@@ -149,6 +162,9 @@ const EditReviewForm: React.FC<EditReviewFormProps> = (props: EditReviewFormProp
     completion: 0,  
     state: FileUploadState.WAITING
   });
+
+  // Declares the poster update status.
+  const [updatingPoster, setUpdatingPoster] = React.useState<boolean>(false);
 
   // Validation hook.
   const {
@@ -261,6 +277,23 @@ const EditReviewForm: React.FC<EditReviewFormProps> = (props: EditReviewFormProp
   }
 
   /**
+   * Updates the poster image and submits the updated review.
+   *
+   * @param { string } path - the path to the poster image.
+   */
+  const updatePoster: (
+    path: string
+  ) => void = (
+    path: string
+  ): void => {
+
+    setUpdatingPoster(true);
+
+    submit(path);
+
+  }
+
+  /**
    * Handles the updating of the metadata file to trigger the video processing.
    */
   const uploadMetadata: (
@@ -295,12 +328,24 @@ const EditReviewForm: React.FC<EditReviewFormProps> = (props: EditReviewFormProp
   }
 
   /**
+   * Handles the submit button functionality.
+   */
+  const handleSubmit: (
+    e: React.MouseEvent<HTMLButtonElement>
+  ) => void = (
+    e: React.MouseEvent<HTMLButtonElement>
+  ): void => {
+    submit();
+  }
+
+
+  /**
    * Submits the edited review.
    */
   const submit: (
-    e: React.MouseEvent<HTMLButtonElement>
+    updatedPoster?: string
   ) => Promise<void> = async (
-    e: React.MouseEvent<HTMLButtonElement>
+    updatedPoster?: string
   ): Promise<void> => {
 
     // Don't do anything if we're already submitting.
@@ -308,21 +353,23 @@ const EditReviewForm: React.FC<EditReviewFormProps> = (props: EditReviewFormProp
       return;
     }
 
-    // Validate all of the fieds in the form.
-    const errors: Array<string> = await validateAllFields({
-      'title': review.title
-    });
+    if (!updatedPoster) {
+      // Validate all of the fieds in the form.
+      const errors: Array<string> = await validateAllFields({
+        'title': review.title
+      });
 
-    // If we have any errors, set the messages on the form and prevent the
-    // submission.
-    if (errors.length > 0) {
-      setFormErrorMessages(errors);
-      setSubmitting(false)
-      return;
+      // If we have any errors, set the messages on the form and prevent the
+      // submission.
+      if (errors.length > 0) {
+        setFormErrorMessages(errors);
+        setSubmitting(false)
+        return;
+      }
+
+      // Set the submission state.
+      setSubmitting(true)
     }
-
-    // Set the submission state.
-    setSubmitting(true)
 
     // Hide the product if it's currently displaying.
     props.toggleProduct(false);
@@ -333,6 +380,7 @@ const EditReviewForm: React.FC<EditReviewFormProps> = (props: EditReviewFormProp
       links: review.links,
       _id: review._id,
       sponsored: review.sponsored,
+      thumbnail: updatedPoster ? updatedPoster : review.thumbnail,
       title: review.title,
       recommended: review.recommended
     };
@@ -361,8 +409,23 @@ const EditReviewForm: React.FC<EditReviewFormProps> = (props: EditReviewFormProp
       // If we didn't submit a new video file, display the success snackbar
       // message and prevent additional handling.
       if (!editedReview.videoTitle) {
-        setSubmitting(false);
-        enqueueSnackbar('Rave updated successfully', { variant: 'success' });
+        setTimeout(() => {
+
+          setUpdatingPoster(false);
+
+          // Set the submission state.
+          setSubmitting(false);
+
+          setReview({
+            ...response.review
+          });
+
+          // Display the success message to the user.
+          enqueueSnackbar('Rave updated successfully', { variant: 'success' });
+
+
+        }, updatedPoster ? 5000 : 0);
+
         return;
       }
 
@@ -445,6 +508,26 @@ const EditReviewForm: React.FC<EditReviewFormProps> = (props: EditReviewFormProp
                   required={true}
                   type='text'
                   title="Title"
+                />
+              </Grid>
+              <Grid item xs={12} lg={6} style={{marginBottom: '1.5rem', width: '100%'}}>
+                <Box className={clsx(classes.posterWrapper)}>
+                  {updatingPoster ? (
+                    <Skeleton animation='wave' variant='rect' width={400} height={300} />
+                  ) : (
+                      <img src={review.thumbnail} alt={`${review.title} poster image`} className={clsx(classes.poster)} />
+                  )}
+                </Box>
+              </Grid>
+              <Grid item xs={12} lg={6} style={{marginBottom: '1.5rem', width: '100%'}}>
+                <ImageUpload 
+                  aspectRatio={4/3}
+                  id={review._id}
+                  buttonTitle='Change rave poster'
+                  maxFileSize={0.2}
+                  path={review.thumbnail || ''} 
+                  requestPath={ImageUploadPaths.RAVE_POSTER}
+                  update={updatePoster} 
                 />
               </Grid>
               <Recommendation 
@@ -543,7 +626,7 @@ const EditReviewForm: React.FC<EditReviewFormProps> = (props: EditReviewFormProp
               )}
               <Grid item xs={12}>
                 <StyledButton
-                  clickAction={submit}
+                  clickAction={handleSubmit}
                   color='secondary'
                   disabled={submitting}
                   size='large'

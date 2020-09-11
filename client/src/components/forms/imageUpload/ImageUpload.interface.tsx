@@ -14,7 +14,9 @@ import {
  */
 export interface ImageUploadProps {
   id: string;
+  aspectRatio?: number;
   buttonTitle: string;
+  circleCrop?: boolean;
   maxFileSize?: number;
   path: string;
   requestPath: ImageUploadPaths;

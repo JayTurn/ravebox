@@ -90,12 +90,30 @@ export function useRetrieveChannel(params: RetrieveChannelParams) {
         if (updateActive) {
 
           if (response.channel.profile) {
+            let statistics: string = '';
+
+            const ravesCount: string = CountIdentifier(response.channel.profile.statistics.ravesCount)('rave');
+
+            statistics += ravesCount;
+
+            if (response.channel.profile.statistics.followers > 0) {
+              const followerCount: string = CountIdentifier(response.channel.profile.statistics.followers)('follower');
+
+              if (response.channel.profile.statistics.ravesCount > 0) {
+                statistics += ` | `;
+              }
+
+              statistics += `${followerCount}`;
+            }
+
             const channelDetails = {
               profile: {
                 _id: response.channel.profile._id,
-                avatar: `${process.env.RAZZLE_CDN}${response.channel.profile.avatar}`,
+                avatar: response.channel.profile.avatar,
+                followers: response.channel.profile.statistics.followers,
                 handle: response.channel.profile.handle,
-                ravesCount: CountIdentifier(response.channel.reviews ? response.channel.reviews.length : 0)('rave')
+                ravesCount: response.channel.profile.statistics.ravesCount,
+                statistics: statistics
               },
               reviews: response.channel.reviews
             };

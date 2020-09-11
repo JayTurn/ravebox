@@ -290,7 +290,7 @@ const PrivateReviewCard: React.FC<PrivateReviewCardProps> = (props: PrivateRevie
         }
         <CardMedia
           className={clsx(classes.media)}
-          image={props.thumbnailURL}
+          image={props.thumbnail}
           src='/images/placeholder.png'
           title={`${props.product ? props.product.name : ''} review`}
         />

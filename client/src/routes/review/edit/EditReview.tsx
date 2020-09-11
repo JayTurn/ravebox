@@ -72,7 +72,7 @@ const EditReview: React.FC<EditReviewProps> = (props: EditReviewProps) => {
     if (!pageViewed && review._id) {
       analytics.trackPageView({
         properties: {
-          path: props.location.pathname,
+          path: `${props.location.pathname}${props.location.search}`,
           title: `Edit your rave`
         }
       });

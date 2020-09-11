@@ -82,7 +82,7 @@ const AddReview: React.FC<AddReviewProps> = (props: AddReviewProps) => {
     if (!pageViewed && product.brand) {
       analytics.trackPageView({
         properties: {
-          path: props.location.pathname,
+          path: `${props.location.pathname}${props.location.search}`,
           title: `Post a ${product.brand} ${product.name} review`
         }
       });

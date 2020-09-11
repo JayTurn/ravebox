@@ -209,7 +209,7 @@ const CategoryList: React.FC<CategoryListProps> = (props: CategoryListProps) => 
 
       analytics.trackPageView({
         properties: {
-          path: props.location.pathname,
+          path: `${props.location.pathname}${props.location.search}`,
           title: category.label
         },
         data: {

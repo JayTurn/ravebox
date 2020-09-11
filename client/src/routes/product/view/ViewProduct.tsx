@@ -207,7 +207,7 @@ const ViewProduct: React.FC<ViewProductProps> = (props: ViewProductProps) => {
 
       analytics.trackPageView({
         properties: {
-          path: props.location.pathname,
+          path: `${props.location.pathname}${props.location.search}`,
           title: `${product.brand} ${product.name} reviews`
         },
         data: {

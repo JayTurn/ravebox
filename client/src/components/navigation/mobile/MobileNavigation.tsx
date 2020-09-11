@@ -153,9 +153,9 @@ const MobileNavigation: React.FC<MobileNavigationProps> = (props: MobileNavigati
    * Handles the open and close handling of the drawer.
    */
   const toggleDrawer: (
-    e: React.KeyboardEvent | React.MouseEvent
+    e: React.SyntheticEvent
   ) => void = (
-    e: React.KeyboardEvent | React.MouseEvent
+    e: React.SyntheticEvent
   ): void => {
     if (
       e &&

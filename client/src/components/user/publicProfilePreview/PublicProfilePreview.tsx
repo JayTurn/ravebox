@@ -85,7 +85,7 @@ const PublicProfilePreview: React.FC<PublicProfilePreviewProps> = (props: Public
           to={`/user/channel/${props.handle}`}
         >
           {props.avatar ? (
-            <Avatar alt={props.handle} className={classes.avatar} src={`${process.env.RAZZLE_CDN}${props.avatar}`}/>
+            <Avatar alt={props.handle} className={classes.avatar} src={props.avatar}/>
           ): (
             <Avatar alt={props.handle} className={classes.avatarIcon}>{firstLetter}</Avatar>
           )}
@@ -98,8 +98,8 @@ const PublicProfilePreview: React.FC<PublicProfilePreviewProps> = (props: Public
           to={`/user/channel/${props.handle}`}
         >
           <Typography variant='body1' className={classes.handleText}>{props.handle}</Typography>
-          {profileStatistics.ravesCount &&
-            <Typography variant='body1' className={classes.raveCount}>{profileStatistics.ravesCount}</Typography>
+          {profileStatistics &&
+            <Typography variant='body1' className={classes.raveCount}>{profileStatistics}</Typography>
           }
         </NavLink>
       </Grid>

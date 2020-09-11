@@ -101,7 +101,7 @@ const Following: React.FC<FollowingProps> = (props: FollowingProps) => {
     if (!pageViewed) {
       analytics.trackPageView({
         properties: {
-          path: props.location.pathname,
+          path: `${props.location.pathname}${props.location.search}`,
           title: 'Following'
         }
       });

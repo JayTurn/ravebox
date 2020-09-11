@@ -81,7 +81,7 @@ const ProductPreviewCard: React.FC<ProductPreviewCardProps> = (
             {props.name}
           </Typography>
           <Typography variant='subtitle2' className={classes.cateogryName}>
-            {props.categories[0].label} > {props.categories[1].label}
+            {`${props.categories[0].label} > ${props.categories[1].label}`}
           </Typography>
         </Box>
       </Grid>

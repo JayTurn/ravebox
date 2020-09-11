@@ -53,6 +53,7 @@ class EnvConfig implements EnvironmentProperties {
     region: '',
     signatureVersion: ''
   };
+  public CDN: string;
   public elasticsearch: ElasticsearchProperties = {
     url: ''
   };

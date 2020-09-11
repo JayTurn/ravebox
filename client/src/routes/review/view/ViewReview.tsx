@@ -101,7 +101,7 @@ const ViewReview: React.FC<ViewReviewProps> = (props: ViewReviewProps) => {
 
       analytics.trackPageView({
         properties: {
-          path: props.location.pathname,
+          path: `${props.location.pathname}${props.location.search}`,
           title: `${review.user.handle} reviews ${review.product.brand} ${review.product.name}`
         },
         data: data,
@@ -124,6 +124,16 @@ const ViewReview: React.FC<ViewReviewProps> = (props: ViewReviewProps) => {
               <title>{props.review.user.handle} reviews {props.review.product.brand} {props.review.product.name} - Ravebox</title>
               <meta name='description' content={`Watch the ${props.review.product.brand} ${props.review.product.name} review video created and shared by ${props.review.user.handle} on Ravebox.`} />
               <link rel='canonical' href={`https://ravebox.io/review/${props.review.url}`} />
+              <meta name='og:site_name' content={`Ravebox`} />
+              <meta name='og:title' content={`${props.review.product.brand} ${props.review.product.name} review by ${props.review.user.handle} - Ravebox`} />
+              <meta name='og:description' content={`Watch the ${props.review.product.brand} ${props.review.product.name} review video created and shared by ${props.review.user.handle} on Ravebox.`} />
+              <meta name='og:image' content={`${props.review.thumbnail}`} />
+              <meta name='og:url' content={`https://ravebox.io/review/${props.review.url}`} />
+              <meta name='twitter:title' content={`${props.review.product.brand} ${props.review.product.name} review by ${props.review.user.handle} - Ravebox`} />
+              <meta name='twitter:description' content={`Watch the ${props.review.product.brand} ${props.review.product.name} review video created and shared by ${props.review.user.handle} on Ravebox.`} />
+              <meta name='twitter:image' content={`${props.review.thumbnail}`} />
+              <meta name='twitter:image:alt' content={`Preview image for ${props.review.user.handle}'s review of the ${props.review.product.brand} ${props.review.product.name}`} />
+              <meta name='twitter:card' content={`summary_large_image`} />
             </Helmet>
           }
           <ReviewDetails

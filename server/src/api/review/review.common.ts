@@ -45,7 +45,6 @@ export default class ReviewCommon {
    */
   static PublishReview(publishMessage: ReviewPublishedSNS): void {
 
-    console.log('PUBLISH_REVIEW');
       // Retrieve the review with the product and user details populated so
       // we can send a notification email.
       Review.findOne({

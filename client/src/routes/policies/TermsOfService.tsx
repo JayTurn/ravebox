@@ -6,6 +6,7 @@
 // Modules.
 import Box from '@material-ui/core/Box';
 import clsx from 'clsx';
+import { connect } from 'react-redux';
 import {
   createStyles,
   makeStyles,
@@ -18,6 +19,7 @@ import { Helmet } from 'react-helmet';
 import * as React from 'react';
 import Typography from '@material-ui/core/Typography';
 import useMediaQuery from '@material-ui/core/useMediaQuery';
+import { withRouter } from 'react-router';
 
 // Components.
 import LinkElement from '../../components/elements/link/Link';
@@ -73,7 +75,7 @@ const TermsOfService: React.FC<TermsOfServiceProps> = (props: TermsOfServiceProp
     if (!pageViewed) {
       analytics.trackPageView({
         properties: {
-          path: '/policies/terms',
+          path: `${props.location.pathname}${props.location.search}`,
           title: 'Terms of Service'
         },
         amplitude: {
@@ -336,4 +338,16 @@ const TermsOfService: React.FC<TermsOfServiceProps> = (props: TermsOfServiceProp
   );
 }
 
-export default TermsOfService;
+/**
+ * Map the redux state to the discover properties.
+ *
+ */
+function mapStateToProps(state: any, ownProps: TermsOfServiceProps) {
+  return {
+    ...ownProps
+  };
+}
+
+export default withRouter(connect(
+    mapStateToProps
+)(TermsOfService));

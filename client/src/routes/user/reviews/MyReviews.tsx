@@ -62,7 +62,7 @@ const MyReviews: React.FC<MyReviewsProps> = (props: MyReviewsProps) => {
     if (!pageViewed) {
       analytics.trackPageView({
         properties: {
-          path: props.location.pathname,
+          path: `${props.location.pathname}${props.location.search}`,
           title: 'My raves'
         }
       });

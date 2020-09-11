@@ -205,7 +205,7 @@ const SidebarReviewCard: React.FC<SidebarReviewCardProps> = (props: SidebarRevie
         <Box className={classes.mediaContainer}>
           <CardMedia
             className={clsx(classes.media)}
-            image={props.thumbnailURL}
+            image={props.thumbnail}
             src='/images/placeholder.png'
             title={`${props.product ? props.product.name : ''} review`}
           />

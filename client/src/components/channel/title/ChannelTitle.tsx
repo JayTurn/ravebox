@@ -41,9 +41,11 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
     width: theme.spacing(7)
   },
   container: {
-    padding: theme.spacing(0, 2, 1)
+    backgroundColor: 'rgba(0,0,0,0.05)',
+    padding: theme.spacing(1, 0, 1, 1)
   },
   containerLarge: {
+    backgroundColor: 'transparent',
     marginTop: theme.spacing(4),
     padding: theme.spacing(0, 2)
   },
@@ -58,6 +60,9 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
   raveCount: {
     fontSize: '.7rem',
     textTransform: 'uppercase'
+  },
+  titleContainer: {
+    padding: theme.spacing(1, 0, 1, 1)
   }
 }));
 
@@ -79,7 +84,7 @@ const ChannelTitle: React.FC<ChannelTitleProps> = (props: ChannelTitleProps) => 
       )}
     >
       <Grid item xs={12}>
-        <Grid container direction='row' className={classes.container} alignItems='center'>
+        <Grid container direction='row' className={classes.titleContainer} alignItems='center'>
           <Grid item>
             {props.avatar ? (
               <Avatar alt={props.handle} className={classes.avatar} src={props.avatar}/>
@@ -89,8 +94,8 @@ const ChannelTitle: React.FC<ChannelTitleProps> = (props: ChannelTitleProps) => 
           </Grid>
           <Grid item className={classes.handleContainer}>
             <Typography variant='h1' className={classes.handleText}>{props.handle}</Typography>
-            {props.ravesCount &&
-              <Typography variant='body1' className={classes.raveCount}>{props.ravesCount}</Typography>
+            {props.statistics &&
+              <Typography variant='body1' className={classes.raveCount}>{props.statistics}</Typography>
             }
           </Grid>
         </Grid>

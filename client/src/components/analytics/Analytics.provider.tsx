@@ -34,6 +34,8 @@ export const AnalyticsProvider = (
   // Create a state for the amplitude instance.
   const [Amplitude, setAmplitude] = React.useState<AmplitudeClient | null>(null);
 
+  let ReactPixel: any;
+
   /**
    * Initializes the amplitude client if it doesn't exist already.
    */
@@ -45,11 +47,24 @@ export const AnalyticsProvider = (
       if (typeof window !== 'undefined' && !Amplitude) {
         const amplitude = require('amplitude-js');
         const amplitudeInstance = amplitude.getInstance();
-        amplitudeInstance.init(`${process.env.RAZZLE_AMPLITUDE_KEY}`);
+        amplitudeInstance.init(`${process.env.RAZZLE_AMPLITUDE_KEY}`, undefined, {
+          includeReferrer: true,
+          includeUtm: true
+        });
         setAmplitude(amplitudeInstance);
 
         // Initialize google analytics.
         ReactGA.initialize(`${process.env.RAZZLE_GA_KEY}`);
+
+        if (process.env.RAZZLE_ENVIRONMENT !== 'local') {
+          ReactPixel = require('react-facebook-pixel');
+
+          // Initialize facebook pixel.
+          ReactPixel.default.init(`${process.env.RAZZLE_FB_KEY}`, undefined, {
+            autoConfig: true,
+            debug: false
+          });
+        }
 
         resolve(amplitudeInstance);
       } else {
@@ -156,14 +171,27 @@ export const AnalyticsProvider = (
       if (page.amplitude) {
         trackEvent(page.amplitude.label)(page.data);
       }
+
       ReactGA.pageview(page.properties.path, undefined, page.properties.title);
+
+      if (process.env.RAZZLE_ENVIRONMENT !== 'local' && ReactPixel) {
+        ReactPixel.default.pageView();
+      }
+
     } else {
       initialize()
         .then((instance: AmplitudeClient) => {
+
+          if (process.env.RAZZLE_ENVIRONMENT !== 'local' && ReactPixel) {
+            ReactPixel.default.pageView();
+          }
+
+          ReactGA.pageview(page.properties.path, undefined, page.properties.title);
+
           if (page.amplitude) {
             trackEvent(page.amplitude.label)(page.data);
           }
-          ReactGA.pageview(page.properties.path, undefined, page.properties.title);
+
         });
     }
       
@@ -195,18 +223,6 @@ export const AnalyticsProvider = (
    * Loads the amplitude client if we have a window component.
    */
   React.useEffect(() => {
-
-    if (typeof window !== 'undefined' && !Amplitude) {
-
-      const amplitude = require('amplitude-js');
-
-      const amplitudeInstance = amplitude.getInstance();
-
-      amplitudeInstance.init(`${process.env.RAZZLE_AMPLITUDE_KEY}`);
-
-      setAmplitude(amplitudeInstance);
-
-    }
 
   }, []);
 

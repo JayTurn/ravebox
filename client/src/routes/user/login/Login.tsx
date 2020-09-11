@@ -83,7 +83,7 @@ const Login: React.FC<LoginProps> = (props: LoginProps) => {
     if (!pageViewed) {
       analytics.trackPageView({
         properties: {
-          path: props.location.pathname,
+          path: `${props.location.pathname}${props.location.search}`,
           title: 'Log in'
         }
       });

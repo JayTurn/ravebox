@@ -51,7 +51,7 @@ export default combineReducers<UserStore, UserAction>({
         };
 
         if (retrievedProfile.avatar) {
-          retrievedProfile.avatar = `${process.env.RAZZLE_CDN}${retrievedProfile.avatar}`;
+          retrievedProfile.avatar = `${retrievedProfile.avatar}`;
         }
 
         // Append the new value to the list of watched items.
