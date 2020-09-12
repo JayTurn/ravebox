@@ -124,6 +124,7 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
   },
   primaryHighlight: {
     color: theme.palette.primary.main,
+    fontWeight: 600
   },
   productBrand: {
     fontSize: '.9rem',
@@ -469,11 +470,17 @@ const ReviewDetails: React.FC<ReviewDetailsProps> = (props: ReviewDetailsProps) 
               { !largeScreen &&
                 <ContentBlock
                   background={ColorStyle.WHITE}
+                  reducedVerticalSpace={true}
                   title={
                     <React.Fragment>
                       What is <Box component='span' className={clsx(
                         classes.primaryHighlight
                       )}>Ravebox</Box>?
+                    </React.Fragment>
+                  }
+                  bodyFirst={
+                    <React.Fragment>
+                      It's where you come to talk about your experiences with products.
                     </React.Fragment>
                   }
                   action={{
