@@ -247,6 +247,10 @@ const Home: React.FC<HomeProps> = (props: HomeProps) => {
               path={'/about'}
               styleType={StyleType.BUTTON_PRIMARY}
               title='What is Ravebox?'
+              track={{
+                context: 'home',
+                targetScreen: 'about'
+              }}
             />
           </Grid>
         </Grid>
@@ -262,7 +266,7 @@ const Home: React.FC<HomeProps> = (props: HomeProps) => {
             reviews={props.categoryGroup[queries[0]]}
             title={
               <ListTitle
-                title={`Featured raves`}
+                title={`Featured rave`}
                 url={`/categories/${categoryList[0].key}`}
                 presentationType={PresentationType.GRID} 
               />
@@ -329,7 +333,11 @@ const Home: React.FC<HomeProps> = (props: HomeProps) => {
         }
         action={{
           path: '/apply',
-          title: 'Join waitlist'
+          title: 'Join waitlist',
+          track: {
+            context: 'home',
+            targetScreen: 'join waitlist',
+          }
         }}
       />
     {/*<Grid item xs={12} className={clsx(

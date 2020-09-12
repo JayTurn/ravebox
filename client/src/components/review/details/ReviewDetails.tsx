@@ -35,6 +35,7 @@ import {
 } from '../../../store/review/Actions';
 
 // Components.
+import ContentBlock from '../../elements/contentBlock/ContentBlock';
 import FollowButton from '../../follow/button/FollowButton';
 import ListByQuery from '../listByQuery/ListByQuery';
 import ListTitle from '../../elements/listTitle/ListTitle';
@@ -48,6 +49,7 @@ import ReviewDescription from '../description/ReviewDescription';
 import ReviewLinks from '../link/ReviewLinks';
 
 // Enumerators.
+import { ColorStyle } from '../../elements/contentBlock/ContentBlock.enum';
 import {
   FollowType
 } from '../../follow/FollowType.enum';
@@ -57,6 +59,10 @@ import {
 } from '../listByQuery/ListByQuery.enum';
 import { RetrievalStatus } from '../../../utils/api/Api.enum';
 import { ScreenContext } from '../Review.enum';
+import {
+  ShareStyle,
+  ShareType
+} from '../../share/ShareButton.enum';
 
 // Hooks.
 import { useGenerateRatingToken } from '../rate/useGenerateRatingToken.hook';
@@ -65,6 +71,7 @@ import {
 } from '../listByQuery/useRetrieveListsByQuery.hook';
 
 // Interfaces.
+import { EventObject } from '../../analytics/Analytics.interface';
 import { Product } from '../../product/Product.interface';
 import { RatingAcceptance } from '../rate/Rate.interface';
 import {
@@ -77,6 +84,8 @@ import { PublicProfile } from '../../user/User.interface';
 
 // Utilities.
 import { CommaSeparatedNumber } from '../../../utils/display/numeric/Numeric';
+// Utilities.
+import { formatReviewProperties } from '../Review.common';
 
 /**
  * Create styles for the review screen.
@@ -104,11 +113,17 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
     borderTop: `1px solid rgba(0,0,0,0.1)`,
     backgroundColor: theme.palette.common.white
   },
+  heavy: {
+    fontWeight: 600,
+  },
   moreReviewsTitle: {
     margin: theme.spacing(2),
     fontSize: '.8rem',
     fontWeight: 700,
     textTransform: 'uppercase'
+  },
+  primaryHighlight: {
+    color: theme.palette.primary.main,
   },
   productBrand: {
     fontSize: '.9rem',
@@ -250,6 +265,10 @@ const ReviewDetails: React.FC<ReviewDetailsProps> = (props: ReviewDetailsProps) 
     videoDuration: 0
   });
 
+  // Formats the review event data for tracking purposes.
+  const [eventData, setEventData] = React.useState<EventObject>(
+          formatReviewProperties({...props.review}));
+
   /**
    * Handles the updating of the allowable rating state.
    *
@@ -322,9 +341,11 @@ const ReviewDetails: React.FC<ReviewDetailsProps> = (props: ReviewDetailsProps) 
                     {review && review.product && review.user &&
                       <Grid item>
                         <ShareButton
-                          title={`${review.product.brand} ${review.product.name} rave posted by ${review.user.handle}`}
+                          eventData={{...eventData}}
                           image={`${review.thumbnail}`}
-                          review={{...props.review}}
+                          shareStyle={ShareStyle.ICON}
+                          shareType={ShareType.REVIEW}
+                          title={`${review.product.brand} ${review.product.name} rave posted by ${review.user.handle}`}
                         />
                       </Grid>
                     }
@@ -385,6 +406,32 @@ const ReviewDetails: React.FC<ReviewDetailsProps> = (props: ReviewDetailsProps) 
                       <ReviewDescription description={review.description} />
                     </Grid>
                   }
+                  { largeScreen &&
+                    <ContentBlock
+                      background={ColorStyle.WHITE}
+                      reducedVerticalSpace={true}
+                      title={
+                        <React.Fragment>
+                          What is <Box component='span' className={clsx(
+                            classes.primaryHighlight
+                          )}>Ravebox</Box>?
+                        </React.Fragment>
+                      }
+                      bodyFirst={
+                        <React.Fragment>
+                          It's where you come to talk about your experiences with products.
+                        </React.Fragment>
+                      }
+                      action={{
+                        path: '/about',
+                        title: 'Learn More',
+                        track: {
+                          context: 'review',
+                          targetScreen: 'about',
+                        }
+                      }}
+                    />
+                  }
                 </Grid>
               }
             </Grid>
@@ -419,6 +466,26 @@ const ReviewDetails: React.FC<ReviewDetailsProps> = (props: ReviewDetailsProps) 
                   </Grid>
                 }
               </Grid>
+              { !largeScreen &&
+                <ContentBlock
+                  background={ColorStyle.WHITE}
+                  title={
+                    <React.Fragment>
+                      What is <Box component='span' className={clsx(
+                        classes.primaryHighlight
+                      )}>Ravebox</Box>?
+                    </React.Fragment>
+                  }
+                  action={{
+                    path: '/about',
+                    title: 'Learn More',
+                    track: {
+                      context: 'review',
+                      targetScreen: 'about',
+                    }
+                  }}
+                />
+              }
               <Grid item xs={12} className={clsx(classes.sidebarMoreContainer)}>
                 {props.productGroup && props.productGroup[productId] && review.product &&
                   <ListByQuery

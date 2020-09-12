@@ -10,7 +10,8 @@ import {
   createStyles,
   makeStyles,
   Theme,
-  useTheme
+  useTheme,
+  withStyles
 } from '@material-ui/core/styles';
 import {
   FacebookShareButton,
@@ -40,6 +41,12 @@ import ShareRoundedIcon from '@material-ui/icons/ShareRounded';
 import Typography from '@material-ui/core/Typography';
 import { withRouter } from 'react-router';
 
+// Enumerators.
+import {
+  ShareStyle,
+  ShareType
+} from './ShareButton.enum';
+
 // Hooks.
 import { useAnalytics } from '../analytics/Analytics.provider';
 
@@ -57,6 +64,8 @@ import { formatReviewProperties } from '../review/Review.common';
  * Share button styles.
  */
 const useStyles = makeStyles((theme: Theme) => createStyles({
+  button: {
+  },
   icon: {
     '&:hover': {
       color: theme.palette.primary.main
@@ -119,6 +128,28 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
   },
 }));
 
+const StyledButton = withStyles(theme => ({
+  root: {
+    color: theme.palette.secondary.dark,
+    cursor: 'pointer',
+    fontSize: '.9rem',
+    backgroundColor: theme.palette.common.white,
+    '&:hover': {
+      color: theme.palette.secondary.dark,
+      backgroundColor: theme.palette.common.white,
+      opacity: .9
+    },
+    '&:disabled': {
+      color: theme.palette.secondary.main,
+      backgroundColor: theme.palette.common.white,
+      opacity: '.45'
+    }
+  },
+  label: {
+    fontWeight: 600
+  }
+}))(Button);
+
 /**
  * Determines if we can share using the navigator object.
  */
@@ -150,12 +181,12 @@ const ShareButton: React.FC<ShareButtonProps> = (props: ShareButtonProps) => {
 
   const [open, setOpen] = React.useState<boolean>(false);
 
-  const path: string = `${process.env.RAZZLE_ASSETS_MANIFEST}/${props.location.pathname}`;
+  const path: string = props.sharePath ? props.sharePath : `${process.env.RAZZLE_PUBLIC_PATH}${props.location.pathname}`;
 
   const navigatorSupported: boolean = isSupported();
 
-  const [eventData, setEventData] = React.useState<EventObject>(
-          formatReviewProperties({...props.review}));
+  //const [eventData, setEventData] = React.useState<EventObject>(
+          //formatReviewProperties({...props.review}));
 
   const handleNavigatorShare: (
     e: React.MouseEvent<HTMLButtonElement>
@@ -208,15 +239,15 @@ const ShareButton: React.FC<ShareButtonProps> = (props: ShareButtonProps) => {
    * Tracks the share event.
    */
   const trackShare: (
-    shareType: string
+    shareMedium: string
   ) => void = (
-    shareType: string
+    shareMedium: string
   ): void => {
-    const data: EventObject = {...eventData};
+    const data: EventObject = {...props.eventData};
 
-    data['share type'] = shareType;
+    data['share medium'] = shareMedium;
 
-    analytics.trackEvent('share review')(data);
+    analytics.trackEvent(`share ${props.shareType}`)(data);
   }
 
   return (
@@ -224,28 +255,48 @@ const ShareButton: React.FC<ShareButtonProps> = (props: ShareButtonProps) => {
       classes.shareItem,
       classes.shareItemContainer
     )}>
-      <Grid item>
-        <IconButton
-          className={clsx(
-            classes.iconButton
-          )}
-          onClick={navigatorSupported ? handleNavigatorShare : handleDesktopShare}
-        >
-          <ShareRoundedIcon className={clsx(classes.icon)} />
-        </IconButton>
-      </Grid>
-      <Grid item className={clsx(
-          classes.shareItem,
-          classes.shareTextContainer
-        )}
-      >
-        <Typography variant='body1' className={clsx(
-            classes.shareText
-          )}
-        >
-          Share
-        </Typography>
-      </Grid>
+      {props.shareStyle === ShareStyle.BUTTON &&
+        <React.Fragment>
+          <Grid item>
+            <StyledButton
+              className={clsx(classes.button)}
+              color='primary'
+              disableElevation
+              onClick={navigatorSupported ? handleNavigatorShare : handleDesktopShare}
+              startIcon={<ShareRoundedIcon />}
+              variant='contained'
+            >
+              Share
+            </StyledButton>
+          </Grid>
+        </React.Fragment>
+      }
+      {props.shareStyle === ShareStyle.ICON &&
+        <React.Fragment>
+          <Grid item>
+            <IconButton
+              className={clsx(
+                classes.iconButton
+              )}
+              onClick={navigatorSupported ? handleNavigatorShare : handleDesktopShare}
+            >
+              <ShareRoundedIcon className={clsx(classes.icon)} />
+            </IconButton>
+          </Grid>
+          <Grid item className={clsx(
+              classes.shareItem,
+              classes.shareTextContainer
+            )}
+          >
+            <Typography variant='body1' className={clsx(
+                classes.shareText
+              )}
+            >
+              Share
+            </Typography>
+          </Grid>
+        </React.Fragment>
+      }
       {!navigatorSupported &&
         <Popover
           anchorEl={anchorEl}

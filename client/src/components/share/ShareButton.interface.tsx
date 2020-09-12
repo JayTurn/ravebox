@@ -6,15 +6,25 @@
 // Modules.
 import { RouteComponentProps } from 'react-router';
 
+// Enumerators.
+import {
+  ShareStyle,
+  ShareType
+} from './ShareButton.enum';
+
 // Interfaces.
+import { EventObject } from '../analytics/Analytics.interface';
 import { Review } from '../review/Review.interface';
 
 /**
  * Share component properties interface.
  */
 export interface ShareButtonProps extends RouteComponentProps {
-  title: string;
   description?: string;
+  eventData: EventObject;
   image?: string;
-  review: Review;
+  sharePath?: string;
+  shareStyle: ShareStyle;
+  shareType: ShareType;
+  title: string;
 }

@@ -167,7 +167,11 @@ const About: React.FC<AboutProps> = (props: AboutProps) => {
         }
         action={{
           path: '/apply',
-          title: 'Interested?'
+          title: 'Interested?',
+          track: {
+            context: 'about',
+            targetScreen: 'join waitlist'
+          }
         }}
       />
       <ContentBlock
@@ -191,7 +195,11 @@ const About: React.FC<AboutProps> = (props: AboutProps) => {
         }
         action={{
           path: '/apply',
-          title: 'How about now?'
+          title: 'How about now?',
+          track: {
+            context: 'about',
+            targetScreen: 'join waitlist'
+          }
         }}
       />
       <ContentBlock
@@ -215,7 +223,11 @@ const About: React.FC<AboutProps> = (props: AboutProps) => {
         }
         action={{
           path: '/apply',
-          title: 'Still reading?'
+          title: 'Still reading?',
+          track: {
+            context: 'about',
+            targetScreen: 'join waitlist'
+          }
         }}
       />
       <ContentBlock
@@ -239,7 +251,11 @@ const About: React.FC<AboutProps> = (props: AboutProps) => {
         }
         action={{
           path: '/apply',
-          title: 'Join waitlist'
+          title: 'Join waitlist',
+          track: {
+            context: 'about',
+            targetScreen: 'join waitlist'
+          }
         }}
       />
     </Grid>

@@ -13,4 +13,10 @@ export interface LinkProps extends MaterialLinkProps {
   title: string;
   path: string;
   styleType?: StyleType;
+  track?: LinkTrackingData;
+}
+
+export interface LinkTrackingData {
+  context: string;
+  targetScreen: string;
 }
