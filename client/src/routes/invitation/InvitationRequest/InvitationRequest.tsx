@@ -164,7 +164,7 @@ const InvitationRequest: React.FC<InvitationRequestProps> = (props: InvitationRe
             <React.Fragment>
               <Box component='span' className={clsx(
                 classes.heavy
-              )}>Want to be a trailblazer?</Box>.
+              )}>Want to be a trailblazer?</Box>
             </React.Fragment>
           }
           bodyFirst={
