@@ -313,6 +313,25 @@ const FAQ: React.FC<FAQProps> = (props: FAQProps) => {
           </StyledAccordionSummary>
           <StyledAccordionDetails>
             <Typography variant='body1' className={clsx(classes.paragraph)}>
+              Ravebox is closed to the general public until the Ravebox trailblazers have had a chance to post their content and build out their channels.
+            </Typography>
+            <Typography variant='body1' className={clsx(classes.paragraph)}>
+              Ravers are free to share links to their raves and their channel with followers on other platforms whilst we slowly open up features to the general public.
+            </Typography>
+          </StyledAccordionDetails>
+        </StyledAccordion>
+        <StyledAccordion
+          square
+          expanded={expanded === `Why can't I search for products and raves?`}
+          onChange={() => handleExpansion(`Why can't I search for products and raves?`)}
+        >
+          <StyledAccordionSummary
+            expandIcon={<ExpandMoreRoundedIcon className={clsx(classes.expansionIcon)}/>}
+          >
+            Why can't I search for products and raves?
+          </StyledAccordionSummary>
+          <StyledAccordionDetails>
+            <Typography variant='body1' className={clsx(classes.paragraph)}>
               Ravebox is currently focused on Tech and Health & Beauty products but our platform supports all types of products.
             </Typography>
             <Typography variant='body1' className={clsx(classes.paragraph)}>
