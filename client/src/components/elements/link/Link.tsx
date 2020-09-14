@@ -18,8 +18,18 @@ import { Link as ReactLink } from 'react-router-dom';
 // Enumerators.
 import { StyleType } from './Link.enum';
 
+// Hooks.
+import { useAnalytics } from '../../analytics/Analytics.provider';
+
 // Interfaces.
+import {
+  AnalyticsContextProps,
+  EventObject
+} from '../../analytics/Analytics.interface';
 import { LinkProps } from './Link.interface';
+
+// Utilities.
+import { formatLinkForTracking } from './Link.common';
 
 /**
  * Styles for the link element.
@@ -126,10 +136,31 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
 const LinkElement: React.FC<LinkProps> = (props: LinkProps) => {
 
   // Use the custom styles.
-  const classes = useStyles();
+  const classes = useStyles(),
+        analytics: AnalyticsContextProps = useAnalytics() as AnalyticsContextProps;
 
   // Define the link style type.
   const styleType: StyleType = props.styleType ? props.styleType : StyleType.STANDARD_PRIMARY;
+
+  /**
+   * Handles analytics tracking for events that have a context.
+   */
+  const handleClick: (
+    e: React.SyntheticEvent
+  ) => void = (
+    e: React.SyntheticEvent
+  ): void => {
+
+    if (props.track) {
+      const data: EventObject = formatLinkForTracking(props.track)
+
+      // Add the link title.
+      data['link title'] = props.title;
+
+      analytics.trackEvent('select link')(data);
+    }
+
+  }
 
   return (
     <Link
@@ -145,7 +176,12 @@ const LinkElement: React.FC<LinkProps> = (props: LinkProps) => {
       color={props.color}
       component={({className, children}) => {
         return (
-          <ReactLink className={className} to={props.path} title={props.title}>
+          <ReactLink
+            className={className}
+            onClick={handleClick}
+            to={props.path}
+            title={props.title}
+          >
             {children}
           </ReactLink>
         )

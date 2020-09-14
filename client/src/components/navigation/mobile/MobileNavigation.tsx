@@ -20,6 +20,7 @@ import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
 import { NavLink } from 'react-router-dom';
 import PageviewRoundedIcon from '@material-ui/icons/PageviewRounded';
+import QuestionAnswerRoundedIcon from '@material-ui/icons/QuestionAnswerRounded';
 import SubscriptionsRoundedIcon from '@material-ui/icons/SubscriptionsRounded';
 import SwipeableDrawer from '@material-ui/core/SwipeableDrawer';
 import Typography from '@material-ui/core/Typography';
@@ -312,6 +313,24 @@ const MobileNavigation: React.FC<MobileNavigationProps> = (props: MobileNavigati
                 <Typography variant='subtitle2' className={clsx(
                   classes.listButtonTypographyOpen
                 )}>About</Typography>
+              </ListItemText>
+            </NavLink>
+          </ListItem>
+          <ListItem button className={clsx(classes.listButton, classes.listButtonOpen)}>
+            <NavLink to='/frequently-asked-questions' className={clsx(classes.linkStyle, classes.linkStyleOpen)} onClick={toggleDrawer}>
+              <ListItemIcon className={clsx(
+                classes.listButtonIconOpen,
+                {[classes.listButtonIconActive]: activePath === '/frequently-asked-questions'}
+              )}>
+                <QuestionAnswerRoundedIcon />
+              </ListItemIcon>
+              <ListItemText disableTypography className={clsx(
+                classes.listButtonTextOpen,
+                {[classes.listButtonTextActive]: activePath === '/frequently-asked-questions'}
+              )}>
+                <Typography variant='subtitle2' className={clsx(
+                  classes.listButtonTypographyOpen
+                )}>FAQ</Typography>
               </ListItemText>
             </NavLink>
           </ListItem>

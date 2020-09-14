@@ -7,6 +7,9 @@
 // Enumerators.
 import { ColorStyle } from './ContentBlock.enum'; 
 
+// Interfaces.
+import { LinkTrackingData } from '../link/Link.interface';
+
 /**
  * ContentBlock component properties.
  */
@@ -16,8 +19,10 @@ export interface ContentBlockProps {
   bodyFirst?: React.ReactElement;
   bodySecond?: React.ReactElement;
   reducedBottomMargin?: boolean;
+  reducedVerticalSpace?: boolean;
   action?: {
     path: string;
     title: string;
+    track?: LinkTrackingData;
   };
 }

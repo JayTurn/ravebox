@@ -119,21 +119,21 @@ const InvitationRequest: React.FC<InvitationRequestProps> = (props: InvitationRe
           background={ColorStyle.WHITE}
           title={
             <React.Fragment>
-              Want to become a <Box component='span' className={clsx(
+              Want to join <Box component='span' className={clsx(
                 classes.primaryHighlight
-              )}>raver</Box>?
+              )}>Ravebox</Box>?
             </React.Fragment>
           }
           bodyFirst={
             <React.Fragment>
-              Great! There's a catch... <Box component='span' className={clsx(
+              Great! We're just starting out so we have a <Box component='span' className={clsx(
                 classes.heavy
-              )}>we have a waitlist</Box>.
+              )}>waitlist</Box>.
             </React.Fragment>
           }
           bodySecond={
             <React.Fragment>
-              We're not ready for thousands of people to be posting raves just yet.
+              Whilst we're not ready for thousands of people to be posting raves just yet, we are looking for Ravebox trailblazers.
             </React.Fragment>
           }
         />
@@ -141,19 +141,19 @@ const InvitationRequest: React.FC<InvitationRequestProps> = (props: InvitationRe
           background={ColorStyle.PRIMARY}
           title={
             <React.Fragment>
-              <Box component='span' className={clsx(
+              Who is a <Box component='span' className={clsx(
                 classes.heavy
-              )}>We're also pretty picky</Box>.
+              )}>Ravebox trailblazer</Box>?
             </React.Fragment>
           }
           bodyFirst={
             <React.Fragment>
-              We're looking for people that are fun, creative and authentic to define the vibe of Ravebox.
+              As a Ravebox trailblazer, you'll be the first to post creative, authentic raves and define the vibe of Ravebox for years to come.
             </React.Fragment>
           }
           bodySecond={
             <React.Fragment>
-              Trailblazers of the next big thing.
+              You'll also be the first to build your channel and create a following of people looking to you for recommendations and advice.
             </React.Fragment>
           }
         />
@@ -164,17 +164,12 @@ const InvitationRequest: React.FC<InvitationRequestProps> = (props: InvitationRe
             <React.Fragment>
               <Box component='span' className={clsx(
                 classes.heavy
-              )}>We want rising stars</Box>.
+              )}>Want to be a trailblazer?</Box>
             </React.Fragment>
           }
           bodyFirst={
             <React.Fragment>
-              We're not looking for big name content creators. We're providing a platform for up and coming content creators to share their passions and build a name for themselves.
-            </React.Fragment>
-          }
-          bodySecond={
-            <React.Fragment>
-              If you think you fit what we're looking for, provide a link to your previous reviews and join our waitlist below!
+              If you want to be the first on Ravebox, include a link to your best social profile and join our waitlist!
             </React.Fragment>
           }
         />

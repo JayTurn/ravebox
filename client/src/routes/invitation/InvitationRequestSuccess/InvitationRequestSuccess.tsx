@@ -10,6 +10,7 @@ import {
   bindActionCreators,
   Dispatch,
 } from 'redux';
+import Box from '@material-ui/core/Box';
 import clsx from 'clsx';
 import { connect } from 'react-redux';
 import {
@@ -22,15 +23,22 @@ import {
 import Grid from '@material-ui/core/Grid';
 import { Helmet } from 'react-helmet';
 import * as React from 'react';
+import ShareButton from '../../../components/share/ShareButton';
 import Typography from '@material-ui/core/Typography';
 import { withRouter } from 'react-router';
 
 // Components.
+import ContentBlock from '../../../components/elements/contentBlock/ContentBlock';
 import InvitationRequestForm from '../../../components/invitation/invitationRequestForm/InvitationRequestForm';
 import PageTitle from '../../../components/elements/pageTitle/PageTitle';
 
 // Enumerators.
 import { AccessOptions } from '../../../components/user/accessType/AccessType.enum';
+import { ColorStyle } from '../../../components/elements/contentBlock/ContentBlock.enum';
+import {
+  ShareStyle,
+  ShareType
+} from '../../../components/share/ShareButton.enum';
 
 // Hooks.
 import { useAnalytics } from '../../../components/analytics/Analytics.provider';
@@ -46,11 +54,16 @@ import {
  */
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
+    bodySpacing: {
+      marginBottom: theme.spacing(4)
+    },
     heading: {
       fontWeight: 300,
       margin: theme.spacing(4, 0, 4)
     },
     padding: {
+      marginBottom: theme.spacing(2),
+      marginTop: theme.spacing(2),
       paddingLeft: theme.spacing(2),
       paddingRight: theme.spacing(2)
     },
@@ -109,27 +122,50 @@ const InvitationRequestSuccess: React.FC<InvitationRequestSuccessProps> = (
           <meta name='description' content={`Ravebox is a place to share videos videos talking about your experiences with products and become a trusted source for recommendations and advice.`} />
           <link rel='canonical' href='https://ravebox.io/apply' />
         </Helmet>
-        <PageTitle title='Thanks for applying' />
-        <Grid item xs={12} lg={9} className={clsx(classes.padding)}>
-          <Typography variant='h2' className={clsx(classes.heading)} style={{marginTop: 0}}>
-            What happens next?
-          </Typography>
-          <Typography variant='body1' className={clsx(classes.paragraph)}>
-            You've been added to our waitlist. If you provided a link to your previous product reviews, we'll watch them as soon as we can. If they match the Ravebox vibe we're looking for, you'll jump to the front of the waitlist. 
-          </Typography>
-          <Typography variant='body1' className={clsx(classes.paragraph)}>
-            When we're ready to invite you, we'll send you an email with a link to join. Once you've signed up, you can start posting raves right away. Aww yeah! 
-          </Typography>
-          <Typography variant='h3' className={clsx(classes.subHeading)}>
-            Is there another way to join?
-          </Typography>
-          <Typography variant='body1' className={clsx(classes.paragraph)}>
-            Now that you mention it, we provide every raver with two invitations for their friends. If you know someone with an invitation, you could promise to do their washing for a week if they invite you... or you could just ask nicely.
-          </Typography>
-          <Typography variant='body1' className={clsx(classes.paragraph)}>
-            It's up to you.
-          </Typography>
-        </Grid>
+        <ContentBlock
+          background={ColorStyle.WHITE}
+          title={
+            <React.Fragment>
+              <Box>You've been added to our waitlist.</Box>
+            </React.Fragment>
+          }
+          bodyFirst={
+            <React.Fragment>
+              <Box>What happens next?</Box>
+            </React.Fragment>
+          }
+          bodySecond={
+            <React.Fragment>
+              <Box>We'll watch your previous product reviews as soon as we can. If they match the vibe we're looking as one of our Ravebox trailblazers, you'll jump to the front of the waitlist. Aww yeah!</Box>
+            </React.Fragment>
+          }
+        />
+        <ContentBlock
+          background={ColorStyle.SECONDARY}
+          title={
+            <React.Fragment>
+              <Box>Have some friends that would make great ravers?</Box>
+            </React.Fragment>
+          }
+          bodyFirst={
+            <React.Fragment>
+              <Box>Spread the word.</Box>
+            </React.Fragment>
+          }
+          bodySecond={
+            <React.Fragment>
+              <Box className={clsx(classes.bodySpacing)}>Share the Ravebox waitlist and invite your friends to sign up.</Box>
+              <ShareButton
+                eventData={{ }}
+                image={`/images/make-raves.png`}
+                sharePath={`${process.env.RAZZLE_PUBLIC_PATH}/apply`}
+                shareStyle={ShareStyle.BUTTON}
+                shareType={ShareType.WAITLIST}
+                title={`Join me on Ravebox. Where people want you to talk about products.`}
+              />
+            </React.Fragment>
+          }
+        />
       </Grid>
     </div>
   );

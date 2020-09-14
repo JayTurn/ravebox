@@ -84,6 +84,13 @@ const useStyles = makeStyles((theme: Theme) =>
     reducedBottomMargin: {
       paddingBottom: theme.spacing(6)
     },
+    reducedVerticalSpace: {
+      paddingBottom: theme.spacing(6),
+      paddingTop: theme.spacing(2)
+    },
+    reducedVerticalSpaceTitle: {
+      marginTop: theme.spacing(2)
+    },
     secondaryContainer: {
       backgroundColor: theme.palette.secondary.dark,
     },
@@ -157,7 +164,8 @@ const ContentBlock: React.FC<ContentBlockProps> = (props: ContentBlockProps) => 
             [classes.primaryContainer]: props.background === ColorStyle.PRIMARY,
             [classes.secondaryContainer]: props.background === ColorStyle.SECONDARY,
             [classes.containerLarge]: largeScreen,
-            [classes.reducedBottomMargin]: props.reducedBottomMargin
+            [classes.reducedBottomMargin]: props.reducedBottomMargin,
+            [classes.reducedVerticalSpace]: props.reducedVerticalSpace
           }
         )}
       >
@@ -174,7 +182,8 @@ const ContentBlock: React.FC<ContentBlockProps> = (props: ContentBlockProps) => 
                     [classes.whiteContainerText]: props.background === ColorStyle.WHITE,
                     [classes.primaryContainerText]: props.background === ColorStyle.PRIMARY,
                     [classes.secondaryContainerText]: props.background === ColorStyle.SECONDARY,
-                    [classes.containerTitleLarge]: largeScreen
+                    [classes.reducedVerticalSpaceTitle]: props.reducedVerticalSpace,
+                    [classes.containerTitleLarge]: largeScreen,
                   }
                 )}
               >
@@ -182,7 +191,7 @@ const ContentBlock: React.FC<ContentBlockProps> = (props: ContentBlockProps) => 
               </Typography>
             }
             {props.bodyFirst &&
-              <Typography variant='body1' className={clsx(
+              <Box className={clsx(
                   classes.containerText,
                   {
                     [classes.whiteContainerText]: props.background === ColorStyle.WHITE,
@@ -193,10 +202,10 @@ const ContentBlock: React.FC<ContentBlockProps> = (props: ContentBlockProps) => 
                 )}
               >
                 {props.bodyFirst}
-              </Typography>
+              </Box>
             }
             {props.bodySecond &&
-              <Typography variant='body1' className={clsx(
+              <Box className={clsx(
                   classes.containerText,
                   {
                     [classes.whiteContainerText]: props.background === ColorStyle.WHITE,
@@ -207,7 +216,7 @@ const ContentBlock: React.FC<ContentBlockProps> = (props: ContentBlockProps) => 
                 )}
               >
                 {props.bodySecond}
-              </Typography>
+              </Box>
             }
           </Grid>
           {props.action &&
@@ -219,6 +228,7 @@ const ContentBlock: React.FC<ContentBlockProps> = (props: ContentBlockProps) => 
                 path={props.action.path}
                 styleType={buttonStyle}
                 title={props.action.title}
+                track={props.action.track}
               />
             </Grid>
           }

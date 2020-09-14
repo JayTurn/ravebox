@@ -155,7 +155,7 @@ const About: React.FC<AboutProps> = (props: AboutProps) => {
         }
         bodyFirst={
           <React.Fragment>
-            Everyone is here to discover and compare products through the videos you share. 
+            Everyone is here to discover and compare the products you talk about with videos you share.
           </React.Fragment>
         }
         bodySecond={
@@ -167,16 +167,20 @@ const About: React.FC<AboutProps> = (props: AboutProps) => {
         }
         action={{
           path: '/apply',
-          title: 'Interested?'
+          title: 'Interested?',
+          track: {
+            context: 'about',
+            targetScreen: 'join waitlist'
+          }
         }}
       />
       <ContentBlock
         background={ColorStyle.PRIMARY}
         title={
           <React.Fragment>
-            A <Box component='span' className={clsx(
+            A rave is a <Box component='span' className={clsx(
               classes.heavy
-            )}>rave</Box> is a short video talking about your unique experience with a product.
+            )}>short video</Box> where you creatively talk about your unique experience with a product.
           </React.Fragment>
         }
         bodyFirst={
@@ -186,60 +190,73 @@ const About: React.FC<AboutProps> = (props: AboutProps) => {
         }
         bodySecond={
           <React.Fragment>
-            Share promo codes and links so people can support you.
+            You can share promo codes and links to buy products so people can support you.
           </React.Fragment>
         }
         action={{
           path: '/apply',
-          title: 'How about now?'
+          title: 'How about now?',
+          track: {
+            context: 'about',
+            targetScreen: 'join waitlist'
+          }
         }}
       />
       <ContentBlock
         background={ColorStyle.WHITE}
         title={
           <React.Fragment>
+            It doesn't matter if you have 1 follower or 1 million followers, 
             <Box component='span' className={clsx(
               classes.heavy
-            )}>Your raves are discovered </Box> when people search for products.
+            )}> your raves</Box> can be found.
           </React.Fragment>
         }
         bodyFirst={
           <React.Fragment>
-            When someone searches for a product they will find every rave that talks about it. Including yours.
+            When someone searches for a product they will find every rave that has been created for it. Including yours!
           </React.Fragment>
         }
         bodySecond={
           <React.Fragment>
-            The more raves a product has, the better chance your rave has to be seen.
+            The more raves a product has, the more likely your rave will be seen.
           </React.Fragment>
         }
         action={{
           path: '/apply',
-          title: 'Still reading?'
+          title: 'Still reading?',
+          track: {
+            context: 'about',
+            targetScreen: 'join waitlist'
+          }
         }}
       />
       <ContentBlock
         background={ColorStyle.SECONDARY}
         title={
           <React.Fragment>
-            <Box component='span' className={clsx(
+            Your <Box component='span' className={clsx(
               classes.heavy
-            )}>Every rave you create</Box> can be found on your channel.
+            )}>channel</Box> is dedicated to all of your product recommendations and advice.
           </React.Fragment>
         }
         bodyFirst={
           <React.Fragment>
-            Everyone can find and follow your product recommendations and advice in one place.
+            Everyone can follow your channel and receive updates when you post new content.
           </React.Fragment>
         }
         bodySecond={
           <React.Fragment>
-            No need to hide your product conversations, it's why people are here.
+            Advocate for products you're passionate about and help people make better decisions.
           </React.Fragment>
         }
         action={{
           path: '/apply',
-          title: 'Join waitlist'
+          title: 'Join waitlist',
+          track: {
+            context: 'about',
+            targetScreen: 'join waitlist'
+          }
         }}
       />
     </Grid>

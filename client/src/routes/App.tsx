@@ -48,6 +48,7 @@ const Channel = loadable(() => import('./user/channel/Channel'));
 const CommunityGuidelines = loadable(() => import('./policies/CommunityGuidelines'));
 const Discover = loadable(() => import('./discover/Discover'));
 const EditReview = loadable(() => import('./review/edit/EditReview'));
+const FAQ = loadable(() => import('./faq/Faq'));
 const Following = loadable(() => import('./user/following/Following'));
 const Home = loadable(() => import('./home/Home'));
 const InvitationRequest = loadable(() => import('./invitation/InvitationRequest/InvitationRequest'));
@@ -217,6 +218,9 @@ const App: React.FC<AppProps> = (props: AppProps) => {
                       </PrivateRoute>
                       <Route exact={true} path="/categories/:category">
                         <CategoryList />
+                      </Route>
+                      <Route path="/frequently-asked-questions" exact={true}>
+                        <FAQ />
                       </Route>
                       <Route exact={true} path="/discover/:term">
                         <Search />
