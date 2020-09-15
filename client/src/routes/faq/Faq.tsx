@@ -49,6 +49,7 @@ const useStyles = makeStyles((theme: Theme) =>
       color: theme.palette.text.secondary,
     },
     padding: {
+      marginBottom: theme.spacing(4),
       paddingLeft: theme.spacing(2),
       paddingRight: theme.spacing(2)
     },
@@ -228,7 +229,7 @@ const FAQ: React.FC<FAQProps> = (props: FAQProps) => {
               In the very early stages, we have to support ravers creating authentic raves that suit the Ravebox vibe. We're a small team and we currently work closely with ravers to post raves, help them build their channel and promote their content.
             </Typography>
             <Typography variant='body1' className={clsx(classes.paragraph)}>
-              Once the Ravebox trailblazers have established themselves it will set an example for new ravers to follow. At that point we can start opening up registration to the general public.
+              Once the <LinkElement title='Ravebox trailblazers' path={'/apply'} track={{context: 'faq', targetScreen: 'join waitlist'}}/> have established themselves it will set an example for new ravers to follow. At that point we can start opening up registration to the general public.
             </Typography>
           </StyledAccordionDetails>
         </StyledAccordion>
@@ -313,7 +314,7 @@ const FAQ: React.FC<FAQProps> = (props: FAQProps) => {
           </StyledAccordionSummary>
           <StyledAccordionDetails>
             <Typography variant='body1' className={clsx(classes.paragraph)}>
-              Ravebox is closed to the general public until the Ravebox trailblazers have had a chance to post their content and build out their channels.
+              Ravebox is closed to the general public until the <LinkElement title='Ravebox trailblazers' path={'/apply'} track={{context: 'faq', targetScreen: 'join waitlist'}}/> have had a chance to post their content and build out their channels.
             </Typography>
             <Typography variant='body1' className={clsx(classes.paragraph)}>
               Ravers are free to share links to their raves and their channel with followers on other platforms whilst we slowly open up features to the general public.
@@ -335,7 +336,7 @@ const FAQ: React.FC<FAQProps> = (props: FAQProps) => {
               Ravebox is currently focused on Tech and Health & Beauty products but our platform supports all types of products.
             </Typography>
             <Typography variant='body1' className={clsx(classes.paragraph)}>
-              If you have a history of reviewing products in a different category, we'd still love for you to apply to be a Ravebox trailblazer by joining the waitlist.
+              If you have a history of reviewing products in a different category, we'd still love for you to apply to be a <LinkElement title='Ravebox trailblazer' path={'/apply'} track={{context: 'faq', targetScreen: 'join waitlist'}}/> by joining the waitlist.
             </Typography>
           </StyledAccordionDetails>
         </StyledAccordion>
