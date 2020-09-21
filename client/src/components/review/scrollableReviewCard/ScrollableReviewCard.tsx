@@ -229,26 +229,44 @@ const ScrollableReviewCard: React.FC<ScrollableReviewCardProps> = (props: Scroll
           </Grid>
         }
       />
-      <CardMedia
-        className={clsx(classes.media)}
-        image={props.thumbnail}
-        src='/images/placeholder.png'
-        title={`${props.product ? props.product.name : ''} review`}
-      />
+      <NavLink
+        className={classes.linkText}
+        onClick={handleNavigation}
+        to={`/review/${props.url}`}
+      >
+        <CardMedia
+          className={clsx(classes.media)}
+          image={props.thumbnail}
+          src='/images/placeholder.png'
+          title={`${props.product ? props.product.name : ''} review`}
+        />
+      </NavLink>
       <CardContent className={clsx(classes.textContent)}
       >
         <Grid container direction='row' style={{flexWrap: 'nowrap', maxWidth: '100%'}}>
           {props.product &&
             <Grid item style={{flexGrow: 1, minWidth: 0}}>
-              <Typography variant='body2' className={classes.productNameText}>
-                <Box component='span' className={classes.brandText}>{props.product.brand}</Box> {props.product.name}
-              </Typography>
+              <NavLink
+                className={classes.linkText}
+                onClick={handleNavigation}
+                to={`/review/${props.url}`}
+              >
+                <Typography variant='body2' className={classes.productNameText}>
+                  <Box component='span' className={classes.brandText}>{props.product.brand}</Box> {props.product.name}
+                </Typography>
+              </NavLink>
             </Grid>
           }
           <Grid item style={{flexGrow: 0, marginLeft: theme.spacing(1)}}>
-            <IconButton className={classes.reviewLinkButton}>
-              <PlayArrowRoundedIcon color='secondary' className={classes.reviewLinkIcon} />
-            </IconButton>
+            <NavLink
+              className={classes.linkText}
+              onClick={handleNavigation}
+              to={`/review/${props.url}`}
+            >
+              <IconButton className={classes.reviewLinkButton}>
+                <PlayArrowRoundedIcon color='secondary' className={classes.reviewLinkIcon} />
+              </IconButton>
+            </NavLink>
           </Grid>
         </Grid>
       </CardContent>
