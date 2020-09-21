@@ -65,8 +65,16 @@ const useStyles = makeStyles((theme: Theme) =>
       borderBottom: `1px solid rgba(0,0,0,0.2)`,
       borderRadius: 4,
       boxShadow: `0 1px 2px rgba(0,0,0,0.15)`,
+      display: 'inline-block',
+      margin: theme.spacing(0, 1),
       maxWidth: 320,
-      width: `calc(100vw * 0.85)`
+      width: `calc(100vw * 0.85)`,
+      '&:first-child': {
+        marginLeft: theme.spacing(2)
+      },
+      '&:last-child': {
+        marginRight: theme.spacing(2)
+      }
     },
     cardHeaderContent: {
       maxWidth: '100%',

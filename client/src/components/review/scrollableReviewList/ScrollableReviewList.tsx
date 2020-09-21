@@ -63,6 +63,18 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
     '&:last-child': {
       paddingRight: theme.spacing(2)
     }
+  },
+  scrollableWrapper: {
+    overflow: 'hidden',
+    width: '100%'
+  },
+  scrollableContainer: {
+    whiteSpace: 'nowrap',
+    overflowX: 'scroll',
+    overflowY: 'hidden',
+    '&::-webkit-scrollbar': {
+      display: 'none'
+    }
   }
 }));
 
@@ -109,6 +121,29 @@ const ScrollableReviewList: React.FC<ScrollableReviewListProps> = (props: Scroll
       {props.retrievalStatus === RetrievalStatus.SUCCESS ? (
         <Grid item xs={12}>
           {props.reviews.length > 0 ? (
+            <Box className={clsx(classes.scrollableWrapper)}>
+              <Box className={clsx(classes.scrollableContainer)}>
+                {(props.reviews as Array<Review>).map((review: Review, index: number) => {
+                  return (
+                    <ScrollableReviewCard
+                      {...review}
+                      context={props.context}
+                      key={index}
+                      listType={props.listType}
+                    />
+                  )})
+                }
+              </Box>
+            </Box>
+          ) : (
+            <React.Fragment>
+              No reviews found
+            </React.Fragment>
+          )}
+        </Grid>
+        /*
+        <Grid item xs={12}>
+          {props.reviews.length > 0 ? (
             <ScrollMenu
               alignCenter={false}
               data={(props.reviews as Array<Review>).map((review: Review, index: number) => {
@@ -132,6 +167,7 @@ const ScrollableReviewList: React.FC<ScrollableReviewListProps> = (props: Scroll
             </React.Fragment>
           )}
         </Grid>
+        */
       ) : (
         <LoadingReviewList columns={1} height={180} count={6} />
       )}

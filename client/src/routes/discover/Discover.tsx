@@ -220,7 +220,7 @@ const Discover: React.FC<DiscoverProps> = (props: DiscoverProps) => {
                       reviews={props.categoryGroup[query]}
                       title={
                         <ListTitle
-                          title={`${categoryList[index].label} raves`}
+                          title={categoryList[index].label}
                           url={`/categories/${query}`}
                           presentationType={largeScreen ? PresentationType.GRID : PresentationType.SCROLLABLE} 
                         />

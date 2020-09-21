@@ -559,6 +559,7 @@ export default class ReviewController {
         model: 'UserStatistic'
       }
     })
+    .sort({'created': -1})
     .then((reviews: Array<ReviewDocument>) => {
       // Fitler the results for each review to the details object only.
       const reviewList: Array<PrivateReviewDetails> = [];
@@ -927,7 +928,7 @@ export default class ReviewController {
             },
             published: Workflow.PUBLISHED
           })
-          .sort('created')
+          .sort({'created': -1})
           .limit(8)
           .populate({
             path: 'product',

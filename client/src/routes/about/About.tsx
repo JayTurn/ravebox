@@ -167,7 +167,7 @@ const About: React.FC<AboutProps> = (props: AboutProps) => {
         }
         action={{
           path: '/apply',
-          title: 'Interested?',
+          title: 'Join waitlist',
           track: {
             context: 'about',
             targetScreen: 'join waitlist'
@@ -195,7 +195,7 @@ const About: React.FC<AboutProps> = (props: AboutProps) => {
         }
         action={{
           path: '/apply',
-          title: 'How about now?',
+          title: 'Join waitlist',
           track: {
             context: 'about',
             targetScreen: 'join waitlist'
@@ -224,7 +224,7 @@ const About: React.FC<AboutProps> = (props: AboutProps) => {
         }
         action={{
           path: '/apply',
-          title: 'Still reading?',
+          title: 'Join waitlist',
           track: {
             context: 'about',
             targetScreen: 'join waitlist'

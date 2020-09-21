@@ -4,6 +4,7 @@
  */
 
 // Modules.
+import Box from '@material-ui/core/Box';
 import clsx from 'clsx';
 import {
   createStyles,
@@ -27,6 +28,9 @@ import { ListTitleProps } from './ListTitle.interface';
  * Create styles for the list title.
  */
 const useStyles = makeStyles((theme: Theme) => createStyles({
+  highlightText: {
+    color: theme.palette.grey.A400
+  },
   titleContainer: {
   },
   titleText: {
@@ -71,12 +75,12 @@ const ListTitle: React.FC<ListTitleProps> = (props: ListTitleProps) => {
             })}
           >
             {props.url ? (
-              <LinkElement path={props.url} title={props.title}> 
-                {props.title}
+              <LinkElement path={props.url} title={`#${props.title}`}> 
+               {props.title}
               </LinkElement>
             ) : (
               <React.Fragment>
-                {props.title}
+               #{props.title}
               </React.Fragment>
             )}
           </Typography>
