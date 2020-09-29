@@ -502,7 +502,7 @@ const ReviewDetails: React.FC<ReviewDetailsProps> = (props: ReviewDetailsProps) 
                     reviews={props.productGroup[productId]}
                     title={
                       <ListTitle
-                        title={`More reviews for this product`}
+                        title={review.product.name}
                         url={`/product/${review.product.url}`}
                       />
                     }

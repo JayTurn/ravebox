@@ -239,14 +239,14 @@ const Home: React.FC<HomeProps> = (props: HomeProps) => {
                 }
               )}
             >
-              Make raves.
+              A new way to discover and compare products.
             </Typography>
           </Grid>
           <Grid item xs={12}>
             <LinkElement
               path={'/about'}
               styleType={StyleType.BUTTON_PRIMARY}
-              title='What is Ravebox?'
+              title='Tell me more'
               track={{
                 context: 'home',
                 targetScreen: 'about'
@@ -266,7 +266,7 @@ const Home: React.FC<HomeProps> = (props: HomeProps) => {
             reviews={props.categoryGroup[queries[0]]}
             title={
               <ListTitle
-                title={`Featured rave`}
+                title={`Featured`}
                 url={`/categories/${categoryList[0].key}`}
                 presentationType={PresentationType.GRID} 
               />

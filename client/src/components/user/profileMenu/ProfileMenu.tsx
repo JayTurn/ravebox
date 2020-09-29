@@ -94,6 +94,11 @@ const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     avatar: {
       fontWeight: 600,
+      height: theme.spacing(4),
+      width: theme.spacing(4)
+    },
+    avatarLarge: {
+      fontWeight: 600,
       height: theme.spacing(4.5),
       width: theme.spacing(4.5)
     }
@@ -188,14 +193,18 @@ const ProfileMenu: React.FC<ProfileMenuProps> = (props: ProfileMenuProps) => {
       {largeScreen ? (
         <ProfileIconButton onClick={handleClick}>
           {props.profile && props.profile.avatar ? (
-            <Avatar alt={`Expand menu`} className={classes.avatar} src={`${props.profile.avatar}`}></Avatar>
+            <Avatar alt={`Expand menu`} className={classes.avatarLarge} src={`${props.profile.avatar}`}></Avatar>
           ): (
             <AccountCircleSharpIcon color='primary' fontSize='large'/>
           )}
         </ProfileIconButton>
       ) : (
         <MobileProfileIconButton onClick={handleClick}>
-          <AccountCircleSharpIcon color='primary' style={{fontSize: '1.7rem'}}/>
+          {props.profile && props.profile.avatar ? (
+            <Avatar alt={`Expand menu`} className={classes.avatar} src={`${props.profile.avatar}`}></Avatar>
+          ): (
+            <AccountCircleSharpIcon color='primary' style={{fontSize: '1.7rem'}}/>
+          )}
         </MobileProfileIconButton>
       )}
       <StyledMenu
