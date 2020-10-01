@@ -38,7 +38,7 @@ export const sharedConfig = {
   // Refresh if there is an hour before authentication expiry.
   refreshBuffer: 3600,
   // Application roles.
-  roles: ['tenant', 'landlord', 'admin'],
+  roles: ['user', 'youtube', 'creator', 'admin'],
   providers: ['password'],
   seedConfig: false
 };

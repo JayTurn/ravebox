@@ -220,8 +220,16 @@ const CreateUser: React.FC<CreateUserProps> = (props: CreateUserProps) => {
         'handle': values.handle
       });
 
-      // Set the submission state.
+      // Invoke the user update functions and modify the submission status.
+      props.update(response.user);
       setSubmitting(false);
+      setOpen(!open);
+
+    })
+    .catch(() => {
+      // Present any errors that were returned in the response.
+      setSubmitting(false);
+      setFormErrorMessages([`Something went wrong. Please try creating the user again.`])
     });
   }
 
@@ -268,16 +276,19 @@ const CreateUser: React.FC<CreateUserProps> = (props: CreateUserProps) => {
                   justify='space-between'
                 >
                   <Grid item>
-                    <StyledButton
-                      title='Cancel'
-                      clickAction={handleOverlay}
-                      variant='outlined'
-                    />
+                    {!submitting &&
+                      <StyledButton
+                        title='Cancel'
+                        clickAction={handleOverlay}
+                        variant='outlined'
+                      />
+                    }
                   </Grid>
                   <Grid item>
                     <StyledButton
                       title='Create'
-                      clickAction={handleOverlay}
+                      clickAction={submit}
+                      submitting={submitting}
                     />
                   </Grid>
                 </Grid>

@@ -41,7 +41,10 @@ import { PrivateProfile } from '../../user/User.interface';
  */
 const useStyles = makeStyles((theme: Theme) => createStyles({
   tableContainer: {
-    maxHeight: `calc(100vh - 250px)`
+    //maxHeight: `calc(100vh - 250px)`
+  },
+  toolbar: {
+    marginBottom: theme.spacing(2)
   },
   headerCell: {
     backgroundColor: `#F1F1F1`,
@@ -49,6 +52,14 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
     fontWeight: 800,
     textTransform: 'uppercase'
   },
+  tableCell: {
+    backgroundColor: 'transparent'
+  },
+  tableRow: {
+    '&:hover': {
+      backgroundColor: `rgba(250, 250, 250)`
+    }
+  }
 }));
 
 /**
@@ -61,6 +72,7 @@ const AdminUsers: React.FC<AdminUsersProps> = (props: AdminUsersProps) => {
         largeScreen = useMediaQuery(theme.breakpoints.up('md'));
 
   const {
+    addUser,
     retrievalStatus,
     users
   } = useRetrieveUsersList();
@@ -75,6 +87,7 @@ const AdminUsers: React.FC<AdminUsersProps> = (props: AdminUsersProps) => {
   ) => void = (
     user: PrivateProfile
   ): void => {
+    addUser(user);
   }
 
   /**
@@ -83,7 +96,15 @@ const AdminUsers: React.FC<AdminUsersProps> = (props: AdminUsersProps) => {
   return (
     <Grid container>
       <Grid item xs={12}>
-        <Grid container>
+        <Grid
+          alignItems='center'
+          container
+          className={clsx(classes.toolbar)}
+          justify='space-between'
+        >
+          <Grid item>
+            Filter options
+          </Grid>
           <Grid item>
             <CreateUser 
               update={updateUsers}
@@ -112,14 +133,14 @@ const AdminUsers: React.FC<AdminUsersProps> = (props: AdminUsersProps) => {
                 <TableBody>
                   {users.map((user: PrivateProfile) => {
                     return (
-                      <TableRow key={user._id}>
-                        <TableCell component='th' scope='row'>
+                      <TableRow key={user._id} className={clsx(classes.tableRow)}>
+                        <TableCell component='th' scope='row' className={clsx(classes.tableCell)}>
                           {user.handle}
                         </TableCell>
-                        <TableCell align='right'>
+                        <TableCell align='right' className={clsx(classes.tableCell)}>
                           {user.statistics ? user.statistics.ravesCount : 'N/A'}
                         </TableCell>
-                        <TableCell align='right'>
+                        <TableCell align='right' className={clsx(classes.tableCell)}>
                           {user.statistics ? user.statistics.followers : 'N/A'}
                         </TableCell>
                       </TableRow>

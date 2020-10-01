@@ -32,6 +32,23 @@ export function useRetrieveUsersList() {
   const [users, setUsers] = React.useState<Array<PrivateProfile>>([]);
 
   /**
+   * Updates the list of user's with an additional user.
+   *
+   * @param { PrivateProfile } user - the newly added user.
+   */
+  const addUser: (
+    user: PrivateProfile
+  ) => void = (
+    user: PrivateProfile
+  ): void => {
+    const updatedUsers: Array<PrivateProfile> = [...users];
+
+    updatedUsers.unshift({...user});
+
+    setUsers(updatedUsers);
+  }
+
+  /**
    * Handle state updates based on the presence of an admin user.
    */
   React.useEffect(() => {
@@ -63,6 +80,7 @@ export function useRetrieveUsersList() {
   }, [retrieved]);
 
   return {
+    addUser: addUser,
     retrievalStatus: retrieved,
     users: users
   }
