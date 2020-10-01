@@ -4,6 +4,7 @@
 import { Router } from 'express';
 
 // Route Controllers.
+import AdminController from '../api/admin/admin.controller';
 import FollowController from '../api/follow/follow.controller';
 import InvitationController from '../api/invitation/invitation.controller';
 import ReviewController from '../api/review/review.controller';
@@ -30,6 +31,8 @@ export default class RoutesController {
     // Instantiate the router to be pass to classes for route registration.
     this.router = Router();
 
+    // Register the admin routes.
+    AdminController.createRoutes(this.router, this.apiPath);
     // Register the follow routes.
     FollowController.createRoutes(this.router, this.apiPath);
     // Register the invitation routes.

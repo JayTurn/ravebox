@@ -8,6 +8,7 @@ import { APIResponse } from '../../../utils/api/Api.interface';
 import { PrivateProfile } from '../User.interface';
 
 export interface RetrieveProfileParams {
+  admin: boolean;
   profile?: PrivateProfile;
   updateProfile?: (profile: PrivateProfile) => {};
   logout?: () => void;

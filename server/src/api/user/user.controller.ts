@@ -104,6 +104,9 @@ export default class UserController {
     // Retrieve the user's profile.
     router.get(`${path}/profile`, Authenticate.isAuthenticated, UserController.Profile);
 
+    // Check the user's admin status.
+    router.get(`${path}/admin`, Authenticate.isAuthenticated, Authenticate.isAdmin, UserController.Profile);
+
     // Attempt to sign up a user based on the form data.
     router.post(`${path}/signup`, UserController.SignUp);
 

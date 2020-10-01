@@ -248,6 +248,52 @@ export default class Authenticate {
   }
 
   /**
+   * Checks if the user has an admin role.
+   *
+   * @param { Request } request - the request object.
+   * @param { Response } response - the response object.
+   * @param { NextFunction } next - the function to progress to the next step.
+   */
+  static isAdmin(request: AuthenticatedUserRequest, response: Response, next: NextFunction): void {
+
+    let responseObject: ResponseObject;
+
+    if (!request.auth) {
+      // Define an error response to be returned.
+      responseObject = Connect.setResponse({
+            data: {
+              errorCode: 'NO_AUTHORIZATION_COOKIE',
+              message: 'Please log in and try again'
+            }
+          }, 401, 'You need an active session to access this area');
+
+      return response.status(responseObject.status).json(responseObject.data).end();
+    }
+
+    User.findOne({
+      _id: request.auth._id,
+      role: 'admin'
+    })
+    .then((userDocument: UserDetailsDocument) => {
+      if (userDocument) {
+        next();
+      } else {
+        throw new Error('Admin user not found.');
+      }
+    })
+    .catch(() => {
+      // Define an error response to be returned.
+      responseObject = Connect.setResponse({
+            data: {
+              errorCode: 'NOT_AN_ADMIN',
+              message: 'This is a restricted area for admins only.'
+            }
+          }, 401, 'This is a restricted area for admins only.');
+
+      return response.status(responseObject.status).json(responseObject.data).end();
+    })
+  }
+  /**
    * Checks if the user is authenticated and attaches them to the request.
    *
    * @param { Request } request - the request object.

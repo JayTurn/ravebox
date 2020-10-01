@@ -6,6 +6,8 @@
 // User roles.
 export enum UserRole {
   USER = 'user',
+  YOUTUBE = 'youtube',
+  CREATOR = 'creator',
   ADMIN = 'admin'
 }
 

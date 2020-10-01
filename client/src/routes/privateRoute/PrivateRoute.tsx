@@ -39,6 +39,7 @@ const PrivateRoute: React.FC<PrivateRouteProps> = (
 
   // Retrieve the user profile if we have a valid token.
   const {profileStatus} = useRetrieveProfile({
+    admin: props.admin || false,
     profile: props.profile,
     updateProfile: props.login,
     logout: props.logout

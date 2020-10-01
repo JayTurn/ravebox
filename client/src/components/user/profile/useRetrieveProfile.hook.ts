@@ -66,6 +66,7 @@ export function useRetrieveProfile(params: RetrieveProfileParams) {
 
   // Retrieve the parameters.
   const {
+    admin,
     profile,
     updateProfile,
     logout,
@@ -74,6 +75,8 @@ export function useRetrieveProfile(params: RetrieveProfileParams) {
 
   // Check if the current profile exists and contains a valid cookie.
   const [retrieved, setRetrieved] = React.useState(RetrievalStatus.REQUESTED); 
+
+  const [path, setPath]= React.useState<string>(admin ? 'user/admin' : 'user/profile');
 
   /**
    * Handle state updates based on the presence of a profile.
@@ -92,7 +95,7 @@ export function useRetrieveProfile(params: RetrieveProfileParams) {
 
 
       // Perform the API request to get the user's profile.
-      API.requestAPI<ProfileResponse>('user/profile', {
+      API.requestAPI<ProfileResponse>(path, {
         method: RequestType.GET,
         headers: {
           'x-xsrf-token': security
@@ -129,7 +132,7 @@ export function useRetrieveProfile(params: RetrieveProfileParams) {
       
       // Update the user's profile in the redux store.
     }
-  }, [profile]);
+  }, [profile, path]);
 
   return {
     profileStatus: retrieved

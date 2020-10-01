@@ -18,6 +18,7 @@ import {
   Theme
 } from '@material-ui/core/styles';
 import { connect } from 'react-redux';
+import DashboardRoundedIcon from '@material-ui/icons/DashboardRounded';
 import Divider from '@material-ui/core/Divider';
 import Drawer from '@material-ui/core/Drawer';
 import HomeRoundedIcon from '@material-ui/icons/HomeRounded';
@@ -47,6 +48,9 @@ import { StyleType } from '../../elements/link/Link.enum';
 // Interfaces.
 import { PrivateProfile } from '../../user/User.interface';
 import { SideNavigationProps } from './SideNavigation.interface';
+
+// Utilities.
+import { isAdmin } from '../../user/User.common';
 
 const drawerWidth: number = 240;
 
@@ -158,7 +162,8 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
  */
 const SideNavigation: React.FC<SideNavigationProps> = (props: SideNavigationProps) => {
   const classes = useStyles(),
-        activePath: string = props.location.pathname;
+        activePath: string = props.location.pathname,
+        admin: boolean = (props.profile) ? isAdmin(props.profile) : false;
 
   return (
     <Drawer
@@ -235,6 +240,35 @@ const SideNavigation: React.FC<SideNavigationProps> = (props: SideNavigationProp
         */}
         {props.profile ? (
           <React.Fragment>
+            {admin && 
+              <ListItem button alignItems='center' className={clsx(classes.listButton, {
+                [classes.listButtonOpen]: props.expanded,
+                [classes.listButtonClosed]: !props.expanded,
+              })}>
+                <NavLink to='/admin' className={clsx(classes.linkStyle, {
+                  [classes.linkStyleOpen]: props.expanded,
+                  [classes.linkStyleClosed]: !props.expanded
+                })}>
+                  <ListItemIcon className={clsx({
+                    [classes.listButtonIconOpen]: props.expanded,
+                    [classes.listButtonIconClosed]: !props.expanded,
+                    [classes.listButtonIconActive]: activePath === '/admin'
+                  })}>
+                    <DashboardRoundedIcon />
+                  </ListItemIcon>
+                  <ListItemText disableTypography className={clsx({
+                    [classes.listButtonTextOpen]: props.expanded,
+                    [classes.listButtonTextClosed]: !props.expanded
+                  })}>
+                    <Typography variant='subtitle2' className={clsx({
+                      [classes.listButtonTypographyOpen]: props.expanded,
+                      [classes.listButtonTypographyClosed]: !props.expanded,
+                      [classes.listButtonTextActive]: activePath === '/admin'
+                    })}>Admin</Typography>
+                  </ListItemText>
+                </NavLink>
+              </ListItem>
+            }
             <ListItem button alignItems='center' className={clsx(classes.listButton, {
               [classes.listButtonOpen]: props.expanded,
               [classes.listButtonClosed]: !props.expanded,
