@@ -42,6 +42,7 @@ const About = loadable(() => import('./about/About'));
 const Account = loadable(() => import('./user/account/Account'));
 const AddProduct = loadable(() => import('./product/add/AddProduct'));
 const AddReview = loadable(() => import('./review/add/AddReview'));
+const Admin = loadable(() => import('./admin/Admin'));
 import { AnalyticsProvider } from '../components/analytics/Analytics.provider';
 const CategoryList = loadable(() => import('./category/CategoryList'));
 const Channel = loadable(() => import('./user/channel/Channel'));
@@ -155,6 +156,7 @@ const App: React.FC<AppProps> = (props: AppProps) => {
 
   // Retrieve the user profile if we have a valid token.
   const {profileStatus} = useRetrieveProfile({
+    admin: false,
     profile: props.profile,
     updateProfile: props.login,
     updateXsrf: props.updateXsrf
@@ -211,6 +213,9 @@ const App: React.FC<AppProps> = (props: AppProps) => {
                 render={(route: RouteComponentProps) => {
                   return (
                     <Switch location={route.location}>
+                      <PrivateRoute path="/admin" admin={true}>
+                        <Admin />
+                      </PrivateRoute>
                       <Route path="/about" exact={true}>
                         <About />
                       </Route>

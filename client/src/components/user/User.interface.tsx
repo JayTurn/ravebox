@@ -3,6 +3,9 @@
  * Interfaces for user components.
  */
 
+// Enumerators.
+import { Role } from './User.enum';
+
 // Interfaces.
 import { Following } from '../follow/Follow.interface';
 
@@ -16,6 +19,8 @@ export interface PrivateProfile {
   emailVerified: boolean;
   following: Following;  
   handle: string;
+  role: Array<Role>;
+  statistics?: ProfileStatistics;
 }
 
 /**
