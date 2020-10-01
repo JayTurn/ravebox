@@ -5,12 +5,17 @@
  */
 
 // Modules.
-import { Request, Response, Router } from 'express';
 import Authenticate from '../../models/authentication/authenticate.model';
 import Connect from '../../models/database/connect.model';
 import EnvConfig from '../../config/environment/environmentBaseConfig';
 import Follow from '../follow/follow.model';
 import Logging from '../../shared/logging/Logging.model';
+import {
+  NextFunction,
+  Request,
+  Response,
+  Router
+} from 'express';
 import Product from '../product/product.model';
 import Review from '../review/review.model';
 import User from '../user/user.model';
@@ -75,6 +80,21 @@ export default class AdminController {
       Authenticate.isAuthenticated,
       Authenticate.isAdmin,
       AdminController.CreateUser
+    );
+
+    // Impersonate an existing user.
+    router.get(
+      `${path}/users/impersonate`,
+      Authenticate.isAuthenticated,
+      AdminController.ImpersonateUser
+    );
+
+    // Impersonate an existing user.
+    router.get(
+      `${path}/users/impersonate/:id`,
+      Authenticate.isAuthenticated,
+      Authenticate.isAdmin,
+      AdminController.ImpersonateUser
     );
   }
 
@@ -263,5 +283,125 @@ export default class AdminController {
         // Return the response.
         response.status(responseObject.status).json(responseObject.data);
     });
+  }
+
+  /**
+   * Returns a list of users.
+   *
+   * @param {object} req
+   * The request object.
+   *
+   * @param {object} res
+   * The response object.
+   */
+  static ImpersonateUser(
+    request: AuthenticatedUserRequest,
+    response: Response,
+    next: NextFunction
+  ): void {
+    // Retrieve the user based on the id provided and create a token session.
+    const id: string = request.params.id;
+    
+    // If we haven't been provided an id, we should reset the impersonation.
+    if (!id) {
+
+      const adminId: string = Authenticate.getAdminUserIdFromToken(request);
+
+      // Store the admin authentication cookie and header.
+      Authenticate.removeAdminAuthenticationResponseHeader(request, response);
+
+      User.findById(adminId)
+        .populate({
+          path: 'following',
+          model: 'Follow'
+        })
+        .populate({
+          path: 'statistics',
+          model: 'UserStatistic'
+        })
+        .then((userDetails: UserDetailsDocument) => {
+          if (!userDetails) {
+            throw new Error(`User ID ${id} not found for impersonation`);
+          }
+
+          // Build the successful response, using the private user profile.
+          const responseObject: ResponseObject = Connect.setResponse({
+            data: {
+              user: userDetails.privateProfile
+            }
+          }, 200, 'Login Successful!');
+
+          // Return the response.
+          response.status(responseObject.status).json(responseObject.data).end();
+        })
+        .catch((error: Error) => {
+          // Define the responseObject.
+          const responseObject = Connect.setResponse({
+              data: {
+                errorCode: 'UNABLE_TO_FIND_ADMIN_USER',
+                message: `Admin user with the ID ${adminId} was not found for impersonation.`
+              },
+              error: error
+            }, 401, `Admin user with the ID ${adminId} was not found for impersonation.`);
+
+          Logging.Send(LogLevel.ERROR, responseObject);
+
+          // Return the response.
+          response.status(responseObject.status).json(responseObject.data).end();
+        });
+
+    } else {
+
+    User.findById(id)
+      .populate({
+        path: 'following',
+        model: 'Follow'
+      })
+      .populate({
+        path: 'statistics',
+        model: 'UserStatistic'
+      })
+      .then((userDetails: UserDetailsDocument) => {
+        if (!userDetails) {
+          throw new Error(`User ID ${id} not found for impersonation`);
+        }
+
+        // Store the admin authentication cookie and header.
+        Authenticate.setAdminAuthenticationResponseHeader(request, response);
+
+        // Clear the existing authentication from the response.
+        Authenticate.removeAuthentication(response);
+
+        // Sign the token for the login request.
+        const token: string = Authenticate.signToken(userDetails._id, userDetails.role[0]);
+        // Build the successful response, using the private user profile.
+        const responseObject: ResponseObject = Connect.setResponse({
+          data: {
+            user: userDetails.privateProfile
+          }
+        }, 200, 'Login Successful!');
+
+        // Set CSRF values.
+        response = Authenticate.setAuthenticatedResponseHeader(token, response);
+
+        // Return the response.
+        response.status(responseObject.status).json(responseObject.data);
+      })
+      .catch((error: Error) => {
+        // Define the responseObject.
+        const responseObject = Connect.setResponse({
+            data: {
+              errorCode: 'UNABLE_TO_FIND_USER_TO_IMPERSONATE',
+              message: `User with the ID ${id} was not found for impersonation.`
+            },
+            error: error
+          }, 401, `User with the ID ${id} was not found for impersonation.`);
+
+        Logging.Send(LogLevel.ERROR, responseObject);
+
+        // Return the response.
+        response.status(responseObject.status).json(responseObject.data).end();
+      });
+    }
   }
 }

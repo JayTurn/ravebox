@@ -47,6 +47,7 @@ import { toggleSide } from '../../../store/navigation/Actions';
 import Logo from '../../logo/Logo';
 import ProfileMenu from '../../user/profileMenu/ProfileMenu';
 //import SearchField from '../../search/field/SearchField';
+import ImpersonateUser from '../../admin/impersonateUser/ImpersonateUser';
 
 // Interfaces.
 import {
@@ -176,6 +177,9 @@ const TopNavigation: React.FC<TopNavigationProps> = (props: TopNavigationProps) 
         theme = useTheme(),
         path = useLocation();
 
+  const cookie: Cookies = new Cookies(),
+        adminCookie: string = cookie.get('XSRF-TOKEN-ADMIN');
+
   // Create a search bar state.
   const [searchBar, setSearchBar] = React.useState<boolean>(false);
 
@@ -183,6 +187,12 @@ const TopNavigation: React.FC<TopNavigationProps> = (props: TopNavigationProps) 
   const largeScreen = useMediaQuery(theme.breakpoints.up('md'));
 
   const [showLogo, setShowLogo] = React.useState<boolean>(true);
+
+  const [profileId, setProfileId] = React.useState<string>('');
+
+  // If we have an admin cookie, we'll need to display the button to stop
+  // impersontating a user.
+  const [isAdmin, setIsAdmin] = React.useState<boolean>(adminCookie !== undefined);
 
   /**
    * Checks the route path for logo display.
@@ -195,7 +205,15 @@ const TopNavigation: React.FC<TopNavigationProps> = (props: TopNavigationProps) 
         setShowLogo(true);
       }
     }
-  }, [path]);
+
+    // Update the state of the admin based on changes to the profile.
+    if (props.profile && props.profile._id !== profileId) {
+      const updatedCookie: string = cookie.get('XSRF-TOKEN-ADMIN');
+      setProfileId(props.profile._id);
+      setIsAdmin(updatedCookie !== undefined);
+    }
+
+  }, [cookie, path, profileId, props.profile]);
 
   /**
    * Toggles the display of side navigation menu.
@@ -261,6 +279,9 @@ const TopNavigation: React.FC<TopNavigationProps> = (props: TopNavigationProps) 
               <Grid item xs={4} style={{textAlign: 'right'}}>
                 {props.profile ? (
                   <React.Fragment>
+                    {isAdmin &&
+                      <ImpersonateUser />
+                    }
                     <ProfileMenu />
                   </React.Fragment>
                 ) : (

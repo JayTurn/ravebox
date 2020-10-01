@@ -14,6 +14,7 @@ import {
 import Grid from '@material-ui/core/Grid';
 import Paper from '@material-ui/core/Paper';
 import * as React from 'react';
+import StyledButton from '../../elements/buttons/StyledButton';
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
@@ -28,6 +29,7 @@ import { withRouter } from 'react-router';
 
 // Components.
 import CreateUser from '../createUser/CreateUser';
+import ImpersonateUser from '../impersonateUser/ImpersonateUser';
 
 // Hooks.
 import { useRetrieveUsersList } from './useRetrieveUsersList.hook';
@@ -128,6 +130,8 @@ const AdminUsers: React.FC<AdminUsersProps> = (props: AdminUsersProps) => {
                       <TableCell align='right' className={clsx(classes.headerCell)}>
                         Followers
                       </TableCell>
+                      <TableCell align='right' className={clsx(classes.headerCell)}>
+                      </TableCell>
                     </TableRow>
                   </TableHead>
                 <TableBody>
@@ -142,6 +146,11 @@ const AdminUsers: React.FC<AdminUsersProps> = (props: AdminUsersProps) => {
                         </TableCell>
                         <TableCell align='right' className={clsx(classes.tableCell)}>
                           {user.statistics ? user.statistics.followers : 'N/A'}
+                        </TableCell>
+                        <TableCell align='right' className={clsx(classes.tableCell)}>
+                          <ImpersonateUser
+                            id={user._id}
+                          />  
                         </TableCell>
                       </TableRow>
                     );
