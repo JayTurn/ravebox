@@ -63,6 +63,7 @@ const ContactSettings: React.FC<ContactSettingsProps> = (props: ContactSettingsP
   const {
     profileStatus,
   } = useUpdateSettings({
+    admin: false,
     profile: props.profile,
     updateProfile: props.update
   });

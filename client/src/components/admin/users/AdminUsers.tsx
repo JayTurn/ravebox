@@ -26,6 +26,9 @@ import Typography from '@material-ui/core/Typography';
 import useMediaQuery from '@material-ui/core/useMediaQuery';
 import { withRouter } from 'react-router';
 
+// Components.
+import CreateUser from '../createUser/CreateUser';
+
 // Hooks.
 import { useRetrieveUsersList } from './useRetrieveUsersList.hook';
 
@@ -62,8 +65,32 @@ const AdminUsers: React.FC<AdminUsersProps> = (props: AdminUsersProps) => {
     users
   } = useRetrieveUsersList();
 
+  /**
+   * Updates the list of users with the latest one.
+   *
+   * @param { PrivateProfile } user - the new user to be added.
+   */
+  const updateUsers: (
+    user: PrivateProfile
+  ) => void = (
+    user: PrivateProfile
+  ): void => {
+  }
+
+  /**
+   * Displays the create new account overlay.
+   */
   return (
     <Grid container>
+      <Grid item xs={12}>
+        <Grid container>
+          <Grid item>
+            <CreateUser 
+              update={updateUsers}
+            />
+          </Grid>
+        </Grid>
+      </Grid>
       <Grid item xs={12}>
         {users.length > 0 &&
           <Paper>

@@ -131,7 +131,8 @@ const ChangeProfile: React.FC<ChangeProfileProps> = (props: ChangeProfileProps) 
     following: {
       channels: []
     },
-    handle: ''
+    handle: '',
+    role: []
   });
 
   // Form error messages to be displayed if fields haven't been validated

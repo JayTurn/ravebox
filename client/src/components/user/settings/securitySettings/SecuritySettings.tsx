@@ -63,6 +63,7 @@ const SecuritySettings: React.FC<SecuritySettingsProps> = (props: SecuritySettin
   const {
     profileStatus,
   } = useUpdateSettings({
+    admin: false,
     profile: props.profile,
     updateProfile: props.update
   });
