@@ -8,6 +8,9 @@ import * as Jwt from 'jsonwebtoken';
 import * as Crypto from 'crypto';
 import * as _ from 'lodash';
 
+// Enumerators.
+import { UserRole } from './user.enum';
+
 // Interfaces.
 import { UserDetailsDocument } from './user.interface';
 
@@ -60,7 +63,7 @@ const UserSchema = new Schema({
   },
   role: {
     type: Array,
-    default: [ EnvConfig.roles[0] ],
+    default: [ UserRole.USER ],
   },
   salt: {
     type: String,
@@ -134,7 +137,11 @@ UserSchema
       return true;
     }
 
-    return email.length;
+    if (this.role.includes(UserRole.YOUTUBE)) {
+      return 5;
+    } else {
+      return email.length;
+    }
   }, 'EMAIL_EMPTY');
 
 // Validate the email provided hasn't been taken.
@@ -143,6 +150,10 @@ UserSchema
   .validate(function(email: string, callback: Function) {
     // Get the instance of this Schema.
     //let _this = this;
+    
+    if (this.role.includes(UserRole.YOUTUBE)) {
+      email = 'N/A';
+    }
 
     // Return the result from attempting to find the email address in the
     // database.
@@ -174,6 +185,10 @@ UserSchema
 UserSchema
   .pre<UserDetailsDocument>('save', function(next: Mongoose.HookNextFunction) {
     let _this: UserDetailsDocument;
+
+    if (this.role.lastIndexOf(UserRole.YOUTUBE) >= 0) {
+      next();
+    }
 
     // If this is a new or updated password.
     if (this.isModified('password')) {

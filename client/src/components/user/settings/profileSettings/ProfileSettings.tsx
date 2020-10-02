@@ -69,6 +69,7 @@ const ProfileSettings: React.FC<ProfileSettingsProps> = (props: ProfileSettingsP
   const {
     profileStatus,
   } = useUpdateSettings({
+    admin: false,
     profile: props.profile,
     updateProfile: props.update
   });

@@ -66,6 +66,7 @@ export function useUpdateSettings(params: RetrieveProfileParams) {
 
   // Retrieve the parameters.
   const {
+    admin,
     profile,
     updateProfile,
     updateXsrf

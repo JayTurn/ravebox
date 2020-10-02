@@ -40,7 +40,8 @@ export default combineReducers<UserStore, UserAction>({
     following: {
       channels: []
     },
-    handle: ''
+    handle: '',
+    role: []
   }, action: UserAction) => {
     // Update the configuration based on the redux action triggered.
     switch (action.type) {
@@ -65,7 +66,8 @@ export default combineReducers<UserStore, UserAction>({
           following: {
             channels: []
           },
-          handle: ''
+          handle: '',
+          role: []
         };
       default:
         return state;

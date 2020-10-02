@@ -26,7 +26,9 @@ import { UserDetailsDocument } from '../../api/user/user.interface';
 import { ResponseObject } from '../database/connect.interface';
 
 const JWT = 'ravebox';
+const JWTADMIN = 'ravebox-admin';
 const CSRF = 'XSRF-TOKEN';
+const CSRFADMIN = 'XSRF-TOKEN-ADMIN';
 
 /**
  * Validate the CSRF Token matches the header, cookie and JWT.
@@ -433,6 +435,117 @@ export default class Authenticate {
 
     // Remove the CSRF Cookie.
     response.clearCookie('XSRF-TOKEN');
+
+    return response;
+  }
+
+  /**
+   * Retrieves the admin id from the token if it exists.
+   *
+   * @param { object } res - the response object.
+   * 
+   * @return { object }
+   */
+  static getAdminUserIdFromToken(
+    request: Request
+  ): string {
+    let id = '';
+
+    const token: string = request.cookies[JWTADMIN];
+
+    if (token) {
+      // Decode the token string.
+      const decoded: string | {[key: string]: any} = Jwt.decode(token, {
+        complete: true,
+        json: true
+      });
+
+      id = decoded.payload._id;
+    }
+
+    return id;
+  }
+
+  /**
+   * Removes the administration cookie and header.
+   *
+   * @param { object } res - the response object.
+   * 
+   * @return { object }
+   */
+  static removeAdminAuthenticationResponseHeader(
+    request: Request,
+    response: Response
+  ): Response {
+
+    const token: string = request.cookies[JWTADMIN];
+
+    // Decode the token string.
+    const decoded: string | {[key: string]: any} = Jwt.decode(token, {
+      complete: true,
+      json: true
+    });
+
+    // Generate the expiry date.
+    const expiration: Date = new Date((decoded.payload.exp as number) * 1000);
+
+    response.cookie(JWT, token, {
+      domain: '.ravebox.io',
+      expires: expiration,
+      httpOnly: true
+    });
+
+    // Set the response cookie.
+    response.cookie(CSRF, decoded.payload.csrf, {
+      domain: '.ravebox.io',
+      expires: expiration,
+      httpOnly: false
+    });
+
+    // Remove the JWT Cookie.
+    response.clearCookie(JWTADMIN);
+
+    // Remove the CSRF Cookie.
+    response.clearCookie('XSRF-TOKEN-ADMIN');
+
+    return response;
+  }
+
+  /**
+   * Sets an administration cookie and header.
+   *
+   * @param { object } res - the response object.
+   * 
+   * @return { object }
+   */
+  static setAdminAuthenticationResponseHeader(
+    request: Request,
+    response: Response
+  ): Response {
+
+    const token: string = request.cookies[JWT];
+
+    // Decode the token string.
+    const decoded: string | {[key: string]: any} = Jwt.decode(token, {
+      complete: true,
+      json: true
+    });
+
+    // Generate the expiry date.
+    const expiration: Date = new Date((decoded.payload.exp as number) * 1000);
+
+    response.cookie(JWTADMIN, token, {
+      domain: '.ravebox.io',
+      expires: expiration,
+      httpOnly: true
+    });
+
+    // Set the response cookie.
+    response.cookie(CSRFADMIN, decoded.payload.csrf, {
+      domain: '.ravebox.io',
+      expires: expiration,
+      httpOnly: false
+    });
 
     return response;
   }

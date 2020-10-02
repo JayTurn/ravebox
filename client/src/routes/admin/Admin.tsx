@@ -90,12 +90,12 @@ const Admin: React.FC<AdminProps> = (props: AdminProps) => {
    * @param { React.}
    */
   const navigate: (
-    value: AdminPath
+    value: AdminPath | null
   ) => void = (
-    value: AdminPath
+    value: AdminPath | null
   ): void => {
     // Only navigate if the intended path differs to the current one.
-    const navigateTo: string = `${props.match.path}/${value}`;
+    const navigateTo: string = value ? `${props.match.path}/${value}` : `${props.match.path}`;
     if (value === navigateTo) {
       return;
     }
@@ -132,6 +132,14 @@ const Admin: React.FC<AdminProps> = (props: AdminProps) => {
           value={path}
           variant={largeScreen ? 'standard' : 'fullWidth'}
         >
+          <Tab
+            disableRipple
+            label={`Overview`} 
+            onClick={(e: React.SyntheticEvent) => {
+              navigate(null);
+            }}
+            value={`${props.match.path}`}
+          />
           <Tab
             disableRipple
             label={`Users`} 
