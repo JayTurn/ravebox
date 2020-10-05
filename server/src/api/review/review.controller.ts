@@ -25,6 +25,7 @@ import Video from '../../shared/video/Video.model';
 import { LogLevel } from '../../shared/logging/Logging.enum';
 import { SNSMessageType } from '../../shared/sns/sns.enum';
 import { Workflow } from '../../shared/enumerators/workflow.enum';
+import { VideoType } from './review.enum';
 
 // Interfaces.
 import {
@@ -190,22 +191,29 @@ export default class ReviewController {
       statistics: newReviewStatistics._id,
       title: reviewDetails.title,
       thumbnail: reviewDetails.thumbnail,
-      user: request.auth._id
+      user: request.auth._id,
+      videoType: reviewDetails.videoType
     });
 
     // Update the review statistics with the new review id.
     newReviewStatistics.review = newReview._id;
-    newReviewStatistics.save();
 
-    Video.CreatePresignedVideoRequest(
-      reviewDetails.videoTitle,
-      reviewDetails.videoSize,
-      reviewDetails.videoType,
-      `reviews/${newReview._id}`
-    ).then((requestData: S3.PresignedPost) => {
+    if (reviewDetails.videoType === VideoType.YOUTUBE) {
 
-        newReview.save()
-          .then((review: ReviewDocument) => {
+      // Publish the review immediately.
+      newReview.published = Workflow.PUBLISHED;
+
+      // Add the YouTube video details to the review and save it.
+      newReview.youtube = {
+        endTime: reviewDetails.endTime,
+        startTime: reviewDetails.startTime,
+        url: reviewDetails.videoURL
+      };
+
+      newReview.save()
+        .then((review: ReviewDocument) => {
+          // Save the statistics object now that we have a review.
+          newReviewStatistics.save();
 
             // Increment the raves count in the user statistics.
             UserStatisticsCommon.IncrementRavesCount(request.auth._id, 1);
@@ -213,8 +221,7 @@ export default class ReviewController {
             // Set the response object.
             const responseObject: ResponseObject = Connect.setResponse({
               data: {
-                review: review.details,
-                presigned: requestData
+                review: review.details
               }
             }, 201, `Review ${review._id} created successfully`);
 
@@ -223,10 +230,6 @@ export default class ReviewController {
             // Return the response for the authenticated user.
             response.status(responseObject.status).json(responseObject.data);
 
-          })
-          .catch((error: Error) => {
-            throw error;
-          });
         })
         .catch((error: Error) => {
           // Return an error indicating the review wasn't created.
@@ -243,6 +246,58 @@ export default class ReviewController {
           // Return the error response for the user.
           response.status(401).json(responseObject.data);
         });
+    } else {
+
+      Video.CreatePresignedVideoRequest(
+        reviewDetails.videoTitle,
+        reviewDetails.videoSize,
+        reviewDetails.videoFileType,
+        `reviews/${newReview._id}`
+      ).then((requestData: S3.PresignedPost) => {
+
+          newReview.save()
+            .then((review: ReviewDocument) => {
+
+              // Save the statistics object now that we have a review.
+              newReviewStatistics.save();
+
+              // Increment the raves count in the user statistics.
+              UserStatisticsCommon.IncrementRavesCount(request.auth._id, 1);
+
+              // Set the response object.
+              const responseObject: ResponseObject = Connect.setResponse({
+                data: {
+                  review: review.details,
+                  presigned: requestData
+                }
+              }, 201, `Review ${review._id} created successfully`);
+
+              Logging.Send(LogLevel.INFO, responseObject);
+
+              // Return the response for the authenticated user.
+              response.status(responseObject.status).json(responseObject.data);
+
+            })
+            .catch((error: Error) => {
+              throw error;
+            });
+          })
+          .catch((error: Error) => {
+            // Return an error indicating the review wasn't created.
+            const responseObject = Connect.setResponse({
+              data: {
+                errorCode: 'REVIEW_NOT_CREATED',
+                message: 'There was a problem creating your review'
+              },
+              error: error
+            }, 401, 'There was a problem creating your review');
+
+            Logging.Send(LogLevel.ERROR, responseObject);
+
+            // Return the error response for the user.
+            response.status(401).json(responseObject.data);
+          });
+    }
   }
 
   /**
@@ -1035,9 +1090,14 @@ export default class ReviewController {
           thumbnail = request.body.thumbnail,
           title = request.body.title,
           userId = request.auth._id,
+          videoFileType = request.body.videoFileType,
           videoSize = request.body.videoSize,
           videoTitle = request.body.videoTitle,
-          videoType = request.body.videoType;
+          youtube = {
+            endTime: request.body.endTime || 0,
+            startTime: request.body.startTime || 0,
+            url: request.body.videoURL || ''
+          };
 
     Review.findOneAndUpdate({
       _id: id,
@@ -1048,7 +1108,8 @@ export default class ReviewController {
       recommended: recommended,
       sponsored: sponsored,
       thumbnail: thumbnail,
-      title: title
+      title: title,
+      youtube: youtube
     }, {
       new: true,
       upsert: false
@@ -1065,7 +1126,7 @@ export default class ReviewController {
         // Set the response object.
         responseObject = Connect.setResponse({
           data: {
-            review: review
+            review: review.details
           }
         }, 200, `Review ${review._id}: Updated successfully`);
 
@@ -1080,7 +1141,7 @@ export default class ReviewController {
       Video.CreatePresignedVideoRequest(
         videoTitle,
         videoSize,
-        videoType,
+        videoFileType,
         `reviews/${review._id}`
       ).then((requestData: S3.PresignedPost) => {
 

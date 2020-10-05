@@ -15,6 +15,7 @@ import {
 import {
   Recommended
 } from './recommendation/Recommendation.enum';
+import { VideoType } from './Review.enum';
 
 // Interfaces.
 import {
@@ -64,12 +65,15 @@ export function useRetrieveReviewById(params: RetrieveReviewByIdParams) {
   const [review, setReview] = React.useState<Review>({
     created: new Date(),
     description: '',
+    endTime: 0,
     _id: '',
     links: [],
     sponsored: false,
+    startTime: 0,
     title: '',
     recommended: Recommended.RECOMMENDED,
-    url: ''
+    url: '',
+    videoType: VideoType.NATIVE
   });
 
   /**

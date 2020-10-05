@@ -109,7 +109,7 @@ const ReviewList: React.FC<ReviewListProps> = (props: ReviewListProps) => {
             <React.Fragment>
               {isPrivateList ? (
                 <React.Fragment>
-                  <Grid container direction='row' spacing={largeScreen ? 3 : 0} className={clsx(
+                  <Grid container direction='row' spacing={0} className={clsx(
                     classes.listContainer, {
                       [classes.listContainerLarge]: largeScreen
                     })}

@@ -16,15 +16,15 @@ import {
   Response,
   Router
 } from 'express';
-import Product from '../product/product.model';
-import Review from '../review/review.model';
+//import Product from '../product/product.model';
+//import Review from '../review/review.model';
 import User from '../user/user.model';
 import UserStatistics from '../userStatistics/userStatistics.model'
 
 // Enumerators.
 import { LogLevel } from '../../shared/logging/Logging.enum';
 import { UserRole } from '../user/user.enum';
-import { Workflow } from '../../shared/enumerators/workflow.enum';
+//import { Workflow } from '../../shared/enumerators/workflow.enum';
 
 // Interfaces.
 import {
@@ -40,7 +40,7 @@ import {
 } from '../user/user.interface';
 import { ResponseObject } from '../../models/database/connect.interface';
 import {
-  UserStatistics as UserStats,
+  //UserStatistics as UserStats,
   UserStatisticsDocument
 } from '../userStatistics/userStatistics.interface'
 
@@ -296,8 +296,7 @@ export default class AdminController {
    */
   static ImpersonateUser(
     request: AuthenticatedUserRequest,
-    response: Response,
-    next: NextFunction
+    response: Response
   ): void {
     // Retrieve the user based on the id provided and create a token session.
     const id: string = request.params.id;

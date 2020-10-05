@@ -9,6 +9,7 @@ import { combineReducers } from 'redux';
 // Enumerators.
 import { Recommended } from '../../components/review/recommendation/Recommendation.enum';
 import { ReviewVerb } from './Actions.enum';
+import { VideoType } from '../../components/review/Review.enum';
 
 // Interfaces.
 import {
@@ -23,12 +24,15 @@ import {
 const emptyReview: Review = {
   created: new Date(),
   description: '',
+  endTime: 0,
   _id: '',
   links: [],
   sponsored: false,
+  startTime: 0,
   title: '',
   recommended: Recommended.RECOMMENDED,
-  url: ''
+  url: '',
+  videoType: VideoType.NATIVE
 }
 
 const emptyReviewList: ReviewGroup = {

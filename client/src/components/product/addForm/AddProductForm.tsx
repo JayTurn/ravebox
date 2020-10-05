@@ -1,6 +1,6 @@
 /**
- * ProductForm.tsx
- * Product form component.
+ * AddProductForm.tsx
+ * AddProduct form component.
  */
 
 // Modules.
@@ -48,9 +48,9 @@ import { CategoryItem } from '../../category/Category.interface';
 import { InputData } from '../../forms/input/Input.interface';
 import { Product } from '../../product/Product.interface';
 import {
-  ProductFormProps,
-  ProductFormResponse
-} from './ProductForm.interface';
+  AddProductFormProps,
+  AddProductFormResponse
+} from './AddProductForm.interface';
 import { ValidationSchema } from '../../forms/validation/Validation.interface';
 
 // Validation rules.
@@ -74,7 +74,7 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
 }));
 
 /**
- * Product validation schema.
+ * AddProduct validation schema.
  */
 const productValidation: ValidationSchema = {
   name: {
@@ -100,8 +100,8 @@ const productValidation: ValidationSchema = {
 /**
  * Renders the product form component.
  */
-const ProductForm: React.FC<ProductFormProps> = (
-  props: ProductFormProps
+const AddProductForm: React.FC<AddProductFormProps> = (
+  props: AddProductFormProps
 ) => {
 
   // Define the analytics context and a tracking event.
@@ -280,14 +280,14 @@ const ProductForm: React.FC<ProductFormProps> = (
     // Set the submission state.
     setSubmitting(true)
 
-    API.requestAPI<ProductFormResponse>('product/create', {
+    API.requestAPI<AddProductFormResponse>('product/create', {
       method: RequestType.POST,
       headers: {
         'x-xsrf-token': props.xsrf || ''
       },
       body: JSON.stringify(product)
     })
-    .then((response: ProductFormResponse) => {
+    .then((response: AddProductFormResponse) => {
 
       // Present any errors that were returned in the response.
       if (response.errorCode) {
@@ -364,7 +364,7 @@ const ProductForm: React.FC<ProductFormProps> = (
  * Map the redux state to the product form properties.
  *
  */
-function mapStatetoProps(state: any, ownProps: ProductFormProps) {
+function mapStatetoProps(state: any, ownProps: AddProductFormProps) {
   // Retrieve the xsrf token to be submitted with the request.
   const xsrfToken: string = state.xsrf ? state.xsrf.token : undefined;
 
@@ -376,4 +376,4 @@ function mapStatetoProps(state: any, ownProps: ProductFormProps) {
 
 export default withRouter(connect(
   mapStatetoProps
-)(ProductForm));
+)(AddProductForm));
