@@ -1,5 +1,5 @@
 /**
- * ProductForm.interface.tsx
+ * AddProductForm.interface.tsx
  * Interfaces for the product form.
  */
 
@@ -10,10 +10,10 @@ import { RouteComponentProps } from 'react-router';
 import { APIResponse } from '../../../utils/api/Api.interface';
 import { Product } from '../Product.interface';
 
-export interface ProductFormProps extends RouteComponentProps {
+export interface AddProductFormProps extends RouteComponentProps {
   xsrf?: string;
 }
 
-export interface ProductFormResponse extends APIResponse {
+export interface AddProductFormResponse extends APIResponse {
   product: Product;
 }

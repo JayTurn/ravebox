@@ -7,7 +7,10 @@
 import * as Mongoose from 'mongoose';
 
 // Enumerators.
-import { Recommended } from './review.enum';
+import {
+  Recommended,
+  VideoType
+} from './review.enum';
 import { Workflow } from '../../shared/enumerators/workflow.enum';
 
 // Interfaces.
@@ -50,6 +53,8 @@ export interface ReviewDocument extends Mongoose.Document {
   url: string;
   user: UserDetailsDocument;
   video: AWSVideo;
+  videoType: VideoType;
+  youtube: YouTubeVideo;
 }
 
 /**
@@ -58,14 +63,17 @@ export interface ReviewDocument extends Mongoose.Document {
 export interface ReviewDetails {
   created: Date;
   description?: string;
+  endTime: number;
   _id: string;
   links?: Array<LinkDetails>;
   product: ProductDetails;
   recommended: Recommended;
+  startTime: number;
   statistics?: ReviewStatistics;
   sponsored: boolean;
   title: string;
   user: PublicUserDetails;
+  videoType: VideoType;
   videoURL: string;
   thumbnailURL: string;
 }
@@ -87,15 +95,19 @@ export interface PrivateReviewDetails extends ReviewDetails {
  */
 export interface ReviewRequestBody {
   description: string;
+  endTime: number;
   links: Array<LinkDetails>;
   product: string;
   recommended: Recommended;
   sponsored: boolean;
+  startTime: number;
   thumbnail: string;
   title: string;
-  videoTitle: string;
+  videoFileType: string;
   videoSize: string;
-  videoType: string;
+  videoTitle: string;
+  videoType: VideoType;
+  videoURL: string;
 }
 
 /**
@@ -163,6 +175,12 @@ export interface AWSVideo {
   workflowName: string;
   workflowStatus: string;
   workflowTrigger: string;
+}
+
+export interface YouTubeVideo {
+  endTime: number;
+  startTime: number;
+  url: string;
 }
 
 /**

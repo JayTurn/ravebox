@@ -13,6 +13,7 @@ import {
   RequestType,
   RetrievalStatus
 } from '../../utils/api/Api.enum';
+import { VideoType } from '../review/Review.enum';
 
 // Interfaces.
 import {
@@ -59,11 +60,14 @@ export function useRetrieveProductByURL(params: RetrieveProductByURLParams) {
       _id: '',
       created: new Date(),
       description: '',
+      endTime: 0,
       links: [],
       sponsored: false,
+      startTime: 0,
       title: '',
       recommended: Recommended.RECOMMENDED,
-      url: ''
+      url: '',
+      videoType: VideoType.NATIVE
     }]
   );
 
@@ -116,7 +120,6 @@ export function useRetrieveProductByURL(params: RetrieveProductByURLParams) {
         }
       })
       .catch((error: Error) => {
-        console.error(error);
         setRetrieved(RetrievalStatus.FAILED);
       });
     }

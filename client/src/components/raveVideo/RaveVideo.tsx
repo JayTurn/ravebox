@@ -4,11 +4,23 @@
  */
 
 // Modules.
+import Box from '@material-ui/core/Box';
+import clsx from 'clsx';
 import { connect } from 'react-redux';
+import {
+  createStyles,
+  makeStyles,
+  withStyles,
+  useTheme,
+  Theme
+} from '@material-ui/core/styles';
 import Grid from '@material-ui/core/Grid';
 import * as React from 'react';
 import Player from 'react-player';
 import useResizeObserver from 'use-resize-observer/polyfilled';
+
+// Enumerators.
+import { VideoType } from '../review/Review.enum';
 
 // Hooks.
 import { useAnalytics } from '../analytics/Analytics.provider';
@@ -27,11 +39,33 @@ import {
 import { formatReviewProperties } from '../review/Review.common';
 
 /**
+ * Styles for the wrapping button element.
+ */
+const useStyles = makeStyles((theme: Theme) => createStyles({
+  container: {
+    height: 0,
+    paddingTop: '56.25%',
+    position: 'relative',
+    overflow: 'hidden',
+    width: '100%'
+  },
+  inside: {
+    height: '100%',
+    left: 0,
+    position: 'absolute',
+    top: 0,
+    width: '100%'
+  }
+}));
+
+/**
  * Renders the review video.
  */
 const RaveVideo: React.FC<RaveVideoProps> = (props: RaveVideoProps) => {
   // Define the analytics context and a tracking event.
   const analytics: AnalyticsContextProps = useAnalytics() as AnalyticsContextProps;
+
+  const classes = useStyles();
   
   const playerRef = React.useRef<Player>(null);
 
@@ -179,14 +213,18 @@ const RaveVideo: React.FC<RaveVideoProps> = (props: RaveVideoProps) => {
   return (
     <Grid container direction='column'>
       {props.review.videoURL &&
-        <Player
-          {...config} 
-          progressInterval={5000}
-          onEnded={handleComplete}
-          onProgress={handleProgress}
-          onStart={handleStart}
-          ref={playerRef}
-        />
+        <Box className={clsx(classes.container)}>
+          <Box className={clsx(classes.inside)}>
+            <Player
+              {...config} 
+              progressInterval={5000}
+              onEnded={handleComplete}
+              onProgress={handleProgress}
+              onStart={handleStart}
+              ref={playerRef}
+            />
+          </Box>
+        </Box>
       }
     </Grid>
   );

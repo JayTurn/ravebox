@@ -43,11 +43,13 @@ import StyledButton from '../../elements/buttons/StyledButton';
 import PaddedDivider from '../../elements/dividers/PaddedDivider';
 
 // Enumerators.
+import { FileUploadState } from '../../forms/fileUpload/FileUpload.enum';
 import {
   RequestType
 } from '../../../utils/api/Api.enum';
 import { Recommended } from '../recommendation/Recommendation.enum';
-import { FileUploadState } from '../../forms/fileUpload/FileUpload.enum';
+import { Role } from '../../user/User.enum';
+import { VideoType } from '../Review.enum';
 
 // Hooks.
 import { useAnalytics } from '../../../components/analytics/Analytics.provider';
@@ -70,6 +72,7 @@ import { PrivateProfile } from '../../user/User.interface';
 import { Product } from '../../product/Product.interface';
 import { ReviewLink } from '../Review.interface';
 import { ValidationSchema } from '../../forms/validation/Validation.interface';
+import { VariantType, useSnackbar } from 'notistack';
 
 // Validation rules.
 import {
@@ -184,13 +187,22 @@ const AddReviewForm: React.FC<AddReviewFormProps> = (props: AddReviewFormProps) 
   // Define the analytics context and a tracking event.
   const analytics: AnalyticsContextProps = useAnalytics() as AnalyticsContextProps;
 
+  // Register the snackbar.
+  const { enqueueSnackbar } = useSnackbar();
+
   const classes = useStyles(),
         theme = useTheme(),
         largeScreen = useMediaQuery(theme.breakpoints.up('md'));
 
+  // Set the youtube flag if this account should be working with YouTube videos.
+  const [youTubeAccount, setYouTubeAccount] = React.useState<boolean>(
+    props.profile && props.profile.role.includes(Role.YOUTUBE) ? true : false
+  );
+
   // Define the review details.
   const [review, setReview] = React.useState<AddReviewFormRequest>({
     description: '',
+    endTime: 0,
     links: [{
       code: '',
       info: '',
@@ -199,7 +211,10 @@ const AddReviewForm: React.FC<AddReviewFormProps> = (props: AddReviewFormProps) 
     product: props.product._id,
     recommended: Recommended.RECOMMENDED,
     sponsored: false,
+    startTime: 0,
     title: '',
+    videoType: youTubeAccount ? VideoType.YOUTUBE : VideoType.NATIVE,
+    videoURL: ''
   });
 
   // Set a form submission state, used to inform the user their form has been
@@ -473,6 +488,64 @@ const AddReviewForm: React.FC<AddReviewFormProps> = (props: AddReviewFormProps) 
   }
 
   /**
+   * Submit the youtube review for creation.
+   */
+  const submitYouTube: (
+    e: React.MouseEvent<HTMLButtonElement>
+  ) => Promise<void> = async (
+    e: React.MouseEvent<HTMLButtonElement>
+  ): Promise<void> => {
+
+    // Don't do anything if we're already submitting.
+    if (submitting) {
+      return;
+    }
+
+    // Validate all of the fieds in the form.
+    const errors: Array<string> = await validateAllFields({
+      'title': review.title
+    });
+
+    // If we have any errors, set the messages on the form and prevent the
+    // submission.
+    if (errors.length > 0) {
+      setFormErrorMessages(errors);
+      setSubmitting(false)
+      return;
+    }
+
+    // Set the submission state.
+    setSubmitting(true)
+
+    props.toggleProduct(false);
+
+    // Create the review  using the YouTube video.
+    API.requestAPI<AddReviewFormResponse>('review/create', {
+      headers: {
+        'x-xsrf-token': props.xsrf || ''
+      },
+      method: RequestType.POST,
+      body: JSON.stringify({
+        ...review
+      })
+    })
+    .then((response: AddReviewFormResponse) => {
+      // Set the submission state.
+      setSubmitting(false)
+
+      // Display the success message to the user.
+      enqueueSnackbar('Rave created successfully', { variant: 'success' });
+
+      props.history.push('/user/reviews');
+    })
+    .catch((error: Error) => {
+      setFormErrorMessages(['Video upload failed']);
+      // Set the submission state.
+      setSubmitting(false)
+    });
+  }
+
+  /**
    * Submits the review for creation.
    */
   const submit: (
@@ -700,18 +773,65 @@ const AddReviewForm: React.FC<AddReviewFormProps> = (props: AddReviewFormProps) 
                 </ListItem>
               </List>
             </Grid>
-            <Grid item xs={12} lg={6} style={{marginBottom: '2rem'}}>
-              <FileUpload name='videoFile' update={updateVideo} filename={video.name}/>
-            </Grid>
+            {review.videoType === VideoType.YOUTUBE ? (
+              <React.Fragment>
+                <Grid item xs={12} lg={6} style={{marginBottom: theme.spacing(1)}}>
+                  <Input
+                    handleBlur={updateInputs}
+                    name='videoURL'
+                    required={true}
+                    type='text'
+                    title="YouTube URL"
+                  />
+                </Grid>
+                <Grid item xs={12} lg={6} style={{marginBottom: '1.5rem'}}>
+                  <Grid container spacing={2}>
+                    <Grid item xs={6}>
+                      <Input
+                        handleBlur={updateInputs}
+                        name='startTime'
+                        required={true}
+                        type='text'
+                        title="Start video at (in seconds)"
+                      />
+                    </Grid>
+                    <Grid item xs={6}>
+                      <Input
+                        handleBlur={updateInputs}
+                        name='endTime'
+                        required={true}
+                        type='text'
+                        title="End video at (in seconds)"
+                      />
+                    </Grid>
+                  </Grid>
+                </Grid>
+              </React.Fragment>
+            ) : (
+              <Grid item xs={12} lg={6} style={{marginBottom: '2rem'}}>
+                <FileUpload name='videoFile' update={updateVideo} filename={video.name}/>
+              </Grid>
+            )}
             <Grid item xs={12}>
-              <StyledButton
-                clickAction={submit}
-                color='secondary'
-                disabled={submitting}
-                size='large'
-                submitting={submitting}
-                title='Submit'
-              />
+              {review.videoType === VideoType.YOUTUBE ? (
+                <StyledButton
+                  clickAction={submitYouTube}
+                  color='secondary'
+                  disabled={submitting}
+                  size='large'
+                  submitting={submitting}
+                  title='Submit'
+                />
+              ): (
+                <StyledButton
+                  clickAction={submit}
+                  color='secondary'
+                  disabled={submitting}
+                  size='large'
+                  submitting={submitting}
+                  title='Submit'
+                />
+              )}
             </Grid>
           </form>
         </Fade>

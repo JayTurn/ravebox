@@ -5,7 +5,10 @@
 
 // Enumerators.
 import { Recommended } from './recommendation/Recommendation.enum';
-import { Workflow } from './Review.enum';
+import {
+  VideoType,
+  Workflow
+} from './Review.enum';
 
 // Interfaces.
 import { Product } from '../product/Product.interface';
@@ -17,17 +20,20 @@ import { PublicProfile } from '../user/User.interface';
 export interface Review {
   created: Date;
   description?: string;
+  endTime: number;
   _id: string;
   links: Array<ReviewLink>;
   product?: Product;
   recommended: Recommended;
   sponsored: boolean;
   statistics?: ReviewStatistics;
+  startTime: number;
   thumbnail?: string;
   title: string;
   url: string;
   user?: PublicProfile;
   videoURL?: string;
+  videoType: VideoType;
 }
 
 /**

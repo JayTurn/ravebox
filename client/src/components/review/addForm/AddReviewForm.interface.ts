@@ -8,6 +8,9 @@ import { RouteComponentProps } from 'react-router';
 
 // Enumerators.
 import { Recommended } from '../recommendation/Recommendation.enum';
+import {
+  VideoType
+} from '../Review.enum';
 
 // Interfaces.
 import { APIResponse } from '../../../utils/api/Api.interface';
@@ -45,13 +48,17 @@ export interface AddReviewFormResponse extends APIResponse {
  */
 export interface AddReviewFormRequest {
   description: string;
+  endTime: number;
   links: Array<ReviewLink>;
   _id?: string;
   product: string;
   recommended: Recommended;
+  startTime: number;
   sponsored: boolean;
   title: string;
   video?: File;
+  videoType: VideoType;
+  videoURL?: string;
 }
 
 /**

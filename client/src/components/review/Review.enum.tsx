@@ -34,3 +34,11 @@ export enum ScreenContext {
   REVIEW_PRODUCT_LIST = 'review: product list',
   SEARCH = 'search'
 }
+
+/**
+ * Video type enumerator.
+ */
+export enum VideoType {
+  NATIVE = 'native',
+  YOUTUBE = 'youtube'
+}

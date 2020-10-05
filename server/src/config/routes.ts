@@ -11,6 +11,7 @@ import ReviewController from '../api/review/review.controller';
 import ReviewStatisticsController from '../api/reviewStatistics/reviewStatistics.controller';
 import ProductController from '../api/product/product.controller';
 import SearchController from '../api/search/search.controller';
+import TagController from '../api/tag/tag.controller';
 import UserController from '../api/user/user.controller';
 
 /**
@@ -45,6 +46,8 @@ export default class RoutesController {
     ReviewStatisticsController.createRoutes(this.router, this.apiPath);
     // Register the search routes.
     SearchController.createRoutes(this.router, this.apiPath);
+    // Register the tag routes.
+    TagController.createRoutes(this.router, this.apiPath);
     // Register the user routes.
     UserController.createRoutes(this.router, this.apiPath);
   }

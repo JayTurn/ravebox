@@ -49,6 +49,8 @@ import { Recommended } from '../recommendation/Recommendation.enum';
 import {
   RequestType
 } from '../../../utils/api/Api.enum';
+import { Role } from '../../user/User.enum';
+import { VideoType } from '../Review.enum';
 
 // Hooks.
 import { useValidation } from '../../forms/validation/useValidation.hook';
@@ -62,6 +64,7 @@ import {
   EditReviewFormProps,
   ReviewMetadataResponse
 } from './EditReviewForm.interface';
+import { PrivateProfile } from '../../user/User.interface';
 import {
   Review,
   ReviewLink
@@ -126,6 +129,12 @@ const EditReviewForm: React.FC<EditReviewFormProps> = (props: EditReviewFormProp
   const classes = useStyles(),
         theme = useTheme(),
         largeScreen = useMediaQuery(theme.breakpoints.up('md'));
+
+  // Set the youtube flag if this account should be working with YouTube videos.
+  const [youTubeAccount, setYouTubeAccount] = React.useState<boolean>(
+    props.profile && props.profile.role.includes(Role.YOUTUBE) ? true : false
+  );
+
   // Register the snackbar for success updates.
   const { enqueueSnackbar } = useSnackbar();
 
@@ -133,6 +142,7 @@ const EditReviewForm: React.FC<EditReviewFormProps> = (props: EditReviewFormProp
   const [review, setReview] = React.useState<Review>(props.review ? props.review : {
     created: new Date(),
     description: '',
+    endTime: 0,
     links: [{
       code: '',
       info: '',
@@ -140,10 +150,13 @@ const EditReviewForm: React.FC<EditReviewFormProps> = (props: EditReviewFormProp
     }],
     _id: '',
     sponsored: false,
+    startTime: 0,
     thumbnail: '',
     title: '',
     recommended: Recommended.RECOMMENDED,
-    url: ''
+    url: '',
+    videoType: VideoType.NATIVE,
+    videoURL: ''
   });
 
   // Set a form submission state, used to inform the user their form has been
@@ -338,7 +351,6 @@ const EditReviewForm: React.FC<EditReviewFormProps> = (props: EditReviewFormProp
     submit();
   }
 
-
   /**
    * Submits the edited review.
    */
@@ -377,12 +389,15 @@ const EditReviewForm: React.FC<EditReviewFormProps> = (props: EditReviewFormProp
     // Define the request object to be sent for updating.
     let editedReview: EditReviewFormRequest = {
       description: review.description || '',
+      endTime: review.endTime,
       links: review.links,
       _id: review._id,
       sponsored: review.sponsored,
+      startTime: review.startTime,
       thumbnail: updatedPoster ? updatedPoster : review.thumbnail,
       title: review.title,
-      recommended: review.recommended
+      recommended: review.recommended,
+      videoType: review.videoType || VideoType.NATIVE
     };
 
     if (video.name) {
@@ -391,7 +406,14 @@ const EditReviewForm: React.FC<EditReviewFormProps> = (props: EditReviewFormProp
 
       editedReview.videoTitle = filename;
       editedReview.videoSize = video.size;
-      editedReview.videoType = video.type;
+      editedReview.videoFileType = video.type;
+    }
+
+    // If this is a YouTube video.
+    if (editedReview.videoType === VideoType.YOUTUBE) {
+      editedReview.endTime = review.endTime;
+      editedReview.startTime = review.startTime;
+      editedReview.videoURL = review.videoURL;
     }
 
     // Perform the request to update the review.
@@ -423,8 +445,9 @@ const EditReviewForm: React.FC<EditReviewFormProps> = (props: EditReviewFormProp
           // Display the success message to the user.
           enqueueSnackbar('Rave updated successfully', { variant: 'success' });
 
-
         }, updatedPoster ? 5000 : 0);
+
+        props.history.push('/user/reviews');
 
         return;
       }
@@ -612,16 +635,55 @@ const EditReviewForm: React.FC<EditReviewFormProps> = (props: EditReviewFormProp
                   <Grid item xs={12} lg={6} style={{marginBottom: '1.5rem', width: '100%'}}>
                     <RaveVideo review={review} />
                   </Grid>
-                  <Grid item xs={12} lg={6} style={{marginBottom: '3rem', width: '100%'}}>
-                    <StyledButton
-                      clickAction={(
-                        e: React.MouseEvent<HTMLButtonElement>
-                      ) => editVideo(true)}
-                      color='primary'
-                      size='large'
-                      title={review.videoURL ? 'Upload new video' : 'Upload'}
-                    />
-                  </Grid>
+                  { youTubeAccount ? (
+                    <Grid item xs={12} lg={6} style={{marginBottom: '3rem', width: '100%'}}>
+                      <Grid item xs={12} style={{marginBottom: theme.spacing(1)}}>
+                        <Input
+                          defaultValue={review.videoURL}
+                          handleBlur={updateInputs}
+                          name='videoURL'
+                          required={true}
+                          type='text'
+                          title="YouTube URL"
+                        />
+                      </Grid>
+                      <Grid item xs={12} style={{marginBottom: '1.5rem'}}>
+                        <Grid container spacing={2}>
+                          <Grid item xs={6}>
+                            <Input
+                              defaultValue={`${review.startTime}`}
+                              handleBlur={updateInputs}
+                              name='startTime'
+                              required={true}
+                              type='text'
+                              title="Start video at (in seconds)"
+                            />
+                          </Grid>
+                          <Grid item xs={6}>
+                            <Input
+                              defaultValue={`${review.endTime}`}
+                              handleBlur={updateInputs}
+                              name='endTime'
+                              required={true}
+                              type='text'
+                              title="End video at (in seconds)"
+                            />
+                          </Grid>
+                        </Grid>
+                      </Grid>
+                    </Grid>
+                  ) : (
+                    <Grid item xs={12} lg={6} style={{marginBottom: '3rem', width: '100%'}}>
+                      <StyledButton
+                        clickAction={(
+                          e: React.MouseEvent<HTMLButtonElement>
+                        ) => editVideo(true)}
+                        color='primary'
+                        size='large'
+                        title={review.videoURL ? 'Upload new video' : 'Upload'}
+                      />
+                    </Grid>
+                  )}
                 </React.Fragment>
               )}
               <Grid item xs={12}>
@@ -710,8 +772,14 @@ const mapStatetoProps = (state: any, ownProps: EditReviewFormProps): EditReviewF
   // Retrieve the xsrf token to be submitted with the request.
   const xsrfToken: string = state.xsrf ? state.xsrf.token : undefined;
 
+  let profile: PrivateProfile | undefined = state.user ? state.user.profile : undefined;
+  if (profile && !profile._id) {
+    profile = undefined;
+  }
+
   return {
     ...ownProps,
+    profile,
     xsrf: xsrfToken
   };
 };

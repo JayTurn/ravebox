@@ -8,9 +8,11 @@ import { RouteComponentProps } from 'react-router';
 
 // Enumerators.
 import { Recommended } from '../recommendation/Recommendation.enum';
+import { VideoType } from '../Review.enum';
 
 // Interfaces.
 import { APIResponse } from '../../../utils/api/Api.interface';
+import { PrivateProfile } from '../../user/User.interface';
 import {
   Review,
   ReviewLink
@@ -20,6 +22,7 @@ import {
  * Edit review form properties.
  */
 export interface EditReviewFormProps extends RouteComponentProps {
+  profile?: PrivateProfile;
   review?: Review;
   toggleProduct: (visible: boolean) => void;
   xsrf?: string;
@@ -41,16 +44,20 @@ export interface EditReviewFormResponse extends APIResponse {
  */
 export interface EditReviewFormRequest {
   description: string;
+  endTime: number;
   _id: string;
   links: Array<ReviewLink>;
   recommended: Recommended;
   sponsored: boolean;
+  startTime: number;
   thumbnail?: string;
   title: string;
+  videoFileType?: string;
   videoSize?: number;
-  videoTitle?: string;
-  videoType?: string;
   video?: File;
+  videoTitle?: string;
+  videoType: VideoType;
+  videoURL?: string;
 }
 
 /**

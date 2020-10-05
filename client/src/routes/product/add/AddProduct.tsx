@@ -17,7 +17,7 @@ import { withRouter } from 'react-router';
 
 // Components.
 import PageTitle from '../../../components/elements/pageTitle/PageTitle';
-import ProductForm from '../../../components/product/form/ProductForm';
+import AddProductForm from '../../../components/product/addForm/AddProductForm';
 
 // Hooks.
 import { useAnalytics } from '../../../components/analytics/Analytics.provider';
@@ -64,7 +64,7 @@ const AddProduct: React.FC<AddProductProps> = (props: AddProductProps) => {
         <link rel='canonical' href='https://ravebox.io/product/add' />
       </Helmet>
       <PageTitle title='Post a rave' />
-      <ProductForm />
+      <AddProductForm />
     </Grid>
   );
 }

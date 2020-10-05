@@ -7,7 +7,10 @@
 import * as Mongoose from 'mongoose';
 
 // Enumerators.
-import { Recommended } from './review.enum';
+import {
+  Recommended,
+  VideoType
+} from './review.enum';
 import { Workflow } from '../../shared/enumerators/workflow.enum';
 
 // Interfaces.
@@ -73,6 +76,13 @@ const ReviewSchema = new Schema<ReviewDocument>({
   },
   video: {
     type: Object
+  },
+  videoType: {
+    type: VideoType,
+    default: VideoType.NATIVE
+  },
+  youtube: {
+    type: Object
   }
 });
 
@@ -112,11 +122,21 @@ ReviewSchema
   .virtual('details')
   .get(function() {
 
-    let videoURL = '',
-        thumbnailURL = '';
+    let endTime = 0, 
+        startTime = 0,
+        thumbnailURL = '',
+        videoURL = '';
 
-    if (this.video && this.video.egressEndpoints) {
-      videoURL = this.video.egressEndpoints.HLS;
+    if (this.videoType === VideoType.YOUTUBE) {
+      if (this.youtube) {
+        endTime = this.youtube.endTime;
+        startTime = this.youtube.startTime;
+        videoURL = this.youtube.url; 
+      }
+    } else {
+      if (this.video && this.video.egressEndpoints) {
+        videoURL = this.video.egressEndpoints.HLS;
+      }
     }
 
     if (this.thumbnail) {
@@ -128,17 +148,20 @@ ReviewSchema
     }
 
     return {
+      '_id': this._id,
       'created': this.created,
       'description': this.description,
-      '_id': this._id,
+      'endTime': endTime,
       'links': this.links,
       'product': this.product,
       'recommended': this.recommended,
       'sponsored': this.sponsored,
+      'startTime': startTime,
       'thumbnail': thumbnailURL,
       'title': this.title,
       'url': this.url,
       'user': this.user,
+      'videoType': this.videoType,
       'videoURL': videoURL
     };
   });
@@ -148,11 +171,21 @@ ReviewSchema
   .virtual('privateDetails')
   .get(function() {
 
-    let videoURL = '',
-        thumbnailURL = '';
+    let endTime = 0, 
+        startTime = 0,
+        thumbnailURL = '',
+        videoURL = '';
 
-    if (this.video && this.video.egressEndpoints) {
-      videoURL = this.video.egressEndpoints.DASH;
+    if (this.videoType === VideoType.YOUTUBE) {
+      if (this.youtube) {
+        endTime = this.youtube.endTime;
+        startTime = this.youtube.startTime;
+        videoURL = this.youtube.url; 
+      }
+    } else {
+      if (this.video && this.video.egressEndpoints) {
+        videoURL = this.video.egressEndpoints.HLS;
+      }
     }
 
     if (this.thumbnail) {
@@ -164,15 +197,18 @@ ReviewSchema
     }
 
     return {
-      'created': this.created,
       '_id': this._id,
+      'created': this.created,
+      'endTime': endTime,
       'published': this.published,
       'product': this.product,
       'recommended': this.recommended,
+      'startTime': startTime,
       'thumbnail': thumbnailURL,
       'title': this.title,
       'url': this.url,
       'user': this.user,
+      'videoType': this.videoType,
       'videoURL': videoURL
     };
   });
