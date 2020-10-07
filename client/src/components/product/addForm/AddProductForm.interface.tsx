@@ -17,3 +17,10 @@ export interface AddProductFormProps extends RouteComponentProps {
 export interface AddProductFormResponse extends APIResponse {
   product: Product;
 }
+
+export interface AddProductStep {
+  completed: boolean;
+  help: string;
+  id: string;
+  title: string;
+}

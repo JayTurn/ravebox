@@ -21,6 +21,9 @@ import {
   RetrieveProductByURLParams
 } from './Product.interface';
 
+// Utilities.
+import { emptyProduct } from './Product.common';
+
 /**
  * Sets the default retrieval status.
  *
@@ -58,13 +61,7 @@ export function useRetrieveProductById(params: RetrieveProductByIdParams) {
   const [retrieved, setRetrieved] = React.useState(setDefaultRetrievalStatus(id)); 
 
   // Define the product to be used for view rendering.
-  const [product, setProduct] = React.useState<Product>({
-    _id: '',
-    brand: '',
-    categories: [{key: '', label: ''}],
-    name: '',
-    url: ''
-  });
+  const [product, setProduct] = React.useState<Product>(emptyProduct());
 
   /**
    * Handle state updates based on the presence of a product.

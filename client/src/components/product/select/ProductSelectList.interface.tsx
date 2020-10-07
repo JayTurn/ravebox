@@ -14,4 +14,5 @@ import { Product } from '../Product.interface';
  */
 export interface ProductSelectListProps extends RouteComponentProps {
   products: Array<Product>;
+  select: (product: Product) => void;
 }

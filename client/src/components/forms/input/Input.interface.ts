@@ -27,6 +27,7 @@ export interface InputProps extends BaseTextFieldProps {
   type: string;
   width?: number;
   validation?: ValidationRules;
+  variation?: 'fixed-mobile-bottom' | 'rounded';
 }
 
 /**

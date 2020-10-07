@@ -5,8 +5,12 @@
 
 // Modules.
 import * as Mongoose from 'mongoose';
+import Brand from '../brand/brand.model';
 
 // Interfaces.
+import {
+  BrandDetails
+} from '../brand/brand.interface';
 import {
   Category,
   ProductDetailsDocument
@@ -18,12 +22,17 @@ const Schema = Mongoose.Schema;
 // Create the product schema to be the base for the product model.
 const ProductSchema = new Schema({
   brand: {
-    type: String,
+    type: Schema.Types.ObjectId,
+    ref: 'Brand'
   },
   brandPartials: {
     type: Array,
     default: [],
     index: true
+  },
+  category: {
+    type: Schema.Types.ObjectId, 
+    ref: 'Tag',
   },
   categories: {
     type: Array,
@@ -33,6 +42,10 @@ const ProductSchema = new Schema({
     type: Date,
     default: Date.now
   },
+  description: {
+    type: String,
+    default: ''
+  },
   name: {
     type: String,
   },
@@ -40,6 +53,10 @@ const ProductSchema = new Schema({
     type: Array,
     default: [],
     index: true
+  },
+  productType: {
+    type: Schema.Types.ObjectId, 
+    ref: 'Tag',
   },
   creator:  { 
     type: Schema.Types.ObjectId, 
@@ -57,9 +74,14 @@ ProductSchema
   .get(function() {
     return {
       '_id': this._id,
-      'brand': this.brand,
-      'categories': this.categories,
+      'brand': (this.brand && this.brand.details) ?
+        this.brand.details : this.brand,
+      'category': (this.category && this.category.details) ?
+        this.category.details : this.category,
+      'description': this.description,
       'name': this.name,
+      'productType': (this.productType && this.productType.light) ?
+        this.productType.light : this.productType,
       'url': this.url
     };
   });
@@ -69,27 +91,29 @@ ProductSchema
  */
 ProductSchema
   .pre<ProductDetailsDocument>('save', function(next: Mongoose.HookNextFunction) {
-    const name: string = this.name.split(' ').join('_')
-            .split('&').join('and').toLowerCase(),
-          brand: string = encodeURIComponent(this.brand.split(' ').join('_')
-            .split('&').join('and').toLowerCase());
 
-    let url = '',
-        i = 0;
+    Brand.findOne(this.brand)
+      .lean()
+      .then((brandDetails: BrandDetails) => {
+        if (!brandDetails) {
+          throw new Error('Brand not found');
+        }
 
-    do {
-      const current: Category = this.categories[i];
+        const name: string = this.name.split(' ').join('_')
+                .split('&').join('and').toLowerCase();
 
-      const label: string = current.label.split(' ').join('_')
-        .split('&').join('and').toLowerCase();
+        const id = this._id.toString();
 
-      url += `${label}/`
-      i++;
-    } while (i < this.categories.length);
+        const unique: string = id.substring(id.length - 5, id.length - 1);
 
-    this.url = `${url}${brand}/${name}`;
+        this.url = `${brandDetails.url}/${name}/${unique}`;
 
-    next();
+        next();
+      })
+      .catch((error: Error) => {
+        throw error;
+      })
+
   });
 
 // Declare the product mongoose model.

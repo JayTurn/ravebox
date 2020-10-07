@@ -24,7 +24,6 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
       marginLeft: -12
     },
     wrapper: {
-      float: 'left',
       position: 'relative'
     }
   })
@@ -89,10 +88,11 @@ const StyledButton: React.FC<StyledButtonProps> = (props: StyledButtonProps) => 
   const buttonColor = props.color ? props.color : 'primary';
 
   return (
-    <div className={classes.wrapper}>
+    <div className={classes.wrapper} style={{float: props.align || 'left'}}>
       {props.orientation && props.orientation === 'inline' ? (
         <React.Fragment>
           <HorizontalButtonElement
+            className={props.className}
             color={buttonColor}
             disabled={props.disabled || props.submitting}
             disableElevation
@@ -114,6 +114,7 @@ const StyledButton: React.FC<StyledButtonProps> = (props: StyledButtonProps) => 
       ) : (
         <React.Fragment>
           <VerticalButtonElement
+            className={props.className}
             color={buttonColor}
             disabled={props.disabled || props.submitting}
             disableElevation

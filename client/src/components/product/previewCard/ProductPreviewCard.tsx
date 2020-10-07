@@ -80,9 +80,6 @@ const ProductPreviewCard: React.FC<ProductPreviewCardProps> = (
           <Typography variant='body1' className={classes.productName}>
             {props.name}
           </Typography>
-          <Typography variant='subtitle2' className={classes.cateogryName}>
-            {`${props.categories[0].label} > ${props.categories[1].label}`}
-          </Typography>
         </Box>
       </Grid>
     </Grid>

@@ -1,10 +1,9 @@
 /**
- * ProductSelection.tsx
- * Provides assistance to users adding a product to rave.
+ * BrandSelection.tsx
+ * Provides assistance to users adding a brand to rave.
  */
 
 // Modules.
-import * as React from 'react';
 import API from '../../../utils/api/Api.model';
 import Box from '@material-ui/core/Box';
 import clsx from 'clsx';
@@ -15,11 +14,11 @@ import {
   Theme,
   useTheme
 } from '@material-ui/core/styles';
+import debounce from 'lodash/debounce';
 import Fade from '@material-ui/core/Fade';
 import Grid from '@material-ui/core/Grid';
-import Grow from '@material-ui/core/Grow';
+import * as React from 'react';
 import Typography from '@material-ui/core/Typography';
-import debounce from 'lodash/debounce';
 import useMediaQuery from '@material-ui/core/useMediaQuery';
 import {
   useSnackbar,
@@ -27,9 +26,9 @@ import {
 } from 'notistack';
 
 // Components.
-import Input from '../../forms/input/Input';
+import BrandSelectList from '../selectList/BrandSelectList';
 import LoadingTagsList from '../../placeholders/loadingTagsList/LoadingTagsList';
-import ProductSelectList from './ProductSelectList';
+import Input from '../../forms/input/Input';
 import StyledButton from '../../elements/buttons/StyledButton';
 
 // Enumerators.
@@ -41,17 +40,19 @@ import { useValidation } from '../../forms/validation/useValidation.hook';
 
 // Interfaces.
 import {
+  AddBrandFormResponse,
+  BrandSearchResponse,
+  BrandSelectionProps,
+  BrandSelectionForm
+} from './BrandSelection.interface';
+import {
   AnalyticsContextProps,
   EventObject
 } from '../../../components/analytics/Analytics.interface';
-import { InputData } from '../../forms/input/Input.interface';
-import { Product } from '../Product.interface';
 import {
-  AddProductFormResponse,
-  ProductSearchResponse,
-  ProductSelectionProps,
-  ProductSelectionForm
-} from './ProductSelection.interface';
+  Brand
+} from '../Brand.interface';
+import { InputData } from '../../forms/input/Input.interface';
 import { ValidationSchema } from '../../forms/validation/Validation.interface';
 
 // Validation rules.
@@ -60,10 +61,10 @@ import {
 } from '../../forms/validation/ValidationRules';
 
 /**
- * Product selection form schema.
+ * Brand selection form schema.
  */
 const formValidation: ValidationSchema = {
-  name: {
+  brand: {
     errorMessage: '',
     rules: [
       isRequired
@@ -72,14 +73,9 @@ const formValidation: ValidationSchema = {
 };
 
 /**
- * Create styles product selection.
+ * Create styles for the page title.
  */
 const useStyles = makeStyles((theme: Theme) => createStyles({
-  brandTitle: {
-    margin: theme.spacing(2, 0),
-    padding: theme.spacing(0, 2),
-    fontWeight: 600
-  },
   buttonContainer: {
     marginBottom: theme.spacing(6),
     marginTop: theme.spacing(6)
@@ -180,17 +176,13 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
     marginLeft: 'auto',
     marginRight: 'auto',
     width: 50
-  },
-  previousButton: {
-    borderRadius: 0,
-    lineHeight: '2.8rem'
   }
 }));
 
 /**
  * Assists the user in the selection of a product.
  */
-const ProductSelection: React.FC<ProductSelectionProps> = (props: ProductSelectionProps) => {
+const BrandSelection: React.FC<BrandSelectionProps> = (props: BrandSelectionProps) => {
 
   // Define the analytics context and a tracking event.
   const analytics: AnalyticsContextProps = useAnalytics() as AnalyticsContextProps;
@@ -205,13 +197,20 @@ const ProductSelection: React.FC<ProductSelectionProps> = (props: ProductSelecti
         extraLargeScreen = useMediaQuery(theme.breakpoints.up('lg'));
 
   // Define the product selection form state.
-  const [values, setValues] = React.useState<ProductSelectionForm>({
-    name: '',
-    brand: props.brand._id
+  const [values, setValues] = React.useState<BrandSelectionForm>({
+    name: ''
   });
 
-  // Define the product selection state.
-  const [selected, setSelected] = React.useState<boolean>(false);
+  // Set the brand search query.
+  const [query, setQuery] = React.useState<string>('');
+
+  // Define the debounce function for search queries.
+  const delayedQuery = React.useCallback(debounce((q: string) => searchBrands(q), 300), []);
+
+  const [options, setOptions] = React.useState<Array<Brand>>([]);
+
+  // Set the touched state of the form so the help content can be removed.
+  const [touched, setTouched] = React.useState<boolean>(false);
 
   // Form error messages to be displayed if fields haven't been validated
   // and prevents submissions to the api.
@@ -221,20 +220,8 @@ const ProductSelection: React.FC<ProductSelectionProps> = (props: ProductSelecti
   // submitted and to prevent duplicate submissions.
   const [submitting, setSubmitting] = React.useState<boolean>(false);
 
-  // Set the product search query.
-  const [query, setQuery] = React.useState<string>('');
-
-  // Define the debounce function for search queries.
-  const delayedQuery = React.useCallback(debounce((q: string) => searchProducts(q), 300), []);
-
-  const [options, setOptions] = React.useState<Array<Product>>([]);
-
-  // Set the touched state of the form so the help content can be removed.
-  const [touched, setTouched] = React.useState<boolean>(false);
-
   // Set a searching flag to show placeholders when attempting to find matches.
   const [searching, setSearching] = React.useState<boolean>(false)
-
 
   // Validation hook.
   const {
@@ -246,7 +233,7 @@ const ProductSelection: React.FC<ProductSelectionProps> = (props: ProductSelecti
   });
 
   /**
-   * Handles updates to the product name.
+   * Handles updates to the brand form.
    *
    * @param { InputData } data - the field data.
    */
@@ -259,7 +246,7 @@ const ProductSelection: React.FC<ProductSelectionProps> = (props: ProductSelecti
     // Reset the form errors based on field input.
     setFormErrorMessages(['']);
 
-    const updatedValues: ProductSelectionForm = {
+    const updatedValues: BrandSelectionForm = {
       ...values,
       [data.key]: data.value
     };
@@ -276,7 +263,7 @@ const ProductSelection: React.FC<ProductSelectionProps> = (props: ProductSelecti
   }
 
   /**
-   * Handles the change event on the product field.
+   * Handles the change event on the brand field.
    *
    * @param { React.ChangeEvent } fieldEvent - the react event.
    */
@@ -285,6 +272,7 @@ const ProductSelection: React.FC<ProductSelectionProps> = (props: ProductSelecti
   ) => void = (
     fieldEvent: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ): void => {
+
     const term: string = fieldEvent.target.value;
 
     setQuery(term);
@@ -292,20 +280,20 @@ const ProductSelection: React.FC<ProductSelectionProps> = (props: ProductSelecti
   }
 
   /**
-   * Performs the update for the product selection.
+   * Progresses to the next step with an existing brand.
    *
-   * @param { Product } product - the selected product.
+   * @param { Brand } brand - the selected brand.
    */
-  const selectProduct: (
-    product: Product
+  const selectBrand: (
+    brand: Brand
   ) => void = (
-    product: Product
+    brand: Brand
   ): void => {
-    props.complete(product);
+    props.update(brand);
   }
-  
+
   /**
-   * Handles creating a new product and navigating to the next step.
+   * Handles creating a new brand and navigating to the next step.
    */
   const submit: (
     e: React.MouseEvent<HTMLButtonElement>
@@ -320,8 +308,7 @@ const ProductSelection: React.FC<ProductSelectionProps> = (props: ProductSelecti
     
     // Validate all of the fieds in the form.
     const errors: Array<string> = await validateAllFields({
-      'name': values.name,
-      'brand': props.brand.name
+      'name': values.name
     });
 
     // If we have any errors, set the messages on the form and prevent the
@@ -335,14 +322,14 @@ const ProductSelection: React.FC<ProductSelectionProps> = (props: ProductSelecti
     // Set the submission state.
     setSubmitting(true)
 
-    API.requestAPI<AddProductFormResponse>('product/create', {
+    API.requestAPI<AddBrandFormResponse>('brand/create', {
       method: RequestType.POST,
       headers: {
         'x-xsrf-token': props.xsrf || ''
       },
       body: JSON.stringify(values)
     })
-    .then((response: AddProductFormResponse) => {
+    .then((response: AddBrandFormResponse) => {
       // Present any errors that were returned in the response.
       if (response.errorCode) {
         setFormErrorMessages([response.title])
@@ -352,29 +339,27 @@ const ProductSelection: React.FC<ProductSelectionProps> = (props: ProductSelecti
       }
 
       // Display the success message to the user.
-      enqueueSnackbar('Product added successfully', { variant: 'success' });
+      enqueueSnackbar('Brand created successfully', { variant: 'success' });
 
       // Create the event object from the provided values.
       const eventData: EventObject = {
-        'id': response.product._id,
-        'name': response.product.name,
-        'brand name': props.brand.name,
-        'brand id': props.brand._id
+        'brand name': response.brand.name,
+        'brand id': response.brand._id
       };
 
-      analytics.trackEvent(`add new product`)(eventData);
+      analytics.trackEvent(`add new brand`)(eventData);
 
-      props.update(response.product);
+      selectBrand(response.brand);
     })
     .catch((error: Error) => {
-      enqueueSnackbar('There was a problem adding your product', { variant: 'error'});
+      enqueueSnackbar('There was a problem creating your brand', { variant: 'error'});
     })
   }
 
   /**
-   * Performs a search for similar product names.
+   * Performs a search for similar brand names.
    */
-  const searchProducts: (
+  const searchBrands: (
     query: string
   ) => Promise<void> = async (
     query: string
@@ -389,31 +374,27 @@ const ProductSelection: React.FC<ProductSelectionProps> = (props: ProductSelecti
     setSearching(true)
 
     // Performt he product name search.
-    API.requestAPI<ProductSearchResponse>('product/search/name', {
+    API.requestAPI<BrandSearchResponse>('brand/search/name', {
       method: RequestType.POST,
-      body: JSON.stringify({
-        name: query,
-        brand: props.brand._id
-      })
+      body: JSON.stringify({name: query})
     })
-    .then((response: ProductSearchResponse) => {
+    .then((response: BrandSearchResponse) => {
 
       if (response.errorCode) {
         // Set an empty list of options.
         setOptions([]);
       } else {
         // Set the options returned.
-        setOptions(response.products);
-        analytics.trackEvent('search existing product')({
+        setOptions(response.brands);
+        analytics.trackEvent('search existing brand')({
           'term': query
         });
       }
 
       // Set the submission state.
-      setSearching(false)
+      setSearching(false);
     })
     .catch((error: Error) => {
-      console.log(error);
     });
   }
 
@@ -435,8 +416,9 @@ const ProductSelection: React.FC<ProductSelectionProps> = (props: ProductSelecti
               handleChange={handleChange}
               name='name'
               type='text'
-              title="Product name"
-              validation={validation.name}
+              title="Brand name"
+              validation={validation.brand}
+              variation='fixed-mobile-bottom'
             />
           </Grid>
           <Grid item>
@@ -478,17 +460,12 @@ const ProductSelection: React.FC<ProductSelectionProps> = (props: ProductSelecti
                 ) : (
                   <Fade in={!searching} timeout={300}>
                     {options.length > 0 ? (
-                      <React.Fragment>
-                        <Typography variant='h2' className={clsx(classes.brandTitle)}>
-                          {props.brand.name}
-                        </Typography>
-                        <ProductSelectList products={[...options]} select={selectProduct} />
-                      </React.Fragment>
+                      <BrandSelectList brands={[...options]} select={selectBrand} />
                     ) : (
                       <Grid
-                      className={clsx({
-                        [classes.noResultsContainer]: !largeScreen
-                      })}
+                        className={clsx({
+                          [classes.noResultsContainer]: !largeScreen
+                        })}
                         container
                         direction='row'
                         justify='center'
@@ -496,10 +473,10 @@ const ProductSelection: React.FC<ProductSelectionProps> = (props: ProductSelecti
                       >
                         <Grid item className={clsx(classes.helpContent)}>
                           <Typography variant='h2' className={clsx(classes.helpTitle)}>
-                            A new {props.brand.name} product
+                            A new brand
                           </Typography>
                           <Typography variant='subtitle1' className={clsx(classes.helpSubtitle)}>
-                            Looks like you're the first to rave about this product on Ravebox. That's great!
+                            Looks like you're the first to rave about this brand on Ravebox. That's great!
                           </Typography>
                         </Grid>
                       </Grid>
@@ -520,10 +497,10 @@ const ProductSelection: React.FC<ProductSelectionProps> = (props: ProductSelecti
             >
               <Grid item className={clsx(classes.helpContent)}>
                 <Typography variant='h2' className={clsx(classes.helpTitle)}>
-                  Enter the name of your {props.brand.name} product
+                  Start by typing the brand name for your product
                 </Typography>
                 <Typography variant='subtitle1' className={clsx(classes.helpSubtitle)}>
-                  If we already know this {props.brand.name} product, you'll be able to select it from the list. Otherwise, enter the product name (don't include the {props.brand.name} brand name) and hit next.
+                  If we already know this brand, you'll be able to select it from the list. Otherwise, enter the full brand name and hit next.
                 </Typography>
               </Grid>
             </Grid>
@@ -538,7 +515,7 @@ const ProductSelection: React.FC<ProductSelectionProps> = (props: ProductSelecti
  * Map the redux state to the product form properties.
  *
  */
-function mapStateToProps(state: any, ownProps: ProductSelectionProps) {
+function mapStateToProps(state: any, ownProps: BrandSelectionProps) {
   // Retrieve the xsrf token to be submitted with the request.
   const xsrfToken: string = state.xsrf ? state.xsrf.token : undefined;
 
@@ -550,4 +527,4 @@ function mapStateToProps(state: any, ownProps: ProductSelectionProps) {
 
 export default connect(
   mapStateToProps
-)(ProductSelection);
+)(BrandSelection);

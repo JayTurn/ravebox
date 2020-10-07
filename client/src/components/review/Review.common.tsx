@@ -65,10 +65,14 @@ export const formatReviewProperties: (
   }
 
   if (review.product) {
-    data['brand name'] = review.product.brand;
+    data['brand id'] = review.product.brand._id;
+    data['brand name'] = review.product.brand.name;
     data['product id'] = review.product._id;
     data['product name'] = review.product.name;
+    data['product type id'] = review.product.productType._id;
+    data['product type'] = review.product.productType.name;
 
+    /*
     if (review.product.categories && review.product.categories.length > 0) {
       data['product category'] = review.product.categories[0].key;
 
@@ -76,6 +80,7 @@ export const formatReviewProperties: (
       data['product sub-category'] = review.product.categories[1].key;
       }
     }
+    */
   }
 
   return data;

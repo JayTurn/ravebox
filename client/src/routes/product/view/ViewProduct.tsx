@@ -177,6 +177,7 @@ const ViewProduct: React.FC<ViewProductProps> = (props: ViewProductProps) => {
     requested: props.match.params
   });
 
+  /*
   const {
     queries,
     listStatus 
@@ -186,6 +187,7 @@ const ViewProduct: React.FC<ViewProductProps> = (props: ViewProductProps) => {
     queries: setCategoryQueries(product.categories),
     update: props.updateListByCategory
   });
+  */
 
   // Create a page viewed state to avoid duplicate views.
   const [pageViewed, setPageViewed] = React.useState<boolean>(false);
@@ -198,12 +200,14 @@ const ViewProduct: React.FC<ViewProductProps> = (props: ViewProductProps) => {
     // Track the category list page view.
     if (!pageViewed && product._id) {
 
+      /*
       const category: string = product.categories.length > 0
               ? product.categories[0].key
               : '',
             subCategory: string = product.categories.length > 1
               ? product.categories[1].key
               : '';
+      */
 
       analytics.trackPageView({
         properties: {
@@ -211,11 +215,12 @@ const ViewProduct: React.FC<ViewProductProps> = (props: ViewProductProps) => {
           title: `${product.brand} ${product.name} reviews`
         },
         data: {
-          'product brand': product.brand,
-          'product category': category,
-          'product sub-category': subCategory,
+          'brand id': product.brand._id,
+          'brand name': product.brand.name,
           'product id': product._id,
-          'product name': product.name
+          'product name': product.name,
+          'product type id': product.productType._id,
+          'product type name': product.productType.name
         },
         amplitude: {
           label: 'view product'
@@ -258,7 +263,7 @@ const ViewProduct: React.FC<ViewProductProps> = (props: ViewProductProps) => {
           />
         </Grid>
       }
-      {props.categoryGroup && product.categories &&
+      {/*
         <Grid item xs={12}>
           {product.categories[0] && props.categoryGroup[product.categories[0].key] &&
             <ListByQuery
@@ -276,7 +281,7 @@ const ViewProduct: React.FC<ViewProductProps> = (props: ViewProductProps) => {
             />
           }
         </Grid>
-      }
+      */}
     </Grid>
   );
 }
