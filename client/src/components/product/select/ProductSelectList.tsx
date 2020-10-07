@@ -12,6 +12,8 @@ import {
   withStyles,
   Theme
 } from '@material-ui/core/styles';
+import Fade from '@material-ui/core/Fade';
+import Grid from '@material-ui/core/Grid';
 import Grow from '@material-ui/core/Grow';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
@@ -37,11 +39,16 @@ import { ProductSelectListProps } from './ProductSelectList.interface';
  * Search product list.
  */
 const useStyles = makeStyles((theme: Theme) => createStyles({
-  list: {
+  backgroundContainer: {
     backgroundColor: 'rgba(100, 106, 240, 0.1)',
     borderRadius: theme.shape.borderRadius,
-    marginTop: '0.5rem',
-    padding: theme.spacing(1)
+    marginTop: '0.5rem'
+  },
+  container: {
+    height: '100%'
+  },
+  list: {
+    padding: '0.1rem 1rem'
   },
   listItem: {
     backgroundColor: theme.palette.common.white,
@@ -109,45 +116,53 @@ const ProductSelectList: React.FC<ProductSelectListProps> = (props: ProductSelec
   }
 
   return (
-    <React.Fragment>
-      {props.products && props.products.length > 0 &&
-        <Grow in={props.products.length > 0}>
-          <List className={classes.list}>
-            {props.products.map((product: Product, index: number) => {
-              const added: boolean = true;
-              return (
-                <Zoom 
-                  in={added}
-                  style={{transitionDelay: added ? `${100 * index}ms`: `100ms`}}
-                  key={product._id}
-                >
-                  <ListItem
-                    button
-                    className={classes.listItem}
-                    disableRipple
-                    onClick={() => selectProduct(index)}
-                  >
-                    <Box component='div'>
-                      <Typography variant='body2' color='textPrimary' className={classes.productBrand}>
-                        {product.brand.name}
-                      </Typography>
-                      <Typography variant='body1' color='textPrimary' className={classes.productName}>
-                        {product.name}
-                      </Typography>
-                      {product.productType &&
-                        <Typography variant='subtitle2' color='textPrimary' className={classes.productTypeName}>
-                          {product.productType.name}
-                        </Typography>
-                      }
-                    </Box>
-                  </ListItem>
-                </Zoom>
-              )
-            })}
-          </List>
-        </Grow>
-      }
-    </React.Fragment>
+    <Grid
+      className={classes.container}
+      container
+      alignItems='stretch'
+    >
+      <Fade in={props.products && props.products.length > 0}>
+        <Grid item xs={12} className={classes.backgroundContainer}>
+          {props.products && props.products.length > 0 &&
+            <Grow in={props.products.length > 0}>
+              <List className={classes.list}>
+                {props.products.map((product: Product, index: number) => {
+                  const added: boolean = true;
+                  return (
+                    <Zoom 
+                      in={added}
+                      style={{transitionDelay: added ? `${100 * index}ms`: `100ms`}}
+                      key={product._id}
+                    >
+                      <ListItem
+                        button
+                        className={classes.listItem}
+                        disableRipple
+                        onClick={() => selectProduct(index)}
+                      >
+                        <Box component='div'>
+                          <Typography variant='body2' color='textPrimary' className={classes.productBrand}>
+                            {product.brand.name}
+                          </Typography>
+                          <Typography variant='body1' color='textPrimary' className={classes.productName}>
+                            {product.name}
+                          </Typography>
+                          {product.productType &&
+                            <Typography variant='subtitle2' color='textPrimary' className={classes.productTypeName}>
+                              {product.productType.name}
+                            </Typography>
+                          }
+                        </Box>
+                      </ListItem>
+                    </Zoom>
+                  )
+                })}
+              </List>
+            </Grow>
+          }
+        </Grid>
+      </Fade>
+    </Grid>
   )
 }
 

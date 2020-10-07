@@ -77,6 +77,7 @@ const formValidation: ValidationSchema = {
 const useStyles = makeStyles((theme: Theme) => createStyles({
   brandTitle: {
     margin: theme.spacing(2, 0),
+    padding: theme.spacing(0, 2),
     fontWeight: 600
   },
   buttonContainer: {
@@ -122,9 +123,11 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
     width: '100%',
   },
   inputContainerLarge: {
-    bottom: '125px',
-    left: '25%',
-    width: '50%'
+    width: '75%',
+    margin: `24px auto 16px`
+  },
+  inputContainerExtraLarge: {
+    width: '50%',
   },
   inputField: {
     '& .MuiOutlinedInput-root': {
@@ -144,10 +147,6 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
     '& .MuiOutlinedInput-notchedOutline': {
       borderRight: 'none'
     }
-  },
-  previousButton: {
-    borderRadius: 0,
-    lineHeight: '2.8rem'
   },
   nextButton: {
     borderRadius: 0,
@@ -169,7 +168,7 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
     overflowY: 'auto'
   },
   resultsContainerLarge: {
-    height: 'calc(100vh - 290px)',
+    marginTop: theme.spacing(2)
   },
   stepNumber: {
     backgroundColor: theme.palette.secondary.main,
@@ -181,6 +180,10 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
     marginLeft: 'auto',
     marginRight: 'auto',
     width: 50
+  },
+  previousButton: {
+    borderRadius: 0,
+    lineHeight: '2.8rem'
   }
 }));
 
@@ -198,7 +201,8 @@ const ProductSelection: React.FC<ProductSelectionProps> = (props: ProductSelecti
   // Match the mobile media query size.
   const classes = useStyles(),
         theme = useTheme(),
-        largeScreen = useMediaQuery(theme.breakpoints.up('sm'));
+        largeScreen = useMediaQuery(theme.breakpoints.up('sm')),
+        extraLargeScreen = useMediaQuery(theme.breakpoints.up('lg'));
 
   // Define the product selection form state.
   const [values, setValues] = React.useState<ProductSelectionForm>({
@@ -415,83 +419,11 @@ const ProductSelection: React.FC<ProductSelectionProps> = (props: ProductSelecti
 
   return (
     <Box className={clsx(classes.container)}>
-      <Grid
-        container
-        direction='row'
-        justify='center'
-        alignItems='stretch'
-      >
-        <Grid item xs={12} className={clsx(
-          classes.resultsContainer, {
-            [classes.resultsContainerLarge]: largeScreen
-        })}>
-          {touched ? (
-            <Grid
-              container
-              className={clsx(classes.results)}
-              justify='center'
-            >
-              <Grid item xs={12} lg={6}>
-                {searching ? (
-                  <Fade in={searching}>
-                    <LoadingTagsList />
-                  </Fade>
-                ) : (
-                  <Fade in={!searching} timeout={300}>
-                      {options.length > 0 ? (
-                        <React.Fragment>
-                          <Typography variant='h2' className={clsx(classes.brandTitle)}>
-                            {props.brand.name}
-                          </Typography>
-                          <ProductSelectList products={[...options]} select={selectProduct} />
-                        </React.Fragment>
-                      ) : (
-                        <Grid
-                          className={classes.noResultsContainer}
-                          container
-                          direction='row'
-                          justify='center'
-                          alignItems='center'
-                        >
-                          <Grid item className={clsx(classes.helpContent)}>
-                            <Typography variant='h2' className={clsx(classes.helpTitle)}>
-                              A new {props.brand.name} product
-                            </Typography>
-                            <Typography variant='subtitle1' className={clsx(classes.helpSubtitle)}>
-                              Looks like you're the first to rave about this product on Ravebox. That's great!
-                            </Typography>
-                          </Grid>
-                        </Grid>
-                      )}
-                  </Fade>
-                )}
-              </Grid>
-            </Grid>
-          ) : (
-            <Grid
-              className={classes.helpContainer}
-              container
-              direction='row'
-              justify='center'
-              alignItems='center'
-            >
-              <Grid item className={clsx(classes.helpContent)}>
-                <Typography variant='h2' className={clsx(classes.helpTitle)}>
-                  Enter the name of your {props.brand.name} product
-                </Typography>
-                <Typography variant='subtitle1' className={clsx(classes.helpSubtitle)}>
-                  If we already know this {props.brand.name} product, you'll be able to select it from the list. Otherwise, enter the product name (don't include the {props.brand.name} brand name) and hit next.
-                </Typography>
-              </Grid>
-            </Grid>
-          )}
-        </Grid>
-      </Grid>
-      <Box className={clsx(
-        classes.inputContainer, {
-          [classes.inputContainerLarge]: largeScreen
-        }
-      )}>
+      <Box className={clsx({
+        [classes.inputContainer]: !largeScreen,
+        [classes.inputContainerLarge]: largeScreen,
+        [classes.inputContainerExtraLarge]: extraLargeScreen
+      })}>
         <Grid container>
           <Grid item className={clsx(classes.input)}>
             <Input
@@ -520,44 +452,86 @@ const ProductSelection: React.FC<ProductSelectionProps> = (props: ProductSelecti
           </Grid>
         </Grid>
       </Box>
-    </Box>
-  );
-
-  /*
-  return (
-    <React.Fragment>
       <Grid
         container
-        direction='column'
+        direction='row'
+        justify='center'
+        alignItems='stretch'
       >
-        <Grid item xs={12} lg={6}>
-          <Input
-            handleBlur={handleBlur}
-            handleChange={handleChange}
-            handleFocus={handleFocus}
-            name='name'
-            type='text'
-            title="Product name"
-            validation={validation.name}
-          />
+        <Grid item xs={12} className={clsx(
+          classes.resultsContainer, {
+            [classes.resultsContainerLarge]: largeScreen
+        })}>
+          {touched ? (
+            <Grid
+              container
+              className={clsx({
+                [classes.results]: !largeScreen
+              })}
+              justify='center'
+            >
+              <Grid item xs={12} sm={9} lg={6}>
+                {searching ? (
+                  <Fade in={searching}>
+                    <LoadingTagsList />
+                  </Fade>
+                ) : (
+                  <Fade in={!searching} timeout={300}>
+                    {options.length > 0 ? (
+                      <React.Fragment>
+                        <Typography variant='h2' className={clsx(classes.brandTitle)}>
+                          {props.brand.name}
+                        </Typography>
+                        <ProductSelectList products={[...options]} select={selectProduct} />
+                      </React.Fragment>
+                    ) : (
+                      <Grid
+                      className={clsx({
+                        [classes.noResultsContainer]: !largeScreen
+                      })}
+                        container
+                        direction='row'
+                        justify='center'
+                        alignItems='center'
+                      >
+                        <Grid item className={clsx(classes.helpContent)}>
+                          <Typography variant='h2' className={clsx(classes.helpTitle)}>
+                            A new {props.brand.name} product
+                          </Typography>
+                          <Typography variant='subtitle1' className={clsx(classes.helpSubtitle)}>
+                            Looks like you're the first to rave about this product on Ravebox. That's great!
+                          </Typography>
+                        </Grid>
+                      </Grid>
+                    )}
+                  </Fade>
+                )}
+              </Grid>
+            </Grid>
+          ) : (
+            <Grid
+              className={clsx({
+                [classes.helpContainer]: !largeScreen
+              })}
+              container
+              direction='row'
+              justify='center'
+              alignItems='center'
+            >
+              <Grid item className={clsx(classes.helpContent)}>
+                <Typography variant='h2' className={clsx(classes.helpTitle)}>
+                  Enter the name of your {props.brand.name} product
+                </Typography>
+                <Typography variant='subtitle1' className={clsx(classes.helpSubtitle)}>
+                  If we already know this {props.brand.name} product, you'll be able to select it from the list. Otherwise, enter the product name (don't include the {props.brand.name} brand name) and hit next.
+                </Typography>
+              </Grid>
+            </Grid>
+          )}
         </Grid>
-        <Grid item xs={12} lg={6}>
-          <ProductSelectList products={options} />
-        </Grid>
-        {showButton &&
-          <Grid item xs={12} style={{marginTop: '.5rem'}}>
-            <StyledButton
-              clickAction={updateProductName}
-              disabled={!changed}
-              submitting={submitting}
-              title={selected ? 'Update' : 'Add new'}
-            />
-          </Grid>
-        }
       </Grid>
-    </React.Fragment>
+    </Box>
   );
-  */
 }
 
 /**

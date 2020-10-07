@@ -119,6 +119,13 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
     position: 'absolute',
     width: '100%',
   },
+  inputContainerLarge: {
+    width: '75%',
+    margin: `24px auto 16px`
+  },
+  inputContainerExtraLarge: {
+    width: '50%',
+  },
   inputField: {
     '& .MuiOutlinedInput-root': {
       borderRadius: 0
@@ -129,16 +136,40 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
       borderRight: 'none'
     }
   },
-  previousButton: {
-    borderRadius: 0,
-    lineHeight: '2.8rem'
+  inputFieldLarge: {
+    '& .MuiOutlinedInput-root': {
+      borderBottomRightRadius: 0,
+      borderTopRightRadius: 0
+    },
+    '& .MuiOutlinedInput-notchedOutline': {
+      borderRight: 'none'
+    }
   },
   nextButton: {
     borderRadius: 0,
     lineHeight: '2.8rem'
   },
+  nextButtonLarge: {
+    borderBottomLeftRadius: 0,
+    borderTopLeftRadius: 0,
+    lineHeight: '2.8rem'
+  },
   noResultsContainer: {
     height: '100%'
+  },
+  previousButton: {
+    borderRadius: 0,
+    lineHeight: '2.8rem'
+  },
+  brandTitle: {
+    marginTop: theme.spacing(2),
+    padding: theme.spacing(0, 2),
+    fontSize: '0.8rem'
+  },
+  productTitle: {
+    marginBottom: theme.spacing(2),
+    padding: theme.spacing(0, 2),
+    fontWeight: 600
   },
   results: {
     height: '100%'
@@ -146,6 +177,9 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
   resultsContainer: {
     height: 'calc(100vh - 160px)',
     overflowY: 'auto'
+  },
+  resultsContainerLarge: {
+    marginTop: theme.spacing(2)
   },
   stepNumber: {
     backgroundColor: theme.palette.secondary.main,
@@ -174,7 +208,8 @@ const ProductTypeSelection: React.FC<ProductTypeSelectionProps> = (props: Produc
   // Match the mobile media query size.
   const classes = useStyles(),
         theme = useTheme(),
-        largeScreen = useMediaQuery(theme.breakpoints.up('sm'));
+        largeScreen = useMediaQuery(theme.breakpoints.up('sm')),
+        extraLargeScreen = useMediaQuery(theme.breakpoints.up('lg'));
 
   // Define the product selection form state.
   const [values, setValues] = React.useState<ProductTypeSelectionForm>({
@@ -453,19 +488,58 @@ const ProductTypeSelection: React.FC<ProductTypeSelectionProps> = (props: Produc
 
   return (
     <Box className={clsx(classes.container)}>
+      <Box className={clsx({
+        [classes.inputContainer]: !largeScreen,
+        [classes.inputContainerLarge]: largeScreen,
+        [classes.inputContainerExtraLarge]: extraLargeScreen
+      })}>
+        <Grid container>
+          <Grid item className={clsx(classes.input)}>
+            <Input
+              className={clsx({
+                [classes.inputField]: !largeScreen,
+                [classes.inputFieldLarge]: largeScreen
+              })}
+              handleBlur={handleBlur}
+              handleChange={handleChange}
+              name='name'
+              type='text'
+              title="Product type"
+              validation={validation.name}
+            />
+          </Grid>
+          <Grid item>
+            <StyledButton
+              align='right'
+              className={clsx({
+                [classes.nextButton]: !largeScreen,
+                [classes.nextButtonLarge]: largeScreen
+              })}
+              clickAction={submit}
+              title='Next'
+            />
+          </Grid>
+        </Grid>
+      </Box>
       <Grid
         container
         direction='row'
         justify='center'
         alignItems='stretch'
       >
-        <Grid item xs={12} className={clsx(classes.resultsContainer)}>
+        <Grid item xs={12} className={clsx(
+          classes.resultsContainer, {
+            [classes.resultsContainerLarge]: largeScreen
+        })}>
           {touched ? (
             <Grid
               container
-              className={clsx(classes.results)}
+              className={clsx({
+                [classes.results]: !largeScreen
+              })}
+              justify='center'
             >
-              <Grid item xs={12}>
+              <Grid item xs={12} sm={9} lg={6}>
                 {searching ? (
                   <Fade in={searching}>
                     <LoadingTagsList />
@@ -473,10 +547,20 @@ const ProductTypeSelection: React.FC<ProductTypeSelectionProps> = (props: Produc
                 ) : (
                   <Fade in={!searching} timeout={300}>
                     {options.length > 0 ? (
-                      <ProductTypeSelectList product={{...props.product}} tags={[...options]} select={selectTag} />
+                        <React.Fragment>
+                          <Typography variant='subtitle1' className={clsx(classes.brandTitle)}>
+                            {props.product.brand.name} 
+                          </Typography>
+                          <Typography variant='h2' className={clsx(classes.productTitle)}>
+                            {props.product.name}
+                          </Typography>
+                          <ProductTypeSelectList product={{...props.product}} tags={[...options]} select={selectTag} />
+                        </React.Fragment>
                     ) : (
                       <Grid
-                        className={classes.noResultsContainer}
+                        className={clsx({
+                          [classes.noResultsContainer]: !largeScreen
+                        })}
                         container
                         direction='row'
                         justify='center'
@@ -498,7 +582,9 @@ const ProductTypeSelection: React.FC<ProductTypeSelectionProps> = (props: Produc
             </Grid>
           ) : (
             <Grid
-              className={classes.helpContainer}
+              className={clsx({
+                [classes.helpContainer]: !largeScreen
+              })}
               container
               direction='row'
               justify='center'
@@ -509,74 +595,18 @@ const ProductTypeSelection: React.FC<ProductTypeSelectionProps> = (props: Produc
                   What type of product is this?
                 </Typography>
                 <Typography variant='subtitle1' className={clsx(classes.helpSubtitle)}>
-                  By entering the product type, it will ensure your rave is displayed with similar products. Example product types are "moisturizer", "mascara", "phone", "gaming console", "television".
+                  By entering the product type, it will ensure your rave is displayed with similar products.
+                </Typography>
+                <Typography variant='subtitle1' className={clsx(classes.helpSubtitle)}>
+                  Example product types are "moisturizer", "mascara", "phone", "gaming console", "television".
                 </Typography>
               </Grid>
             </Grid>
           )}
         </Grid>
       </Grid>
-      <Box className={clsx(classes.inputContainer)}>
-        <Grid container>
-          <Grid item className={clsx(classes.input)}>
-            <Input
-              className={classes.inputField}
-              handleBlur={handleBlur}
-              handleChange={handleChange}
-              name='name'
-              type='text'
-              title="Product name"
-              validation={validation.name}
-            />
-          </Grid>
-          <Grid item>
-            <StyledButton
-              align='right'
-              className={classes.nextButton}
-              clickAction={submit}
-              title='Next'
-            />
-          </Grid>
-        </Grid>
-      </Box>
     </Box>
   );
-
-  /*
-  return (
-    <React.Fragment>
-      <Grid
-        container
-        direction='column'
-      >
-        <Grid item xs={12} lg={6}>
-          <Input
-            handleBlur={handleBlur}
-            handleChange={handleChange}
-            handleFocus={handleFocus}
-            name='name'
-            type='text'
-            title="Product name"
-            validation={validation.name}
-          />
-        </Grid>
-        <Grid item xs={12} lg={6}>
-          <ProductSelectList products={options} />
-        </Grid>
-        {showButton &&
-          <Grid item xs={12} style={{marginTop: '.5rem'}}>
-            <StyledButton
-              clickAction={updateProductName}
-              disabled={!changed}
-              submitting={submitting}
-              title={selected ? 'Update' : 'Add new'}
-            />
-          </Grid>
-        }
-      </Grid>
-    </React.Fragment>
-  );
-  */
 }
 
 /**

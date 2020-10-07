@@ -125,19 +125,25 @@ export default class ProductController {
 
     // Save the new product.
     newProduct.save()
-      .then((product: ProductDetailsDocument) => {
+      .then((productDetails: ProductDetailsDocument) => {
+        return productDetails.populate({
+          path: 'brand',
+          model: 'Brand'
+        })
+        .execPopulate();
+      })
+      .then((productDetails: ProductDetailsDocument) => {
         // Set the response object.
         const responseObject: ResponseObject = Connect.setResponse({
           data: {
-            product: product.details
+            product: productDetails.details
           }
-        }, 201, `Product ${product._id} created successfully`);
+        }, 201, `Product ${productDetails._id} created successfully`);
 
         Logging.Send(LogLevel.INFO, responseObject);
 
         // Return the response for the authenticated user.
         response.status(responseObject.status).json(responseObject.data);
-
       })
       .catch((error: Error) => {
         // Attach the private user profile to the response.

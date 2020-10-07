@@ -33,12 +33,14 @@ const useStyles = makeStyles((theme: Theme) => (
     gridItem: {
     },
     gridTitleContainer: {
-      width: '100%'
+      width: '100%',
+      padding: theme.spacing(0, 2)
     },
     gridTitleText: {
+      borderRadius: theme.shape.borderRadius,
       marginBottom: theme.spacing(1),
       width: '100%',
-      height: 60
+      height: 50
     }
   })
 ));
@@ -51,7 +53,7 @@ const LoadingTagsList: React.FC<LoadingTagsListProps> = (props: LoadingTagsListP
   const classes = useStyles();
 
   // Define the grid list.
-  const gridList: Array<number> = [0, 1, 2, 3, 4, 5, 6, 7];
+  const gridList: Array<number> = [0, 1, 2, 3];
 
   return (
     <Grid
