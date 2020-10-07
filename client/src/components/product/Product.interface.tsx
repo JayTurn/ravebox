@@ -4,14 +4,21 @@
  */
 
 // Interfaces.
+import { Brand } from '../brand/Brand.interface';
 import { CategoryItem } from '../category/Category.interface';
 import { Review } from '../review/Review.interface';
+import { Tag } from '../tag/Tag.interface';
 
 export interface Product {
   _id: string;
-  brand: string;
-  categories: Array<CategoryItem>;
+  brand: Brand;
+  category: Tag;
+  competitors?: Array<Product>;
+  complementary?: Array<Product>;
+  description?: string;
   name: string;
+  productType: Tag;
+  tags: Array<Tag>;
   url: string;
 }
 

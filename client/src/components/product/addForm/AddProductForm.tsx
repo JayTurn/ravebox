@@ -5,6 +5,7 @@
 
 // Modules.
 import API from '../../../utils/api/Api.model';
+import Backdrop from '@material-ui/core/Backdrop';
 import Box from '@material-ui/core/Box';
 import clsx from 'clsx';
 import { connect } from 'react-redux';
@@ -17,6 +18,11 @@ import {
 import Grid from '@material-ui/core/Grid';
 import Fade from '@material-ui/core/Fade';
 import * as React from 'react';
+import LinearProgress from '@material-ui/core/LinearProgress';
+import Modal from '@material-ui/core/Modal';
+import Stepper from '@material-ui/core/Stepper';
+import Step from '@material-ui/core/Step';
+import StepLabel from '@material-ui/core/StepLabel';
 import Typography from '@material-ui/core/Typography';
 import useMediaQuery from '@material-ui/core/useMediaQuery';
 import { VariantType, useSnackbar } from 'notistack';
@@ -27,7 +33,8 @@ import CategorySelection from '../../category/selection/CategorySelection';
 import ErrorMessages from '../../forms/errorMessages/ErrorMessages';
 import PaddedDivider from '../../elements/dividers/PaddedDivider';
 import ProductSelection from '../select/ProductSelection';
-import BrandSelection from '../select/BrandSelection';
+import ProductTypeSelection from '../type/ProductTypeSelection';
+import BrandSelection from '../../brand/select/BrandSelection';
 import StyledButton from '../../elements/buttons/StyledButton';
 
 // Enumerators.
@@ -44,14 +51,19 @@ import {
   AnalyticsContextProps,
   EventObject
 } from '../../../components/analytics/Analytics.interface';
+import { Brand } from '../../brand/Brand.interface';
 import { CategoryItem } from '../../category/Category.interface';
 import { InputData } from '../../forms/input/Input.interface';
 import { Product } from '../../product/Product.interface';
 import {
   AddProductFormProps,
-  AddProductFormResponse
+  AddProductFormResponse,
+  AddProductStep
 } from './AddProductForm.interface';
 import { ValidationSchema } from '../../forms/validation/Validation.interface';
+
+// Utilities.
+import { emptyTag } from '../../tag/Tag.common';
 
 // Validation rules.
 import {
@@ -67,35 +79,117 @@ import {
  * Create styles for the page title.
  */
 const useStyles = makeStyles((theme: Theme) => createStyles({
+  container: {
+    backgroundColor: theme.palette.common.white,
+    height: '100%',
+    width: '100%'
+  },
+  contentContainer: {
+    height: 'calc(100% - 100px)'
+  },
+  modal: {
+    alignItems: 'center',
+    display: 'flex',
+    justifyContent: 'center',
+    outline: 0
+  },
   padding: {
     paddingLeft: theme.spacing(2),
     paddingRight: theme.spacing(2)
-  }
+  },
+  stepCancelContainer: {
+    alignSelf: 'center',
+    flexGrow: 1,
+    marginRight: theme.spacing(2)
+  },
+  stepCancelContainerLarge: {
+    marginRight: 0
+  },
+  stepCircleContainer: {
+    marginLeft: theme.spacing(2)
+  },
+  stepCircleContainerLarge: {
+    marginLeft: 0
+  },
+  stepContainer: {
+    margin: theme.spacing(1, 0, 2),
+    flexWrap: 'nowrap'
+  },
+  stepCounterContainer: {
+    marginLeft: theme.spacing(2)
+  },
+  stepCounter: {
+    color: theme.palette.primary.main,
+    fontSize: '0.75rem',
+    fontWeight: 600,
+    textTransform: 'uppercase'
+  },
+  stepCircleLabel: {
+    backgroundColor: theme.palette.primary.main,
+    borderRadius: 26,
+    color: theme.palette.common.white,
+    display: 'block',
+    fontSize: '1.5em',
+    fontWeight: 500,
+    height: '50px',
+    lineHeight: '50px',
+    margin: '5px',
+    textTransform: 'uppercase',
+    textAlign: 'center',
+    width: '50px'
+  },
+  stepCircleOutline: {
+    border: `1px solid ${theme.palette.primary.main}`,
+    borderRadius: 34,
+    height: 62,
+    width: 62
+  },
+  stepHelp: {
+    fontSize: '.85rem',
+  },
+  stepTitle: {
+    fontSize: '1.15rem',
+    fontWeight: 600,
+    marginBottom: 0,
+    textTransform: 'uppercase'
+  },
 }));
 
 /**
  * AddProduct validation schema.
  */
-const productValidation: ValidationSchema = {
+const brandValidation: ValidationSchema = {
   name: {
     errorMessage: '',
     rules: [
       isRequired
     ]
-  },
-  brand: {
-    errorMessage: '',
-    rules: [isRequired]
-  },
-  category: {
-    errorMessage: '',
-    rules: [isRequired]
-  },
-  'sub-category': {
-    errorMessage: '',
-    rules: [isRequired]
   }
 };
+
+/**
+ * Defines the product creation steps.
+ */
+const retrieveSteps: (
+) => Array<AddProductStep> = (
+): Array<AddProductStep> => {
+  return [{
+    completed: false,
+    help: 'Enter the brand name for the product you are raving about.',
+    id: 'brand',
+    title: 'Brand'
+  }, {
+    completed: false,
+    help: `Enter the name of the product you are raving about. You don't need to include the brand.`,
+    id: 'product',
+    title: 'Product name'
+  }, {
+    completed: false,
+    help: `Enter the type of product you are raving about. E.G. phone, moisturizer, earphones, televion etc.`,
+    id: 'productType',
+    title: 'Product type'
+  }];
+}
 
 /**
  * Renders the product form component.
@@ -110,33 +204,7 @@ const AddProductForm: React.FC<AddProductFormProps> = (
   // Match the mobile media query size.
   const classes = useStyles(),
         theme = useTheme(),
-        largeScreen = useMediaQuery(theme.breakpoints.up('md'));
-
-  // Register the snackbar.
-  const { enqueueSnackbar } = useSnackbar();
-
-  // Form error messages to be displayed if fields haven't been validated
-  // and prevents submissions to the api.
-  const [formErrorMessages, setFormErrorMessages] = React.useState(['']);
-
-  // Set a form submission state, used to inform the user their form has been
-  // submitted and to prevent duplicate submissions.
-  const [submitting, setSubmitting] = React.useState(false);
-
-  // Define the product details.
-  const [product, setProduct] = React.useState({
-    brand: '',
-    categories: [{
-      key: '',
-      label: ''
-    }],
-    name: '',
-  });
-
-  const [brandChanged, setBrandChanged] = React.useState<boolean>(false);
-
-  React.useEffect(() => {
-  }, [product]);
+        largeScreen = useMediaQuery(theme.breakpoints.up('lg'));
 
   // Validation hook.
   const {
@@ -144,92 +212,146 @@ const AddProductForm: React.FC<AddProductFormProps> = (
     validateField,
     validateAllFields
   } = useValidation({
-    validation: productValidation
+    validation: brandValidation
   });
 
+  // Register the snackbar.
+  const { enqueueSnackbar } = useSnackbar();
+
+  // Set the open state of the modal.
+  const [open, setOpen] = React.useState<boolean>(true);
+
+  // Create the steps to be used for creating a product.
+  const [step, setStep] = React.useState<number>(0);
+
+  // Define the step information.
+  const [steps, setSteps] = React.useState<Array<AddProductStep>>(retrieveSteps());
+
+  // Form error messages to be displayed if fields haven't been validated
+  // and prevents submissions to the api.
+  const [formErrorMessages, setFormErrorMessages] = React.useState(['']);
+
+  const [backButtonLabel, setBackButtonLabel] = React.useState<string>('Cancel');
+
+  // Set a form submission state, used to inform the user their form has been
+  // submitted and to prevent duplicate submissions.
+  const [submitting, setSubmitting] = React.useState(false);
+
+  const [brand, setBrand] = React.useState<Brand>({
+    _id: '',
+    logo: '',
+    name: '',
+    url: ''
+  });
+
+  // Define the product details.
+  const [product, setProduct] = React.useState<Product>({
+    _id: '',
+    brand: brand,
+    category: emptyTag(),
+    competitors: [],
+    complementary: [],
+    description: '',
+    name: '',
+    productType: emptyTag(),
+    tags: [],
+    url: ''
+  });
+
+  const [brandChanged, setBrandChanged] = React.useState<boolean>(false);
+
   /**
-   * Updates the categories with the selected field.
-   *
-   * @param { Array<string> } selected - the selected categories.
+   * Handles the display for creating a new user.
    */
-  const updateCategories: (
-    categoryType: string
-  ) => (
-    selected: Array<CategoryItem>
+  const handleOverlay: (
+    e: React.MouseEvent<HTMLButtonElement>
   ) => void = (
-    categoryType: string
-  ) => (
-    selected: Array<CategoryItem>
+    e: React.MouseEvent<HTMLButtonElement>
+  ): void => {
+    setOpen(!open);
+  }
+
+  /**
+   * Handles going back a step.
+   */
+  const handleBack: (
+    e: React.MouseEvent<HTMLButtonElement>
+  ) => void = (
+    e: React.MouseEvent<HTMLButtonElement>
   ): void => {
 
-    // Reset the form errors based on field input.
-    setFormErrorMessages(['']);
+    // If we're on the first step we should cancel and redirect to the 
+    // users reviews. If we we're on any other step, ensure the button
+    // handles as a backward step.
+    if (step === 0) {
 
-    setProduct({
-      ...product,
-      categories: selected
-    });
+      setOpen(false);
+      props.history.push('/user/reviews');
 
-    // Create the event object from the provided values.
-    const eventData: EventObject = {
-      'brand name': product.brand,
-      'product name': product.name
-    };
+    } else {
 
-    if (categoryType === 'category') {
-      eventData['product category'] = selected[0].key;
-      analytics.trackEvent(`add category`)(eventData);
-    }
+      // Define the updated step to be set using the back button.
+      const updatedStep: number = step > 0 ? step - 1 : step;
 
-    if (categoryType === 'sub-category') {
-      eventData['product category'] = selected[0].key;
-      eventData['product sub-category'] = selected[1].key;
-      analytics.trackEvent(`add sub-category`)(eventData);
+      const label: string = step === 0 ? 'Cancel' : 'Back';
+
+      setBackButtonLabel(label);
+
+      setStep(updatedStep);
+
     }
   }
 
   /**
-   * Updates the text values for the relevant product field.
+   * Updates the selected brand.
    *
-   * @param { InputData } data - the field data.
+   * @param { Brand } brand - the selected brand.
    */
-  const updateInputs: (
-    data: InputData
+  const updateBrand: (
+    brand: Brand
   ) => void = (
-    data: InputData
+    brand: Brand
   ): void => {
-    
-    // Reset the form errors based on field input.
-    setFormErrorMessages(['']);
-
     setProduct({
       ...product,
-      [data.key]: data.value
+      brand: {...brand}
     });
 
-    // Create the event object from the provided values.
-    const eventData: EventObject = {
-      'brand name': product.brand,
-      'product name': product.name
-    };
+    setBackButtonLabel('Back');
 
-    if (product.categories && product.categories.length > 0) {
-      eventData['product category'] = product.categories[0].key;
+    setStep(1);
+  }
 
-      if (product.categories.length > 1) {
-        eventData['product sub-category'] = product.categories[1].key;
-      }
-    }
+  /**
+   * Updates the selected product.
+   *
+   * @param { Product } product - the selected product.
+   */
+  const updateProduct: (
+    data: Product
+  ) => void = (
+    data: Product
+  ): void => {
+    setProduct({
+      ...product,
+      name: data.name
+    });
 
-    if (data.key === 'brand') {
-      eventData['brand name'] = data.value;
-    }
+    setStep(2);
+  }
 
-    if (data.key === 'name') {
-      eventData['product name'] = data.value;
-    }
-
-    analytics.trackEvent(`add ${data.key}`)(eventData);
+  /**
+   * Completes the new product process.
+   *
+   * @param { Product } product - the selected product.
+   */
+  const complete: (
+    data: Product
+  ) => void = (
+    data: Product
+  ): void => {
+    setOpen(false);
+    props.history.push(`/product/${data._id}/review`);
   }
 
   /**
@@ -243,120 +365,115 @@ const AddProductForm: React.FC<AddProductFormProps> = (
     setBrandChanged(true);
   }
 
-  /**
-   * Submits the product for creation.
-   */
-  const submit: (
-    e: React.MouseEvent<HTMLButtonElement>
-  ) => Promise<void> = async (
-    e: React.MouseEvent<HTMLButtonElement>
-  ): Promise<void> => {
-
-    // Don't do anything if we're already submitting.
-    if (submitting) {
-      return;
-    }
-
-    // Define the selected category.
-    const category: string = product.categories.length > 0 ? product.categories[0].label : '',
-          subCategory: string = product.categories.length > 1 ? product.categories[1].label : '';
-
-    // Validate all of the fieds in the form.
-    const errors: Array<string> = await validateAllFields({
-      'name': product.name,
-      'brand': product.brand,
-      'category': category,
-      'sub-category': subCategory
-    });
-
-    // If we have any errors, set the messages on the form and prevent the
-    // submission.
-    if (errors.length > 0) {
-      setFormErrorMessages(errors);
-      setSubmitting(false)
-      return;
-    }
-
-    // Set the submission state.
-    setSubmitting(true)
-
-    API.requestAPI<AddProductFormResponse>('product/create', {
-      method: RequestType.POST,
-      headers: {
-        'x-xsrf-token': props.xsrf || ''
-      },
-      body: JSON.stringify(product)
-    })
-    .then((response: AddProductFormResponse) => {
-
-      // Present any errors that were returned in the response.
-      if (response.errorCode) {
-        setFormErrorMessages([response.title])
-
-        setSubmitting(false);
-        return;
-      }
-
-      // Display the success message to the user.
-      enqueueSnackbar('Product added successfully', { variant: 'success' });
-
-      // Create the event object from the provided values.
-      const eventData: EventObject = {
-        'brand name': response.product.brand,
-        'product id': response.product._id,
-        'product name': response.product.name
-      };
-
-      if (response.product.categories && response.product.categories.length > 0) {
-        eventData['product category'] = response.product.categories[0].key;
-
-        if (response.product.categories.length > 1) {
-          eventData['product sub-category'] = response.product.categories[1].key;
-        }
-      }
-
-      analytics.trackEvent(`add new product`)(eventData);
-
-      // Redirect to the add review screen.
-      props.history.push(`/product/${response.product._id}/review`);
-
-    })
-    .catch((error: Error) => {
-      console.error(error);
-    })
-  };
-
   return (
-    <form noValidate autoComplete='off'>
-      <Grid
-        container
-        direction='column'
-      >
-        <Box className={clsx(classes.padding)}
+    <Modal
+      BackdropComponent={Backdrop}
+      BackdropProps={{
+        timeout: 300
+      }}
+      className={clsx(classes.modal)}
+      closeAfterTransition
+      open={open}
+      onClose={handleOverlay}
+    >
+      <Box className={clsx(classes.container)}>
+        <Grid
+          container
+          direction='row'
+          justify='center'
+          alignItems='stretch'
         >
-          <BrandSelection update={updateInputs} />
-          <ProductSelection update={updateInputs} brand={product.brand} />
-          <CategorySelection
-            update={updateCategories}
-            visible={product.name !== ''}
-          />
-          <Grid item xs={12} md={6} style={{marginTop: '2rem'}}>
-            <ErrorMessages errors={formErrorMessages} />
-          </Grid>
-          <Fade in={product.categories.length > 1} timeout={300}>
-            <Grid item xs={12}>
-              <StyledButton
-                clickAction={submit}
-                color='secondary'
-                disabled={submitting}
-                submitting={submitting}
-                title='Next'
-              />
+          <Grid item xs={12} className={clsx(classes.stepContainer)}>
+            <Grid
+              container
+              justify='center'
+            >
+              <Grid item xs={12} lg={6}>
+                <Grid
+                  container
+                  className={clsx(classes.stepContainer)} 
+                  alignItems='center'
+                >
+                  <Grid item className={clsx(
+                    classes.stepCircleContainer, {
+                      [classes.stepCircleContainerLarge]: largeScreen
+                    }
+                  )}>
+                    <Box className={clsx(classes.stepCircleOutline)}>
+                      <Typography variant='body1' className={clsx(classes.stepCircleLabel)}>
+                        {(step + 1)}
+                      </Typography>
+                    </Box>
+                  </Grid>
+                  <Grid item>
+                    <Grid container className={clsx(classes.stepCounterContainer)}>
+                      <Grid item xs={12}>
+                        <Typography variant='body1' className={clsx(classes.stepCounter)}>
+                          Step {(step + 1)} of {steps.length}
+                        </Typography>
+                      </Grid>
+                      <Grid item xs={12}>
+                        <Typography variant='h2' className={clsx(classes.stepTitle)}>
+                          {steps[step].title}
+                        </Typography>
+                      </Grid>
+                    </Grid>
+                  </Grid>
+                  <Grid
+                    className={clsx(classes.stepCancelContainer)}
+                    item
+                  >
+                    <StyledButton
+                      align='right'
+                      title={backButtonLabel}
+                      clickAction={handleBack}
+                      variant='outlined'
+                    />
+                  </Grid>
+                </Grid>
+                <Grid item xs={12}>
+                  <LinearProgress variant='determinate' value={(((step + 1) / steps.length) * 100)} />
+                </Grid>
+              </Grid>
             </Grid>
-          </Fade>
-        </Box>
-      </Grid>
-    </form>
+          </Grid>
+          <Grid item xs={12} className={clsx(classes.contentContainer)}>
+            <Grid
+              container
+              justify='center'
+            >
+              <Grid item xs={12} lg={6}>
+                {step === 0 &&
+                  <Fade in={step === 0}>
+                    <BrandSelection
+                      completed={steps[0].completed}
+                      update={updateBrand}
+                    />
+                  </Fade>
+                }
+                {step === 1 &&
+                  <Fade in={step === 1}>
+                    <ProductSelection
+                      brand={product.brand}
+                      complete={complete}
+                      update={updateProduct}
+                    />
+                  </Fade>
+                }
+                {step === 2 &&
+                  <Fade in={step === 2}>
+                    <ProductTypeSelection
+                      product={product}
+                      complete={complete}
+                    />
+                  </Fade>
+                }
+              </Grid>
+            </Grid>
+          </Grid>
+        </Grid>
+      </Box>
+    </Modal>
   );
 };
 

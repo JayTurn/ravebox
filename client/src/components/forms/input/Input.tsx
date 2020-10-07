@@ -4,6 +4,12 @@
  */
 
 // Dependent modules.
+import {
+  createStyles,
+  makeStyles,
+  Theme,
+  withStyles
+} from '@material-ui/core/styles';
 import InputAdornment from '@material-ui/core/InputAdornment';
 import * as React from 'react';
 import TextField from '@material-ui/core/TextField';
@@ -61,6 +67,7 @@ const Input: React.FC<InputProps> = (props: InputProps) => {
   return (
     <TextField
       autoFocus={props.autoFocus}
+      className={props.className}
       defaultValue={props.defaultValue}
       error={props.validation && props.validation.errorMessage !== ''}
       fullWidth={true}

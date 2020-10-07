@@ -63,7 +63,6 @@ const AddProduct: React.FC<AddProductProps> = (props: AddProductProps) => {
         <title>Add a new product - Ravebox</title>
         <link rel='canonical' href='https://ravebox.io/product/add' />
       </Helmet>
-      <PageTitle title='Post a rave' />
       <AddProductForm />
     </Grid>
   );

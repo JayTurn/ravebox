@@ -25,14 +25,11 @@ import {
   ProductAction
 } from './product.interface';
 
+// Utilities.
+import { emptyProduct } from '../../components/product/Product.common';
+
 const emptyProductView: ProductView = {
-  product: {
-    _id: '',
-    brand: '',
-    categories: [],
-    name: '',
-    url: ''
-  },
+  product: emptyProduct(),
   reviews: []
 }
 

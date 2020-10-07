@@ -1,5 +1,5 @@
 /**
- * ProductSelectList.tsx.
+ * ProductTypeSelectList.tsx.
  * Component for selecting a product from a display list.
  */
 
@@ -29,9 +29,8 @@ import {
   AnalyticsContextProps,
   EventObject
 } from '../../analytics/Analytics.interface';
-import { CategoryItem } from '../../category/Category.interface';
-import { Product, ProductGroup } from '../Product.interface';
-import { ProductSelectListProps } from './ProductSelectList.interface';
+import { ProductTypeSelectListProps } from './ProductTypeSelectList.interface';
+import { Tag } from '../../tag/Tag.interface'; 
 
 /**
  * Search product list.
@@ -41,7 +40,7 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
     backgroundColor: 'rgba(100, 106, 240, 0.1)',
     borderRadius: theme.shape.borderRadius,
     marginTop: '0.5rem',
-    padding: theme.spacing(1)
+    padding: '0.1rem 1rem'
   },
   listItem: {
     backgroundColor: theme.palette.common.white,
@@ -49,8 +48,8 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
     boxShadow: `0 1px 1px rgba(100,106,240, 0.25)`,
     paddingBottom: '.5rem',
     paddingTop: '.5rem',
-    marginBottom: theme.spacing(1),
-    marginTop: theme.spacing(1),
+    marginBottom: '1rem',
+    marginTop: '1rem',
     '&:hover': {
       backgroundColor: theme.palette.common.white
     }
@@ -58,23 +57,16 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
   listBox: {
     flexDirection: 'column'
   },
-  productBrand: {
-    fontSize: '.9rem',
-    fontWeight: 500
-  },
-  productName: {
+  productTypeName: {
     fontSize: '1.15rem',
     fontWeight: 500
-  },
-  productTypeName: {
-    fontWeight: 400
   }
 }));
 
 /**
- * Assists the user in the selection of a product.
+ * Assists the user in the selection of a product typ.
  */
-const ProductSelectList: React.FC<ProductSelectListProps> = (props: ProductSelectListProps) => {
+const ProductTypeSelectList: React.FC<ProductTypeSelectListProps> = (props: ProductTypeSelectListProps) => {
 
   // Define the analytics context and a tracking event.
   const analytics: AnalyticsContextProps = useAnalytics() as AnalyticsContextProps;
@@ -87,58 +79,53 @@ const ProductSelectList: React.FC<ProductSelectListProps> = (props: ProductSelec
    *
    * @param { string } id - the product id.
    */
-  const selectProduct: (
+  const selectProductType: (
     index: number
   ) => void = (
     index: number
   ): void => {
 
-    const product: Product = {...props.products[index]};
+    const tag: Tag = {...props.tags[index]};
 
     // Create the event object from the provided values.
     const eventData: EventObject = {
-      'brand id': product.brand._id,
-      'brand name': product.brand.name,
-      'product id': product._id,
-      'product name': product.name
+      'brand name': props.product.brand.name,
+      'brand id': props.product.brand._id,
+      'product id': props.product._id,
+      'product name': props.product.name,
+      'product type': tag.name,
+      'product type id': tag._id
     };
 
-    analytics.trackEvent(`select existing product`)(eventData);
+    analytics.trackEvent(`select existing product type`)(eventData);
 
-    props.select(product);
+    // Handle the product type tag selection.
+    props.select(tag);
   }
 
   return (
     <React.Fragment>
-      {props.products && props.products.length > 0 &&
-        <Grow in={props.products.length > 0}>
+      {props.tags && props.tags.length > 0 &&
+        <Grow in={props.tags.length > 0}>
           <List className={classes.list}>
-            {props.products.map((product: Product, index: number) => {
+            {props.tags.map((tag: Tag, index: number) => {
               const added: boolean = true;
               return (
                 <Zoom 
                   in={added}
                   style={{transitionDelay: added ? `${100 * index}ms`: `100ms`}}
-                  key={product._id}
+                  key={tag._id}
                 >
                   <ListItem
                     button
                     className={classes.listItem}
                     disableRipple
-                    onClick={() => selectProduct(index)}
+                    onClick={() => selectProductType(index)}
                   >
                     <Box component='div'>
-                      <Typography variant='body2' color='textPrimary' className={classes.productBrand}>
-                        {product.brand.name}
+                      <Typography variant='body1' color='textPrimary' className={classes.productTypeName}>
+                        {tag.name}
                       </Typography>
-                      <Typography variant='body1' color='textPrimary' className={classes.productName}>
-                        {product.name}
-                      </Typography>
-                      {product.productType &&
-                        <Typography variant='subtitle2' color='textPrimary' className={classes.productTypeName}>
-                          {product.productType.name}
-                        </Typography>
-                      }
                     </Box>
                   </ListItem>
                 </Zoom>
@@ -151,4 +138,4 @@ const ProductSelectList: React.FC<ProductSelectListProps> = (props: ProductSelec
   )
 }
 
-export default withRouter(ProductSelectList);
+export default withRouter(ProductTypeSelectList);

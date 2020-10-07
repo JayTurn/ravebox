@@ -26,6 +26,9 @@ import {
   Review
 } from '../review/Review.interface';
 
+// Utilities.
+import { emptyProduct } from './Product.common';
+
 /**
  * Returns a product if it exists using the url.
  *
@@ -46,13 +49,7 @@ export function useRetrieveProductByURL(params: RetrieveProductByURLParams) {
   const [retrieved, setRetrieved] = React.useState(RetrievalStatus.NOT_REQUESTED);
 
   // Define the product to be set.
-  const [product, setProduct] = React.useState<Product>(existing ? existing.product : {
-    _id: '',
-    brand: '',
-    categories: [{key: '', label: ''}],
-    name: '',
-    url: ''
-  });
+  const [product, setProduct] = React.useState<Product>(existing ? existing.product : emptyProduct());
 
   // Define the product reviews to be set.
   const [reviews, setReviews] = React.useState<Array<Review>>(existing && existing.reviews ?

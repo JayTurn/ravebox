@@ -1,5 +1,5 @@
 /**
- * tag.enum.ts
+ * Tag.enum.ts
  * Enumerators for tags.
  */
 
@@ -11,13 +11,4 @@ export enum TagAssociation {
   FILTER = 'filter',
   PRODUCT = 'product',
   REVIEW = 'review'
-}
-
-/**
- * The tag status enumerator.
- */
-export enum TagStatus {
-  DRAFT = 'draft',
-  PUBLISHED = 'published',
-  UNPUBLISHED = 'unpublished'
 }

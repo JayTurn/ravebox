@@ -144,7 +144,7 @@ const formatEventData: (
 ): EventObject => {
   // Create the event object from the provided values.
   let eventData: EventObject = {
-    'brand name': product.brand,
+    'brand name': product.brand.name,
     'product id': product._id,
     'product name': product.name,
     'product recommended': review.recommended === Recommended.RECOMMENDED,
@@ -155,14 +155,6 @@ const formatEventData: (
     eventData['review url provided'] = review.links[0].path !== '';
     eventData['review promo provided'] = review.links[0].code !== ''; 
     eventData['review promo information provided'] = review.links[0].info !== '';
-  }
-
-  if (product.categories && product.categories.length > 0) {
-    eventData['product category'] = product.categories[0].key;
-
-    if (product.categories.length > 1) {
-      eventData['product sub-category'] = product.categories[1].key;
-    }
   }
 
   if (profile) {
