@@ -332,10 +332,7 @@ const AddProductForm: React.FC<AddProductFormProps> = (
   ) => void = (
     data: Product
   ): void => {
-    setProduct({
-      ...product,
-      name: data.name
-    });
+    setProduct({...data});
 
     setStep(2);
   }

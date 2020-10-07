@@ -34,6 +34,7 @@ import StyledButton from '../../elements/buttons/StyledButton';
 
 // Enumerators.
 import { RequestType } from '../../../utils/api/Api.enum';
+import { TagAssociation } from '../../tag/Tag.enum';
 
 // Hooks.
 import { useAnalytics } from '../../../components/analytics/Analytics.provider';
@@ -198,7 +199,7 @@ const ProductTypeSelection: React.FC<ProductTypeSelectionProps> = (props: Produc
   const [query, setQuery] = React.useState<string>('');
 
   // Define the debounce function for search queries.
-  const delayedQuery = React.useCallback(debounce((q: string) => searchProducts(q), 300), []);
+  const delayedQuery = React.useCallback(debounce((q: string) => searchProductTypes(q), 300), []);
 
   const [options, setOptions] = React.useState<Array<Tag>>([]);
 
@@ -407,7 +408,7 @@ const ProductTypeSelection: React.FC<ProductTypeSelectionProps> = (props: Produc
   /**
    * Performs a search for similar product names.
    */
-  const searchProducts: (
+  const searchProductTypes: (
     query: string
   ) => Promise<void> = async (
     query: string
@@ -425,7 +426,8 @@ const ProductTypeSelection: React.FC<ProductTypeSelectionProps> = (props: Produc
     API.requestAPI<ProductTypeSearchResponse>('tag/search/name', {
       method: RequestType.POST,
       body: JSON.stringify({
-        name: query
+        association: TagAssociation.PRODUCT,
+        name: query,
       })
     })
     .then((response: ProductTypeSearchResponse) => {

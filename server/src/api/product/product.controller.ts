@@ -173,7 +173,7 @@ export default class ProductController {
           tagName: string = request.body.name;
 
     // See if we have a tag id available to use from the request.
-    let tagId: string = request.body.tagId;
+    const tagId: string = request.body.tagId;
 
     if (!tagId) {
       if (!tagName) {
@@ -194,60 +194,139 @@ export default class ProductController {
         return;
       }
 
-      // Create a new tag.
-      const productTypeTag: TagDetailsDocument = new Tag({
-        name: tagName,
-        partials: Keywords.CreatePartialMatches(tagName),
+      // Capture the label as a lower case value to be compared with other
+      // possible tags that exist.
+      const label: string = tagName.toLowerCase(); 
+
+      Tag.findOne({
+        labels: label,
         association: TagAssociation.PRODUCT
+      })
+      .lean()
+      .then((tagDetails: TagDetailsDocument) => {
+        let productTypeTag: TagDetailsDocument;
+
+        // If a matching tag already exists, use that.
+        if (tagDetails) {
+          productTypeTag = tagDetails;
+        } else {
+          // Create and store a new tag to be associated with the product.
+          productTypeTag = new Tag({
+            name: tagName,
+            labels: [label],
+            partials: Keywords.CreatePartialMatches(tagName),
+            association: TagAssociation.PRODUCT
+          });
+          productTypeTag.save();
+        }
+
+        // Update the product with the tag we've identified.
+        Product.findOneAndUpdate({
+          _id: productId
+        }, {
+          productType: productTypeTag._id
+        }, {
+          new: true,
+          upsert: false
+        })
+        .populate({
+          path: 'brand',
+          model: 'Brand'
+        })
+        .populate({
+          path: 'productType',
+          model: 'Tag'
+        })
+        .then((productDetails: ProductDetailsDocument) => {
+
+          // Attach the brands to the response.
+          const responseObject = Connect.setResponse({
+            data: {
+              product: productDetails.details
+            }
+          }, 200, 'Product type updated successfully');
+
+          // Return the response for the authenticated user.
+          response.status(responseObject.status).json(responseObject.data);
+        })
+        .catch((error: Error) => {
+          // Define the responseObject.
+          const responseObject = Connect.setResponse({
+              data: {
+                errorCode: 'PRODUCT_TYPE_UPDATE_FAILED',
+                title: `Product type could not be added`
+              },
+              error: error
+            }, 401, `Product type could not be added`);
+
+          Logging.Send(LogLevel.ERROR, responseObject);
+
+          // Return the response.
+          response.status(responseObject.status).json(responseObject.data);
+        });
+
+      })
+      .catch((error: Error) => {
+        // Define the responseObject.
+        const responseObject = Connect.setResponse({
+            data: {
+              errorCode: 'PRODUCT_TYPE_UPDATE_FAILED',
+              title: `Product type could not be added`
+            },
+            error: error
+          }, 401, `Product type could not be added`);
+
+        Logging.Send(LogLevel.ERROR, responseObject);
+
+        // Return the response.
+        response.status(responseObject.status).json(responseObject.data);
       });
 
-      productTypeTag.save();
+    } else {
 
-      tagId = productTypeTag._id;
-    }
-
-    Product.findOneAndUpdate({
-      _id: productId
-    }, {
-      productType: Mongoose.Types.ObjectId(tagId)
-    }, {
-      new: true,
-      upsert: false
-    })
-    .populate({
-      path: 'brand',
-      model: 'Brand'
-    })
-    .populate({
-      path: 'productType',
-      model: 'Tag'
-    })
-    .then((productDetails: ProductDetailsDocument) => {
-      // Attach the brands to the response.
-      const responseObject = Connect.setResponse({
-        data: {
-          product: productDetails.details
-        }
-      }, 200, 'Product type updated successfully');
-
-      // Return the response for the authenticated user.
-      response.status(responseObject.status).json(responseObject.data);
-    })
-    .catch((error: Error) => {
-      // Define the responseObject.
-      const responseObject = Connect.setResponse({
+      Product.findOneAndUpdate({
+        _id: productId
+      }, {
+        productType: Mongoose.Types.ObjectId(tagId)
+      }, {
+        new: true,
+        upsert: false
+      })
+      .populate({
+        path: 'brand',
+        model: 'Brand'
+      })
+      .populate({
+        path: 'productType',
+        model: 'Tag'
+      })
+      .then((productDetails: ProductDetailsDocument) => {
+        // Attach the brands to the response.
+        const responseObject = Connect.setResponse({
           data: {
-            errorCode: 'PRODUCT_TYPE_UPDATE_FAILED',
-            title: `Product type could not be added`
-          },
-          error: error
-        }, 401, `Product type could not be added`);
+            product: productDetails.details
+          }
+        }, 200, 'Product type updated successfully');
 
-      Logging.Send(LogLevel.ERROR, responseObject);
+        // Return the response for the authenticated user.
+        response.status(responseObject.status).json(responseObject.data);
+      })
+      .catch((error: Error) => {
+        // Define the responseObject.
+        const responseObject = Connect.setResponse({
+            data: {
+              errorCode: 'PRODUCT_TYPE_UPDATE_FAILED',
+              title: `Product type could not be added`
+            },
+            error: error
+          }, 401, `Product type could not be added`);
 
-      // Return the response.
-      response.status(responseObject.status).json(responseObject.data);
-    });
+        Logging.Send(LogLevel.ERROR, responseObject);
+
+        // Return the response.
+        response.status(responseObject.status).json(responseObject.data);
+      });
+    }
   }
 
   /**

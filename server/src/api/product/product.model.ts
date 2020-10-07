@@ -30,6 +30,10 @@ const ProductSchema = new Schema({
     default: [],
     index: true
   },
+  category: {
+    type: Schema.Types.ObjectId, 
+    ref: 'Tag',
+  },
   categories: {
     type: Array,
     default: []
@@ -38,6 +42,10 @@ const ProductSchema = new Schema({
     type: Date,
     default: Date.now
   },
+  description: {
+    type: String,
+    default: ''
+  },
   name: {
     type: String,
   },
@@ -45,6 +53,10 @@ const ProductSchema = new Schema({
     type: Array,
     default: [],
     index: true
+  },
+  productType: {
+    type: Schema.Types.ObjectId, 
+    ref: 'Tag',
   },
   creator:  { 
     type: Schema.Types.ObjectId, 
@@ -62,9 +74,14 @@ ProductSchema
   .get(function() {
     return {
       '_id': this._id,
-      'brand': this.brand,
-      'categories': this.categories,
+      'brand': (this.brand && this.brand.details) ?
+        this.brand.details : this.brand,
+      'category': (this.category && this.category.details) ?
+        this.category.details : this.category,
+      'description': this.description,
       'name': this.name,
+      'productType': (this.productType && this.productType.light) ?
+        this.productType.light : this.productType,
       'url': this.url
     };
   });

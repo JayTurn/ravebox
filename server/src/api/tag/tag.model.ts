@@ -35,6 +35,10 @@ const TagSchema = new Schema({
     type: String,
     default: ''
   },
+  labels: {
+    type: Array,
+    default: []
+  },
   name: {
     type: String,
     default: ''
@@ -56,6 +60,7 @@ TagSchema
   .get(function() {
     return {
       '_id': this._id,
+      'association': this.association,
       'name': this.name,
       'context': this.context
     };
@@ -67,6 +72,7 @@ TagSchema
   .get(function() {
     return {
       '_id': this._id,
+      'association': this.association,
       'name': this.name,
       'context': this.context,
       'children': this.children
