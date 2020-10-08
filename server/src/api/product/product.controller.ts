@@ -39,8 +39,7 @@ import {
   ReviewDocument
 } from '../review/review.interface';
 import {
-  TagDetailsDocument,
-  TagDetails
+  TagDetailsDocument
 } from '../tag/tag.interface';
 
 // Utilities.

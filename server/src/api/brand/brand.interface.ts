@@ -6,9 +6,6 @@
 // Modules.
 import * as Mongoose from 'mongoose';
 
-// Interfaces.
-import { TagDetails } from '../tag/tag.interface';
-
 /**
  * Brand interface.
  */

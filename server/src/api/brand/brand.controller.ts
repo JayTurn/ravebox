@@ -7,7 +7,6 @@ import Authenticate from '../../models/authentication/authenticate.model';
 import Connect from '../../models/database/connect.model';
 import Logging from '../../shared/logging/Logging.model';
 import {
-  NextFunction,
   Request,
   Response,
   Router
@@ -16,7 +15,6 @@ import Brand from './brand.model';
 
 // Enumerators.
 import { LogLevel } from '../../shared/logging/Logging.enum';
-import { Workflow } from '../../shared/enumerators/workflow.enum';
 
 // Interfaces.
 import {

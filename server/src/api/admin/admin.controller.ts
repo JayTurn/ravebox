@@ -11,7 +11,6 @@ import EnvConfig from '../../config/environment/environmentBaseConfig';
 import Follow from '../follow/follow.model';
 import Logging from '../../shared/logging/Logging.model';
 import {
-  NextFunction,
   Request,
   Response,
   Router
@@ -25,7 +24,6 @@ import UserStatistics from '../userStatistics/userStatistics.model'
 import { LogLevel } from '../../shared/logging/Logging.enum';
 import { UserRole } from '../user/user.enum';
 //import { Workflow } from '../../shared/enumerators/workflow.enum';
-import { SortDirection } from '../../shared/enumerators/sort.enum';
 
 // Interfaces.
 import {

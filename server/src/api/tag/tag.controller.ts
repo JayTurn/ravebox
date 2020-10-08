@@ -17,8 +17,7 @@ import Tag from './tag.model';
 // Enumerators.
 import { LogLevel } from '../../shared/logging/Logging.enum';
 import {
-  TagAssociation,
-  TagStatus
+  TagAssociation
 } from './tag.enum';
 
 // Interfaces.
@@ -95,7 +94,7 @@ export default class TagController {
 
     // Exit if we don't have a tag name provided.
     if (!name) {
-      const responseObject = Connect.setResponse({
+      const responseObject: ResponseObject = Connect.setResponse({
         data: {
           errorCode: `TAG_NAME_NOT_PROVIDED`,
           message: `A tag name was missing from your submission`
@@ -143,7 +142,7 @@ export default class TagController {
     .then((tagDetails: TagDetailsDocument) => {
 
       // Attach the tag to the response.
-      const responseObject = Connect.setResponse({
+      const responseObject: ResponseObject = Connect.setResponse({
         data: {
           tag: tagDetails.light
         }
@@ -154,7 +153,7 @@ export default class TagController {
     })
     .catch((error: Error) => {
       // Define the responseObject.
-      const responseObject = Connect.setResponse({
+      const responseObject: ResponseObject = Connect.setResponse({
           data: {
             errorCode: 'TAG_CREATION_FAILED',
             title: `Tag could not be created`
@@ -185,7 +184,7 @@ export default class TagController {
     // Exit if a value wasn't provided.
     if (!name || !association) {
       // Define the responseObject.
-      const responseObject = Connect.setResponse({
+      const responseObject: ResponseObject = Connect.setResponse({
           data: {
             errorCode: 'TAG_NAME_NOT_PROVIDED',
             title: `A tag name was not provided for searching`
@@ -208,7 +207,7 @@ export default class TagController {
     .lean()
     .then((tags: Array<TagDetails>) => {
       // Attach the product to the response.
-      const responseObject = Connect.setResponse({
+      const responseObject: ResponseObject = Connect.setResponse({
         data: {
           tags: tags
         }
@@ -219,7 +218,7 @@ export default class TagController {
     })
     .catch((error: Error) => {
       // Define the responseObject.
-      const responseObject = Connect.setResponse({
+      const responseObject: ResponseObject = Connect.setResponse({
           data: {
             errorCode: 'TAG_NAME_SEARCH_FAILED',
             title: `The search couldn't be completed`
