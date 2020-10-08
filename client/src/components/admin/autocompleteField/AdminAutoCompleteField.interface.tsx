@@ -14,7 +14,7 @@ export interface AdminAutoCompleteFieldProps {
   close: () => void;
   defaultValue: string;
   options: Array<string>;
-  search: (query: string) => Promise<void>;
+  search: (query: string) => Promise<void> | undefined;
   select: (index: number) => void;
   fieldTitle: string;
 }
