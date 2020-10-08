@@ -3,6 +3,7 @@
  */
 
 // Modules.
+import Brand from '../brand/brand.model';
 import Connect from '../../models/database/connect.model';
 import Logging from '../../shared/logging/Logging.model';
 import Product from '../product/product.model';
@@ -12,18 +13,28 @@ import {
   Router
 } from 'express';
 import ReviewCommon from '../review/review.common';
+import Tag from '../tag/tag.model';
 
 // Enumerators.
 import { LogLevel } from '../../shared/logging/Logging.enum';
 import { ResultType } from './search.enum';
+import { TagAssociation } from '../tag/tag.enum'; 
 
 // Interfaces.
 import {
   AutocompleteItem,
 } from './search.interface';
+import {
+  BrandDetails,
+  BrandDetailsDocument
+} from '../brand/brand.interface';
 import { CategorizedReviewGroup } from '../review/review.interface';
 import { ProductDetails } from '../product/product.interface';
 import { ResponseObject } from '../../models/database/connect.interface';
+import {
+  TagDetailsLight,
+  TagDetailsDocument
+} from '../tag/tag.interface';
 
 /**
  * Routing controller for search.
@@ -54,6 +65,18 @@ export default class SearchController {
     router.get(
       `${path}/discover/:query`,
       SearchController.Discover
+    );
+
+    // Performs a brand search.
+    router.get(
+      `${path}/brand/autocomplete/:query`,
+      SearchController.AutocompleteBrands
+    );
+
+    // Performs a tag search.
+    router.post(
+      `${path}/tag/autocomplete/:query`,
+      SearchController.AutocompleteTags
     );
   }
 
@@ -147,6 +170,177 @@ export default class SearchController {
         },
         error: error
       }, 404, `We experienced a problem finding search results`);
+
+      Logging.Send(LogLevel.ERROR, responseObject);
+
+      // Return the error response for the user.
+      response.status(responseObject.status).json(responseObject.data);
+    });
+  }
+
+  /**
+   * Returns a list of matches based on the brand search query.
+   *
+   * @param {object} req
+   * The request object.
+   *
+   * @param {object} res
+   * The response object.
+   */
+  static AutocompleteBrands(request: Request, response: Response): void {
+    let query: string = request.params.query;
+
+    if (!query) {
+      // Set the response object.
+      const responseObject: ResponseObject = Connect.setResponse({
+        data: {
+          results: []
+        }
+      }, 200, 'No results were found for your brand search');
+
+      // Return the response for the authenticated user.
+      response.status(responseObject.status).json(responseObject.data);
+
+      return;
+    }
+
+    // Decode the query.
+    query = decodeURI(query);
+
+    // As a poor person's search, let's just use regex for now and replace it
+    // with elastic at some point in the future.
+    const regEx = new RegExp(query.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, "\\$&"), 'gi');
+
+    // Define an autocomplete results array.
+    const searchResults: Array<BrandDetails> = [];
+
+    // Begin by searching for product types, categories and brands.
+    Brand.find({
+      namePartials: regEx,
+    })
+    .limit(8)
+    .then((brandDetails: Array<BrandDetailsDocument>) => {
+
+      // If we found brands, loop through them and add them to the
+      // search results array.
+      if (brandDetails.length > 0) {
+        let i = 0;
+
+        do {
+          const current: BrandDetails = brandDetails[i];
+
+          searchResults.push(current.details);
+
+          i++;
+        } while (i < brandDetails.length);
+      }
+
+      // Set the response object.
+      const responseObject: ResponseObject = Connect.setResponse({
+        data: {
+          results: searchResults
+        }
+      }, 200, 'Brands successfully returned');
+
+      response.status(responseObject.status).json(responseObject.data);
+    })
+    .catch((error: Error) => {
+
+      // Return an error indicating the list of reviews weren't found.
+      const responseObject = Connect.setResponse({
+        data: {
+          errorCode: 'SEARCH_BRANDS_FAILED',
+          message: `We experienced a problem finding search results for brands`
+        },
+        error: error
+      }, 404, `We experienced a problem finding search results for brands`);
+
+      Logging.Send(LogLevel.ERROR, responseObject);
+
+      // Return the error response for the user.
+      response.status(responseObject.status).json(responseObject.data);
+    });
+  }
+
+  /**
+   * Returns a list of matches based on the tag search query.
+   *
+   * @param {object} req
+   * The request object.
+   *
+   * @param {object} res
+   * The response object.
+   */
+  static AutocompleteTags(request: Request, response: Response): void {
+    let query: string = request.params.query;
+
+    const association: TagAssociation = request.body.association;
+
+    if (!query) {
+      // Set the response object.
+      const responseObject: ResponseObject = Connect.setResponse({
+        data: {
+          results: []
+        }
+      }, 200, 'No results were found for your tag search');
+
+      // Return the response for the authenticated user.
+      response.status(responseObject.status).json(responseObject.data);
+
+      return;
+    }
+
+    // Decode the query.
+    query = decodeURI(query);
+
+    // As a poor person's search, let's just use regex for now and replace it
+    // with elastic at some point in the future.
+    const regEx = new RegExp(query.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, "\\$&"), 'gi');
+
+    // Define an autocomplete results array.
+    const searchResults: Array<TagDetailsLight> = [];
+
+    // Begin by searching for product types, categories and brands.
+    Tag.find({
+      partials: regEx,
+      association: association
+    })
+    .limit(8)
+    .then((tagDetails: Array<TagDetailsDocument>) => {
+
+      // If we found brands, loop through them and add them to the
+      // search results array.
+      if (tagDetails.length > 0) {
+        let i = 0;
+
+        do {
+          const current: TagDetailsDocument = tagDetails[i];
+
+          searchResults.push(current.light);
+
+          i++;
+        } while (i < tagDetails.length);
+      }
+
+      // Set the response object.
+      const responseObject: ResponseObject = Connect.setResponse({
+        data: {
+          results: searchResults
+        }
+      }, 200, 'Tags successfully returned');
+
+      response.status(responseObject.status).json(responseObject.data);
+    })
+    .catch((error: Error) => {
+
+      // Return an error indicating the tag results weren't found.
+      const responseObject = Connect.setResponse({
+        data: {
+          errorCode: 'SEARCH_TAGS_FAILED',
+          message: `We experienced a problem finding search results for tags`
+        },
+        error: error
+      }, 404, `We experienced a problem finding search results for tags`);
 
       Logging.Send(LogLevel.ERROR, responseObject);
 

@@ -28,7 +28,8 @@ import {
 } from '../../models/authentication/authentication.interface';
 import {
   ProductDetails,
-  ProductDetailsDocument
+  ProductDetailsDocument,
+  ProductUpdates
 } from './product.interface';
 import {
   ResponseObject
@@ -68,6 +69,14 @@ export default class ProductController {
       `${path}/create`,
       Authenticate.isAuthenticated, 
       ProductController.Create
+    );
+
+    // Updates a product.
+    router.post(
+      `${path}/update`,
+      Authenticate.isAuthenticated, 
+      Authenticate.isAdmin,
+      ProductController.Update
     );
 
     // Updates a product type.
@@ -160,6 +169,110 @@ export default class ProductController {
         // Return the error response for the user.
         response.status(401).json(responseObject.data);
       });
+  }
+
+  /**
+   * Updates an existing product.
+   *
+   * @param {object} req
+   * The request object.
+   *
+   * @param {object} res
+   * The response object.
+   */
+  static Update(request: AuthenticatedUserRequest, response: Response): void {
+
+    // If we didn't receive a product object exit.
+    if (!request.body.product) {
+
+      const responseObject = Connect.setResponse({
+        data: {
+          errorCode: `PRODUCT_CHANGES_NOT_PROVIDED`,
+          message: `Product updates weren't provided with your request`
+        },
+      }, 401, `Product updates weren't provided with your request`);
+
+      Logging.Send(LogLevel.ERROR, responseObject);
+
+      // Return the error response for the user.
+      response.status(401).json(responseObject.data);
+
+      return;
+    }
+
+    // Get the id of the product we're updating.
+    const id: string = request.body.product._id;
+
+    // Get the product details from the values provided.
+    const query: ProductUpdates = {
+      name: request.body.product.name,
+      description: request.body.product.description
+    };
+
+    // Assign the brand id if it's been provided.
+    if (request.body.product.brand) {
+      query.brand = Mongoose.Types.ObjectId(request.body.product.brand);
+    }
+    // Assign the category id if it's been provided.
+    if (request.body.product.category) {
+      query.category = Mongoose.Types.ObjectId(request.body.product.category);
+    }
+
+    // Assign the product type id if it's been provided.
+    if (request.body.product.productType) {
+      query.productType = Mongoose.Types.ObjectId(request.body.product.productType);
+    }
+
+    if (request.body.product.name) {
+      query.namePartials = Keywords.CreatePartialMatches(request.body.product.name);
+    }
+
+    Product.findOneAndUpdate({
+      _id: id
+    },
+    query,
+    {
+      new: true,
+      upsert: false
+    })
+    .populate({
+      path: 'brand',
+      model: 'Brand'
+    })
+    .populate({
+      path: 'category',
+      model: 'Tag'
+    })
+    .populate({
+      path: 'productType',
+      model: 'Tag'
+    })
+    .then((productDetails: ProductDetailsDocument) => {
+        // Attach the updated product to the response.
+        const responseObject = Connect.setResponse({
+          data: {
+            product: productDetails.details
+          }
+        }, 200, 'Product updated successfully');
+
+        // Return the response for the authenticated user.
+        response.status(responseObject.status).json(responseObject.data);
+    })
+    .catch((error: Error) => {
+      // Define the responseObject.
+      const responseObject = Connect.setResponse({
+          data: {
+            errorCode: 'PRODUCT_UPDATE_FAILED',
+            title: `Product could not be updated`
+          },
+          error: error
+        }, 401, `Product could not be updated`);
+
+      Logging.Send(LogLevel.ERROR, responseObject);
+
+      // Return the response.
+      response.status(responseObject.status).json(responseObject.data);
+    });
   }
 
   /**

@@ -16,7 +16,7 @@ import {
   Response,
   Router
 } from 'express';
-//import Product from '../product/product.model';
+import Product from '../product/product.model';
 //import Review from '../review/review.model';
 import User from '../user/user.model';
 import UserStatistics from '../userStatistics/userStatistics.model'
@@ -25,6 +25,7 @@ import UserStatistics from '../userStatistics/userStatistics.model'
 import { LogLevel } from '../../shared/logging/Logging.enum';
 import { UserRole } from '../user/user.enum';
 //import { Workflow } from '../../shared/enumerators/workflow.enum';
+import { SortDirection } from '../../shared/enumerators/sort.enum';
 
 // Interfaces.
 import {
@@ -38,6 +39,13 @@ import {
   SignupDetails,
   UserDetailsDocument
 } from '../user/user.interface';
+import {
+  ProductDetails,
+  ProductDetailsDocument
+} from '../product/product.interface';
+import {
+  ProductSearchSort
+} from './admin.interface';
 import { ResponseObject } from '../../models/database/connect.interface';
 import {
   //UserStatistics as UserStats,
@@ -67,11 +75,11 @@ export default class AdminController {
     );
 
     // Get the list of users.
-    router.get(
+    router.post(
       `${path}/users`,
       Authenticate.isAuthenticated,
       Authenticate.isAdmin,
-      AdminController.GetUsersList
+      AdminController.RetrieveUsersList
     );
 
     // Create a new user.
@@ -96,6 +104,14 @@ export default class AdminController {
       Authenticate.isAdmin,
       AdminController.ImpersonateUser
     );
+
+    // Get the list of products.
+    router.post(
+      `${path}/products`,
+      Authenticate.isAuthenticated,
+      Authenticate.isAdmin,
+      AdminController.RetrieveProductsList
+    );
   }
 
   /**
@@ -115,7 +131,7 @@ export default class AdminController {
    * @param {object} res
    * The response object.
    */
-  static GetUsersList(request: AuthenticatedUserRequest, response: Response): void {
+  static RetrieveUsersList(request: AuthenticatedUserRequest, response: Response): void {
 
     // Perform a request to get all users based on the query provided.
     User.find(
@@ -402,5 +418,72 @@ export default class AdminController {
         response.status(responseObject.status).json(responseObject.data).end();
       });
     }
+  }
+
+  /**
+   * Returns a list of products.
+   *
+   * @param {object} req
+   * The request object.
+   *
+   * @param {object} res
+   * The response object.
+   */
+  static RetrieveProductsList(request: AuthenticatedUserRequest, response: Response): void {
+
+    // Get the different sort options.
+    const sort: ProductSearchSort = {...request.body.sort}
+
+    // Perform a request to get all products based on the query provided.
+    Product.find(
+    )
+    .populate({
+      path: 'brand',
+      model: 'Brand'
+    })
+    .populate({
+      path: 'productType',
+      model: 'Tag'
+    })
+    .sort(sort)
+    .then((productDocuments: Array<ProductDetailsDocument>) => {
+      const products: Array<ProductDetails> = [];
+
+      if (productDocuments.length > 0) {
+        let i = 0;
+
+        do {
+          products.push(productDocuments[i].details);
+          i++;
+        } while (i < productDocuments.length);
+      }
+
+      // Set the response object.
+      const responseObject: ResponseObject = Connect.setResponse({
+        data: {
+          products: products,
+        }
+      }, 201, `Products returned successfully`);
+
+      Logging.Send(LogLevel.INFO, responseObject);
+
+      // Return the response for the authenticated user.
+      response.status(responseObject.status).json(responseObject.data);
+    })
+    .catch((error: Error) => {
+      // Return an error indicating the review wasn't created.
+      const responseObject: ResponseObject = Connect.setResponse({
+        data: {
+          errorCode: 'RETRIEVE_PRODUCTS_LIST_FAILED',
+          message: 'There was a problem retrieving the list of products.'
+        },
+        error: error
+      }, 401, 'There was a problem retrieving the list of products.');
+
+      Logging.Send(LogLevel.ERROR, responseObject);
+
+      // Return the error response for the user.
+      response.status(401).json(responseObject.data);
+    });
   }
 }

@@ -37,10 +37,7 @@ export interface ProductDetailsDocument extends Mongoose.Document {
 export interface ProductDetails {
   _id?: string;
   brand: string;
-  brandPartials?: Array<string>;
   category: string;
-  categories: Array<Category>;
-  categoriesPartials?: Array<string>;
   competitors: Array<string>;
   complementary: Array<string>;
   description: string;
@@ -59,4 +56,14 @@ export interface ProductReview {
 export interface Category {
   key: string;
   label: string;
+}
+
+export interface ProductUpdates {
+  brand?: Mongoose.Types.ObjectId;
+  category?: Mongoose.Types.ObjectId;
+  description?: string;
+  name?: string;
+  namePartials?: Array<string>;
+  productType?: Mongoose.Types.ObjectId;
+  tags?: Array<Mongoose.Types.ObjectId>;
 }

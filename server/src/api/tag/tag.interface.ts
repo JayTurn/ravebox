@@ -14,10 +14,12 @@ import { TagAssociation } from './tag.enum';
  */
 export interface TagDetailsDocument extends Mongoose.Document {
   _id: string;
+  association: TagAssociation;
+  full: TagDetails;
   name: string;
   labels: Array<string>;
+  light: TagDetailsLight;
   partials: Array<string>;
-  association: TagAssociation;
   context: string;
   childen: Array<TagDetailsDocument>;
 }
@@ -27,9 +29,19 @@ export interface TagDetailsDocument extends Mongoose.Document {
  */
 export interface TagDetails extends Mongoose.Document {
   _id: string;
+  association: TagAssociation;
   name: string;
   label: string;
-  association: TagAssociation;
   context: string;
   childen?: Array<TagDetailsDocument>;
+}
+
+/**
+ * Tag details.
+ */
+export interface TagDetailsLight extends Mongoose.Document {
+  _id: string;
+  association: TagAssociation;
+  name: string;
+  context: string;
 }

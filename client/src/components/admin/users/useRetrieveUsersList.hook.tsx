@@ -60,7 +60,7 @@ export function useRetrieveUsersList() {
 
       // Perform the API request to get the list of users.
       API.requestAPI<RetrieveUsersListResponse>('admin/users', {
-        method: RequestType.GET,
+        method: RequestType.POST,
         headers: {
           'x-xsrf-token': security
         }

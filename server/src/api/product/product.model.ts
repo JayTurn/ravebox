@@ -12,7 +12,6 @@ import {
   BrandDetails
 } from '../brand/brand.interface';
 import {
-  Category,
   ProductDetailsDocument
 } from './product.interface';
 
@@ -25,24 +24,15 @@ const ProductSchema = new Schema({
     type: Schema.Types.ObjectId,
     ref: 'Brand'
   },
-  brandPartials: {
-    type: Array,
-    default: [],
-    index: true
-  },
-  category: {
-    type: Schema.Types.ObjectId, 
-    ref: 'Tag',
-  },
-  categories: {
-    type: Array,
-    default: []
-  },
   created: {
     type: Date,
     default: Date.now
   },
   description: {
+    type: String,
+    default: ''
+  },
+  logo: {
     type: String,
     default: ''
   },
@@ -76,9 +66,9 @@ ProductSchema
       '_id': this._id,
       'brand': (this.brand && this.brand.details) ?
         this.brand.details : this.brand,
-      'category': (this.category && this.category.details) ?
-        this.category.details : this.category,
+      'created': this.created,
       'description': this.description,
+      'logo': this.logo,
       'name': this.name,
       'productType': (this.productType && this.productType.light) ?
         this.productType.light : this.productType,

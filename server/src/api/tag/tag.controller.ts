@@ -3,6 +3,7 @@
  */
 
 // Modules.
+import Authenticate from '../../models/authentication/authenticate.model';
 import Connect from '../../models/database/connect.model';
 import Logging from '../../shared/logging/Logging.model';
 import {
@@ -22,6 +23,9 @@ import {
 
 // Interfaces.
 import {
+  AuthenticatedUserRequest
+} from '../../models/authentication/authentication.interface';
+import {
   TagDetails,
   TagDetailsDocument
 } from './tag.interface';
@@ -30,7 +34,7 @@ import {
 } from '../../models/database/connect.interface';
 
 // Utilities.
-//import Keywords from '../../shared/keywords/keywords.model';
+import Keywords from '../../shared/keywords/keywords.model';
 
 /**
  * Routing controller for tags.
@@ -48,8 +52,15 @@ export default class TagController {
 
     // Get the index route.
     router.get(
-      path, 
+      path,
       TagController.getStatus
+    );
+
+    // Create a new tag.
+    router.post(
+      `${path}/create`,
+      Authenticate.isAuthenticated,
+      TagController.Create
     );
 
     // Search for tags by name.
@@ -65,6 +76,97 @@ export default class TagController {
    */
   static getStatus(req: Request, res: Response): void {
     res.status(200).json({'body': 'Tags are healthy!'});
+  }
+
+  /**
+   * Creates a new tag.
+   *
+   * @param {object} req
+   * The request object.
+   *
+   * @param {object} res
+   * The response object.
+   */
+  static Create(request: AuthenticatedUserRequest, response: Response): void {
+
+    // Define the provided brand name.
+    const name: string = request.body.name,
+          association: TagAssociation = request.body.association;
+
+    // Exit if we don't have a tag name provided.
+    if (!name) {
+      const responseObject = Connect.setResponse({
+        data: {
+          errorCode: `TAG_NAME_NOT_PROVIDED`,
+          message: `A tag name was missing from your submission`
+        },
+      }, 401, 'A tag name was missing from your submission');
+
+      Logging.Send(LogLevel.ERROR, responseObject);
+
+      // Return the error response for the user.
+      response.status(401).json(responseObject.data);
+
+      return;
+    }
+
+    // Capture the label as a lower case value to be compared with other
+    // possible tags that exist.
+    const label: string = name.toLowerCase();
+
+    // Attempt to find any existing tags.
+    Tag.findOne({
+      labels: label,
+      association: association
+    })
+    .lean()
+    .then((tagDetails: TagDetailsDocument) => {
+      let tag: TagDetailsDocument;
+
+      // If a matching tag already exists, use that.
+      if (tagDetails) {
+
+        return tagDetails;
+
+      } else {
+
+        // Create and store a new tag to be associated with the product.
+        tag = new Tag({
+          name: name,
+          labels: [label],
+          partials: Keywords.CreatePartialMatches(name),
+          association: association
+        });
+        return tag.save();
+      }
+    })
+    .then((tagDetails: TagDetailsDocument) => {
+
+      // Attach the tag to the response.
+      const responseObject = Connect.setResponse({
+        data: {
+          tag: tagDetails.light
+        }
+      }, 200, 'Tag created successfully');
+
+      // Return the response for the authenticated user.
+      response.status(responseObject.status).json(responseObject.data);
+    })
+    .catch((error: Error) => {
+      // Define the responseObject.
+      const responseObject = Connect.setResponse({
+          data: {
+            errorCode: 'TAG_CREATION_FAILED',
+            title: `Tag could not be created`
+          },
+          error: error
+        }, 401, `Tag could not be created`);
+
+      Logging.Send(LogLevel.ERROR, responseObject);
+
+      // Return the response.
+      response.status(responseObject.status).json(responseObject.data);
+    });
   }
 
   /**
