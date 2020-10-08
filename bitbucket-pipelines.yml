@@ -28,7 +28,7 @@ pipelines:
               ZIP_FILE: 'ravebox-staging.zip'
               S3_BUCKET: 'ravebox-staging-deployment'
               VERSION_LABEL: 'ravebox-$BITBUCKET_TAG'
-              WAIT: 'true'
+              WAIT: 'false'
     v*:
       - step:
           name: Package the files for the production environment
@@ -55,4 +55,4 @@ pipelines:
               ZIP_FILE: 'ravebox-production.zip'
               S3_BUCKET: 'ravebox-production-deployment'
               VERSION_LABEL: 'ravebox-$BITBUCKET_TAG'
-              WAIT: 'true'
+              WAIT: 'false'
