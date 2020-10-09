@@ -71,6 +71,7 @@ export interface ProductUpdates {
   namePartials?: Array<string>;
   productType?: Mongoose.Types.ObjectId;
   tags?: Array<Mongoose.Types.ObjectId>;
+  website?: string;
 }
 
 export interface ProductImage {

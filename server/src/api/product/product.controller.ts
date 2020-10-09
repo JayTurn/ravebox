@@ -276,7 +276,8 @@ export default class ProductController {
     // Get the product details from the values provided.
     const query: ProductUpdates = {
       name: request.body.product.name,
-      description: request.body.product.description
+      description: request.body.product.description,
+      website: request.body.product.website
     };
 
     // Assign the brand id if it's been provided.

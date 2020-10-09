@@ -82,7 +82,8 @@ ProductSchema
       'name': this.name,
       'productType': (this.productType && this.productType.light) ?
         this.productType.light : this.productType,
-      'url': this.url
+      'url': this.url,
+      'website': this.website
     };
   });
 

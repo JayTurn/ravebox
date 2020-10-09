@@ -269,7 +269,7 @@ const AdminProductRow: React.FC<AdminProductRowProps> = (props: AdminProductRowP
   ) => void = (
     e: React.MouseEvent<HTMLButtonElement>
   ): void => {
-    submit(true);
+    submit(true)({...product});
   }
 
   /**
@@ -384,7 +384,8 @@ const AdminProductRow: React.FC<AdminProductRowProps> = (props: AdminProductRowP
           brand: data.brand ? data.brand._id : '',
           description: data.description,
           images: data.images,
-          productType: data.productType ? data.productType._id : ''
+          productType: data.productType ? data.productType._id : '',
+          website: data.website
         }
       })
     })
@@ -494,6 +495,18 @@ const AdminProductRow: React.FC<AdminProductRowProps> = (props: AdminProductRowP
                     rows={4}
                     type='text'
                     title="Product description"
+                  />
+                </Grid>
+                <Grid item xs={12} style={{zIndex: 98}}>
+                  <Input
+                    defaultValue={product.website}
+                    handleBlur={updateInputs}
+                    name='website'
+                    prefix='https://'
+                    required={false}
+                    type='text'
+                    title="Product URL"
+                    helperText={`Provide a link to the official product website.`}
                   />
                 </Grid>
                 <Grid item xs={12}>
