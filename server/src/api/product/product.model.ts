@@ -22,7 +22,8 @@ const Schema = Mongoose.Schema;
 const ProductSchema = new Schema({
   brand: {
     type: Schema.Types.ObjectId,
-    ref: 'Brand'
+    ref: 'Brand',
+    index: true
   },
   created: {
     type: Date,
@@ -32,9 +33,12 @@ const ProductSchema = new Schema({
     type: String,
     default: ''
   },
-  logo: {
-    type: String,
-    default: ''
+  images: {
+    type: [{
+      title: String,
+      url: String
+    }],
+    default: []
   },
   name: {
     type: String,
@@ -47,6 +51,7 @@ const ProductSchema = new Schema({
   productType: {
     type: Schema.Types.ObjectId, 
     ref: 'Tag',
+    index: true,
   },
   creator:  { 
     type: Schema.Types.ObjectId, 
@@ -55,6 +60,10 @@ const ProductSchema = new Schema({
   url: {
     type: String,
     index: true,
+  },
+  website: {
+    type: String,
+    default: ''
   }
 });
 
@@ -68,6 +77,7 @@ ProductSchema
         this.brand.details : this.brand,
       'created': this.created,
       'description': this.description,
+      'images': this.images,
       'logo': this.logo,
       'name': this.name,
       'productType': (this.productType && this.productType.light) ?

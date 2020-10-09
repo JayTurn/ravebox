@@ -13,6 +13,7 @@ import { TagDetails } from '../tag/tag.interface';
  * Product interface.
  */
 export interface ProductDetailsDocument extends Mongoose.Document {
+  _id: string;
   added?: Date;
   brand: string;
   brandPartials?: Array<string>;
@@ -24,7 +25,7 @@ export interface ProductDetailsDocument extends Mongoose.Document {
   creator: string;
   description: string;
   details: ProductDetails;
-  _id: string;
+  images: Array<ProductImage>;
   name: string;
   namePartials?: Array<string>;
   productType: string;
@@ -32,6 +33,7 @@ export interface ProductDetailsDocument extends Mongoose.Document {
   synchronize: Function;
   tags: Array<string>;
   url: string;
+  website: string;
 }
 
 export interface ProductDetails {
@@ -41,11 +43,13 @@ export interface ProductDetails {
   competitors: Array<string>;
   complementary: Array<string>;
   description: string;
+  images: Array<ProductImage>;
   name: string;
   namePartials?: Array<string>;
   productType: TagDetails;
   tags: Array<TagDetails>;
   url: string;
+  website: string;
 }
 
 export interface ProductReview {
@@ -62,8 +66,17 @@ export interface ProductUpdates {
   brand?: Mongoose.Types.ObjectId;
   category?: Mongoose.Types.ObjectId;
   description?: string;
+  images?: Array<ProductImage>;
   name?: string;
   namePartials?: Array<string>;
   productType?: Mongoose.Types.ObjectId;
   tags?: Array<Mongoose.Types.ObjectId>;
+}
+
+export interface ProductImage {
+  title: string;
+  url: string;
+  creditText: string;
+  creditUrl: string;
+  user?: Mongoose.Types.ObjectId;
 }

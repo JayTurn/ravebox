@@ -5,6 +5,8 @@
 // Modules.
 import Authenticate from '../../models/authentication/authenticate.model';
 import Connect from '../../models/database/connect.model';
+import EnvConfig from '../../config/environment/environmentBaseConfig';
+import Images from '../../shared/images/Images.model';
 import Logging from '../../shared/logging/Logging.model';
 import * as Mongoose from 'mongoose';
 import {
@@ -15,6 +17,7 @@ import {
 } from 'express';
 import Product from './product.model';
 import Review from '../review/review.model';
+import * as S3 from 'aws-sdk/clients/s3';
 import Tag from '../tag/tag.model';
 
 // Enumerators.
@@ -68,6 +71,14 @@ export default class ProductController {
       `${path}/create`,
       Authenticate.isAuthenticated, 
       ProductController.Create
+    );
+
+    // Create a presigned request URL for uploading a product image.
+    router.post(
+      `${path}/image/request`,
+      Authenticate.isAuthenticated,
+      Authenticate.isAdmin,
+      ProductController.CreateImageRequest
     );
 
     // Updates a product.
@@ -171,6 +182,66 @@ export default class ProductController {
   }
 
   /**
+   * Performs a request to POST the image metadata.
+   *
+   * @param {object} req
+   * The request object.
+   *
+   * @param {object} res
+   * The response object.
+   */
+  static CreateImageRequest(request: AuthenticatedUserRequest, response: Response): void {
+    const imageTitle: string = request.body.imageTitle,
+          imageSize: string = request.body.imageSize,
+          imageType: string = request.body.imageType,
+          productId: string = request.body.id;
+
+    if (!imageTitle || !imageSize || !imageType || !productId) {
+      return;
+    }
+
+    // Define the path to be stored in the database.
+    const storagePath = `images/products/${productId}/${imageTitle}`;
+
+    // Create a presigned request for the new image file.
+    Images.CreatePresignedImageRequest(
+      imageTitle,
+      imageSize,
+      imageType,
+      `images/products/${productId}`
+    ).then((requestData: S3.PresignedPost) => {
+      // Set the response object.
+      const responseObject: ResponseObject = Connect.setResponse({
+        data: {
+          presigned: requestData,
+          path: `${EnvConfig.CDN}${storagePath}`
+        }
+      }, 200, `${productId}: Presigned image request successful`);
+
+      Logging.Send(LogLevel.INFO, responseObject);
+
+      // Return the response for the authenticated user.
+      response.status(responseObject.status).json(responseObject.data);
+
+    })
+    .catch((error: Error) => {
+      // Return an error indicating the review wasn't created.
+      const responseObject = Connect.setResponse({
+        data: {
+          errorCode: 'PRODUCT_IMAGE_NOT_SIGNED',
+          message: 'There was a problem updating your product'
+        },
+        error: error
+      }, 401, 'There was a problem updating your product');
+
+      Logging.Send(LogLevel.ERROR, responseObject);
+
+      // Return the error response for the user.
+      response.status(responseObject.status).json(responseObject.data);
+    });
+  }
+
+  /**
    * Updates an existing product.
    *
    * @param {object} req
@@ -215,6 +286,11 @@ export default class ProductController {
     // Assign the category id if it's been provided.
     if (request.body.product.category) {
       query.category = Mongoose.Types.ObjectId(request.body.product.category);
+    }
+
+    // Assign the product images if they've been provided.
+    if (request.body.product.images) {
+      query.images = request.body.product.images;
     }
 
     // Assign the product type id if it's been provided.

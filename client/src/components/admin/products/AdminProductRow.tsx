@@ -30,10 +30,13 @@ import {
 
 // Components.
 import AdminAutoCompleteField from '../autocompleteField/AdminAutoCompleteField';
+import AdminProductImageGroup from './AdminProductImageGroup';
+import ImageUpload from '../../forms/imageUpload/ImageUpload';
 import Input from '../../forms/input/Input';
 import StyledButton from '../../elements/buttons/StyledButton';
 
 // Enumerators.
+import { ImageUploadPaths } from '../../forms/imageUpload/ImageUpload.enum';
 import { RequestType } from '../../../utils/api/Api.enum';
 import { TagAssociation } from '../../tag/Tag.enum';
 
@@ -49,6 +52,7 @@ import {
   AdminProductRowProps,
   UpdateProductFormResponse
 } from './AdminProductRow.interface';
+import { ImageAndTitle } from '../../elements/image/Image.interface';
 import { InputData } from '../../forms/input/Input.interface';
 import { Product } from '../../product/Product.interface';
 
@@ -77,6 +81,9 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
     '&:hover': {
       backgroundColor: `rgba(250, 250, 250)`
     }
+  },
+  verticalMargin: {
+    margin: theme.spacing(2, 0)
   }
 }));
 
@@ -255,6 +262,65 @@ const AdminProductRow: React.FC<AdminProductRowProps> = (props: AdminProductRowP
   }
 
   /**
+   * Handles the submit button event.
+   */
+  const handleSubmit: (
+    e: React.MouseEvent<HTMLButtonElement>
+  ) => void = (
+    e: React.MouseEvent<HTMLButtonElement>
+  ): void => {
+    submit(true);
+  }
+
+  /**
+   * Handles the updates to the product images.
+   *
+   * @param { string } path - the path to the poster image.
+   */
+  const addImage: (
+    path: string
+  ) => void = (
+    path: string
+  ): void => {
+
+    const images: Array<ImageAndTitle> = product.images || [];
+    const updatedProduct: Product = {...product};
+
+    images.push({
+      title: `${product.brand.name} ${product.name} photo ${images.length}`,
+      url: path
+    });
+
+    updatedProduct.images = images;
+
+    setProduct({...updatedProduct});
+
+    // Save the form so we don't orphan images.
+    submit(false)(updatedProduct);
+  }
+
+  /**
+   * Updates the images in the product and saves the changes.
+   *
+   * @param { Array<ImageAndTitle> } images - the images to be updated.
+   */
+  const updateImages: (
+    images: Array<ImageAndTitle>
+  ) => void = (
+    images: Array<ImageAndTitle>
+  ): void => {
+    const updatedProduct: Product= {...product};
+
+    updatedProduct.images = [...images];
+
+    // Update the images in the product.
+    setProduct({...updatedProduct});
+
+    // Save the form.
+    submit(false)(updatedProduct);
+  }
+
+  /**
    * Handles updates to the product form field.
    *
    * @param { InputData } data - the field data.
@@ -290,9 +356,13 @@ const AdminProductRow: React.FC<AdminProductRowProps> = (props: AdminProductRowP
    * Saves the product data.
    */
   const submit: (
-    e: React.MouseEvent<HTMLButtonElement>
-  ) => Promise<void> = async (
-    e: React.MouseEvent<HTMLButtonElement>
+    closeOnSave: boolean
+  ) => (
+    data: Product
+  ) => Promise<void> = (
+    closeOnSave: boolean
+  ) => async (
+    data: Product
   ): Promise<void> => {
     // Don't do anything if we're already submitting.
     if (submitting) {
@@ -309,10 +379,12 @@ const AdminProductRow: React.FC<AdminProductRowProps> = (props: AdminProductRowP
       },
       body: JSON.stringify({
         product: {
-          _id: product._id,
-          name: product.name,
-          brand: product.brand ? product.brand._id : '',
-          productType: product.productType ? product.productType._id : ''
+          _id: data._id,
+          name: data.name,
+          brand: data.brand ? data.brand._id : '',
+          description: data.description,
+          images: data.images,
+          productType: data.productType ? data.productType._id : ''
         }
       })
     })
@@ -326,15 +398,19 @@ const AdminProductRow: React.FC<AdminProductRowProps> = (props: AdminProductRowP
       }
 
       // Display the success message to the user.
-      enqueueSnackbar(`${product.name} updated successfully`, { variant: 'success' });
+      enqueueSnackbar(`${data.name} updated successfully`, { variant: 'success' });
 
       props.update(response.product)(props.index);
 
-      setOpen(false);
       setSubmitting(false);
+
+      if (closeOnSave) {
+        setOpen(false);
+      }
+
     })
     .catch((error: Error) => {
-      enqueueSnackbar(`There was a problem updating ${product.name}`, { variant: 'error'});
+      enqueueSnackbar(`There was a problem updating ${data.name}`, { variant: 'error'});
       setSubmitting(false);
     });
 
@@ -408,10 +484,41 @@ const AdminProductRow: React.FC<AdminProductRowProps> = (props: AdminProductRowP
                     options={[...productType.tagResultNames]}
                   /> 
                 </Grid>
+                <Grid item xs={12} style={{zIndex: 98}}>
+                  <Input
+                    defaultValue={product.description}
+                    handleBlur={updateInputs}
+                    multiline
+                    name='description'
+                    required={false}
+                    rows={4}
+                    type='text'
+                    title="Product description"
+                  />
+                </Grid>
                 <Grid item xs={12}>
+                  {product.images && product.images.length > 0 &&
+                    <AdminProductImageGroup
+                      images={product.images}
+                      update={updateImages}
+                    />
+                  }
+                </Grid>
+                <Grid item xs={12}>
+                  <ImageUpload 
+                    aspectRatio={1}
+                    id={product._id}
+                    buttonTitle='Add image'
+                    maxFileSize={0.2}
+                    path={''} 
+                    requestPath={ImageUploadPaths.PRODUCT_PHOTO}
+                    update={addImage} 
+                  />
+                </Grid>
+                <Grid item xs={12} className={clsx(classes.verticalMargin)}>
                   <StyledButton
                     title='Save'
-                    clickAction={submit}
+                    clickAction={handleSubmit}
                   />
                 </Grid>
               </Grid>

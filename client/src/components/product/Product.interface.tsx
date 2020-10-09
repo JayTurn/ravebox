@@ -6,20 +6,23 @@
 // Interfaces.
 import { Brand } from '../brand/Brand.interface';
 import { CategoryItem } from '../category/Category.interface';
+import { ImageAndTitle } from '../elements/image/Image.interface';
 import { Review } from '../review/Review.interface';
 import { Tag } from '../tag/Tag.interface';
 
 export interface Product {
   _id: string;
   brand: Brand;
-  category: Tag;
+  category?: Tag;
   competitors?: Array<Product>;
   complementary?: Array<Product>;
   description?: string;
+  images?: Array<ImageAndTitle>;
   name: string;
   productType: Tag;
-  tags: Array<Tag>;
+  tags?: Array<Tag>;
   url: string;
+  website?: string;
 }
 
 export interface ProductGroup {
