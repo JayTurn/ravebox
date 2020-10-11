@@ -6,6 +6,7 @@ import { Router } from 'express';
 // Route Controllers.
 import AdminController from '../api/admin/admin.controller';
 import BrandController from '../api/brand/brand.controller';
+import CollectionController from '../api/collection/collection.controller';
 import FollowController from '../api/follow/follow.controller';
 import InvitationController from '../api/invitation/invitation.controller';
 import ReviewController from '../api/review/review.controller';
@@ -37,6 +38,8 @@ export default class RoutesController {
     AdminController.createRoutes(this.router, this.apiPath);
     // Register the brand routes.
     BrandController.createRoutes(this.router, this.apiPath);
+    // Register the collection routes.
+    CollectionController.createRoutes(this.router, this.apiPath);
     // Register the follow routes.
     FollowController.createRoutes(this.router, this.apiPath);
     // Register the invitation routes.
