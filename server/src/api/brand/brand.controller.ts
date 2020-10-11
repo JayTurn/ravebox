@@ -152,8 +152,6 @@ export default class BrandController {
     brandDetails.namePartials = Keywords.CreatePartialMatches(
       brandDetails.name);
 
-    // Create a new brand from the request data.
-
     // Create a new product from the request data.
     const newBrand: BrandDetailsDocument = new Brand({
       ...brandDetails

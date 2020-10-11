@@ -1,5 +1,6 @@
 /**
  * product.controller.ts
+ * Product controller class.
  */
 
 // Modules.
