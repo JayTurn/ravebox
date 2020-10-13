@@ -29,7 +29,7 @@ import {
 } from 'notistack';
 
 // Components.
-import AdminAddToCollection from '../collections/AdminAddToCollection';
+import ManageCompetingProducts from '../collections/ManageCompetingProducts';
 import AdminAutoCompleteField from '../autocompleteField/AdminAutoCompleteField';
 import AdminProductImageGroup from './AdminProductImageGroup';
 import ImageUpload from '../../forms/imageUpload/ImageUpload';
@@ -536,7 +536,7 @@ const AdminProductRow: React.FC<AdminProductRowProps> = (props: AdminProductRowP
                   />
                 </Grid>
                 <Grid item xs={12} className={clsx(classes.collection)}>
-                  <AdminAddToCollection
+                  <ManageCompetingProducts
                     context={CollectionContext.COMPETING}
                     product={product}
                     title='Competing products'

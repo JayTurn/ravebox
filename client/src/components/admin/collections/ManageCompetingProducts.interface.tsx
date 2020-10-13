@@ -1,6 +1,6 @@
 /**
- * AdminAddToCollection.interface.tsx
- * Interfaces for adding items to a collection.
+ * ManageCompetingProducts.interface.tsx
+ * Interfaces for managing competing products.
  */
 
 // Enumerators.
@@ -14,7 +14,7 @@ import { Product } from '../../product/Product.interface';
 /**
  * Add to collection component properties.
  */
-export interface AdminAddToCollectionProps {
+export interface ManageCompetingProductsProps {
   context: CollectionContext; 
   product: Product;
   title: string;

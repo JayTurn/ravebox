@@ -1,5 +1,5 @@
 /**
- * AdminAddToCollection.tsx
+ * ManageCompetingProducts.tsx
  * Renders the component displaying the add to collection form.
  */
 
@@ -47,9 +47,9 @@ import { useRetrieveCollectionById } from '../../collection/useRetrieveCollectio
 
 // Interfaces.
 import {
-  AdminAddToCollectionProps,
+  ManageCompetingProductsProps,
   CollectionsFormResponse
-} from './AdminAddToCollection.interface';
+} from './ManageCompetingProducts.interface';
 import { Collection } from '../../collection/Collection.interface';
 import { InputData } from '../../forms/input/Input.interface';
 import { Product } from '../../product/Product.interface';
@@ -115,7 +115,7 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
 /**
  * Renders the add to collection admin screen.
  */
-const AdminAddToCollection: React.FC<AdminAddToCollectionProps> = (props: AdminAddToCollectionProps) => {
+const ManageCompetingProducts: React.FC<ManageCompetingProductsProps> = (props: ManageCompetingProductsProps) => {
 
   // Match the large media query size.
   const classes = useStyles(),
@@ -483,7 +483,7 @@ const AdminAddToCollection: React.FC<AdminAddToCollectionProps> = (props: AdminA
  * Map the redux state to the product form properties.
  *
  */
-const mapStateToProps = (state: any, ownProps: AdminAddToCollectionProps): AdminAddToCollectionProps => {
+const mapStateToProps = (state: any, ownProps: ManageCompetingProductsProps): ManageCompetingProductsProps => {
   // Retrieve the xsrf token to be submitted with the request.
   const xsrfToken: string = state.xsrf ? state.xsrf.token : undefined;
 
@@ -495,4 +495,4 @@ const mapStateToProps = (state: any, ownProps: AdminAddToCollectionProps): Admin
 
 export default connect(
   mapStateToProps
-)(AdminAddToCollection);
+)(ManageCompetingProducts);
