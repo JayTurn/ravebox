@@ -132,14 +132,16 @@ export default class ProductController {
    */
   static Create(request: AuthenticatedUserRequest, response: Response): void {
 
-    const namePartials = Keywords.CreatePartialMatches(
-      request.body.name);
+    const namePartials = Keywords.CreatePartialMatchesForProduct(
+      request.body.brandName,
+      request.body.name
+    );
 
     // Create a new product from the request data.
     const newProduct: ProductDetailsDocument = new Product({
       name: request.body.name,
       namePartials: namePartials,
-      brand: Mongoose.Types.ObjectId(request.body.brand),
+      brand: Mongoose.Types.ObjectId(request.body.brandId),
       creator: request.auth._id
     });
 

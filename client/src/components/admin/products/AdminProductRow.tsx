@@ -29,6 +29,7 @@ import {
 } from 'notistack';
 
 // Components.
+import AdminAddToCollection from '../collections/AdminAddToCollection';
 import AdminAutoCompleteField from '../autocompleteField/AdminAutoCompleteField';
 import AdminProductImageGroup from './AdminProductImageGroup';
 import ImageUpload from '../../forms/imageUpload/ImageUpload';
@@ -36,6 +37,7 @@ import Input from '../../forms/input/Input';
 import StyledButton from '../../elements/buttons/StyledButton';
 
 // Enumerators.
+import { CollectionContext } from '../../collection/Collection.enum';
 import { ImageUploadPaths } from '../../forms/imageUpload/ImageUpload.enum';
 import { RequestType } from '../../../utils/api/Api.enum';
 import { TagAssociation } from '../../tag/Tag.enum';
@@ -68,6 +70,11 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
   collapsibleCell: {
     paddingBottom: 0,
     paddingTop: 0
+  },
+  collection: {
+    backgroundColor: `rgba(250,250,250)`,
+    border: '1px solid rgba(240, 240, 240)',
+    margin: theme.spacing(2, 0)
   },
   formContainer: {
     padding: theme.spacing(4, 0),
@@ -526,6 +533,13 @@ const AdminProductRow: React.FC<AdminProductRowProps> = (props: AdminProductRowP
                     path={''} 
                     requestPath={ImageUploadPaths.PRODUCT_PHOTO}
                     update={addImage} 
+                  />
+                </Grid>
+                <Grid item xs={12} className={clsx(classes.collection)}>
+                  <AdminAddToCollection
+                    context={CollectionContext.COMPETING}
+                    product={product}
+                    title='Competing products'
                   />
                 </Grid>
                 <Grid item xs={12} className={clsx(classes.verticalMargin)}>

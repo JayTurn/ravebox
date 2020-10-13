@@ -207,7 +207,8 @@ const ProductSelection: React.FC<ProductSelectionProps> = (props: ProductSelecti
   // Define the product selection form state.
   const [values, setValues] = React.useState<ProductSelectionForm>({
     name: '',
-    brand: props.brand._id
+    brandId: props.brand._id,
+    brandName: props.brand.name
   });
 
   // Define the product selection state.

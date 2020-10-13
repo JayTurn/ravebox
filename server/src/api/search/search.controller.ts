@@ -29,7 +29,10 @@ import {
   BrandDetailsDocument
 } from '../brand/brand.interface';
 import { CategorizedReviewGroup } from '../review/review.interface';
-import { ProductDetails } from '../product/product.interface';
+import {
+  ProductDetails,
+  ProductDetailsDocument
+} from '../product/product.interface';
 import { ResponseObject } from '../../models/database/connect.interface';
 import {
   TagDetailsLight,
@@ -71,6 +74,12 @@ export default class SearchController {
     router.get(
       `${path}/brand/autocomplete/:query`,
       SearchController.AutocompleteBrands
+    );
+
+    // Performs a product search.
+    router.get(
+      `${path}/product/autocomplete/:query`,
+      SearchController.AutocompleteProducts
     );
 
     // Performs a tag search.
@@ -254,6 +263,94 @@ export default class SearchController {
         },
         error: error
       }, 404, `We experienced a problem finding search results for brands`);
+
+      Logging.Send(LogLevel.ERROR, responseObject);
+
+      // Return the error response for the user.
+      response.status(responseObject.status).json(responseObject.data);
+    });
+  }
+
+  /**
+   * Returns a list of matches based on the product search query.
+   *
+   * @param {object} req
+   * The request object.
+   *
+   * @param {object} res
+   * The response object.
+   */
+  static AutocompleteProducts(request: Request, response: Response): void {
+    let query: string = request.params.query;
+
+    if (!query) {
+      // Set the response object.
+      const responseObject: ResponseObject = Connect.setResponse({
+        data: {
+          results: []
+        }
+      }, 200, 'No results were found for your product search');
+
+      // Return the response for the authenticated user.
+      response.status(responseObject.status).json(responseObject.data);
+
+      return;
+    }
+
+    // Decode the query.
+    query = decodeURI(query);
+
+    // As a poor person's search, let's just use regex for now and replace it
+    // with elastic at some point in the future.
+    const regEx = new RegExp(query.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, "\\$&"), 'gi');
+
+    // Define an autocomplete results array.
+    const searchResults: Array<ProductDetails> = [];
+
+    // Begin by searching for product types, categories and brands.
+    Product.find({
+      namePartials: regEx,
+    })
+    .populate({
+      path: 'brand',
+      model: 'Brand'
+    })
+    .limit(8)
+    .then((productDetails: Array<ProductDetailsDocument>) => {
+
+      // If we found products, loop through them and add them to the
+      // search results array.
+      if (productDetails.length > 0) {
+        let i = 0;
+
+        do {
+          const current: ProductDetailsDocument = productDetails[i];
+
+          searchResults.push(current.details);
+
+          i++;
+        } while (i < productDetails.length);
+      }
+
+      // Set the response object.
+      const responseObject: ResponseObject = Connect.setResponse({
+        data: {
+          results: searchResults
+        }
+      }, 200, 'Products successfully returned');
+
+      response.status(responseObject.status).json(responseObject.data);
+    })
+    .catch((error: Error) => {
+
+      // Return an error indicating the searched products weren't found.
+      const responseObject = Connect.setResponse({
+        data: {
+          errorCode: 'SEARCH_PRODUCTS_FAILED',
+          message: `We experienced a problem finding search results for products`
+        },
+        error: error
+      }, 404, `We experienced a problem finding search results for products`);
 
       Logging.Send(LogLevel.ERROR, responseObject);
 

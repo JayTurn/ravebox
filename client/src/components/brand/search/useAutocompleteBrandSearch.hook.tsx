@@ -19,7 +19,7 @@ import {
   AutocompleteBrandSearchParams,
   AutocompleteBrandSearchResponse
 } from './AutocompleteBrandSearch.interface';
-import { Brand } from '../../brand/Brand.interface';
+import { Brand } from '../Brand.interface';
 
 /**
  * Returns a list of brand results if found.

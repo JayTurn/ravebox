@@ -24,7 +24,8 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
       marginLeft: -12
     },
     wrapper: {
-      position: 'relative'
+      position: 'relative',
+      display: 'inline-block'
     }
   })
 );

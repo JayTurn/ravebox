@@ -21,7 +21,7 @@ export interface ProductDetailsDocument extends Mongoose.Document {
   categories: Array<Category>;
   categoriesPartials?: Array<string>;
   competitors: Array<string>;
-  complentary: Array<string>;
+  complementary: Array<string>;
   creator: string;
   description: string;
   details: ProductDetails;
