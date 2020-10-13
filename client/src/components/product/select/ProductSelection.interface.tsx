@@ -21,7 +21,8 @@ export interface ProductSelectionProps {
 
 export interface ProductSelectionForm {
   name: string;
-  brand: string;
+  brandId: string;
+  brandName: string;
 }
 
 /**

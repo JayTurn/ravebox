@@ -19,7 +19,7 @@ export interface InputProps extends BaseTextFieldProps {
   defaultValue?: string;
   handleChange?: (fieldEvent: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
   handleBlur: (data: InputData) => void;
-  handleFocus?: (e: React.SyntheticEvent) => void;
+  handleFocus?: (e: React.FocusEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
   name: string;
   required?: boolean;
   prefix?: string;

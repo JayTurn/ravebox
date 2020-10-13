@@ -6,6 +6,9 @@
 // Enumerators.
 import { TagAssociation } from './Tag.enum';
 
+// Interfaces.
+import { APIResponse } from '../../utils/api/Api.interface';
+
 /**
  * Tag item interface.
  */
@@ -16,4 +19,11 @@ export interface Tag {
   association: TagAssociation;
   context: string;
   children?: Array<Tag>;
+}
+
+/**
+ * Resonse for creating new tags.
+ */
+export interface AddTagFormResponse extends APIResponse {
+  tag: Tag;
 }

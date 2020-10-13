@@ -6,9 +6,6 @@
 // Modules.
 import * as Mongoose from 'mongoose';
 
-// Interfaces.
-import { TagDetails } from '../tag/tag.interface';
-
 /**
  * Brand interface.
  */
@@ -27,6 +24,7 @@ export interface BrandDetailsDocument extends Mongoose.Document {
 export interface BrandDetails {
   _id?: string;
   description: string;
+  details: BrandDetails;
   logo: string;
   name: string;
   namePartials?: Array<string>;

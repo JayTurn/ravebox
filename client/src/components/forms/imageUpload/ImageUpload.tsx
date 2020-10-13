@@ -610,6 +610,7 @@ const ImageUpload: React.FC<ImageUploadProps> = (props: ImageUploadProps) => {
           <Button
             color='primary'
             size='large'
+            variant='outlined'
           >
             {props.buttonTitle}
           </Button>

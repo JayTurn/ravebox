@@ -13,6 +13,7 @@ import { TagDetails } from '../tag/tag.interface';
  * Product interface.
  */
 export interface ProductDetailsDocument extends Mongoose.Document {
+  _id: string;
   added?: Date;
   brand: string;
   brandPartials?: Array<string>;
@@ -20,11 +21,11 @@ export interface ProductDetailsDocument extends Mongoose.Document {
   categories: Array<Category>;
   categoriesPartials?: Array<string>;
   competitors: Array<string>;
-  complentary: Array<string>;
+  complementary: Array<string>;
   creator: string;
   description: string;
   details: ProductDetails;
-  _id: string;
+  images: Array<ProductImage>;
   name: string;
   namePartials?: Array<string>;
   productType: string;
@@ -32,23 +33,23 @@ export interface ProductDetailsDocument extends Mongoose.Document {
   synchronize: Function;
   tags: Array<string>;
   url: string;
+  website: string;
 }
 
 export interface ProductDetails {
   _id?: string;
   brand: string;
-  brandPartials?: Array<string>;
   category: string;
-  categories: Array<Category>;
-  categoriesPartials?: Array<string>;
   competitors: Array<string>;
   complementary: Array<string>;
   description: string;
+  images: Array<ProductImage>;
   name: string;
   namePartials?: Array<string>;
   productType: TagDetails;
   tags: Array<TagDetails>;
   url: string;
+  website: string;
 }
 
 export interface ProductReview {
@@ -59,4 +60,24 @@ export interface ProductReview {
 export interface Category {
   key: string;
   label: string;
+}
+
+export interface ProductUpdates {
+  brand?: Mongoose.Types.ObjectId;
+  category?: Mongoose.Types.ObjectId;
+  description?: string;
+  images?: Array<ProductImage>;
+  name?: string;
+  namePartials?: Array<string>;
+  productType?: Mongoose.Types.ObjectId;
+  tags?: Array<Mongoose.Types.ObjectId>;
+  website?: string;
+}
+
+export interface ProductImage {
+  title: string;
+  url: string;
+  creditText: string;
+  creditUrl: string;
+  user?: Mongoose.Types.ObjectId;
 }

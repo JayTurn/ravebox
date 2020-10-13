@@ -7,7 +7,6 @@ import Authenticate from '../../models/authentication/authenticate.model';
 import Connect from '../../models/database/connect.model';
 import Logging from '../../shared/logging/Logging.model';
 import {
-  NextFunction,
   Request,
   Response,
   Router
@@ -16,7 +15,6 @@ import Brand from './brand.model';
 
 // Enumerators.
 import { LogLevel } from '../../shared/logging/Logging.enum';
-import { Workflow } from '../../shared/enumerators/workflow.enum';
 
 // Interfaces.
 import {
@@ -153,8 +151,6 @@ export default class BrandController {
     // Create the brand name partial keyword matching.
     brandDetails.namePartials = Keywords.CreatePartialMatches(
       brandDetails.name);
-
-    // Create a new brand from the request data.
 
     // Create a new product from the request data.
     const newBrand: BrandDetailsDocument = new Brand({

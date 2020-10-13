@@ -144,6 +144,7 @@ const frontloadHome = async (props: HomeProps) => {
   // Capture the category queries to.
   const queries: Array<string> = getTopLevelCategories(categoryList); 
 
+  /*
   // Perform the API request to get the review group.
   await API.requestAPI<RetrieveListByQueryResponse>(QueryPath.CATEGORY, {
     method: RequestType.POST,
@@ -159,6 +160,7 @@ const frontloadHome = async (props: HomeProps) => {
   .catch((error: Error) => {
     console.log(error);
   });
+  */
 };
 
 /**
@@ -175,6 +177,7 @@ const Home: React.FC<HomeProps> = (props: HomeProps) => {
         largeScreen = useMediaQuery(theme.breakpoints.up('sm')),
         queries: Array<string> = getTopLevelCategories(categoryList); 
 
+  /*
   const {
     listStatus
   } = useRetrieveListByQuery({
@@ -182,6 +185,7 @@ const Home: React.FC<HomeProps> = (props: HomeProps) => {
     listType: ReviewListType.CATEGORY,
     update: props.updateListByCategory
   });
+  */
 
   // Create a page viewed state to avoid duplicate views.
   const [pageViewed, setPageViewed] = React.useState<boolean>(false);
@@ -255,6 +259,7 @@ const Home: React.FC<HomeProps> = (props: HomeProps) => {
           </Grid>
         </Grid>
       </Grid>
+      {/*
       <Grid item xs={12} className={clsx({
         [classes.tempCategorySmall]: !largeScreen
       })}>
@@ -274,6 +279,7 @@ const Home: React.FC<HomeProps> = (props: HomeProps) => {
           />
         }
       </Grid>
+      */}
       {/*
       <Grid item xs={12}>
         {props.categoryGroup && props.categoryGroup[queries[0]] &&

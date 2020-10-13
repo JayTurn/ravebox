@@ -12,7 +12,6 @@ import {
   BrandDetails
 } from '../brand/brand.interface';
 import {
-  Category,
   ProductDetailsDocument
 } from './product.interface';
 
@@ -23,20 +22,8 @@ const Schema = Mongoose.Schema;
 const ProductSchema = new Schema({
   brand: {
     type: Schema.Types.ObjectId,
-    ref: 'Brand'
-  },
-  brandPartials: {
-    type: Array,
-    default: [],
+    ref: 'Brand',
     index: true
-  },
-  category: {
-    type: Schema.Types.ObjectId, 
-    ref: 'Tag',
-  },
-  categories: {
-    type: Array,
-    default: []
   },
   created: {
     type: Date,
@@ -45,6 +32,13 @@ const ProductSchema = new Schema({
   description: {
     type: String,
     default: ''
+  },
+  images: {
+    type: [{
+      title: String,
+      url: String
+    }],
+    default: []
   },
   name: {
     type: String,
@@ -57,6 +51,7 @@ const ProductSchema = new Schema({
   productType: {
     type: Schema.Types.ObjectId, 
     ref: 'Tag',
+    index: true,
   },
   creator:  { 
     type: Schema.Types.ObjectId, 
@@ -65,6 +60,10 @@ const ProductSchema = new Schema({
   url: {
     type: String,
     index: true,
+  },
+  website: {
+    type: String,
+    default: ''
   }
 });
 
@@ -76,13 +75,15 @@ ProductSchema
       '_id': this._id,
       'brand': (this.brand && this.brand.details) ?
         this.brand.details : this.brand,
-      'category': (this.category && this.category.details) ?
-        this.category.details : this.category,
+      'created': this.created,
       'description': this.description,
+      'images': this.images,
+      'logo': this.logo,
       'name': this.name,
       'productType': (this.productType && this.productType.light) ?
         this.productType.light : this.productType,
-      'url': this.url
+      'url': this.url,
+      'website': this.website
     };
   });
 

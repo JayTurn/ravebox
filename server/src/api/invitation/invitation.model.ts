@@ -25,7 +25,7 @@ const InvitationSchema = new Schema({
     default: ''
   },
   invitedBy: {
-    type: String, 
+    type: Schema.Types.ObjectId, 
     default: EnvConfig.admin
   },
   status: {
