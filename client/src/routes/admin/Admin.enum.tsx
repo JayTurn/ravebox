@@ -8,8 +8,9 @@
  * Route paths.
  */
 export enum AdminPath {
-  USERS = 'users',
-  RAVES = 'reviews',
+  INVITATIONS = 'invitations',
   PRODUCTS = 'products',
-  INVITATIONS = 'invitations'
+  RAVES = 'reviews',
+  CATEGORIES = 'categories',
+  USERS = 'users',
 }

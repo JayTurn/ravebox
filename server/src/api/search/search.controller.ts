@@ -399,7 +399,7 @@ export default class SearchController {
 
     // Begin by searching for product types, categories and brands.
     Tag.find({
-      partials: regEx,
+      namePartials: regEx,
       association: association
     })
     .limit(8)

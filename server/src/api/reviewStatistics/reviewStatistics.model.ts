@@ -30,6 +30,10 @@ const ReviewStatisticsSchema = new Schema<ReviewStatisticsDocument>({
   review: {
     type: Schema.Types.ObjectId,
     ref: 'Review'
+  },
+  score: {
+    type: Number,
+    default: 0
   }
 });
 

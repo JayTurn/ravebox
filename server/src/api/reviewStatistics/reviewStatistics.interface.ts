@@ -20,6 +20,7 @@ export interface ReviewStatisticsDocument extends Mongoose.Document {
   details: ReviewStatistics;
   ratings: ReviewRatings;
   review: string;
+  score: number;
   views: number;
 }
 
