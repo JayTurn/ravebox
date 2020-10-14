@@ -107,7 +107,7 @@ ProductSchema
 
         const unique: string = id.substring(id.length - 5, id.length - 1);
 
-        this.url = `${brandDetails.url}/${name}/${unique}`;
+        this.url = `${brandDetails.url}/${name}`;
 
         next();
       })

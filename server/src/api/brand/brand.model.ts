@@ -66,7 +66,7 @@ BrandSchema
 
     const unique: string = id.substring(id.length - 5, id.length - 1);
 
-    this.url = `/brand/${brand}/${unique}`;
+    this.url = `/${brand}_${unique}`;
 
     next();
   });

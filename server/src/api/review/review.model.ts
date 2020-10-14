@@ -100,10 +100,10 @@ ReviewSchema
       Product.findById(this.product) 
         .then((product: ProductDetailsDocument) => {
 
-          // Format the url in a structured way to be used when retrieving
-          // results.
-          _this.url = ReviewCommon.formatReviewURL(
-            product.name, product.brand, _this.title);
+          const name: string = _this.title.split(' ').join('_')
+                  .split('&').join('and').toLowerCase();
+
+          _this.url = `${this.product.url}/${name}`;
 
           next();
         })

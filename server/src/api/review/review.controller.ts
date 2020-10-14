@@ -178,7 +178,9 @@ export default class ReviewController {
 
     // Create a review stastics document to be cross-referenced with the
     // review document.
-    const newReviewStatistics: ReviewStatisticsDocument = new ReviewStatistics();
+    const newReviewStatistics: ReviewStatisticsDocument = new ReviewStatistics({
+      score: reviewDetails.videoType === VideoType.YOUTUBE ? 0 : 50
+    });
 
     // Create a new review from the request data.
     const newReview: ReviewDocument = new Review({
