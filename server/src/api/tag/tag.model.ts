@@ -5,6 +5,7 @@
 
 // Modules.
 import * as Mongoose from 'mongoose';
+import TagCommon from './tag.common';
 
 // Enumerators.
 import {
@@ -14,6 +15,7 @@ import {
 
 // Interfaces.
 import {
+  TagDetails,
   TagDetailsDocument
 } from './tag.interface';
 
@@ -27,7 +29,7 @@ const TagSchema = new Schema({
     default: TagAssociation.PRODUCT,
     index: true
   },
-  children: [{
+  linkFrom: [{
     type: Schema.Types.ObjectId,
     ref: 'Tag' 
   }],
@@ -43,7 +45,7 @@ const TagSchema = new Schema({
     type: String,
     default: ''
   },
-  partials: {
+  namePartials: {
     type: [String],
     default: [],
     index: true
@@ -68,14 +70,14 @@ TagSchema
 
 // Define a view to be used for tag responses.
 TagSchema
-  .virtual('full')
+  .virtual('details')
   .get(function() {
     return {
       '_id': this._id,
       'association': this.association,
       'name': this.name,
       'context': this.context,
-      'children': this.children
+      'linkFrom': this.linkFrom
     };
   });
 

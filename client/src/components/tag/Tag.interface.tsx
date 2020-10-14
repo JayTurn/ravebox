@@ -18,7 +18,8 @@ export interface Tag {
   labels: Array<string>;
   association: TagAssociation;
   context: string;
-  children?: Array<Tag>;
+  linkFrom?: Array<Tag>;
+  linkTo?: Array<Tag>;
 }
 
 /**

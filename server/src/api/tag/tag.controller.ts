@@ -6,6 +6,7 @@
 import Authenticate from '../../models/authentication/authenticate.model';
 import Connect from '../../models/database/connect.model';
 import Logging from '../../shared/logging/Logging.model';
+import * as Mongoose from 'mongoose';
 import {
   //NextFunction,
   Request,
@@ -13,6 +14,7 @@ import {
   Router
 } from 'express';
 import Tag from './tag.model';
+import TagCommon from './tag.common';
 
 // Enumerators.
 import { LogLevel } from '../../shared/logging/Logging.enum';
@@ -26,7 +28,8 @@ import {
 } from '../../models/authentication/authentication.interface';
 import {
   TagDetails,
-  TagDetailsDocument
+  TagDetailsDocument,
+  TagUpdates
 } from './tag.interface';
 import {
   ResponseObject
@@ -67,6 +70,20 @@ export default class TagController {
       `${path}/search/name`,
       TagController.SearchByName
     );
+    
+    // Update an existing tag.
+    router.post(
+      `${path}/unlink`,
+      Authenticate.isAuthenticated,
+      TagController.Unlink
+    );
+
+    // Update an existing tag.
+    router.post(
+      `${path}/update`,
+      Authenticate.isAuthenticated,
+      TagController.Update
+    );
   }
 
   /**
@@ -90,7 +107,8 @@ export default class TagController {
 
     // Define the provided brand name.
     const name: string = request.body.name,
-          association: TagAssociation = request.body.association;
+          association: TagAssociation = request.body.association,
+          linkFrom: string = request.body.linkFrom;
 
     // Exit if we don't have a tag name provided.
     if (!name) {
@@ -133,13 +151,38 @@ export default class TagController {
         tag = new Tag({
           name: name,
           labels: [label],
-          partials: Keywords.CreatePartialMatches(name),
+          namePartials: Keywords.CreatePartialMatches(name),
           association: association
         });
         return tag.save();
       }
     })
     .then((tagDetails: TagDetailsDocument) => {
+
+      // If we had a linkFrom id, we need to update that tag accordingly.
+      Tag.findOneAndUpdate({
+        _id: linkFrom
+      }, {
+        '$push': {
+          linkFrom: tagDetails._id
+        } 
+      }, {
+        new: false,
+        upsert: false
+      })
+      .catch((error: Error) => {
+        // Define the responseObject.
+        const responseObject: ResponseObject = Connect.setResponse({
+            data: {
+              errorCode: 'TAG_LINK_FAILED',
+              title: `Tag could not be linked`
+            },
+            error: error
+          }, 401, `Tag could not be linked`);
+
+        Logging.Send(LogLevel.ERROR, responseObject);
+
+      });
 
       // Attach the tag to the response.
       const responseObject: ResponseObject = Connect.setResponse({
@@ -201,7 +244,7 @@ export default class TagController {
     const regEx = new RegExp(name.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, "\\$&"), 'gi');
 
     Tag.find({
-      partials: regEx,
+      namePartials: regEx,
       association: association
     })
     .lean()
@@ -232,4 +275,198 @@ export default class TagController {
       response.status(responseObject.status).json(responseObject.data);
     })
   }
+
+  /**
+   * Unlinks the tags.
+   *
+   * @param {object} req
+   * The request object.
+   *
+   * @param {object} res
+   * The response object.
+   */
+  static Unlink(request: AuthenticatedUserRequest, response: Response): void {
+
+    // Define the provided brand name.
+    const id: string = request.body.id,
+          linkFrom: string = request.body.linkFrom;
+
+    // Exit if we don't have a tag id provided.
+    if (!id || !linkFrom) {
+      const responseObject: ResponseObject = Connect.setResponse({
+        data: {
+          errorCode: `TAG_ID_NOT_PROVIDED`,
+          message: `A tag id was missing from your unlink request`
+        },
+      }, 401, 'A tag id was missing from your unlink request');
+
+      Logging.Send(LogLevel.ERROR, responseObject);
+
+      // Return the error response for the user.
+      response.status(401).json(responseObject.data);
+
+      return;
+    }
+
+    Tag.findOneAndUpdate({
+      _id: id
+    }, {
+      '$pull': {
+        linkFrom: linkFrom
+      }
+    }, {
+      new: true,
+      upsert: false
+    })
+    .then((tagDetails: TagDetailsDocument) => {
+      if (tagDetails) {
+        // Set the response object.
+        const responseObject: ResponseObject = Connect.setResponse({
+          data: {
+            tag: tagDetails.details,
+          }
+        }, 201, `Tags returned successfully`);
+
+        Logging.Send(LogLevel.INFO, responseObject);
+
+        // Return the response for the authenticated user.
+        response.status(responseObject.status).json(responseObject.data);
+
+      } else {
+
+        throw new Error(`Tag ${id} couldn't be returned.`);
+
+      }
+    })
+    .catch((error: Error) => {
+      // Define the responseObject.
+      const responseObject = Connect.setResponse({
+          data: {
+            errorCode: 'TAG_UNLINK_FAILED',
+            title: `Tag could not be unlinked`
+          },
+          error: error
+        }, 401, `Tag could not be unlinked`);
+
+      Logging.Send(LogLevel.ERROR, responseObject);
+
+      // Return the response.
+      response.status(responseObject.status).json(responseObject.data);
+    });
+  }
+
+  /**
+   * Creates updating a tag.
+   *
+   * @param {object} req
+   * The request object.
+   *
+   * @param {object} res
+   * The response object.
+   */
+  static Update(request: AuthenticatedUserRequest, response: Response): void {
+
+    // Define the provided brand name.
+    const id: string = request.body.id,
+          name: string = request.body.name,
+          linkFrom: string = request.body.linkFrom;
+
+    /*
+    let tagUpdates: TagUpdates = {};
+
+    if (request.body.name) {
+      tagUpdates.name = request.body.name;
+    }
+
+    if (request.body.linkTo) {
+      tagUpdates.linkTo = request.body.linkTo;
+    }
+    */
+
+    // Create a query 
+    let query: any;
+
+    if (name) {
+      query = {
+        name: name,
+        namePartials: Keywords.CreatePartialMatches(name)
+      };
+    }
+
+    if (linkFrom) {
+      if (query) {
+        query['$push'] = {
+          linkFrom: linkFrom
+        };
+      } else {
+        query = {
+          '$push': {
+            linkFrom: linkFrom
+          }
+        };
+      }
+    }
+
+    // Exit if we don't have a tag id provided.
+    if (!id || !query) {
+      const responseObject: ResponseObject = Connect.setResponse({
+        data: {
+          errorCode: `TAG_ID_NOT_PROVIDED`,
+          message: `A tag id was missing from your update request`
+        },
+      }, 401, 'A tag id was missing from your update request');
+
+      Logging.Send(LogLevel.ERROR, responseObject);
+
+      // Return the error response for the user.
+      response.status(401).json(responseObject.data);
+
+      return;
+    }
+
+    Tag.findOneAndUpdate({
+      _id: id
+    },
+    query,
+    {
+      new: true,
+      upsert: false
+    })
+    .then((tagDetails: TagDetailsDocument) => {
+      if (tagDetails) {
+        // Set the response object.
+        const responseObject: ResponseObject = Connect.setResponse({
+          data: {
+            tag: tagDetails.details,
+          }
+        }, 201, `Tags returned successfully`);
+
+        Logging.Send(LogLevel.INFO, responseObject);
+
+        // Return the response for the authenticated user.
+        response.status(responseObject.status).json(responseObject.data);
+
+      } else {
+
+        throw new Error(`Tag ${id} couldn't be returned.`);
+
+      }
+    })
+    .catch((error: Error) => {
+      // Define the responseObject.
+      const responseObject = Connect.setResponse({
+          data: {
+            errorCode: 'TAG_UPDATE_FAILED',
+            title: `Tag could not be updated`
+          },
+          error: error
+        }, 401, `Tag could not be updated`);
+
+      Logging.Send(LogLevel.ERROR, responseObject);
+
+      // Return the response.
+      response.status(responseObject.status).json(responseObject.data);
+    });
+  }
+
 }

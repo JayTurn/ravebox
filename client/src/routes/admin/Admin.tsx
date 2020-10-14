@@ -24,10 +24,11 @@ import useMediaQuery from '@material-ui/core/useMediaQuery';
 import { withRouter } from 'react-router';
 
 // Components.
-import AdminUsers from '../../components/admin/users/AdminUsers';
-import AdminReviews from '../../components/admin/reviews/AdminReviews';
-import AdminProducts from '../../components/admin/products/AdminProducts';
 import AdminInvitations from '../../components/admin/invitations/AdminInvitations';
+import AdminProducts from '../../components/admin/products/AdminProducts';
+import AdminReviews from '../../components/admin/reviews/AdminReviews';
+import AdminTags from '../../components/admin/tags/AdminTags';
+import AdminUsers from '../../components/admin/users/AdminUsers';
 import PageTitle from '../../components/elements/pageTitle/PageTitle';
 
 // Enumerators.
@@ -142,14 +143,6 @@ const Admin: React.FC<AdminProps> = (props: AdminProps) => {
           />
           <Tab
             disableRipple
-            label={`Users`} 
-            onClick={(e: React.SyntheticEvent) => {
-              navigate(AdminPath.USERS);
-            }}
-            value={`${props.match.path}/${AdminPath.USERS}`}
-          />
-          <Tab
-            disableRipple
             label={`Raves`} 
             onClick={(e: React.SyntheticEvent) => {
               navigate(AdminPath.RAVES);
@@ -166,6 +159,22 @@ const Admin: React.FC<AdminProps> = (props: AdminProps) => {
           />
           <Tab
             disableRipple
+            label={`Categories`} 
+            onClick={(e: React.SyntheticEvent) => {
+              navigate(AdminPath.CATEGORIES);
+            }}
+            value={`${props.match.path}/${AdminPath.CATEGORIES}`}
+          />
+          <Tab
+            disableRipple
+            label={`Users`} 
+            onClick={(e: React.SyntheticEvent) => {
+              navigate(AdminPath.USERS);
+            }}
+            value={`${props.match.path}/${AdminPath.USERS}`}
+          />
+          <Tab
+            disableRipple
             label={`INVITATIONS`} 
             onClick={(e: React.SyntheticEvent) => {
               navigate(AdminPath.INVITATIONS);
@@ -175,16 +184,19 @@ const Admin: React.FC<AdminProps> = (props: AdminProps) => {
         </StyledTabs>
       </Grid>
       <Grid item className={clsx(classes.padding)}>
-        <Route exact={true} path={`${props.match.path}/users`}>
-          <AdminUsers />
-        </Route>
-        <Route exact={true} path={`${props.match.path}/products`}>
-          <AdminProducts />
-        </Route>
-        <Route exact={true} path={`${props.match.path}/reviews`}>
+        <Route exact={true} path={`${props.match.path}/${AdminPath.RAVES}`}>
           <AdminReviews />
         </Route>
-        <Route exact={true} path={`${props.match.path}/invitations`}>
+        <Route exact={true} path={`${props.match.path}/${AdminPath.PRODUCTS}`}>
+          <AdminProducts />
+        </Route>
+        <Route exact={true} path={`${props.match.path}/${AdminPath.CATEGORIES}`}>
+          <AdminTags />
+        </Route>
+        <Route exact={true} path={`${props.match.path}/${AdminPath.USERS}`}>
+          <AdminUsers />
+        </Route>
+        <Route exact={true} path={`${props.match.path}/${AdminPath.INVITATIONS}`}>
           <AdminInvitations />
         </Route>
       </Grid>

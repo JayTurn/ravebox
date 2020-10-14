@@ -5,6 +5,7 @@
 
 // Enumerators.
 import { SortDirection } from '../../shared/enumerators/sort.enum';
+import { TagAssociation } from '../tag/tag.enum';
 
 /**
  * Product search paramaters interface.
@@ -30,7 +31,23 @@ export interface ProductSearchSort {
  * Product search query.
  */
 export interface ProductSearchQuery {
-  name?: string;
+  namePartials?: RegExp;
   brand?: string;
   productType?: string;
+}
+
+/**
+ * Tag search sort parameters.
+ */
+export interface TagSearchSort {
+ name: SortDirection;
+}
+
+/**
+ * Tag search query.
+ */
+export interface TagSearchQuery {
+  namePartials?: RegExp;
+  context?: string;
+  association?: TagAssociation;
 }

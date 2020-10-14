@@ -17,11 +17,14 @@ import {
 } from 'express';
 import Product from '../product/product.model';
 //import Review from '../review/review.model';
+import Tag from '../tag/tag.model';
+import TagCommon from '../tag/tag.common';
 import User from '../user/user.model';
 import UserStatistics from '../userStatistics/userStatistics.model'
 
 // Enumerators.
 import { LogLevel } from '../../shared/logging/Logging.enum';
+import { TagAssociation } from '../tag/tag.enum';
 import { UserRole } from '../user/user.enum';
 //import { Workflow } from '../../shared/enumerators/workflow.enum';
 
@@ -42,9 +45,15 @@ import {
   ProductDetailsDocument
 } from '../product/product.interface';
 import {
-  ProductSearchSort
+  ProductSearchSort,
+  TagSearchQuery,
+  TagSearchSort
 } from './admin.interface';
 import { ResponseObject } from '../../models/database/connect.interface';
+import {
+  TagDetails,
+  TagDetailsDocument
+} from '../tag/tag.interface';
 import {
   //UserStatistics as UserStats,
   UserStatisticsDocument
@@ -109,6 +118,14 @@ export default class AdminController {
       Authenticate.isAuthenticated,
       Authenticate.isAdmin,
       AdminController.RetrieveProductsList
+    );
+
+    // Get the list of tags.
+    router.post(
+      `${path}/tags`,
+      Authenticate.isAuthenticated,
+      Authenticate.isAdmin,
+      AdminController.RetrieveTagsList
     );
   }
 
@@ -477,6 +494,96 @@ export default class AdminController {
         },
         error: error
       }, 401, 'There was a problem retrieving the list of products.');
+
+      Logging.Send(LogLevel.ERROR, responseObject);
+
+      // Return the error response for the user.
+      response.status(401).json(responseObject.data);
+    });
+  }
+
+  /**
+   * Returns a list of tags.
+   *
+   * @param {object} req
+   * The request object.
+   *
+   * @param {object} res
+   * The response object.
+   */
+  static RetrieveTagsList(request: AuthenticatedUserRequest, response: Response): void {
+
+    // Get the different sort options.
+    const sort: TagSearchSort = {...request.body.sort};
+
+    const filters: TagSearchQuery = {
+      association: TagAssociation.PRODUCT
+    };
+    if (request.body.filters) {
+
+      // Tag association.
+      if (request.body.filters.association) {
+        filters.association = request.body.filters.association;
+      }
+
+      // Tag name.
+      if (request.body.filters.name) {
+        // Decode the query.
+        const query: string = decodeURI(name);
+
+        // As a poor person's search, let's just use regex for now and replace it
+        // with elastic at some point in the future.
+        const regEx = new RegExp(query.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, "\\$&"), 'gi');
+
+        filters.namePartials = regEx;
+      }
+    }
+
+    // Perform a request to get all products based on the query provided.
+    Tag.find(
+      filters
+    )
+    .populate({
+      path: 'linkFrom',
+      model: 'Tag',
+      populate: [{
+        path: 'linkFrom',
+        model: 'Tag'
+      }]
+    })
+    .populate({
+      path: 'linkTo',
+      model: 'Tag',
+      populate: [{
+        path: 'linkTo',
+        model: 'Tag'
+      }]
+    })
+    .sort(sort)
+    .then((tagDocuments: Array<TagDetailsDocument>) => {
+      const tags: Array<TagDetails> = TagCommon.LoadLinks(tagDocuments);
+
+      // Set the response object.
+      const responseObject: ResponseObject = Connect.setResponse({
+        data: {
+          tags: tags,
+        }
+      }, 201, `Tags returned successfully`);
+
+      Logging.Send(LogLevel.INFO, responseObject);
+
+      // Return the response for the authenticated user.
+      response.status(responseObject.status).json(responseObject.data);
+    })
+    .catch((error: Error) => {
+      // Return an error indicating the review wasn't created.
+      const responseObject: ResponseObject = Connect.setResponse({
+        data: {
+          errorCode: 'RETRIEVE_TAGS_LIST_FAILED',
+          message: 'There was a problem retrieving the list of tags.'
+        },
+        error: error
+      }, 401, 'There was a problem retrieving the list of tags.');
 
       Logging.Send(LogLevel.ERROR, responseObject);
 
