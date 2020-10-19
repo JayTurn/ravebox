@@ -52,6 +52,7 @@ const useStyles = makeStyles((theme: Theme) =>
       width: theme.spacing(5)
     },
     container: {
+      height: '100%',
       padding: theme.spacing(1)
     },
     handleText: {
@@ -89,7 +90,7 @@ const formatStatistics: (
     statistics += ravesCount;
 
     if (user.statistics.followers > 0) {
-      const followerCount: string = CountIdentifier(user.statistics.followers)('rave');
+      const followerCount: string = CountIdentifier(user.statistics.followers)('follower');
 
       if (user.statistics.ravesCount > 0) {
         statistics += ` | `;
@@ -119,6 +120,7 @@ const StreamUser: React.FC<StreamUserProps> = (props: StreamUserProps) => {
 
   return (
     <Grid
+      alignItems='flex-end'
       className={clsx(classes.container)}
       container
     >
@@ -169,6 +171,9 @@ const StreamUser: React.FC<StreamUserProps> = (props: StreamUserProps) => {
         </Grid>
       }
       <Grid item xs={12}>
+        <Typography variant='body1'>
+          Test content
+        </Typography>
       </Grid>
     </Grid>
   );

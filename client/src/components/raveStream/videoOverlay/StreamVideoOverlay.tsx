@@ -74,6 +74,9 @@ const useStyles = makeStyles((theme: Theme) =>
     },
     productTitleContainer: {
       padding: theme.spacing(1)
+    },
+    userContainer: {
+      alignSelf: 'flex-end'
     }
   })
 );
@@ -146,7 +149,7 @@ const StreamVideoOverlay: React.FC<StreamVideoOverlayProps> = (props: StreamVide
           <Grid item xs={12}>
             Mid section  
           </Grid>
-          <Grid item xs={12}>
+          <Grid item xs={12} className={clsx(classes.userContainer)}>
             <StreamUser />
           </Grid>
         </Grid>
