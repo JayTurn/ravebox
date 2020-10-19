@@ -113,7 +113,9 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
     padding: theme.spacing(0, 0.5)
   },
   searchContainer: {
-    flexShrink: 1
+    flexBasis: '62%',
+    flexShrink: 1,
+    maxWidth: '62%'
   },
   searchIcon: {
     color: theme.palette.common.white,
@@ -152,6 +154,7 @@ const LogoIconButton = withStyles((theme: Theme) => ({
       backgroundColor: 'transparent'
     },
     marginLeft: 0,
+    marginRight: 5,
     padding: theme.spacing(.5)
   },
 }))(IconButton);
@@ -267,7 +270,7 @@ const StreamNavigation: React.FC<StreamNavigationProps> = (props: StreamNavigati
               </Box>
             </LogoIconButton>
           </Grid>
-          <Grid item className={clsx(classes.searchContainer)} xs={7}>
+          <Grid item className={clsx(classes.searchContainer)}>
             <Grid
               alignItems='center'
               className={clsx(classes.searchButton)}
