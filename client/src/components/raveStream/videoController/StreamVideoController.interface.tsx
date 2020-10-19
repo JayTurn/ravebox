@@ -7,13 +7,15 @@
 import { SwipeView } from '../swipe/SwipeStream.enum';
 
 // Interfaces.
-import { Review } from '../../review/Review.interface';
+import { RaveStream } from '../../raveStream/RaveStream.interface';
 
 /**
  * StreamVideoController properties.
  */
 export interface StreamVideoControllerProps {
-  startingIndex: number;
-  reviews: Array<Review>;
+  activeIndex?: number;
+  displayChange: (view: SwipeView) => void;
+  raveStream?: RaveStream;
   showing: SwipeView;
+  updateActiveIndex?: (index: number) => void;
 }

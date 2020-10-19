@@ -237,15 +237,13 @@ const App: React.FC<AppProps> = (props: AppProps) => {
             </Helmet>
             <ScrollToTop />
             {showNavigation &&
-              <React.Fragment>
-                <TopNavigation />
-                {largeScreen ? (
-                  <SideNavigation expanded={false} />
-                ) : (
-                  <MobileNavigation expanded={false} />
-                )}
-              </React.Fragment>
+              <TopNavigation />
             }
+            {largeScreen ? (
+              <SideNavigation expanded={false} />
+            ) : (
+              <MobileNavigation expanded={false} />
+            )}
             <Container maxWidth="lg" disableGutters={true} className={clsx({
               [classes.lgContent]: largeScreen,
               [classes.lgContentOpen]: largeScreen && props.expanded,

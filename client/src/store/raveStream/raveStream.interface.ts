@@ -22,5 +22,6 @@ export type RaveStreamAction = ActionType<typeof actions>;
  * Rave stream store interface.
  */
 export interface RaveStreamStore {
-  active: RaveStream;
+  active: number;
+  raveStream: RaveStream;
 }

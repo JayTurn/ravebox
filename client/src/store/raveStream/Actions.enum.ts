@@ -7,5 +7,6 @@
  * Redux Actions.
  */
 export enum RaveStreamVerb {
-  UPDATE_ACTIVE = 'product/update_active'
+  UPDATE = 'stream/update',
+  UPDATE_ACTIVE = 'stream/update_active'
 }

@@ -48,6 +48,7 @@ const useStyles = makeStyles((theme: Theme) =>
       position: 'absolute',
       overflowY: 'auto',
       transition: 'left 300ms ease-in-out',
+      width: 'calc(100vw)',
       zIndex: 3
     },
     defaultColor: {
@@ -159,9 +160,9 @@ const StreamVideo: React.FC<StreamVideoProps> = (props: StreamVideoProps) => {
       const current: Player | null = playerRef.current;
 
       if (current) {
-        const pl: any = current.getInternalPlayer();
+        //const pl: any = current.getInternalPlayer();
 
-        pl.seekTo(props.review.startTime || 0, true);
+        //pl.seekTo(props.review.startTime || 0, true);
       }
     }
   }

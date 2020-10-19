@@ -28,7 +28,7 @@ const Logo: React.FC<LogoProps> = (props: LogoProps) => {
           alignItems='center'
         >
           <Grid item xs={12}>
-            <SvgIcon component={LogoSVGIcon} />  
+            <SvgIcon htmlColor='#FFF' component={() => LogoSVGIcon(props.color)} />
           </Grid>
         </Grid>
       ) : (
@@ -39,7 +39,7 @@ const Logo: React.FC<LogoProps> = (props: LogoProps) => {
           alignItems='center'
         >
           <Grid item xs={12}>
-            <SvgIcon component={LogoSVG} />  
+            <SvgIcon component={LogoSVG} />
           </Grid>
         </Grid>
       )}

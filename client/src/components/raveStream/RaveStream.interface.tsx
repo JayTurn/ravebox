@@ -44,4 +44,5 @@ export interface RetrieveStreamByURLParams {
   existing?: RaveStream;
   requested: RaveStreamURLParams;
   setActiveRaveStream?: (raveStream: RaveStream) => void;
+  setActiveRave?: (index: number) => void;
 }

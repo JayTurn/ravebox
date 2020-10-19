@@ -16,6 +16,8 @@ import {
  * SwipeStream properties.
  */
 export interface SwipeStreamProps extends RouteComponentProps<RaveStreamURLParams> {
+  activeIndex?: number;
   raveStream?: RaveStream;
   updateActiveRaveStream?: (raveStream: RaveStream) => void;
+  updateActiveIndex?: (index: number) => void;
 }

@@ -14,7 +14,7 @@ import { RouteComponentProps } from 'react-router';
  * Search field component properties.
  */
 export interface SearchFieldProps extends RouteComponentProps {
-  toggleSearchField?: () => void;
+  toggleSearchField?: (e: React.SyntheticEvent) => void;
 }
 
 /**

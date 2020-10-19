@@ -12,6 +12,7 @@ import {
 import API from '../../../utils/api/Api.model';
 import Box from '@material-ui/core/Box';
 import clsx from 'clsx';
+import { connect } from 'react-redux';
 import {
   createStyles,
   makeStyles,
@@ -22,18 +23,20 @@ import {
 import { Helmet } from 'react-helmet';
 import * as React from 'react';
 import { frontloadConnect } from 'react-frontload';
-import { connect } from 'react-redux';
 import useMediaQuery from '@material-ui/core/useMediaQuery';
 import { withRouter } from 'react-router';
 
 // Actions.
-import { updateActive } from '../../../store/raveStream/Actions';
+import {
+  update,
+  updateActive
+} from '../../../store/raveStream/Actions';
 
 // Components.
 import StyledButton from '../../elements/buttons/StyledButton';
 import StreamProductDetails from '../productDetails/StreamProductDetails';
 import StreamReviewDetails from '../reviewDetails/StreamReviewDetails';
-import StreamVideoWrapper from '../videoController/StreamVideoController';
+import StreamVideoController from '../videoController/StreamVideoController';
 
 // Enumerators.
 import {
@@ -137,13 +140,13 @@ const SwipeStream: React.FC<SwipeStreamProps> = (props: SwipeStreamProps) => {
         largeScreen = useMediaQuery(theme.breakpoints.up('sm'));
 
   const {
-    activeIndex,
     raveStream,
     product,
     raveStreamStatus
   } = useRetrieveRaveStreamByURL({
     existing: props.raveStream ? props.raveStream : undefined,
     setActiveRaveStream: props.updateActiveRaveStream,
+    setActiveRave: props.updateActiveIndex,
     requested: props.match.params
   })
 
@@ -151,6 +154,8 @@ const SwipeStream: React.FC<SwipeStreamProps> = (props: SwipeStreamProps) => {
   const [pageViewed, setPageViewed] = React.useState<boolean>(false);
 
   const [swipeView, setSwipeView] = React.useState<SwipeView>(SwipeView.VIDEO);
+
+  const activeIndex: number = props.activeIndex || 0;
 
   /**
    * Track the stream view.
@@ -200,34 +205,10 @@ const SwipeStream: React.FC<SwipeStreamProps> = (props: SwipeStreamProps) => {
 
   return (
     <Box className={clsx(classes.container)}>
-      <Box className={clsx(classes.testContainer)}>
-        <Box>
-          <StyledButton
-            title='Show product'
-            clickAction={() => handleDisplayChange(SwipeView.PRODUCT)}
-            variant='outlined'
-          />
-        </Box>
-        <Box>
-          <StyledButton
-            title='Show Video'
-            clickAction={() => handleDisplayChange(SwipeView.VIDEO)}
-            variant='outlined'
-          />
-        </Box>
-        <Box>
-          <StyledButton
-            title='Show review'
-            clickAction={() => handleDisplayChange(SwipeView.REVIEW)}
-            variant='outlined'
-          />
-        </Box>
-      </Box>
       {props.raveStream && props.raveStream.reviews && props.raveStream.reviews.length > 0 &&
-        <StreamVideoWrapper
-          startingIndex={activeIndex}
-          reviews={[...props.raveStream.reviews]}
+        <StreamVideoController
           showing={swipeView}
+          displayChange={handleDisplayChange}
         />
       }
       <Box className={clsx(classes.detailsContainer)} style={{zIndex: swipeView === SwipeView.PRODUCT ? 2 : 1}}>
@@ -250,7 +231,8 @@ const SwipeStream: React.FC<SwipeStreamProps> = (props: SwipeStreamProps) => {
 const mapDispatchToProps = (dispatch: Dispatch<AnyAction>) =>
   bindActionCreators(
     {
-      updateActiveRaveStream: updateActive,
+      updateActiveRaveStream: update,
+      updateActiveIndex: updateActive,
     },
     dispatch
   );
@@ -260,10 +242,12 @@ const mapDispatchToProps = (dispatch: Dispatch<AnyAction>) =>
  */
 const mapStateToProps = (state: any, ownProps: SwipeStreamProps) => {
   // Retrieve the product stream from the active properties.
-  const raveStream: RaveStream = state.raveStream ? state.raveStream.active : undefined;
+  const raveStream: RaveStream = state.raveStream ? state.raveStream.raveStream : undefined,
+        activeIndex: number = state.raveStream ? state.raveStream.active : 0;
 
   return {
     ...ownProps,
+    activeIndex,
     raveStream
   };
 };

@@ -19,5 +19,13 @@ import {
  *
  * @param { Stream } raveStream - the rave stream to be made active.
  */
-export const updateActive = (raveStream: RaveStream) => action(
-  RaveStreamVerb.UPDATE_ACTIVE, raveStream);
+export const update = (raveStream: RaveStream) => action(
+  RaveStreamVerb.UPDATE, raveStream);
+
+/**
+ * Updates the active index of the current stream review in the redux store.
+ *
+ * @param { number } index - the review index to be made active.
+ */
+export const updateActive = (index: number) => action(
+  RaveStreamVerb.UPDATE_ACTIVE, index);

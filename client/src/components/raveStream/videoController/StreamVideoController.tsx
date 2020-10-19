@@ -4,8 +4,14 @@
  */
 
 // Modules.
+import {
+  AnyAction,
+  bindActionCreators,
+  Dispatch
+} from 'redux';
 import Box from '@material-ui/core/Box';
 import clsx from 'clsx';
+import { connect } from 'react-redux';
 import {
   createStyles,
   makeStyles,
@@ -17,6 +23,11 @@ import Grid from '@material-ui/core/Grid';
 import Typography from '@material-ui/core/Typography';
 import { TransitionGroup } from 'react-transition-group';
 import * as React from 'react';
+
+// Actions.
+import {
+  updateActive
+} from '../../../store/raveStream/Actions';
 
 // Components.
 import StyledButton from '../../elements/buttons/StyledButton';
@@ -38,6 +49,7 @@ import { AnalyticsContextProps } from '../../../components/analytics/Analytics.i
 import {
   StreamVideoControllerProps
 } from './StreamVideoController.interface';
+import { RaveStream } from '../RaveStream.interface';
 import { Review } from '../../review/Review.interface';
 
 /**
@@ -137,10 +149,9 @@ const StreamVideoController: React.FC<StreamVideoControllerProps> = (props: Stre
   // Create a page viewed state to avoid duplicate views.
   const [pageViewed, setPageViewed] = React.useState<boolean>(false);
 
-  const [activeIndex, setActiveIndex] = React.useState<number>(
-    props.startingIndex);
-
   const [showOverlay, setShowOverlay] = React.useState<boolean>(true);
+
+  const activeIndex: number = props.activeIndex || 0;
 
   /**
    * Handles moving to the next video.
@@ -148,13 +159,29 @@ const StreamVideoController: React.FC<StreamVideoControllerProps> = (props: Stre
   const handleNext: (
   ) => void = (
   ): void => {
-    setActiveIndex(activeIndex + 1);
+    if (props.updateActiveIndex) {
+      props.updateActiveIndex(activeIndex + 1);
+    }
   }
 
   const handlePrevious: (
   ) => void = (
   ): void => {
-    setActiveIndex(activeIndex - 1);
+    if (props.updateActiveIndex) {
+      props.updateActiveIndex(activeIndex - 1);
+    }
+  }
+
+  const handleShowProduct: (
+  ) => void = (
+  ): void => {
+    props.displayChange(SwipeView.PRODUCT);
+  }
+
+  const handleShowReview: (
+  ) => void = (
+  ): void => {
+    props.displayChange(SwipeView.REVIEW);
   }
 
   return (
@@ -163,30 +190,64 @@ const StreamVideoController: React.FC<StreamVideoControllerProps> = (props: Stre
       container
       style={{top: `${setSwipePosition(props.showing)}`}}
     >
-      <Grid item xs={12} className={clsx(classes.item)}>
-        <StreamVideoOverlay
-          next={handleNext}
-          previous={handlePrevious}
-          review={props.reviews[activeIndex]}
-          show={showOverlay}
-        />
-        {props.reviews.length > 0 &&
-          <React.Fragment>
-            {props.reviews.map((review: Review, index: number) => (
-              <React.Fragment>
-                {index > activeIndex - 2 && index < activeIndex + 2 &&
-                  <StreamVideo
-                    positioning={setVideoPosition(activeIndex)(index)}
-                    review={{...review}}
-                  />
-                }
-              </React.Fragment>
-            ))}
-          </React.Fragment>
-        }
-      </Grid>
+      {props.raveStream &&
+        <Grid item xs={12} className={clsx(classes.item)}>
+          <StreamVideoOverlay
+            down={handleShowProduct}
+            next={handleNext}
+            previous={handlePrevious}
+            show={showOverlay}
+            up={handleShowReview}
+          />
+          {props.raveStream.reviews.length > 0 &&
+            <React.Fragment>
+              {props.raveStream.reviews.map((review: Review, index: number) => (
+                <React.Fragment key={review._id}>
+                  {index > activeIndex - 2 && index < activeIndex + 2 &&
+                    <StreamVideo
+                      positioning={setVideoPosition(activeIndex)(index)}
+                      review={review}
+                    />
+                  }
+                </React.Fragment>
+              ))}
+            </React.Fragment>
+          }
+        </Grid>
+      }
     </Grid>
   );
 }
 
-export default StreamVideoController;
+/**
+ * Map dispatch actions to properties on the stream.
+ *
+ * @param { Dispatch<AnyAction> } dispatch - the dispatch function to be mapped.
+ */
+const mapDispatchToProps = (dispatch: Dispatch<AnyAction>) =>
+  bindActionCreators(
+    {
+      updateActiveIndex: updateActive,
+    },
+    dispatch
+  );
+
+/**
+ * Mapping the state updates to the properties from redux.
+ */
+const mapStateToProps = (state: any, ownProps: StreamVideoControllerProps) => {
+  // Retrieve the product stream from the active properties.
+  const raveStream: RaveStream = state.raveStream ? state.raveStream.raveStream : undefined,
+        activeIndex: number = state.raveStream ? state.raveStream.active : 0;
+
+  return {
+    ...ownProps,
+    activeIndex,
+    raveStream
+  };
+};
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps,
+)(StreamVideoController);

@@ -36,12 +36,34 @@ export default combineReducers<RaveStreamStore, RaveStreamAction>({
    * @return RaveStream
    */
   active: (
-    raveStream: RaveStream = JSON.parse(JSON.stringify(emptyStream)),
+    index: number = 0,
     action: RaveStreamAction
   ) => {
     // Update the configuration based on the redux action triggered.
     switch (action.type) {
       case RaveStreamVerb.UPDATE_ACTIVE:
+        // Append the new value to the list of watched items.
+        return action.payload;
+      default:
+        return index;
+    }
+  },
+
+  /**
+   * Define the loaded rave stream reducer.
+   *
+   * @param { RaveStream } state - the current rave stream.
+   * @param { RaveStreamAction } action - the filters action.
+   *
+   * @return RaveStream
+   */
+  raveStream: (
+    raveStream: RaveStream = JSON.parse(JSON.stringify(emptyStream)),
+    action: RaveStreamAction
+  ) => {
+    // Update the configuration based on the redux action triggered.
+    switch (action.type) {
+      case RaveStreamVerb.UPDATE:
         // Append the new value to the list of watched items.
         return action.payload;
       default:

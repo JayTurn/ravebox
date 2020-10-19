@@ -70,6 +70,7 @@ export function useRetrieveRaveStreamByURL(
     existing,
     requested,
     setActiveRaveStream,
+    setActiveRave,
   } = {...params};
 
   let path: string = buildRaveStreamPath({...requested});
@@ -91,8 +92,6 @@ export function useRetrieveRaveStreamByURL(
   const [product, setProduct] = React.useState<Product>(retrieveProductFromStream(existing))
 
   const [requestedPath, setRequestedPath] = React.useState<string>(path);
-
-  const [activeIndex, setActiveIndex] = React.useState<number>(0);
 
   /**
    * Handle state updates to the requested path.
@@ -144,7 +143,6 @@ export function useRetrieveRaveStreamByURL(
   }, [retrieved]);
 
   return {
-    activeIndex,
     raveStream,
     product,
     raveStreamStatus: ViewStatus(retrieved)
