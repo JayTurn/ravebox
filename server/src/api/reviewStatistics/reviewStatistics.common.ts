@@ -7,6 +7,12 @@
 import * as Jwt from 'jsonwebtoken';
 import EnvConfig from '../../config/environment/environmentBaseConfig';
 
+// Interfaces.
+import {
+  ReviewStatisticsDetails,
+  ReviewStatisticsDocument
+} from './reviewStatistics.interface';
+
 /**
  * ReviewStatisticsCommon class.
  */
@@ -47,4 +53,35 @@ export default class ReviewStatisticsCommon {
     }
     return allowed;
   }
+
+  /**
+   * Retrieve the review statistics details from a document.
+   *
+   * @param { ReviewStatisticsDocument | ReviewStatisticsDetails } product - the product object.
+   *
+   * @return ReviewStatisticsDetails
+   */
+  static RetrieveDetailsFromDocument(
+    reviewStatisticsDocument: ReviewStatisticsDetails | ReviewStatisticsDocument
+  ): ReviewStatisticsDetails {
+    if (!ReviewStatisticsCommon.isDocument(reviewStatisticsDocument)) {
+      return reviewStatisticsDocument as ReviewStatisticsDetails;
+    }
+
+    return (reviewStatisticsDocument as ReviewStatisticsDocument).details;
+  }
+
+  /**
+   * Checks if the review statistics is a document or details.
+   */
+  static isDocument(
+    reviewStatistics: ReviewStatisticsDetails | ReviewStatisticsDocument
+  ): reviewStatistics is ReviewStatisticsDocument {
+    if ((reviewStatistics as ReviewStatisticsDocument).details) {
+      return true;
+    } else {
+      return false;
+    }
+  }
 }
+

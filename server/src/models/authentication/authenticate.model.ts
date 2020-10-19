@@ -22,7 +22,7 @@ import {
   AuthenticatedUserRequest,
   UserAttachedRequest
 } from './authentication.interface';
-import { UserDetailsDocument } from '../../api/user/user.interface';
+import { UserDocument } from '../../api/user/user.interface';
 import { ResponseObject } from '../database/connect.interface';
 
 const JWT = 'ravebox';
@@ -186,7 +186,7 @@ export default class Authenticate {
 
         // Find the User by the id provided in the request.
         User.findById(request.user._id)
-          .then((user: UserDetailsDocument) => {
+          .then((user: UserDocument) => {
             // Define the token variable.
             let token;
 
@@ -276,7 +276,7 @@ export default class Authenticate {
       _id: request.auth._id,
       role: 'admin'
     })
-    .then((userDocument: UserDetailsDocument) => {
+    .then((userDocument: UserDocument) => {
       if (userDocument) {
         next();
       } else {
@@ -322,7 +322,7 @@ export default class Authenticate {
   static AttachUser(request: AuthenticatedUserRequest, response: Response, next: NextFunction): void {
     // Find the User by the id provided in the request.
     User.findById(request.auth._id)
-      .then((user: UserDetailsDocument) => {
+      .then((user: UserDocument) => {
         // Define the token variable.
         let token;
         // If the user wasn't found.

@@ -38,11 +38,11 @@ import {
 import {
   PrivateUserDetails,
   SignupDetails,
-  UserDetailsDocument
+  UserDocument
 } from '../user/user.interface';
 import {
   ProductDetails,
-  ProductDetailsDocument
+  ProductDocument
 } from '../product/product.interface';
 import {
   ProductSearchSort,
@@ -52,7 +52,7 @@ import {
 import { ResponseObject } from '../../models/database/connect.interface';
 import {
   TagDetails,
-  TagDetailsDocument
+  TagDocument
 } from '../tag/tag.interface';
 import {
   //UserStatistics as UserStats,
@@ -159,7 +159,7 @@ export default class AdminController {
       path: 'statistics',
       model: 'UserStatistic'
     })
-    .then((userDocuments: Array<UserDetailsDocument>) => {
+    .then((userDocuments: Array<UserDocument>) => {
       const users: Array<PrivateUserDetails> = [];
 
       if (userDocuments.length > 0) {
@@ -239,7 +239,7 @@ export default class AdminController {
     // Create a new user from the request data.
     const newUserStatistics: UserStatisticsDocument = new UserStatistics(),
           newFollow: FollowDocument = new Follow(),
-          newUser: UserDetailsDocument = new User({
+          newUser: UserDocument = new User({
             ...userDetails,
             statistics: newUserStatistics._id,
             following: newFollow._id
@@ -260,7 +260,7 @@ export default class AdminController {
     User.findOne({
       'handle': newUser.handle
     })
-    .then((user: UserDetailsDocument) => {
+    .then((user: UserDocument) => {
       // If a user with that handle already exists exit.
       if (user) {
         // Set the response object.
@@ -277,7 +277,7 @@ export default class AdminController {
 
       // Save the new user entry.
       newUser.save()
-        .then((user: UserDetailsDocument) => {
+        .then((user: UserDocument) => {
 
           // Save the user statistics and following.
           newUserStatistics.save();
@@ -349,7 +349,7 @@ export default class AdminController {
           path: 'statistics',
           model: 'UserStatistic'
         })
-        .then((userDetails: UserDetailsDocument) => {
+        .then((userDetails: UserDocument) => {
           if (!userDetails) {
             throw new Error(`User ID ${id} not found for impersonation`);
           }
@@ -391,7 +391,7 @@ export default class AdminController {
         path: 'statistics',
         model: 'UserStatistic'
       })
-      .then((userDetails: UserDetailsDocument) => {
+      .then((userDetails: UserDocument) => {
         if (!userDetails) {
           throw new Error(`User ID ${id} not found for impersonation`);
         }
@@ -403,7 +403,7 @@ export default class AdminController {
         Authenticate.removeAuthentication(response);
 
         // Sign the token for the login request.
-        const token: string = Authenticate.signToken(userDetails._id, userDetails.role[0]);
+        const token: string = Authenticate.signToken(userDetails._id.toString(), userDetails.role[0]);
         // Build the successful response, using the private user profile.
         const responseObject: ResponseObject = Connect.setResponse({
           data: {
@@ -461,7 +461,7 @@ export default class AdminController {
       model: 'Tag'
     })
     .sort(sort)
-    .then((productDocuments: Array<ProductDetailsDocument>) => {
+    .then((productDocuments: Array<ProductDocument>) => {
       const products: Array<ProductDetails> = [];
 
       if (productDocuments.length > 0) {
@@ -560,7 +560,7 @@ export default class AdminController {
       }]
     })
     .sort(sort)
-    .then((tagDocuments: Array<TagDetailsDocument>) => {
+    .then((tagDocuments: Array<TagDocument>) => {
       const tags: Array<TagDetails> = TagCommon.LoadLinks(tagDocuments);
 
       // Set the response object.

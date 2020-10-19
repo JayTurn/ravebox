@@ -17,15 +17,15 @@ import { Workflow } from '../../shared/enumerators/workflow.enum';
 import {
   Category,
   ProductDetails,
-  ProductDetailsDocument
+  ProductDocument
 } from '../product/product.interface';
 import {
-  ReviewStatistics,
+  ReviewStatisticsDetails,
   ReviewStatisticsDocument
 } from '../reviewStatistics/reviewStatistics.interface';
 import {
   PublicUserDetails,
-  UserDetailsDocument
+  UserDocument
 } from '../user/user.interface';
 import {
   PlaylistEndpoints,
@@ -42,7 +42,7 @@ export interface ReviewDocument extends Mongoose.Document {
   details: ReviewDetails;
   links: Array<LinkDetails>;
   privateDetails: PrivateReviewDetails;
-  product: ProductDetailsDocument;
+  product: ProductDocument;
   published: Workflow;
   recommended: Recommended;
   sponsored: Array<string>;
@@ -50,8 +50,9 @@ export interface ReviewDocument extends Mongoose.Document {
   thumbnail: string;
   thumbnails: Array<string>;
   title: string;
+  titleRaw: string;
   url: string;
-  user: UserDetailsDocument;
+  user: UserDocument;
   video: AWSVideo;
   videoType: VideoType;
   youtube: YouTubeVideo;
@@ -61,21 +62,22 @@ export interface ReviewDocument extends Mongoose.Document {
  * Review interface.
  */
 export interface ReviewDetails {
+  _id: Mongoose.Types.ObjectId;
   created: Date;
   description?: string;
   endTime: number;
-  _id: string;
   links?: Array<LinkDetails>;
   product: ProductDetails;
   recommended: Recommended;
   startTime: number;
-  statistics?: ReviewStatistics;
+  statistics?: ReviewStatisticsDetails;
   sponsored: boolean;
   title: string;
+  url: string;
   user: PublicUserDetails;
   videoType: VideoType;
   videoURL: string;
-  thumbnailURL: string;
+  thumbnail: string;
 }
 
 /**

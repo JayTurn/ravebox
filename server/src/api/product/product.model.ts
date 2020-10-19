@@ -5,14 +5,18 @@
 
 // Modules.
 import * as Mongoose from 'mongoose';
-import Brand from '../brand/brand.model';
+import BrandCommon from '../brand/brand.common';
+import ProductCommon from './product.common';
+import TagCommon from '../tag/tag.common';
 
 // Interfaces.
 import {
   BrandDetails
 } from '../brand/brand.interface';
 import {
-  ProductDetailsDocument
+  ProductDetails,
+  ProductDocument,
+  ProductImage
 } from './product.interface';
 
 // Get the Mongoose Shema method.
@@ -71,54 +75,56 @@ const ProductSchema = new Schema({
 ProductSchema
   .virtual('details')
   .get(function() {
-    return {
-      '_id': this._id,
-      'brand': (this.brand && this.brand.details) ?
-        this.brand.details : this.brand,
-      'created': this.created,
-      'description': this.description,
-      'images': this.images,
-      'logo': this.logo,
-      'name': this.name,
-      'productType': (this.productType && this.productType.light) ?
-        this.productType.light : this.productType,
-      'url': this.url,
-      'website': this.website
+
+    // Load the brand document.
+    const brand: BrandDetails = BrandCommon.RetrieveDetailsFromDocuments(this.brand);
+
+    // Define the base product details and extend with the
+    // optional properties if they exist.
+    const product: ProductDetails = {
+      _id: this._id as Mongoose.Types.ObjectId,
+      brand: brand,
+      name: this.name,
+      url: this.url,
     };
+
+    if (this.competitors) {
+      product.competitors = this.competitors as Array<Mongoose.Types.ObjectId>;
+    }
+
+    if (this.description) {
+      product.description = this.description as string;
+    }
+
+    if (this.images) {
+      product.images = this.images as Array<ProductImage>;
+    }
+
+    if (this.productType && this.productType.name) {
+      product.productType = TagCommon.RetrieveDetailsFromDocuments(
+        this.productType);
+    }
+
+    if (this.website) {
+      product.website = this.website as string;
+    }
+
+    return product;
   });
 
 /**
  * Pre-Save hook to set a custom url before saving.
  */
 ProductSchema
-  .pre<ProductDetailsDocument>('save', function(next: Mongoose.HookNextFunction) {
+  .pre<ProductDocument>('save', async function(next: Mongoose.HookNextFunction) {
 
-    Brand.findOne(this.brand)
-      .lean()
-      .then((brandDetails: BrandDetails) => {
-        if (!brandDetails) {
-          throw new Error('Brand not found');
-        }
+    await ProductCommon.UpdateDocumentURL(this);
 
-        const name: string = this.name.split(' ').join('_')
-                .split('&').join('and').toLowerCase();
-
-        const id = this._id.toString();
-
-        const unique: string = id.substring(id.length - 5, id.length - 1);
-
-        this.url = `${brandDetails.url}/${name}`;
-
-        next();
-      })
-      .catch((error: Error) => {
-        throw error;
-      })
-
+    next();
   });
 
 // Declare the product mongoose model.
-const Product: Mongoose.Model<ProductDetailsDocument> = Mongoose.model('Product', ProductSchema);
+const Product: Mongoose.Model<ProductDocument> = Mongoose.model('Product', ProductSchema);
 
 // Declare the User mongoose model.
 export default Product;

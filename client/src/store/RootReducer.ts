@@ -13,6 +13,7 @@ import ChannelReducer from './channel/Reducer';
 import DiscoverReducer from './discover/Reducer';
 import NavigationReducer from './navigation/Reducer';
 import ProductReducer from './product/Reducer';
+import RaveStreamReducer from './raveStream/Reducer';
 import ReviewReducer from './review/Reducer';
 import UserReducer from './user/Reducer';
 import XsrfReducer from './xsrf/Reducer';
@@ -26,6 +27,7 @@ const RootReducer = (history: H.History) =>
     discover: DiscoverReducer,
     navigation: NavigationReducer,
     product: ProductReducer,
+    raveStream: RaveStreamReducer,
     review: ReviewReducer,
     user: UserReducer,
     xsrf: XsrfReducer

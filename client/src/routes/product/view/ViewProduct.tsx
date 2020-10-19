@@ -48,6 +48,7 @@ import {
   ReviewListType
 } from '../../../components/review/listByQuery/ListByQuery.enum';
 import { ScreenContext } from '../../../components/review/Review.enum';
+import { ViewState } from '../../../utils/display/view/ViewState.enum';
 
 // Hooks.
 import { useAnalytics } from '../../../components/analytics/Analytics.provider';
@@ -79,7 +80,6 @@ import { ViewProductProps } from './ViewProduct.interface';
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     container: {
-      flexWrap: 'nowrap'
     },
     listContainer: {
       padding: 0
@@ -129,13 +129,11 @@ const frontloadViewProduct = async (props: ViewProductProps) => {
   // Format the api request path.
   const {
     brand,
-    category,
-    productName,
-    subCategory
+    productName
   } = {...props.match.params};
 
   // If we don't have a product name, redirect.
-  const path: string = `${category}/${subCategory}/${brand}/${productName}`;
+  const path: string = `${brand}/${productName}`;
 
   await API.requestAPI<ProductResponse>(`product/view/${path}`, {
     method: RequestType.GET
@@ -143,8 +141,7 @@ const frontloadViewProduct = async (props: ViewProductProps) => {
   .then((response: ProductResponse) => {
     if (props.updateActive) {
       props.updateActive({
-        product: response.product,
-        reviews: response.reviews
+        product: response.product
       });
     }
   })
@@ -177,18 +174,6 @@ const ViewProduct: React.FC<ViewProductProps> = (props: ViewProductProps) => {
     requested: props.match.params
   });
 
-  /*
-  const {
-    queries,
-    listStatus 
-  } = useRetrieveListByQuery({
-    ignoreProductIds: product ? [product._id] : undefined,
-    listType: ReviewListType.CATEGORY,
-    queries: setCategoryQueries(product.categories),
-    update: props.updateListByCategory
-  });
-  */
-
   // Create a page viewed state to avoid duplicate views.
   const [pageViewed, setPageViewed] = React.useState<boolean>(false);
 
@@ -199,15 +184,6 @@ const ViewProduct: React.FC<ViewProductProps> = (props: ViewProductProps) => {
 
     // Track the category list page view.
     if (!pageViewed && product._id) {
-
-      /*
-      const category: string = product.categories.length > 0
-              ? product.categories[0].key
-              : '',
-            subCategory: string = product.categories.length > 1
-              ? product.categories[1].key
-              : '';
-      */
 
       analytics.trackPageView({
         properties: {
@@ -236,52 +212,21 @@ const ViewProduct: React.FC<ViewProductProps> = (props: ViewProductProps) => {
     <Grid
       className={clsx(classes.container)}
       container
-      direction='column'
     >
-      {product._id &&
-        <React.Fragment>
-          <PageTitle title={`${product.brand} ${product.name} reviews`} />
-          <Helmet>
-            <title>{product.brand} {product.name} reviews - Ravebox</title>
-            <meta name='description' content={`Watch ${product.brand} ${product.name} video reviews created and shared by users on Ravebox.`} />
-            <link rel='canonical' href={`https://ravebox.io/product/${product.url}`} />
-          </Helmet>
-        </React.Fragment>
-      }
-      {reviews && reviews.length > 0 &&
-        <Grid item xs={12} className={clsx(
-            classes.listContainer,
-            {
-              [classes.listContainerLarge]: largeScreen
-            }
-          )}
-        >
-          <ReviewList
-            context={ScreenContext.PRODUCT}
-            reviews={reviews}
-            retrievalStatus={RetrievalStatus.SUCCESS} 
-          />
-        </Grid>
-      }
-      {/*
+      {productStatus === ViewState.FOUND &&
         <Grid item xs={12}>
-          {product.categories[0] && props.categoryGroup[product.categories[0].key] &&
-            <ListByQuery
-              context={ScreenContext.PRODUCT_CATEGORY_LIST}
-              listType={ReviewListType.CATEGORY}
-              presentationType={largeScreen ? PresentationType.GRID : PresentationType.SCROLLABLE}
-              reviews={props.categoryGroup[product.categories[0].key]}
-              title={
-                <ListTitle
-                  presentationType={largeScreen ? PresentationType.GRID : PresentationType.SCROLLABLE} 
-                  title={`More ${product.categories[0].label} raves`}
-                  url={`/categories/${product.categories[0].key}`}
-                />
-              }
-            />
+          {product._id &&
+            <React.Fragment>
+              <PageTitle title={`${product.brand.name} ${product.name}`} />
+              <Helmet>
+                <title>{product.brand.name} {product.name} - Ravebox</title>
+                <meta name='description' content={`Discover reviews for the ${product.brand.name} ${product.name} created and shared by users on Ravebox.`} />
+                <link rel='canonical' href={`https://ravebox.io/product/${product.url}`} />
+              </Helmet>
+            </React.Fragment>
           }
         </Grid>
-      */}
+      }
     </Grid>
   );
 }

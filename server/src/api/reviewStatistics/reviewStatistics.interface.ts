@@ -17,7 +17,7 @@ import { UserType } from '../user/user.enum';
  * Review statistics document model interface.
  */
 export interface ReviewStatisticsDocument extends Mongoose.Document {
-  details: ReviewStatistics;
+  details: ReviewStatisticsDetails;
   ratings: ReviewRatings;
   review: string;
   score: number;
@@ -27,7 +27,7 @@ export interface ReviewStatisticsDocument extends Mongoose.Document {
 /**
  * Review stastics model.
  */
-export interface ReviewStatistics {
+export interface ReviewStatisticsDetails {
   views: number;
   ratings: ReviewRatings;
 }

@@ -48,6 +48,7 @@ ReviewStatisticsSchema
         'down': this.ratings ? this.ratings.down : 0,
         'up': this.ratings ? this.ratings.up : 0
       },
+      'score': this.score ? this.score : 0,
       'views': this.views
     };
   });

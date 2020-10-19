@@ -12,7 +12,7 @@ import { TagAssociation } from './tag.enum';
 /**
  * Mongoose Tag document.
  */
-export interface TagDetailsDocument extends Mongoose.Document {
+export interface TagDocument extends Mongoose.Document {
   _id: string;
   association: TagAssociation;
   details: TagDetails;
@@ -21,7 +21,7 @@ export interface TagDetailsDocument extends Mongoose.Document {
   light: TagDetailsLight;
   namePartials: Array<string>;
   context: string;
-  linkFrom: Array<TagDetailsDocument>;
+  linkFrom: Array<TagDocument>;
 }
 
 /**

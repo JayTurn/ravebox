@@ -7,6 +7,7 @@ import Authenticate from '../../models/authentication/authenticate.model';
 import Connect from '../../models/database/connect.model';
 import * as Jwt from 'jsonwebtoken';
 import Logging from '../../shared/logging/Logging.model';
+import * as Mongoose from 'mongoose';
 import {
   Request,
   Response,
@@ -147,7 +148,7 @@ export default class ReviewStatisticsController {
 
     if (request.userStatistics) {
       currentReview = UserStatisticsCommon.RetriveReviewRating(
-        id, request.userStatistics.reviews || []);
+        Mongoose.Types.ObjectId(id), request.userStatistics.reviews || []);
     }
 
     if (typeof currentReview === 'undefined') {
@@ -252,7 +253,10 @@ export default class ReviewStatisticsController {
     .then(() => {
       // If we have a user, increment their watch statistics.
       if (request.auth) {
-        UserStatisticsCommon.AddReviewWatchEvent(reviewId, userId);
+        UserStatisticsCommon.AddReviewWatchEvent(
+          Mongoose.Types.ObjectId(reviewId),
+          Mongoose.Types.ObjectId(userId)
+        );
       }
 
       // Set the response object.
@@ -331,7 +335,11 @@ export default class ReviewStatisticsController {
       const ratings: ReviewRatings = {...statistics.ratings};
 
       if (request.userStatistics) {
-        const userRating: RatingOptions | undefined = UserStatisticsCommon.RetriveReviewRating(reviewId, request.userStatistics.reviews || []);
+        const userRating: RatingOptions | undefined = UserStatisticsCommon
+          .RetriveReviewRating(
+            Mongoose.Types.ObjectId(reviewId), 
+            request.userStatistics.reviews || []
+          );
 
         if (typeof userRating !== 'undefined') {
           ratings.userRating = userRating;

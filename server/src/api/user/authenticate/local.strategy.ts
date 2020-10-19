@@ -23,7 +23,7 @@ import { LogLevel } from '../../../shared/logging/Logging.enum';
 
 // Interfaces.
 import { ResponseObject } from '../../../models/database/connect.interface';
-import { UserDetailsDocument } from '../user.interface';
+import { UserDocument } from '../user.interface';
 
 /**
  * Defines the LocalController Class.
@@ -123,7 +123,7 @@ export default class LocalController {
     User.findOne({
       email: email.toLowerCase()
     })
-    .then((user: UserDetailsDocument) => {
+    .then((user: UserDocument) => {
       // If we haven't found the user.
       if (!user) {
         // Return a false user to provide error handling.

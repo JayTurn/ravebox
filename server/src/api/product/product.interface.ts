@@ -7,13 +7,13 @@
 import * as Mongoose from 'mongoose';
 
 // Interfaces.
+import { BrandDetails } from '../brand/brand.interface';
 import { TagDetails } from '../tag/tag.interface';
 
 /**
  * Product interface.
  */
-export interface ProductDetailsDocument extends Mongoose.Document {
-  _id: string;
+export interface ProductDocument extends Mongoose.Document {
   added?: Date;
   brand: string;
   brandPartials?: Array<string>;
@@ -27,6 +27,7 @@ export interface ProductDetailsDocument extends Mongoose.Document {
   details: ProductDetails;
   images: Array<ProductImage>;
   name: string;
+  nameRaw: string;
   namePartials?: Array<string>;
   productType: string;
   reviews?: Array<ProductReview>;
@@ -37,19 +38,17 @@ export interface ProductDetailsDocument extends Mongoose.Document {
 }
 
 export interface ProductDetails {
-  _id?: string;
-  brand: string;
-  category: string;
-  competitors: Array<string>;
-  complementary: Array<string>;
-  description: string;
-  images: Array<ProductImage>;
+  _id: Mongoose.Types.ObjectId;
+  brand: BrandDetails;
+  competitors?: Array<Mongoose.Types.ObjectId>;
+  complementary?: Array<Mongoose.Types.ObjectId>;
+  description?: string;
+  images?: Array<ProductImage>;
   name: string;
-  namePartials?: Array<string>;
-  productType: TagDetails;
-  tags: Array<TagDetails>;
+  productType?: TagDetails;
+  tags?: Array<TagDetails>;
   url: string;
-  website: string;
+  website?: string;
 }
 
 export interface ProductReview {

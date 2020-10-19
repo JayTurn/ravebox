@@ -38,10 +38,10 @@ import { LogLevel } from '../../shared/logging/Logging.enum';
 //} from '../../models/authentication/authentication.interface';
 import {
   InvitationDetails,
-  InvitationDetailsDocument
+  InvitationDocument
 } from './invitation.interface';
 import { ResponseObject } from '../../models/database/connect.interface';
-import { UserDetailsDocument } from '../user/user.interface';
+import { UserDocument } from '../user/user.interface';
 
 /**
  * Defines the InvitationController Class.
@@ -106,7 +106,7 @@ export default class InvitationController {
       return next();
     }
 
-    const invite: InvitationDetailsDocument = new Invitation({
+    const invite: InvitationDocument = new Invitation({
       email: email,
       existingChannel: existingChannel
     });
@@ -117,7 +117,7 @@ export default class InvitationController {
       email: email
     })
     .lean()
-    .then((existingUser: UserDetailsDocument) => {
+    .then((existingUser: UserDocument) => {
 
       // If the user exists, return a notification message.
       if (existingUser) {
@@ -162,7 +162,7 @@ export default class InvitationController {
         }
 
         invite.save()
-          .then((invitation: InvitationDetailsDocument) => {
+          .then((invitation: InvitationDocument) => {
             // Return the successful response.
             const responseObject: ResponseObject = Connect.setResponse({
               data: {

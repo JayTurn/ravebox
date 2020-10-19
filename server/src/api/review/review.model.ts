@@ -15,14 +15,22 @@ import { Workflow } from '../../shared/enumerators/workflow.enum';
 
 // Interfaces.
 import {
+  ReviewDetails,
   ReviewDocument
 } from './review.interface';
-import { ProductDetailsDocument } from '../product/product.interface';
+import {
+  ProductDetails
+} from '../product/product.interface';
+import {
+  PublicUserDetails
+} from '../user/user.interface';
 
 // Models.
-import Product from '../product/product.model';
+import ProductCommon from '../product/product.common';
 import ReviewCommon from './review.common';
- 
+import ReviewStatisticsCommon from '../reviewStatistics/reviewStatistics.common';
+import UserCommon from '../user/user.common';
+
 // Get the Mongoose Shema method.
 const Schema = Mongoose.Schema;
 
@@ -66,6 +74,9 @@ const ReviewSchema = new Schema<ReviewDocument>({
   title: {
     type: String
   },
+  titleRaw: {
+    type: String
+  },
   url: {
     type: String,
     index: true
@@ -90,31 +101,22 @@ const ReviewSchema = new Schema<ReviewDocument>({
  * Pre-Save hook to set a custom url before saving.
  */
 ReviewSchema
-  .pre<ReviewDocument>('save', function(next: Mongoose.HookNextFunction) {
-    let _this: ReviewDocument;
+  .pre<ReviewDocument>('save', async function(next: Mongoose.HookNextFunction) {
 
-    if (this.product) {
-      _this = this;
+    await ReviewCommon.UpdateReviewURL(this);
 
-      // Load the related prouct for this review.
-      Product.findById(this.product) 
-        .then((product: ProductDetailsDocument) => {
+    next();
+  });
 
-          const name: string = _this.title.split(' ').join('_')
-                  .split('&').join('and').toLowerCase();
+/**
+ * Pre-FindOneAndUpdate hook to set a custom url before updating.
+ */
+ReviewSchema
+  .pre<ReviewDocument>('updateOne', async function(next: Mongoose.HookNextFunction) {
 
-          _this.url = `${this.product.url}/${name}`;
+    await ReviewCommon.UpdateReviewURL(this);
 
-          next();
-        })
-        .catch((error: Error) => {
-          console.log(error);
-          next();
-        });
-    } else {
-      throw new Error(`Product id doesn't exist`);
-    }
-
+    next();
   });
 
 // Define a structure to be used for public responses.
@@ -147,23 +149,43 @@ ReviewSchema
       }
     }
 
-    return {
-      '_id': this._id,
-      'created': this.created,
-      'description': this.description,
-      'endTime': endTime,
-      'links': this.links,
-      'product': this.product,
-      'recommended': this.recommended,
-      'sponsored': this.sponsored,
-      'startTime': startTime,
-      'thumbnail': thumbnailURL,
-      'title': this.title,
-      'url': this.url,
-      'user': this.user,
-      'videoType': this.videoType,
-      'videoURL': videoURL
-    };
+    // Load the product details.
+    const product: ProductDetails = ProductCommon
+      .RetrieveDetailsFromDocument(this.product);
+
+    // Load the user details.
+    const user: PublicUserDetails = UserCommon.RetrievePublicDetailsFromDocument(this.user);
+
+    const review: ReviewDetails = {
+      _id: this._id,
+      created: this.created,
+      endTime: endTime,
+      product: product,
+      recommended: this.recommended,
+      sponsored: this.sponsored,
+      startTime: startTime,
+      thumbnail: thumbnailURL,
+      title: this.title,
+      url: this.url,
+      user: user,
+      videoType: this.videoType,
+      videoURL: videoURL
+    }
+
+    if (this.description) {
+      review.description = this.description;
+    }
+
+    if (this.links) {
+      review.links = this.links;
+    }
+    if (this.statistics && this.review) {
+      // Load the review statistics details.
+      review.statistics = ReviewStatisticsCommon
+        .RetrieveDetailsFromDocument(this.statistics);
+    }
+
+    return review;
   });
 
 // Define a structure to be used for private reviews.

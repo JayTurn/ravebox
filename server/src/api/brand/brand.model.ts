@@ -8,8 +8,11 @@ import * as Mongoose from 'mongoose';
 
 // Interfaces.
 import {
-  BrandDetailsDocument
+  BrandDocument
 } from './brand.interface';
+
+// Models.
+import BrandCommon from './brand.common';
 
 // Get the Mongoose Shema method.
 const Schema = Mongoose.Schema;
@@ -31,6 +34,9 @@ const BrandSchema = new Schema({
     type: Array,
     default: [],
     index: true
+  },
+  nameRaw: {
+    type: String,
   },
   admins:  { 
     type: [Schema.Types.ObjectId],
@@ -58,21 +64,16 @@ BrandSchema
  * Pre-Save hook to set a custom url before saving.
  */
 BrandSchema
-  .pre<BrandDetailsDocument>('save', function(next: Mongoose.HookNextFunction) {
-    const brand: string = encodeURIComponent(this.name.split(' ').join('_')
-            .split('&').join('and').toLowerCase());
+  .pre<BrandDocument>('save', async function(next: Mongoose.HookNextFunction) {
 
-    const id = this._id.toString();
-
-    const unique: string = id.substring(id.length - 5, id.length - 1);
-
-    this.url = `/${brand}_${unique}`;
+    await BrandCommon.UpdateDocumentURL(this);
 
     next();
+
   });
 
 // Declare the brand mongoose model.
-const Brand: Mongoose.Model<BrandDetailsDocument> = Mongoose.model('Brand', BrandSchema);
+const Brand: Mongoose.Model<BrandDocument> = Mongoose.model('Brand', BrandSchema);
 
 // Declare the User mongoose model.
 export default Brand;

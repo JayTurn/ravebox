@@ -9,7 +9,7 @@ import * as Mongoose from 'mongoose';
 /**
  * Brand interface.
  */
-export interface BrandDetailsDocument extends Mongoose.Document {
+export interface BrandDocument extends Mongoose.Document {
   _id: string;
   created?: Date;
   description: string;
@@ -17,6 +17,7 @@ export interface BrandDetailsDocument extends Mongoose.Document {
   logo: string;
   name: string;
   namePartials?: Array<string>;
+  nameRaw: string;
   admins: Array<string>;
   url: string;
 }

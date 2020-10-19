@@ -14,7 +14,11 @@ import {
 } from '../../shared/notifications/Notifications.enum';
 
 // Interfaces.
-import { PrivateUserDetails } from './user.interface';
+import {
+  PrivateUserDetails,
+  PublicUserDetails,
+  UserDocument
+} from './user.interface';
 
 /**
  * UserCommon class.
@@ -112,5 +116,35 @@ export default class UserCommon {
   static GetPasswordResetToken(token: string): string | {[key: string]: any} {
     // Decode the JWT.
     return Jwt.decode(token);
+  }
+
+  /**
+   * Retrieve the public profile from a user document.
+   *
+   * @param { UserDocument | PublicUserProfile } user - the user object.
+   *
+   * @return PublicUserProfile
+   */
+  static RetrievePublicDetailsFromDocument(
+    userDocument: PublicUserDetails | UserDocument
+  ): PublicUserDetails {
+    if (!UserCommon.isDocument(userDocument)) {
+      return userDocument as PublicUserDetails;
+    }
+
+    return (userDocument as UserDocument).publicProfile;
+  }
+
+  /**
+   * Checks if the product is a document or details.
+   */
+  static isDocument(
+    user: PublicUserDetails | UserDocument
+  ): user is UserDocument {
+    if ((user as UserDocument).publicProfile) {
+      return true;
+    } else {
+      return false;
+    }
   }
 }
