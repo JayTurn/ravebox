@@ -15,6 +15,8 @@ import {
   withStyles
 } from '@material-ui/core/styles';
 import Grid from '@material-ui/core/Grid';
+import IconButton from '@material-ui/core/IconButton';
+import PlayArrowRoundedIcon from '@material-ui/icons/PlayArrowRounded';
 import Typography from '@material-ui/core/Typography';
 import * as React from 'react';
 import {
@@ -27,6 +29,7 @@ import {
 // Components.
 import StyledButton from '../../elements/buttons/StyledButton';
 import StreamNavigation from '../navigation/StreamNavigation';
+import StreamRate from '../rate/StreamRate';
 import StreamVideo from '../video/StreamVideo';
 import StreamUser from '../user/StreamUser';
 
@@ -58,14 +61,27 @@ const useStyles = makeStyles((theme: Theme) =>
       fontWeight: 800
     },
     container: {
-      backgroundColor: `rgba(0,0,0,0.25)`,
+      backgroundColor: `rgba(0,0,0,0.5)`,
       height: 'calc(100vh)',
       position: 'absolute',
+      transition: `opacity 300ms ease-in-out`,
       width: 'calc(100vw)',
       zIndex: 5
     },
     contentContainer: {
       height: '100%'
+    },
+    playButtonContainer: {
+      height: '100%'
+    },
+    playButton: {
+      backgroundColor: `rgba(255,255,255, .1)`,
+      color: `rgba(255,255,255,0.6)`,
+      padding: theme.spacing(1)
+    },
+    playIcon: {
+      height: 60,
+      width: 60
     },
     productTitle: {
       color: theme.palette.common.white,
@@ -73,7 +89,7 @@ const useStyles = makeStyles((theme: Theme) =>
       fontWeight: 600
     },
     productTitleContainer: {
-      padding: theme.spacing(1)
+      padding: theme.spacing(1, 2)
     },
     userContainer: {
       alignSelf: 'flex-end'
@@ -97,31 +113,80 @@ const StreamVideoOverlay: React.FC<StreamVideoOverlayProps> = (props: StreamVide
 
   const activeIndex: number = props.activeIndex || 0;
 
+  const [visible, setVisible] = React.useState<boolean>(props.show);
+
   /**
-   * Handles moving to the next video.
+   * Handles clicking the overlay to play and pause video.
    */
-  const handleNext: (
+  const handleClick: (
+    e: React.SyntheticEvent
+  ) => void = (
+    e: React.SyntheticEvent
+  ): void => {
+    setVisible(!visible);
+  }
+
+  /**
+   * Handles clicking the overlay to play and pause video.
+   */
+  const handlePlay: (
+    e: React.SyntheticEvent
+  ) => void = (
+    e: React.SyntheticEvent
+  ): void => {
+    e.stopPropagation();
+    if (!props.playing) {
+      props.play(true);
+      setVisible(false);
+    } else {
+      props.play(false);
+    }
+  }
+
+  /**
+   * Handles swipe events.
+   *
+   * @param { EventData } eventData - the swipe event data.
+   */
+  const handleSwipe: (
     eventData: EventData
   ) => void = (
     eventData: EventData
   ): void => {
-    console.log('Handle next hit');
+
+    props.play(false);
+    setVisible(false);
+
+    switch (eventData.dir) {
+      case 'Down':
+        props.down();
+        break;
+      case 'Left':
+        props.next();
+        break;
+      case 'Right':
+        props.previous();
+        break;
+      case 'Up':
+        props.up();
+        break;
+      default:
+    }
   }
 
   const swipeableHandlers: SwipeableHandlers = useSwipeable({
     delta: 10,
-    onSwipedDown: props.down,
-    onSwipedLeft: props.next,
-    onSwipedRight: props.previous,
-    onSwipedUp: props.up,
+    onSwiped: handleSwipe,
     preventDefaultTouchmoveEvent: true,
     trackMouse: true
   });
 
   return (
     <Box
-      className={clsx(classes.container)}
       {...swipeableHandlers}
+      className={clsx(classes.container)}
+      onClick={handleClick}
+      style={{opacity: visible ? 1 : 0}}
     >
       {props.raveStream && props.raveStream.reviews.length > 0 &&
         <Grid
@@ -147,10 +212,18 @@ const StreamVideoOverlay: React.FC<StreamVideoOverlayProps> = (props: StreamVide
             </Grid>
           </Grid>
           <Grid item xs={12}>
-            Mid section  
+            <Grid
+              alignItems='center'
+              className={clsx(classes.playButtonContainer)}
+              container 
+              justify='center'
+            >
+              <Grid item>
+              </Grid>
+            </Grid>
           </Grid>
           <Grid item xs={12} className={clsx(classes.userContainer)}>
-            <StreamUser />
+            <StreamUser play={handlePlay} playing={props.playing}/>
           </Grid>
         </Grid>
       }

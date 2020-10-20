@@ -17,6 +17,8 @@ export interface StreamVideoOverlayProps {
   activeIndex?: number;
   down: () => void;
   next: () => void;
+  play: (playState: boolean) => void;
+  playing: boolean;
   previous: () => void;
   raveStream?: RaveStream;
   review?: Review;

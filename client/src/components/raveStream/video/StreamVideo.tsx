@@ -4,8 +4,14 @@
  */
 
 // Modules.
+import {
+  AnyAction,
+  bindActionCreators,
+  Dispatch
+} from 'redux';
 import Box from '@material-ui/core/Box';
 import clsx from 'clsx';
+import { connect } from 'react-redux';
 import {
   createStyles,
   makeStyles,
@@ -18,6 +24,11 @@ import Player from 'react-player';
 import Typography from '@material-ui/core/Typography';
 import { TransitionGroup } from 'react-transition-group';
 import * as React from 'react';
+
+// Actions.
+import {
+  update
+} from '../../../store/video/Actions';
 
 // Enumerators.
 import { ViewState } from '../../../utils/display/view/ViewState.enum';
@@ -110,7 +121,7 @@ const StreamVideo: React.FC<StreamVideoProps> = (props: StreamVideoProps) => {
       forceHLS: true
     },
     muted: true,
-    playing: false,
+    playing: props.playing,
     playsinline: true,
     url: props.review.videoURL,
     volume: 1,
@@ -146,7 +157,16 @@ const StreamVideo: React.FC<StreamVideoProps> = (props: StreamVideoProps) => {
   ) => void = (
     state: VideoProgress 
   ): void => {
-    console.log(state);
+    console.log(props.review._id, state);
+    if (props.update) {
+      props.update({
+        _id: props.review._id,
+        loaded: state.loaded,
+        loadedSeconds: state.loadedSeconds,
+        played: state.played,
+        playedSeconds: state.playedSeconds
+      });
+    }
   }
 
   /**
@@ -160,11 +180,26 @@ const StreamVideo: React.FC<StreamVideoProps> = (props: StreamVideoProps) => {
       const current: Player | null = playerRef.current;
 
       if (current) {
-        //const pl: any = current.getInternalPlayer();
+        const pl: any = current.getInternalPlayer();
 
-        //pl.seekTo(props.review.startTime || 0, true);
+        if (pl && pl.seekTo) {
+          pl.seekTo(props.review.startTime || 0, true);
+        }
+        
+        if (props.update) {
+          // Reset the video progress.
+          props.update({
+            _id: props.review._id,
+            loaded: 0,
+            loadedSeconds: 0,
+            played: 0,
+            playedSeconds: 0,
+            videoDuration: current.getDuration()  
+          });
+        }
       }
     }
+
   }
 
   /**
@@ -175,6 +210,18 @@ const StreamVideo: React.FC<StreamVideoProps> = (props: StreamVideoProps) => {
   ): void => {
     console.log('Start video');
   }
+
+  /**
+   * Update the playing state.
+   */
+  React.useEffect(() => {
+    if (props.playing !== config.playing) {
+      setConfig({
+        ...config,
+        playing: props.playing
+      });
+    }
+  }, [props.playing, config]);
 
   return (
     <Box
@@ -190,6 +237,7 @@ const StreamVideo: React.FC<StreamVideoProps> = (props: StreamVideoProps) => {
           <Player
             {...config}
             progressInterval={5000}
+            onProgress={handleProgress}
             onReady={handleReady}
             onStart={handleStart}
             ref={playerRef}
@@ -200,4 +248,33 @@ const StreamVideo: React.FC<StreamVideoProps> = (props: StreamVideoProps) => {
   );
 }
 
-export default StreamVideo;
+/**
+ * Map dispatch actions to properties on the stream.
+ *
+ * @param { Dispatch<AnyAction> } dispatch - the dispatch function to be mapped.
+ */
+const mapDispatchToProps = (dispatch: Dispatch<AnyAction>) =>
+  bindActionCreators(
+    {
+      update: update,
+    },
+    dispatch
+  );
+
+/**
+ * Mapping the state updates to the properties from redux.
+ */
+const mapStateToProps = (state: any, ownProps: StreamVideoProps) => {
+  // Retrieve the video progress from the redux store.
+  const videoProgress: VideoProgress = state.video ? state.video.progress : undefined;
+
+  return {
+    ...ownProps,
+    videoProgress
+  };
+};
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(StreamVideo);

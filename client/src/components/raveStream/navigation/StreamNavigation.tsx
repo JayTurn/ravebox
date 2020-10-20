@@ -110,7 +110,7 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
     backgroundColor: theme.palette.primary.main,
     borderRadius: 16,
     flexWrap: 'nowrap',
-    padding: theme.spacing(0, 0.5)
+    padding: theme.spacing(0, 1)
   },
   searchContainer: {
     flexBasis: '62%',
@@ -248,7 +248,7 @@ const StreamNavigation: React.FC<StreamNavigationProps> = (props: StreamNavigati
           disableGutters={true}
           style={{minHeight: '50px'}}
         >
-          <SearchField toggleSearchField={toggleSearchField} />
+          <SearchField toggleSearchField={() => toggleSearchField} />
         </Toolbar>
       ) : (
         <Grid

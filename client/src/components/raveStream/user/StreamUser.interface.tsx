@@ -13,6 +13,8 @@ import { Review } from '../../review/Review.interface';
  * Properties for the stream user component.
  */
 export interface StreamUserProps {
+  play: (e: React.SyntheticEvent) => void;
+  playing: boolean;
   raveStream?: RaveStream;
   review?: Review;
   user?: PublicProfile;

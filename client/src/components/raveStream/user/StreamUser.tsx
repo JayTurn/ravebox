@@ -15,12 +15,24 @@ import {
   withStyles
 } from '@material-ui/core/styles';
 import Grid from '@material-ui/core/Grid';
+import IconButton from '@material-ui/core/IconButton';
+import PlayArrowRoundedIcon from '@material-ui/icons/PlayArrowRounded';
+import PauseRoundedIcon from '@material-ui/icons/PauseRounded';
 import Typography from '@material-ui/core/Typography';
 import * as React from 'react';
 
 // Components.
+import StreamRate from '../rate/StreamRate';
+import Share from '../../share/ShareButton';
+
+// Enumerators
+import {
+  ShareStyle,
+  ShareType
+} from '../../share/ShareButton.enum';
 
 // Interfaces.
+import { EventObject } from '../../analytics/Analytics.interface';
 import { PublicProfile } from '../../user/User.interface';
 import { RaveStream } from '../../raveStream/RaveStream.interface';
 import { Review } from '../../review/Review.interface';
@@ -28,17 +40,16 @@ import { StreamUserProps } from './StreamUser.interface';
 
 // Utilities.
 import { CountIdentifier } from '../../../utils/display/numeric/Numeric';
+import {
+  emptyReview,
+  formatReviewProperties
+} from '../../review/Review.common';
 
 /**
  * Create the theme styles to be used for the display.
  */
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
-    actionContainer: {
-      borderBottom: `1px solid ${theme.palette.common.white}`,
-      paddingBottom: theme.spacing(1),
-      marginBottom: theme.spacing(1)
-    },
     avatar: {
       border: `2px solid ${theme.palette.secondary.main}`,
       height: theme.spacing(5),
@@ -51,6 +62,10 @@ const useStyles = makeStyles((theme: Theme) =>
       height: theme.spacing(5),
       width: theme.spacing(5)
     },
+    bottomContainer: {
+      marginBottom: theme.spacing(1),
+      padding: theme.spacing(0, 1)
+    },
     container: {
       height: '100%',
       padding: theme.spacing(1)
@@ -59,13 +74,27 @@ const useStyles = makeStyles((theme: Theme) =>
       color: theme.palette.common.white,
       fontWeight: 600,
     },
+    playButton: {
+      borderRadius: 0,
+      color: theme.palette.common.white,
+      padding: 0
+    },
+    playIcon: {
+      fontSize: '3rem'
+    },
     statisticsText: {
       color: theme.palette.common.white,
       fontSize: '.7rem',
       textTransform: 'uppercase'
     },
+    topContainer: {
+      borderBottom: `1px solid ${theme.palette.common.white}`,
+      padding: theme.spacing(0, 1, 1),
+      marginBottom: theme.spacing(2)
+    },
     userDetailsContainer: {
-      marginLeft: theme.spacing(1)
+      marginLeft: theme.spacing(1),
+      paddingBottom: theme.spacing(1)
     }
   })
 );
@@ -118,6 +147,24 @@ const StreamUser: React.FC<StreamUserProps> = (props: StreamUserProps) => {
 
   const statistics: string = props.review ? formatStatistics(props.review.user) : '';
 
+  // Formats the review event data for tracking purposes.
+  const [eventData, setEventData] = React.useState<EventObject>(
+          formatReviewProperties({...props.review || emptyReview()}));
+
+  const [reviewId, setReviewId] = React.useState<string>(props.review ? props.review._id : '');
+
+  /**
+   * Update the event data if the review id's don't match.
+   */
+  React.useEffect(() => {
+    if (props.review && props.review._id !== reviewId) {
+      setEventData(
+        formatReviewProperties({...props.review})
+      );
+      setReviewId(props.review._id);
+    }
+  }, [props.review, reviewId]);
+
   return (
     <Grid
       alignItems='flex-end'
@@ -126,11 +173,11 @@ const StreamUser: React.FC<StreamUserProps> = (props: StreamUserProps) => {
     >
       {props.user &&
         <Grid
-          className={clsx(classes.actionContainer)}
+          className={clsx(classes.topContainer)}
           item
           xs={12}
         >
-          <Grid container>
+          <Grid container justify='space-between' alignItems='flex-end'>
             <Grid item>
               <Grid container alignItems='center'>
                 <Grid item>
@@ -167,13 +214,42 @@ const StreamUser: React.FC<StreamUserProps> = (props: StreamUserProps) => {
                 </Grid>
               </Grid>
             </Grid>
+            <Grid item>
+              <IconButton
+                className={clsx(classes.playButton)}
+                title='Play video'
+                onClick={props.play}
+              >
+                {props.playing ? (
+                  <PauseRoundedIcon className={clsx(classes.playIcon)}/>
+                ) : (
+                  <PlayArrowRoundedIcon className={clsx(classes.playIcon)}/>
+                )}
+              </IconButton>
+            </Grid>
           </Grid>
         </Grid>
       }
-      <Grid item xs={12}>
-        <Typography variant='body1'>
-          Test content
-        </Typography>
+      <Grid className={clsx(classes.bottomContainer)} item xs={12}>
+        <Grid container justify='flex-start' alignItems='center'>
+          {props.review && props.review.product && props.user &&
+            <React.Fragment>
+              <Grid item>
+                <StreamRate review={props.review} />
+              </Grid>
+              <Grid item>
+                <Share
+                  color='#FFF'
+                  eventData={eventData}
+                  image={`${props.review.thumbnail}`}
+                  shareStyle={ShareStyle.ICON}
+                  shareType={ShareType.REVIEW}
+                  title={`${props.review.product.brand.name} ${props.review.product.name} rave posted by ${props.user.handle}`}
+                />
+              </Grid>
+            </React.Fragment>
+          }
+        </Grid>
       </Grid>
     </Grid>
   );

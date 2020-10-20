@@ -16,6 +16,7 @@ import ProductReducer from './product/Reducer';
 import RaveStreamReducer from './raveStream/Reducer';
 import ReviewReducer from './review/Reducer';
 import UserReducer from './user/Reducer';
+import VideoReducer from './video/Reducer';
 import XsrfReducer from './xsrf/Reducer';
 
 // Combine the router reducer with the application reducers to create a single
@@ -30,6 +31,7 @@ const RootReducer = (history: H.History) =>
     raveStream: RaveStreamReducer,
     review: ReviewReducer,
     user: UserReducer,
+    video: VideoReducer,
     xsrf: XsrfReducer
   });
 

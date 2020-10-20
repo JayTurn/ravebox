@@ -7,15 +7,18 @@
 import {
   SwipeView,
   VideoPosition
-} from '../Swipe/SwipeStream.enum';
+} from '../swipe/SwipeStream.enum';
 
 // Interfaces.
 import { Review } from '../../review/Review.interface';
+import { VideoProgress } from '../../raveVideo/RaveVideo.interface';
 
 /**
  * StreamVideo properties.
  */
 export interface StreamVideoProps {
-  review: Review;
+  playing: boolean;
   positioning: VideoPosition; 
+  review: Review;
+  update?: (videoProgress: VideoProgress) => void;
 }

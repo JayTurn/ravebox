@@ -114,7 +114,6 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
     justifyContent: 'center'
   },
   shareItemContainer: {
-    padding: theme.spacing(0, 2),
   },
   shareText: {
     color: theme.palette.grey.A700,
@@ -175,7 +174,8 @@ const ShareButton: React.FC<ShareButtonProps> = (props: ShareButtonProps) => {
   const analytics: AnalyticsContextProps = useAnalytics() as AnalyticsContextProps;
 
   // Use the custom styles.
-  const classes = useStyles();
+  const classes = useStyles(),
+        theme = useTheme();
 
   const [anchorEl, setAnchorEl] = React.useState<HTMLButtonElement | null>(null);
 
@@ -193,6 +193,7 @@ const ShareButton: React.FC<ShareButtonProps> = (props: ShareButtonProps) => {
   ) => void = (
     e: React.MouseEvent<HTMLButtonElement>
   ): void => {
+    e.stopPropagation();
     if (isSupported()) {
       try {
         (navigator as any).share({
@@ -219,6 +220,7 @@ const ShareButton: React.FC<ShareButtonProps> = (props: ShareButtonProps) => {
   ) => void = (
     e: React.MouseEvent<HTMLButtonElement>
   ): void => {
+    e.stopPropagation();
     // Trigger the display of the minimum duration message.
     setAnchorEl(e.currentTarget);
     setOpen(true);
@@ -280,7 +282,7 @@ const ShareButton: React.FC<ShareButtonProps> = (props: ShareButtonProps) => {
               )}
               onClick={navigatorSupported ? handleNavigatorShare : handleDesktopShare}
             >
-              <ShareRoundedIcon className={clsx(classes.icon)} />
+              <ShareRoundedIcon className={clsx(classes.icon)} style={{color: props.color || theme.palette.grey.A700}}/>
             </IconButton>
           </Grid>
           <Grid item className={clsx(
@@ -288,9 +290,12 @@ const ShareButton: React.FC<ShareButtonProps> = (props: ShareButtonProps) => {
               classes.shareTextContainer
             )}
           >
-            <Typography variant='body1' className={clsx(
+            <Typography
+              variant='body1' 
+              className={clsx(
                 classes.shareText
               )}
+              style={{color: props.color || theme.palette.grey.A700}}
             >
               Share
             </Typography>

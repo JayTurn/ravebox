@@ -34,7 +34,7 @@ import { NumericSuffix } from '../../../utils/display/numeric/Numeric';
 export function useRate(params: RatingParams) {
 
   // Capture the review id from the parameters.
-  const { reviewId } = {...params};
+  const [reviewId, setReviewId] = React.useState<string>(params.reviewId);
 
   // Add the safety check to ensure the component is still mounted.
   const isMounted = useIsMounted();
@@ -46,6 +46,17 @@ export function useRate(params: RatingParams) {
 
   // Define the retrieval status to be used for rating requests.
   const [retrieved, setRetrieved] = React.useState(RetrievalStatus.REQUESTED); 
+
+  /**
+   * Update the retrieved state if the new revie doesn't match the existing
+   * one.
+   */
+  React.useEffect(() => {
+    if (params.reviewId !== reviewId) {
+      setReviewId(params.reviewId);
+      setRetrieved(RetrievalStatus.REQUESTED);
+    }
+  }, [params.reviewId, reviewId]);
 
   /**
    * Handle state updates based on the presence of a review.

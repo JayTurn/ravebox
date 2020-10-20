@@ -41,7 +41,7 @@ export default class ReviewStatisticsCommon {
    */
   static RatingAllowed(created: number, duration: number): boolean {
     // Define the values to evaluate the minimum duration.
-    const minimumDuration = Math.floor(duration / 2),
+    const minimumDuration = Math.floor(15),
           current: number = Math.floor(Date.now() / 1000),
           difference: number = current - created;
 

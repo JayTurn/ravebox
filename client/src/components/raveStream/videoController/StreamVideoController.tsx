@@ -151,6 +151,8 @@ const StreamVideoController: React.FC<StreamVideoControllerProps> = (props: Stre
 
   const [showOverlay, setShowOverlay] = React.useState<boolean>(true);
 
+  const [playing, setPlaying] = React.useState<boolean>(false);
+
   const activeIndex: number = props.activeIndex || 0;
 
   /**
@@ -161,6 +163,7 @@ const StreamVideoController: React.FC<StreamVideoControllerProps> = (props: Stre
   ): void => {
     if (props.updateActiveIndex) {
       props.updateActiveIndex(activeIndex + 1);
+      setPlaying(true);
     }
   }
 
@@ -169,6 +172,7 @@ const StreamVideoController: React.FC<StreamVideoControllerProps> = (props: Stre
   ): void => {
     if (props.updateActiveIndex) {
       props.updateActiveIndex(activeIndex - 1);
+      setPlaying(true);
     }
   }
 
@@ -182,6 +186,17 @@ const StreamVideoController: React.FC<StreamVideoControllerProps> = (props: Stre
   ) => void = (
   ): void => {
     props.displayChange(SwipeView.REVIEW);
+  }
+
+  /**
+   * Handles playing and pausing video.
+   */
+  const handlePlayPause: (
+    playState: boolean
+  ) => void = (
+    playState: boolean
+  ): void => {
+    setPlaying(playState);
   }
 
   return (
@@ -198,6 +213,8 @@ const StreamVideoController: React.FC<StreamVideoControllerProps> = (props: Stre
             previous={handlePrevious}
             show={showOverlay}
             up={handleShowReview}
+            play={handlePlayPause}
+            playing={playing}
           />
           {props.raveStream.reviews.length > 0 &&
             <React.Fragment>
@@ -205,6 +222,7 @@ const StreamVideoController: React.FC<StreamVideoControllerProps> = (props: Stre
                 <React.Fragment key={review._id}>
                   {index > activeIndex - 2 && index < activeIndex + 2 &&
                     <StreamVideo
+                      playing={index === activeIndex ? playing : false}
                       positioning={setVideoPosition(activeIndex)(index)}
                       review={review}
                     />

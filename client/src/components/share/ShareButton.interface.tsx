@@ -21,6 +21,7 @@ import { Review } from '../review/Review.interface';
  */
 export interface ShareButtonProps extends RouteComponentProps {
   description?: string;
+  color?: string;
   eventData: EventObject;
   image?: string;
   sharePath?: string;

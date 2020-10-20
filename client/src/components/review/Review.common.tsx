@@ -10,10 +10,38 @@ import {
 import {
   ScreenContext
 } from './Review.enum';
+import { VideoType } from './Review.enum';
 
 // Interfaces.
 import { Review } from './Review.interface';
 import { EventObject } from '../analytics/Analytics.interface';
+
+// Utilities.
+import { emptyProduct } from '../product/Product.common';
+
+/**
+ * Creates an empty Review object for use in object definitions.
+ *
+ * @return EventObject
+ */
+export const emptyReview: (
+) => Review = (
+): Review => {
+  return {
+    _id: '',
+    created: new Date(),
+    endTime: 0,
+    links: [],
+    product: emptyProduct(),
+    recommended: Recommended.RECOMMENDED,
+    sponsored: false,
+    startTime: 0,
+    thumbnail: '',
+    title: '',
+    url: '',
+    videoType: VideoType.YOUTUBE
+  };
+}
 
 /**
  * Formats a review for tracking an event.
