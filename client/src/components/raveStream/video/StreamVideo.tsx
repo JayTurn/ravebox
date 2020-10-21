@@ -70,7 +70,15 @@ const useStyles = makeStyles((theme: Theme) =>
       fontWeight: 600
     },
     videoContainer: {
-      height: '100%'
+      height: '100%',
+      padding: theme.spacing(0, 1)
+    },
+    videoBox: {
+      borderRadius: 10,
+      height: 0,
+      overflow: 'hidden',
+      paddingTop: '56.25%',
+      position: 'relative'
     }
   })
 );
@@ -120,6 +128,7 @@ const StreamVideo: React.FC<StreamVideoProps> = (props: StreamVideoProps) => {
     file: {
       forceHLS: true
     },
+    height: '100%',
     muted: true,
     playing: props.playing,
     playsinline: true,
@@ -234,14 +243,17 @@ const StreamVideo: React.FC<StreamVideoProps> = (props: StreamVideoProps) => {
         alignItems='center'
       >
         <Grid item xs={12}>
-          <Player
-            {...config}
-            progressInterval={5000}
-            onProgress={handleProgress}
-            onReady={handleReady}
-            onStart={handleStart}
-            ref={playerRef}
-          />
+          <Box className={clsx(classes.videoBox)}>
+            <Player
+              {...config}
+              progressInterval={5000}
+              onProgress={handleProgress}
+              onReady={handleReady}
+              onStart={handleStart}
+              ref={playerRef}
+              style={{position: 'absolute', top: 0, left: 0, height: 'auto !important'}}
+            />
+          </Box>
         </Grid>
       </Grid>
     </Box>

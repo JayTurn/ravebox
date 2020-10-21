@@ -32,13 +32,15 @@ import StreamNavigation from '../navigation/StreamNavigation';
 import StreamRate from '../rate/StreamRate';
 import StreamVideo from '../video/StreamVideo';
 import StreamUser from '../user/StreamUser';
+import SwipeHelper from '../../elements/swipeHelper/SwipeHelper';
 
 // Enumerators.
-import { ViewState } from '../../../utils/display/view/ViewState.enum';
+import { SwipeDirection } from '../../elements/swipeHelper/SwipeHelper.enum';
 import {
   SwipeView,
   VideoPosition
 } from '../swipe/SwipeStream.enum';
+import { ViewState } from '../../../utils/display/view/ViewState.enum';
 
 // Hooks.
 import { useAnalytics } from '../../../components/analytics/Analytics.provider';
@@ -57,11 +59,10 @@ import { Review } from '../../review/Review.interface';
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     brandText: {
-      fontSize: '.75rem',
+      fontSize: '.8rem',
       fontWeight: 800
     },
     container: {
-      backgroundColor: `rgba(0,0,0,0.5)`,
       height: 'calc(100vh)',
       position: 'absolute',
       transition: `opacity 300ms ease-in-out`,
@@ -85,11 +86,19 @@ const useStyles = makeStyles((theme: Theme) =>
     },
     productTitle: {
       color: theme.palette.common.white,
-      fontSize: '1.2rem',
-      fontWeight: 600
+      fontSize: '1.3rem',
+      fontWeight: 700,
+      paddingBottom: 0,
+      marginBottom: 0,
+      textShadow: `1px 1px 1px rgba(0,0,0,0.5)`
     },
     productTitleContainer: {
-      padding: theme.spacing(1, 2)
+      padding: theme.spacing(1, 2, .5),
+      marginTop: theme.spacing(1),
+      textAlign: 'center'
+    },
+    swipeContainer: {
+      padding: theme.spacing(0, 2, 0)
     },
     userContainer: {
       alignSelf: 'flex-end'
@@ -198,8 +207,8 @@ const StreamVideoOverlay: React.FC<StreamVideoOverlayProps> = (props: StreamVide
             {props.raveStream &&
               <StreamNavigation title={props.raveStream.title} />  
             }
-            <Grid container>
-              <Grid item className={clsx(classes.productTitleContainer)}>
+            <Grid container alignItems='center' justify='space-between'>
+              <Grid item className={clsx(classes.productTitleContainer)} xs={12}>
                 {props.review && props.review.product &&
                   <Typography className={clsx(classes.productTitle)}variant='h1'>
                     <Box className={clsx(classes.brandText)}>
@@ -208,6 +217,14 @@ const StreamVideoOverlay: React.FC<StreamVideoOverlayProps> = (props: StreamVide
                     {props.review.product.name}
                   </Typography>
                 }
+              </Grid>
+            </Grid>
+            <Grid container justify='flex-start'>
+              <Grid item className={clsx(classes.swipeContainer)} xs={12}>
+                <SwipeHelper
+                  direction={SwipeDirection.DOWN}
+                  title='Swipe down'
+                />
               </Grid>
             </Grid>
           </Grid>
@@ -223,6 +240,14 @@ const StreamVideoOverlay: React.FC<StreamVideoOverlayProps> = (props: StreamVide
             </Grid>
           </Grid>
           <Grid item xs={12} className={clsx(classes.userContainer)}>
+            <Grid container>
+              <Grid item className={clsx(classes.swipeContainer)} xs={12}>
+                <SwipeHelper
+                  direction={SwipeDirection.UP}
+                  title='Swipe up'
+                />
+              </Grid>
+            </Grid>
             <StreamUser play={handlePlay} playing={props.playing}/>
           </Grid>
         </Grid>

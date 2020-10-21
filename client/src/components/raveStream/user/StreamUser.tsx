@@ -22,8 +22,8 @@ import Typography from '@material-ui/core/Typography';
 import * as React from 'react';
 
 // Components.
-import StreamRate from '../rate/StreamRate';
 import Share from '../../share/ShareButton';
+import StreamRate from '../rate/StreamRate';
 
 // Enumerators
 import {
@@ -51,16 +51,16 @@ import {
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     avatar: {
-      border: `2px solid ${theme.palette.secondary.main}`,
-      height: theme.spacing(5),
-      width: theme.spacing(5)
+      border: `1px solid ${theme.palette.common.white}`,
+      height: theme.spacing(6),
+      width: theme.spacing(6)
     },
     avatarIcon: {
       border: `2px solid ${theme.palette.secondary.main}`,
       fontSize: '.9rem',
       fontWeight: 600,
-      height: theme.spacing(5),
-      width: theme.spacing(5)
+      height: theme.spacing(6),
+      width: theme.spacing(6)
     },
     bottomContainer: {
       marginBottom: theme.spacing(1),
@@ -72,15 +72,18 @@ const useStyles = makeStyles((theme: Theme) =>
     },
     handleText: {
       color: theme.palette.common.white,
+      fontSize: '1.25rem',
       fontWeight: 600,
     },
     playButton: {
       borderRadius: 0,
-      color: theme.palette.common.white,
+      color: theme.palette.secondary.main,
       padding: 0
     },
     playIcon: {
-      fontSize: '3rem'
+      borderRadius: '1.5rem',
+      border: `2px solid ${theme.palette.secondary.main}`,
+      fontSize: '2.75rem'
     },
     statisticsText: {
       color: theme.palette.common.white,
@@ -93,7 +96,6 @@ const useStyles = makeStyles((theme: Theme) =>
       marginBottom: theme.spacing(2)
     },
     userDetailsContainer: {
-      marginLeft: theme.spacing(1),
       paddingBottom: theme.spacing(1)
     }
   })
@@ -177,10 +179,10 @@ const StreamUser: React.FC<StreamUserProps> = (props: StreamUserProps) => {
           item
           xs={12}
         >
-          <Grid container justify='space-between' alignItems='flex-end'>
+          <Grid container justify='center' alignItems='flex-end'>
             <Grid item>
-              <Grid container alignItems='center'>
-                <Grid item>
+              <Grid container alignItems='center' direction='column'>
+                <Grid item xs={12}>
                   {props.user.avatar ? (
                     <Avatar
                       alt={props.user.handle}
@@ -196,13 +198,14 @@ const StreamUser: React.FC<StreamUserProps> = (props: StreamUserProps) => {
                     </Avatar>
                   )}    
                 </Grid>
-                <Grid item className={clsx(classes.userDetailsContainer)}>
+                <Grid item className={clsx(classes.userDetailsContainer)} xs={12}>
                   <Typography
                     className={clsx(classes.handleText)}
                     variant='body1'
                   >
                     {props.user.handle}
                   </Typography>
+                  {/*
                   {statistics &&
                     <Typography
                       className={clsx(classes.statisticsText)}
@@ -211,44 +214,49 @@ const StreamUser: React.FC<StreamUserProps> = (props: StreamUserProps) => {
                       {statistics}
                     </Typography>
                   }
+                  */}
                 </Grid>
               </Grid>
-            </Grid>
-            <Grid item>
-              <IconButton
-                className={clsx(classes.playButton)}
-                title='Play video'
-                onClick={props.play}
-              >
-                {props.playing ? (
-                  <PauseRoundedIcon className={clsx(classes.playIcon)}/>
-                ) : (
-                  <PlayArrowRoundedIcon className={clsx(classes.playIcon)}/>
-                )}
-              </IconButton>
             </Grid>
           </Grid>
         </Grid>
       }
       <Grid className={clsx(classes.bottomContainer)} item xs={12}>
-        <Grid container justify='flex-start' alignItems='center'>
-          {props.review && props.review.product && props.user &&
-            <React.Fragment>
-              <Grid item>
-                <StreamRate review={props.review} />
-              </Grid>
-              <Grid item>
-                <Share
-                  color='#FFF'
-                  eventData={eventData}
-                  image={`${props.review.thumbnail}`}
-                  shareStyle={ShareStyle.ICON}
-                  shareType={ShareType.REVIEW}
-                  title={`${props.review.product.brand.name} ${props.review.product.name} rave posted by ${props.user.handle}`}
-                />
-              </Grid>
-            </React.Fragment>
-          }
+        <Grid container justify='space-between' alignItems='center'>
+          <Grid item>
+            <Grid container justify='flex-start'>
+              {props.review && props.review.product && props.user &&
+                <React.Fragment>
+                  <Grid item>
+                    <StreamRate review={props.review} />
+                  </Grid>
+                  <Grid item>
+                    <Share
+                      color='#FFF'
+                      eventData={eventData}
+                      image={`${props.review.thumbnail}`}
+                      shareStyle={ShareStyle.ICON}
+                      shareType={ShareType.REVIEW}
+                      title={`${props.review.product.brand.name} ${props.review.product.name} rave posted by ${props.user.handle}`}
+                    />
+                  </Grid>
+                </React.Fragment>
+              }
+            </Grid>
+          </Grid>
+          <Grid item>
+            <IconButton
+              className={clsx(classes.playButton)}
+              title='Play video'
+              onClick={props.play}
+            >
+              {props.playing ? (
+                <PauseRoundedIcon className={clsx(classes.playIcon)}/>
+              ) : (
+                <PlayArrowRoundedIcon className={clsx(classes.playIcon)}/>
+              )}
+            </IconButton>
+          </Grid>
         </Grid>
       </Grid>
     </Grid>
