@@ -198,6 +198,11 @@ export default class UserStatisticsCommon {
     statistics: UserStatisticsDocument
   ): void {
 
+    // There's nothing we can do here without a statistics document.
+    if (!statistics) {
+      return;
+    }
+
     // Update the user's rating with the new value.
     UserStatistics.updateOne({
       user: statistics.user,

@@ -25,7 +25,6 @@ export interface BrandDocument extends Mongoose.Document {
 export interface BrandDetails {
   _id?: string;
   description: string;
-  details: BrandDetails;
   logo: string;
   name: string;
   namePartials?: Array<string>;

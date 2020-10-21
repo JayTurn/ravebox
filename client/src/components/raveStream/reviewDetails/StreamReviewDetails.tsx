@@ -4,6 +4,7 @@
  */
 
 // Modules.
+import Avatar from '@material-ui/core/Avatar';
 import Box from '@material-ui/core/Box';
 import clsx from 'clsx';
 import {
@@ -17,7 +18,14 @@ import Grid from '@material-ui/core/Grid';
 import Typography from '@material-ui/core/Typography';
 import * as React from 'react';
 
+// Components.
+import FollowButton from '../../follow/button/FollowButton';
+import StreamUserProfile from '../userProfile/StreamUserProfile';
+
 // Enumerators.
+import {
+  FollowType
+} from '../../follow/FollowType.enum';
 import { ViewState } from '../../../utils/display/view/ViewState.enum';
 
 // Hooks.
@@ -36,13 +44,13 @@ import { Review } from '../../review/Review.interface';
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     container: {
-      backgroundColor: 'blue',
+      backgroundColor: theme.palette.background.default,
       height: 'calc(100vh)',
-      overflowY: 'auto'
+      overflowY: 'auto',
+      paddingTop: 40,
     },
-    subtitle: {
-      fontSize: '1rem',
-      fontWeight: 600
+    userContainer: {
+      padding: theme.spacing(4, 1, 0)
     }
   })
 );
@@ -61,6 +69,8 @@ const StreamReviewDetails: React.FC<StreamReviewDetailsProps> = (props: StreamRe
   // Create a page viewed state to avoid duplicate views.
   const [pageViewed, setPageViewed] = React.useState<boolean>(false);
 
+  const { user } = {...props.review};
+
   return (
     <Grid
       alignItems='stretch'
@@ -68,9 +78,25 @@ const StreamReviewDetails: React.FC<StreamReviewDetailsProps> = (props: StreamRe
       container
     >
       <Grid item xs={12}>
-        <Typography variant='h2'>
-          Review
-        </Typography>
+        {user &&
+        <Grid
+          alignItems='center'
+          className={classes.userContainer}
+          container 
+          justify='space-between'
+        >
+          <Grid item>
+              <StreamUserProfile user={user} />
+          </Grid>
+          <Grid item>
+            <FollowButton
+              id={user._id}
+              handle={user.handle}
+              followType={FollowType.CHANNEL}
+            />
+          </Grid> 
+        </Grid>
+        }
       </Grid>
     </Grid>
   );

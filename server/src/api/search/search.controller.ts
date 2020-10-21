@@ -236,9 +236,9 @@ export default class SearchController {
         let i = 0;
 
         do {
-          const current: BrandDetails = brandDetails[i];
+          const current: BrandDetails = brandDetails[i].details;
 
-          searchResults.push(current.details);
+          searchResults.push(current);
 
           i++;
         } while (i < brandDetails.length);

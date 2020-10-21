@@ -63,7 +63,7 @@ const useStyles = makeStyles((theme: Theme) =>
       left: 0,
       position: 'absolute',
       overflow: 'hidden',
-      transition: 'top 300ms ease-in-out',
+      transition: 'transform 300ms ease-in-out',
       zIndex: 3
     },
     defaultColor: {
@@ -72,6 +72,9 @@ const useStyles = makeStyles((theme: Theme) =>
     item: {
       height: 'calc(100vh)',
       position: 'relative'
+    },
+    shifted: {
+      borderRadius: 10
     },
     subtitle: {
       fontSize: '1rem',
@@ -100,11 +103,11 @@ const setSwipePosition: (
 ): string => {
   switch (showing) {
     case SwipeView.PRODUCT:
-      return 'calc(100vh - 50px)';
+      return 'translate3d(0, calc(100vh - 50px), 0)';
     case SwipeView.REVIEW:
-      return 'calc(-100vh)';
+      return 'translate3d(0, calc(-100vh + 50px), 0)';
     default:
-      return '0px';
+      return 'translate3d(0, 0, 0)';
   }
 };
 
@@ -188,6 +191,12 @@ const StreamVideoController: React.FC<StreamVideoControllerProps> = (props: Stre
     props.displayChange(SwipeView.REVIEW);
   }
 
+  const handleShowVideo: (
+  ) => void = (
+  ): void => {
+    props.displayChange(SwipeView.VIDEO);
+  }
+
   /**
    * Handles playing and pausing video.
    */
@@ -201,20 +210,26 @@ const StreamVideoController: React.FC<StreamVideoControllerProps> = (props: Stre
 
   return (
     <Grid
-      className={clsx(classes.container)}
+      className={clsx(
+        classes.container, {
+          [classes.shifted]: props.showing !== SwipeView.VIDEO
+        }
+      )}
       container
-      style={{top: `${setSwipePosition(props.showing)}`}}
+      style={{transform: `${setSwipePosition(props.showing)}`}}
     >
       {props.raveStream &&
         <Grid item xs={12} className={clsx(classes.item)}>
           <StreamVideoOverlay
             down={handleShowProduct}
             next={handleNext}
+            overlayState={props.showing}
+            play={handlePlayPause}
+            playing={playing}
             previous={handlePrevious}
             show={showOverlay}
             up={handleShowReview}
-            play={handlePlayPause}
-            playing={playing}
+            center={handleShowVideo}
           />
           {props.raveStream.reviews.length > 0 &&
             <React.Fragment>
@@ -222,6 +237,7 @@ const StreamVideoController: React.FC<StreamVideoControllerProps> = (props: Stre
                 <React.Fragment key={review._id}>
                   {index > activeIndex - 2 && index < activeIndex + 2 &&
                     <StreamVideo
+                      active={index === activeIndex}
                       playing={index === activeIndex ? playing : false}
                       positioning={setVideoPosition(activeIndex)(index)}
                       review={review}

@@ -49,5 +49,27 @@ export default combineReducers<VideoStore, VideoAction>({
       default:
         return videoProgress;
     }
+  },
+
+  /**
+   * Define the muted video state.
+   *
+   * @param { booleab } state - the current mute state.
+   * @param { VideoAction } action - the video action.
+   *
+   * @return VideoProgress
+   */
+  muted: (
+    state: boolean = true,
+    action: VideoAction
+  ) => {
+    // Update the configuration based on the redux action triggered.
+    switch (action.type) {
+      case VideoVerb.MUTE:
+        // Update the muted state.
+        return action.payload;
+      default:
+        return state;
+    }
   }
 });

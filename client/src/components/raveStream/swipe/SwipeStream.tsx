@@ -76,6 +76,7 @@ const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     container: {
       height: 'calc(100vh)',
+      overflow: 'hidden',
       position: 'relative',
       top: 0,
       width: 'calc(100vw)',

@@ -19,3 +19,11 @@ import { VideoProgress } from '../../components/raveVideo/RaveVideo.interface';
  */
 export const update = (progress: VideoProgress) => action(
   VideoVerb.UPDATE, progress);
+
+/**
+ * Switches the current mute state in the redux store.
+ *
+ * @param { boolean } muted - the muted state to be updated.
+ */
+export const mute = (muted: boolean) => action(
+  VideoVerb.MUTE, muted);

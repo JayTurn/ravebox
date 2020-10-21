@@ -77,7 +77,13 @@ ProductSchema
   .get(function() {
 
     // Load the brand document.
-    const brand: BrandDetails = BrandCommon.RetrieveDetailsFromDocuments(this.brand);
+    const brand: BrandDetails = this.brand ? BrandCommon.RetrieveDetailsFromDocuments(this.brand) : {
+      _id: '',
+      description: '',
+      logo: '',
+      name: 'N/A',
+      url: ''
+    };
 
     // Define the base product details and extend with the
     // optional properties if they exist.

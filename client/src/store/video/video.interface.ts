@@ -21,4 +21,5 @@ export type VideoAction = ActionType<typeof actions>;
  */
 export interface VideoStore {
   progress: VideoProgress;
+  muted: boolean;
 }

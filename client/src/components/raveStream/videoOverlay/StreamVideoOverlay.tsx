@@ -5,6 +5,7 @@
 
 // Modules.
 import Box from '@material-ui/core/Box';
+import Button from '@material-ui/core/Button';
 import clsx from 'clsx';
 import { connect } from 'react-redux';
 import {
@@ -58,6 +59,24 @@ import { Review } from '../../review/Review.interface';
  */
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
+    backButton: {
+      border: `1px solid ${theme.palette.common.white}`,
+      color: theme.palette.common.white
+    },
+    backButtonBottom: {
+      bottom: 0
+    },
+    backButtonTop: {
+      top: 0
+    },
+    backButtonWrapper: {
+      left: 0,
+      padding: theme.spacing(1),
+      position: 'absolute',
+      textAlign: 'center',
+      width: '100%',
+      zIndex: 2
+    },
     brandText: {
       fontSize: '.8rem',
       fontWeight: 800
@@ -71,6 +90,10 @@ const useStyles = makeStyles((theme: Theme) =>
     },
     contentContainer: {
       height: '100%'
+    },
+    overlaySwiped: {
+      backgroundColor: `rgba(0,0,0,0.8)`,
+      transition: 'backgroundColor 300ms ease-in-out'
     },
     playButtonContainer: {
       height: '100%'
@@ -132,7 +155,12 @@ const StreamVideoOverlay: React.FC<StreamVideoOverlayProps> = (props: StreamVide
   ) => void = (
     e: React.SyntheticEvent
   ): void => {
-    setVisible(!visible);
+    if (props.overlayState === SwipeView.VIDEO) {
+      setVisible(!visible);
+    } else {
+      e.stopPropagation();
+      setVisible(false);
+    }
   }
 
   /**
@@ -153,6 +181,19 @@ const StreamVideoOverlay: React.FC<StreamVideoOverlayProps> = (props: StreamVide
   }
 
   /**
+   * Handles returning to the video.
+   */
+  const handleDisplayVideo: (
+    e: React.SyntheticEvent
+  ) => void = (
+    e: React.SyntheticEvent
+  ): void => {
+    e.stopPropagation();
+    props.center();
+    setVisible(true);
+  }
+
+  /**
    * Handles swipe events.
    *
    * @param { EventData } eventData - the swipe event data.
@@ -164,20 +205,31 @@ const StreamVideoOverlay: React.FC<StreamVideoOverlayProps> = (props: StreamVide
   ): void => {
 
     props.play(false);
-    setVisible(false);
 
     switch (eventData.dir) {
       case 'Down':
-        props.down();
+        if (props.overlayState === SwipeView.VIDEO) {
+          props.down();
+        } else {
+          props.center();
+          setVisible(true);
+        }
         break;
       case 'Left':
         props.next();
+        setVisible(false);
         break;
       case 'Right':
         props.previous();
+        setVisible(false);
         break;
       case 'Up':
-        props.up();
+        if (props.overlayState === SwipeView.VIDEO) {
+          props.up();
+        } else {
+          props.center();
+          setVisible(true);
+        }
         break;
       default:
     }
@@ -195,61 +247,86 @@ const StreamVideoOverlay: React.FC<StreamVideoOverlayProps> = (props: StreamVide
       {...swipeableHandlers}
       className={clsx(classes.container)}
       onClick={handleClick}
-      style={{opacity: visible ? 1 : 0}}
     >
+      {props.overlayState !== SwipeView.VIDEO &&
+        <Box className={clsx(
+          classes.backButtonWrapper, {
+            [classes.backButtonTop]: props.overlayState === SwipeView.PRODUCT,
+            [classes.backButtonBottom]: props.overlayState === SwipeView.REVIEW,
+          }
+        )}>
+          <Button
+            className={clsx(classes.backButton)}
+            onClick={handleDisplayVideo}
+            variant='outlined'
+          >
+            Back to Rave
+          </Button>
+        </Box>
+      }
       {props.raveStream && props.raveStream.reviews.length > 0 &&
         <Grid
-          className={clsx(classes.contentContainer)}
+          className={clsx(
+            classes.contentContainer, {
+              [classes.overlaySwiped]: props.overlayState !== SwipeView.VIDEO
+            }
+          )}
           container
           alignItems='stretch'
+          style={{opacity: visible ? 1 : 0}}
         >
-          <Grid item xs={12}>
-            {props.raveStream &&
-              <StreamNavigation title={props.raveStream.title} />  
-            }
-            <Grid container alignItems='center' justify='space-between'>
-              <Grid item className={clsx(classes.productTitleContainer)} xs={12}>
-                {props.review && props.review.product &&
-                  <Typography className={clsx(classes.productTitle)}variant='h1'>
-                    <Box className={clsx(classes.brandText)}>
-                      {props.review.product.brand.name}
-                    </Box>
-                    {props.review.product.name}
-                  </Typography>
-                }
+          <React.Fragment>
+            <Grid item xs={12}>
+              {props.raveStream &&
+                <StreamNavigation
+                  title={props.raveStream.title}
+                  variant='white'
+                />  
+              }
+              <Grid container alignItems='center' justify='space-between'>
+                <Grid item className={clsx(classes.productTitleContainer)} xs={12}>
+                  {props.review && props.review.product &&
+                    <Typography className={clsx(classes.productTitle)}variant='h1'>
+                      <Box className={clsx(classes.brandText)}>
+                        {props.review.product.brand.name}
+                      </Box>
+                      {props.review.product.name}
+                    </Typography>
+                  }
+                </Grid>
+              </Grid>
+              <Grid container justify='flex-start'>
+                <Grid item className={clsx(classes.swipeContainer)} xs={12}>
+                  <SwipeHelper
+                    direction={SwipeDirection.DOWN}
+                    title='Swipe for details'
+                  />
+                </Grid>
               </Grid>
             </Grid>
-            <Grid container justify='flex-start'>
-              <Grid item className={clsx(classes.swipeContainer)} xs={12}>
-                <SwipeHelper
-                  direction={SwipeDirection.DOWN}
-                  title='Swipe down'
-                />
+            <Grid item xs={12}>
+              <Grid
+                alignItems='center'
+                className={clsx(classes.playButtonContainer)}
+                container 
+                justify='center'
+              >
+                <Grid item>
+                </Grid>
               </Grid>
             </Grid>
-          </Grid>
-          <Grid item xs={12}>
-            <Grid
-              alignItems='center'
-              className={clsx(classes.playButtonContainer)}
-              container 
-              justify='center'
-            >
-              <Grid item>
+            <Grid item xs={12} className={clsx(classes.userContainer)}>
+              <Grid container>
+                <Grid item className={clsx(classes.swipeContainer)} xs={12}>
+                  <SwipeHelper
+                    direction={SwipeDirection.UP}
+                    title='Swipe for details'
+                  />
+                </Grid>
               </Grid>
+              <StreamUser play={handlePlay} playing={props.playing}/>
             </Grid>
-          </Grid>
-          <Grid item xs={12} className={clsx(classes.userContainer)}>
-            <Grid container>
-              <Grid item className={clsx(classes.swipeContainer)} xs={12}>
-                <SwipeHelper
-                  direction={SwipeDirection.UP}
-                  title='Swipe up'
-                />
-              </Grid>
-            </Grid>
-            <StreamUser play={handlePlay} playing={props.playing}/>
-          </Grid>
+          </React.Fragment>
         </Grid>
       }
     </Box>

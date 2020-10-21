@@ -58,7 +58,7 @@ const useStyles = makeStyles((theme: Theme) =>
       height: 'calc(100vh)',
       position: 'absolute',
       overflowY: 'auto',
-      transition: 'left 300ms ease-in-out',
+      transition: 'transform 300ms ease-in-out',
       width: 'calc(100vw)',
       zIndex: 3
     },
@@ -97,11 +97,11 @@ const setVideoPosition: (
 ): string => {
   switch (videoPosition) {
     case VideoPosition.PREVIOUS:
-      return 'calc(-100vw)';
+      return 'translate3d(calc(-100vw), 0, 0)';
     case VideoPosition.NEXT:
-      return 'calc(100vw)';
+      return 'translate3d(calc(100vw), 0, 0)';
     default:
-      return '0px';
+      return 'translate3d(0, 0, 0)';
   }
 };
 
@@ -129,8 +129,8 @@ const StreamVideo: React.FC<StreamVideoProps> = (props: StreamVideoProps) => {
       forceHLS: true
     },
     height: '100%',
-    muted: true,
-    playing: props.playing,
+    muted: props.muted ? true : false,
+    playing: props.active && props.playing,
     playsinline: true,
     url: props.review.videoURL,
     volume: 1,
@@ -143,7 +143,6 @@ const StreamVideo: React.FC<StreamVideoProps> = (props: StreamVideoProps) => {
   const handleComplete: (
   ) => void = (
   ): void => {
-    console.log('Complete video');
   }
 
   /**
@@ -162,13 +161,13 @@ const StreamVideo: React.FC<StreamVideoProps> = (props: StreamVideoProps) => {
    * Handles the progress of video.
    */
   const handleProgress: (
-    state: VideoProgress 
+    state: VideoProgress
   ) => void = (
-    state: VideoProgress 
+    state: VideoProgress
   ): void => {
-    console.log(props.review._id, state);
-    if (props.update) {
+    if (props.update && props.videoProgress && props.active) {
       props.update({
+        ...props.videoProgress,
         _id: props.review._id,
         loaded: state.loaded,
         loadedSeconds: state.loadedSeconds,
@@ -194,8 +193,8 @@ const StreamVideo: React.FC<StreamVideoProps> = (props: StreamVideoProps) => {
         if (pl && pl.seekTo) {
           pl.seekTo(props.review.startTime || 0, true);
         }
-        
-        if (props.update) {
+
+        if (props.active && props.update) {
           // Reset the video progress.
           props.update({
             _id: props.review._id,
@@ -203,12 +202,11 @@ const StreamVideo: React.FC<StreamVideoProps> = (props: StreamVideoProps) => {
             loadedSeconds: 0,
             played: 0,
             playedSeconds: 0,
-            videoDuration: current.getDuration()  
+            videoDuration: current.getDuration()
           });
         }
       }
     }
-
   }
 
   /**
@@ -217,7 +215,6 @@ const StreamVideo: React.FC<StreamVideoProps> = (props: StreamVideoProps) => {
   const handleStart: (
   ) => void = (
   ): void => {
-    console.log('Start video');
   }
 
   /**
@@ -230,12 +227,18 @@ const StreamVideo: React.FC<StreamVideoProps> = (props: StreamVideoProps) => {
         playing: props.playing
       });
     }
-  }, [props.playing, config]);
+    if (props.muted !== config.muted) {
+      setConfig({
+        ...config,
+        muted: props.muted ? true : false
+      });
+    }
+  }, [config, props.muted, props.playing]);
 
   return (
     <Box
       className={clsx(classes.container)}
-      style={{left: `${setVideoPosition(props.positioning)}`}}
+      style={{transform: `${setVideoPosition(props.positioning)}`}}
     >
       <Grid
         className={clsx(classes.videoContainer)}
@@ -278,10 +281,12 @@ const mapDispatchToProps = (dispatch: Dispatch<AnyAction>) =>
  */
 const mapStateToProps = (state: any, ownProps: StreamVideoProps) => {
   // Retrieve the video progress from the redux store.
-  const videoProgress: VideoProgress = state.video ? state.video.progress : undefined;
+  const videoProgress: VideoProgress = state.video ? state.video.progress : undefined,
+        muted: boolean = state.video ? state.video.muted : true;
 
   return {
     ...ownProps,
+    muted,
     videoProgress
   };
 };

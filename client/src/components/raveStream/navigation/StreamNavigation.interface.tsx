@@ -18,6 +18,7 @@ export interface StreamNavigationProps extends RouteComponentProps {
   sideMenuExpanded?: boolean;
   toggleSide?: (show: boolean) => void;
   title: string;
+  variant: 'white' | 'colored';
 }
 
 /**

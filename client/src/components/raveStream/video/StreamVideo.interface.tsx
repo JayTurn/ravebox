@@ -17,8 +17,11 @@ import { VideoProgress } from '../../raveVideo/RaveVideo.interface';
  * StreamVideo properties.
  */
 export interface StreamVideoProps {
+  active: boolean;
+  muted?: boolean;
   playing: boolean;
   positioning: VideoPosition; 
   review: Review;
   update?: (videoProgress: VideoProgress) => void;
+  videoProgress?: VideoProgress;
 }

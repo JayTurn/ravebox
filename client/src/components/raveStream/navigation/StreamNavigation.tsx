@@ -75,31 +75,41 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
     padding: theme.spacing(.5, 1)
   },
   links: {
-    color: theme.palette.common.white,
     fontWeight: 700,
     textDecoration: 'none',
+  },
+  linksColored: {
+    color: theme.palette.primary.main,
     '&.active': {
-      color: theme.palette.primary.dark
+      color: theme.palette.primary.main,
     },
     '&:hover': {
-      color: theme.palette.primary.main
+      color: theme.palette.primary.main,
+    }
+  },
+  linksWhite: {
+    color: theme.palette.common.white,
+    '&.active': {
+      color: theme.palette.common.white
+    },
+    '&:hover': {
+      color: theme.palette.common.white
     }
   },
   linksNoHover: {
     textDecoration: 'none'
   },
-  linksInverse: {
-    color: theme.palette.primary.contrastText,
-    textDecoration: 'none',
-    '&.active': {
-      color: theme.palette.primary.contrastText,
-    }
-  },
   menuIconBadge: {
-    backgroundColor: theme.palette.common.white,
-    color: theme.palette.primary.main,
     height: 17,
     width: 18
+  },
+  menuIconBadgeColored: {
+    backgroundColor: theme.palette.primary.main,
+    color: theme.palette.common.white,
+  },
+  menuIconBadgeWhite: {
+    backgroundColor: theme.palette.common.white,
+    color: theme.palette.primary.main,
   },
   menuIconBadgeContainer: {
     bottom: 4,
@@ -112,38 +122,60 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
     flexWrap: 'nowrap',
     padding: theme.spacing(0, 1)
   },
+  searchButtonColored: {
+    backgroundColor: theme.palette.primary.main,
+  },
+  searchButtonWhite: {
+    backgroundColor: theme.palette.primary.main,
+  },
   searchContainer: {
     flexBasis: '62%',
     flexShrink: 1,
     maxWidth: '62%'
   },
   searchIcon: {
-    color: theme.palette.common.white,
     height: 16,
     marginTop: 6,
     width: 18
+  },
+  searchIconColored: {
+    color: theme.palette.common.white,
+  },
+  searchIconWhite: {
+    color: theme.palette.common.white,
   },
   searchIconContainer: {
     marginRight: theme.spacing(.5)
   },
   searchText: {
-    color: theme.palette.common.white,
     fontSize: '.8rem',
     maxWidth: '100%',
     overflow: 'hidden',
     textOverflow: 'ellipsis',
     whiteSpace: 'nowrap'
   },
+  searchTextColored: {
+    color: theme.palette.common.white,
+  },
+  searchTextWhite: {
+    color: theme.palette.common.white,
+  },
   searchTextContainer: {
     flexShrink: 1,
     overflow: 'hidden'
   },
   toolbar: {
-    borderBottom: `1px solid ${theme.palette.common.white}`,
     flexWrap: 'nowrap',
-    margin: theme.spacing(0, 1),
-    maxWidth: 'calc(100vw - 16px)',
     minHeight: 52
+  },
+  toolbarColored: {
+    padding: theme.spacing(0, .5),
+    borderBottom: `2px solid ${theme.palette.primary.light}`
+  },
+  toolbarWhite: {
+    borderBottom: `1px solid ${theme.palette.common.white}`,
+    maxWidth: 'calc(100vw - 16px)',
+    margin: theme.spacing(0, 1)
   }
 }));
 
@@ -244,7 +276,12 @@ const StreamNavigation: React.FC<StreamNavigationProps> = (props: StreamNavigati
     <React.Fragment>
       {searchBar ? (
         <Toolbar
-          className={clsx(classes.toolbar)}
+          className={clsx(
+            classes.toolbar, {
+              [classes.toolbarWhite]: props.variant === 'white',
+              [classes.toolbarColored]: props.variant === 'colored'
+            }
+          )}
           disableGutters={true}
           style={{minHeight: '50px'}}
         >
@@ -252,7 +289,12 @@ const StreamNavigation: React.FC<StreamNavigationProps> = (props: StreamNavigati
         </Toolbar>
       ) : (
         <Grid
-          className={clsx(classes.toolbar)}
+          className={clsx(
+            classes.toolbar, {
+              [classes.toolbarWhite]: props.variant === 'white',
+              [classes.toolbarColored]: props.variant === 'colored'
+            }
+          )}
           container
           justify='space-between'
           alignItems='center'
@@ -261,10 +303,14 @@ const StreamNavigation: React.FC<StreamNavigationProps> = (props: StreamNavigati
             <LogoIconButton
               onClick={toggleSideNavigation}
             >
-              <Logo iconOnly={true} fullWidth='30px' color='#FFF' />
+              <Logo iconOnly={true} fullWidth='30px' color={props.variant === 'white' ? '#FFF' : theme.palette.primary.main} />
               <Box className={classes.menuIconBadgeContainer}>
                 <MenuIcon
-                  className={clsx(classes.menuIconBadge)}
+                  className={clsx(
+                    classes.menuIconBadge, {
+                      [classes.menuIconBadgeWhite]: props.variant === 'white',
+                      [classes.menuIconBadgeColored]: props.variant === 'colored'
+                    })}
                   color='primary'
                 />
               </Box>
@@ -280,11 +326,21 @@ const StreamNavigation: React.FC<StreamNavigationProps> = (props: StreamNavigati
                 className={clsx(classes.searchIconContainer)}
                 item
               >
-                <SearchRoundedIcon className={clsx(classes.searchIcon)}/>
+                <SearchRoundedIcon className={clsx(
+                  classes.searchIcon, {
+                    [classes.searchIconWhite]: props.variant === 'white',
+                    [classes.searchIconColored]: props.variant === 'colored'
+                  }
+                )}/>
               </Grid>
               <Grid item className={clsx(classes.searchTextContainer)}>
                 <Typography
-                  className={clsx(classes.searchText)}
+                  className={clsx(
+                    classes.searchText, {
+                      [classes.searchTextWhite]: props.variant === 'white',
+                      [classes.searchTextColored]: props.variant === 'colored'
+                    }
+                  )}
                   variant='body1'
                 >
                   {props.title}
@@ -302,7 +358,15 @@ const StreamNavigation: React.FC<StreamNavigationProps> = (props: StreamNavigati
                 color="inherit"
                 className={clsx(classes.linkButton)}
               >
-                <NavLink to="/user/login" activeClassName="active" className={classes.links}>Log in</NavLink>
+                <NavLink to="/user/login" activeClassName="active" className={clsx(
+                  classes.links, {
+                    [classes.linksWhite]: props.variant === 'white',
+                    [classes.linksColored]: props.variant === 'colored'
+                  }
+                )}
+                >
+                  Log in
+                </NavLink>
               </MenuButton>
             </Grid>
           )}

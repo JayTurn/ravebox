@@ -15,8 +15,10 @@ import { Review } from '../../review/Review.interface';
  */
 export interface StreamVideoOverlayProps {
   activeIndex?: number;
+  center: () => void;
   down: () => void;
   next: () => void;
+  overlayState: SwipeView;
   play: (playState: boolean) => void;
   playing: boolean;
   previous: () => void;

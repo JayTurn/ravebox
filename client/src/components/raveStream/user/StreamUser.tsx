@@ -4,6 +4,11 @@
  */
 
 // Modules.
+import {
+  AnyAction,
+  bindActionCreators,
+  Dispatch
+} from 'redux';
 import Avatar from '@material-ui/core/Avatar';
 import clsx from 'clsx';
 import { connect } from 'react-redux';
@@ -18,8 +23,15 @@ import Grid from '@material-ui/core/Grid';
 import IconButton from '@material-ui/core/IconButton';
 import PlayArrowRoundedIcon from '@material-ui/icons/PlayArrowRounded';
 import PauseRoundedIcon from '@material-ui/icons/PauseRounded';
-import Typography from '@material-ui/core/Typography';
 import * as React from 'react';
+import Typography from '@material-ui/core/Typography';
+import VolumeMuteRoundedIcon from '@material-ui/icons/VolumeMuteRounded';
+import VolumeOffRoundedIcon from '@material-ui/icons/VolumeOffRounded';
+
+// Actions.
+import {
+  mute
+} from '../../../store/video/Actions';
 
 // Components.
 import Share from '../../share/ShareButton';
@@ -84,6 +96,16 @@ const useStyles = makeStyles((theme: Theme) =>
       borderRadius: '1.5rem',
       border: `2px solid ${theme.palette.secondary.main}`,
       fontSize: '2.75rem'
+    },
+    muteButton: {
+      color: theme.palette.common.white,
+      padding: 0
+    },
+    muteButtonContainer: {
+      marginRight: theme.spacing(2)
+    },
+    muteIcon: {
+      fontSize: '2rem'
     },
     statisticsText: {
       color: theme.palette.common.white,
@@ -167,6 +189,20 @@ const StreamUser: React.FC<StreamUserProps> = (props: StreamUserProps) => {
     }
   }, [props.review, reviewId]);
 
+  /**
+   * Handles the mute state of the videos.
+   */
+  const handleMute: (
+    e: React.SyntheticEvent
+  ) => void = (
+    e: React.SyntheticEvent
+  ): void => {
+    e.stopPropagation();
+    if (props.mute) {
+      props.mute(!props.muted);
+    }
+  }
+
   return (
     <Grid
       alignItems='flex-end'
@@ -222,7 +258,7 @@ const StreamUser: React.FC<StreamUserProps> = (props: StreamUserProps) => {
         </Grid>
       }
       <Grid className={clsx(classes.bottomContainer)} item xs={12}>
-        <Grid container justify='space-between' alignItems='center'>
+        <Grid container justify='space-between' alignItems='baseline'>
           <Grid item>
             <Grid container justify='flex-start'>
               {props.review && props.review.product && props.user &&
@@ -245,17 +281,34 @@ const StreamUser: React.FC<StreamUserProps> = (props: StreamUserProps) => {
             </Grid>
           </Grid>
           <Grid item>
-            <IconButton
-              className={clsx(classes.playButton)}
-              title='Play video'
-              onClick={props.play}
-            >
-              {props.playing ? (
-                <PauseRoundedIcon className={clsx(classes.playIcon)}/>
-              ) : (
-                <PlayArrowRoundedIcon className={clsx(classes.playIcon)}/>
-              )}
-            </IconButton>
+            <Grid container alignItems='center'>
+              <Grid item className={clsx(classes.muteButtonContainer)}>
+                <IconButton
+                  className={clsx(classes.muteButton)}
+                  title='Mute audio'
+                  onClick={handleMute}
+                >
+                  {props.muted ? (
+                    <VolumeOffRoundedIcon className={clsx(classes.muteIcon)}/>
+                  ) : (
+                    <VolumeMuteRoundedIcon className={clsx(classes.muteIcon)}/>
+                  )}
+                </IconButton>
+              </Grid>
+              <Grid item>
+                <IconButton
+                  className={clsx(classes.playButton)}
+                  title='Play video'
+                  onClick={props.play}
+                >
+                  {props.playing ? (
+                    <PauseRoundedIcon className={clsx(classes.playIcon)}/>
+                  ) : (
+                    <PlayArrowRoundedIcon className={clsx(classes.playIcon)}/>
+                  )}
+                </IconButton>
+              </Grid>
+            </Grid>
           </Grid>
         </Grid>
       </Grid>
@@ -264,12 +317,26 @@ const StreamUser: React.FC<StreamUserProps> = (props: StreamUserProps) => {
 }
 
 /**
+ * Map dispatch actions to properties on the stream.
+ *
+ * @param { Dispatch<AnyAction> } dispatch - the dispatch function to be mapped.
+ */
+const mapDispatchToProps = (dispatch: Dispatch<AnyAction>) =>
+  bindActionCreators(
+    {
+      mute: mute,
+    },
+    dispatch
+  );
+
+/**
  * Mapping the state updates to the properties from redux.
  */
 const mapStateToProps = (state: any, ownProps: StreamUserProps) => {
   // Retrieve the current stream from the active properties.
   const raveStream: RaveStream = state.raveStream ? state.raveStream.raveStream : undefined,
-        activeIndex: number = state.raveStream ? state.raveStream.active : 0;
+        activeIndex: number = state.raveStream ? state.raveStream.active : 0,
+        muted: boolean = state.video ? state.video.muted : true;
 
   let review: Review | undefined,
       user: PublicProfile | undefined;
@@ -285,6 +352,7 @@ const mapStateToProps = (state: any, ownProps: StreamUserProps) => {
   return {
     ...ownProps,
     activeIndex,
+    muted,
     raveStream,
     review,
     user
@@ -293,4 +361,5 @@ const mapStateToProps = (state: any, ownProps: StreamUserProps) => {
 
 export default connect(
   mapStateToProps,
+  mapDispatchToProps
 )(StreamUser);

@@ -120,6 +120,9 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
   ratingItemWithValues: {
     justifyContent: 'flex-start'
   },
+  selected: {
+    color: theme.palette.secondary.main
+  },
   selectedIcon: {
     color: theme.palette.secondary.main
   },
@@ -141,9 +144,12 @@ const StreamRate: React.FC<StreamRateProps> = (props: StreamRateProps) => {
   const classes = useStyles();
 
   const {
+    ratingAllowed,
     ratingResults,
     rate,
+    rated,
     retrieved,
+    setRated,
     setRatingResults
   } = useRate({reviewId: props.review._id || ''});
 
@@ -163,8 +169,6 @@ const StreamRate: React.FC<StreamRateProps> = (props: StreamRateProps) => {
 
   const [reviewId, setReviewId] = React.useState<string>(props.review ? props.review._id : '');
 
-  const [rated, setRated] = React.useState<Rating | null>(null);
-
   const [submitted, setSubmitted] = React.useState<boolean>(false);
 
   /**
@@ -178,6 +182,7 @@ const StreamRate: React.FC<StreamRateProps> = (props: StreamRateProps) => {
     // Update the review id based on changes to the video progress id.
     if (props.videoProgress._id !== reviewId) {
       if (props.videoProgress._id) {
+        ratingAllowed(false)('');
         setReviewId(props.videoProgress._id);
         setToken('');
         setRated(null);
@@ -193,11 +198,10 @@ const StreamRate: React.FC<StreamRateProps> = (props: StreamRateProps) => {
       }
     }
 
-    if (rated && props.videoProgress.playedSeconds > 30) {
-      if (!submitted) {
-        rate(Rating.HELPFUL)(token);
-        trackRating(Rating.HELPFUL);
-      }
+    if (props.videoProgress.playedSeconds > 30 && !submitted) {
+      ratingAllowed(true)(token);
+      trackRating(Rating.HELPFUL);
+      setSubmitted(true);
     }
 
   }, [reviewId, props.videoProgress]);
@@ -212,8 +216,11 @@ const StreamRate: React.FC<StreamRateProps> = (props: StreamRateProps) => {
   ): void => {
     e.stopPropagation();
     // Track the successful attempt to rate the review.
-    trackRating(Rating.HELPFUL);
-    setRated(Rating.HELPFUL);
+    if (rated === Rating.HELPFUL) {
+      rate(null)(token)(false);
+    } else {
+      rate(Rating.HELPFUL)(token)(false);
+    }
   }
 
   /**
@@ -295,7 +302,11 @@ const StreamRate: React.FC<StreamRateProps> = (props: StreamRateProps) => {
                   )}
                   onClick={handleUpvote}
                 >
-                  <ThumbUpAltRoundedIcon className={clsx(classes.icon)}/>
+                  <ThumbUpAltRoundedIcon className={clsx(
+                    classes.icon, {
+                      [classes.selected]: ratingResults.userRating === Rating.HELPFUL || rated === Rating.HELPFUL
+                    }
+                  )}/>
                 </IconButton>
               </Grid>
               {ratingResults && ratingResults.up !== '0' &&
@@ -307,7 +318,7 @@ const StreamRate: React.FC<StreamRateProps> = (props: StreamRateProps) => {
                   <Typography variant='body1' className={clsx(
                       classes.countText,
                       {
-                        [classes.selectedText]: ratingResults.userRating === Rating.HELPFUL
+                        [classes.selected]: ratingResults.userRating === Rating.HELPFUL || rated === Rating.HELPFUL
                       }
                     )}
                   >
@@ -317,7 +328,11 @@ const StreamRate: React.FC<StreamRateProps> = (props: StreamRateProps) => {
               }
             </Grid>
             <Grid item>
-              <Typography variant='body1' className={clsx(classes.ratingItemLabel)}>
+              <Typography variant='body1' className={clsx(
+                classes.ratingItemLabel, {
+                  [classes.selected]: ratingResults.userRating === Rating.HELPFUL || rated === Rating.HELPFUL
+                }
+              )}>
                 Helpful
               </Typography>
             </Grid>
