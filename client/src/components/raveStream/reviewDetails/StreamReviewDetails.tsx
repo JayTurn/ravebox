@@ -79,23 +79,23 @@ const StreamReviewDetails: React.FC<StreamReviewDetailsProps> = (props: StreamRe
     >
       <Grid item xs={12}>
         {user &&
-        <Grid
-          alignItems='center'
-          className={classes.userContainer}
-          container 
-          justify='space-between'
-        >
-          <Grid item>
-              <StreamUserProfile user={user} />
+          <Grid
+            alignItems='center'
+            className={classes.userContainer}
+            container 
+            justify='space-between'
+          >
+            <Grid item>
+                <StreamUserProfile user={user} />
+            </Grid>
+            <Grid item>
+              <FollowButton
+                id={user._id}
+                handle={user.handle}
+                followType={FollowType.CHANNEL}
+              />
+            </Grid> 
           </Grid>
-          <Grid item>
-            <FollowButton
-              id={user._id}
-              handle={user.handle}
-              followType={FollowType.CHANNEL}
-            />
-          </Grid> 
-        </Grid>
         }
       </Grid>
     </Grid>

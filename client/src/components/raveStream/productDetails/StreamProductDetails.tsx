@@ -48,7 +48,7 @@ const useStyles = makeStyles((theme: Theme) =>
       overflowY: 'auto'
     },
     paddedContent: {
-      padding: theme.spacing(0, 1) 
+      padding: theme.spacing(0, 1)
     },
     subtitle: {
       fontSize: '1rem',
@@ -84,12 +84,10 @@ const StreamProductDetails: React.FC<StreamProductDetailsProps> = (props: Stream
       container
     >
       <Grid item xs={12}>
-        {props.raveStream &&
-          <StreamNavigation
-            title={props.raveStream.title} 
-            variant='colored'
-          />  
-        }
+        <StreamNavigation
+          title={props.raveStream ? props.raveStream.title : ''}
+          variant='colored'
+        />
         {props.product.images && props.product.images.length > 0 &&
           <ProductImages images={props.product.images} />
         }
@@ -99,7 +97,7 @@ const StreamProductDetails: React.FC<StreamProductDetailsProps> = (props: Stream
             classes.titleContainer
           )}>
             <Typography className={clsx(classes.title)} variant='h2'>
-              <Box className={clsx(classes.subtitle)}>{props.product.brand.name}</Box>
+              <Box component='span' className={clsx(classes.subtitle)}>{props.product.brand.name}</Box>
               {props.product.name}
             </Typography>
           </Grid>
@@ -117,7 +115,7 @@ const mapStateToProps = (state: any, ownProps: StreamProductDetailsProps) => {
   const raveStream: RaveStream = state.raveStream ? state.raveStream.raveStream : undefined,
         activeIndex: number = state.raveStream ? state.raveStream.active : 0;
 
-  let review: Review | undefined; 
+  let review: Review | undefined;
 
   if (raveStream && raveStream.reviews.length > 0) {
     review = {...raveStream.reviews[activeIndex]};

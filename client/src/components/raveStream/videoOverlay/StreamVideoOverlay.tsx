@@ -277,12 +277,10 @@ const StreamVideoOverlay: React.FC<StreamVideoOverlayProps> = (props: StreamVide
         >
           <React.Fragment>
             <Grid item xs={12}>
-              {props.raveStream &&
-                <StreamNavigation
-                  title={props.raveStream.title}
-                  variant='white'
-                />  
-              }
+              <StreamNavigation
+                title={props.raveStream ? props.raveStream.title : ''}
+                variant='white'
+              />  
               <Grid container alignItems='center' justify='space-between'>
                 <Grid item className={clsx(classes.productTitleContainer)} xs={12}>
                   {props.review && props.review.product &&

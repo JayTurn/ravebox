@@ -8,6 +8,9 @@ import * as React from 'react';
 import Grid from '@material-ui/core/Grid';
 import SvgIcon from '@material-ui/core/SvgIcon';
 
+// Enumerators.
+import { LogoColor } from './Logo.enum';
+
 // Interfaces.
 import { LogoProps } from './Logo.interface';
 
@@ -18,6 +21,7 @@ import { LogoSVG, LogoSVGIcon } from './LogoSVG';
  * Renders the ravebox logo.
  */
 const Logo: React.FC<LogoProps> = (props: LogoProps) => {
+  const color: string = props.color === LogoColor.MAIN ? '#646AF0' : '#FFFFFF';
   return (
     <React.Fragment>
       {props.iconOnly ? (
@@ -28,7 +32,7 @@ const Logo: React.FC<LogoProps> = (props: LogoProps) => {
           alignItems='center'
         >
           <Grid item xs={12}>
-            <SvgIcon htmlColor='#FFF' component={() => LogoSVGIcon(props.color)} />
+            <SvgIcon htmlColor={color} component={() => LogoSVGIcon(color)} />
           </Grid>
         </Grid>
       ) : (

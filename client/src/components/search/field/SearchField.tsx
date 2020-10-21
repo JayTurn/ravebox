@@ -218,6 +218,7 @@ const SearchField: React.FC<SearchFieldProps> = (props: SearchFieldProps) => {
   ) => void = (
     e: React.SyntheticEvent
   ): void => {
+    e.stopPropagation();
     if (props.toggleSearchField) {
       props.toggleSearchField();
     }

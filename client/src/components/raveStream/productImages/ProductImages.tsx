@@ -65,7 +65,7 @@ const ProductImages: React.FC<ProductImagesProps> = (props: ProductImagesProps) 
       <Box className={clsx(classes.scrollableContainer)}>
         {props.images.map((productImage: ImageAndTitle) => {
           return (
-            <Card className={clsx(classes.cardContainer)}>
+            <Card className={clsx(classes.cardContainer)} key={productImage.url}>
               <CardMedia
                 className={clsx(classes.cardMedia)}
                 image={productImage.url}

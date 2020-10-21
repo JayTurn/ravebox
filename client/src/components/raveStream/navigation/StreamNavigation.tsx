@@ -49,6 +49,9 @@ import ProfileMenu from '../../user/profileMenu/ProfileMenu';
 import SearchField from '../../search/field/SearchField';
 import ImpersonateUser from '../../admin/impersonateUser/ImpersonateUser';
 
+// Enumerators.
+import { LogoColor } from '../../logo/Logo.enum';
+
 // Interfaces.
 import {
   StreamNavigationScrollProps,
@@ -247,6 +250,7 @@ const StreamNavigation: React.FC<StreamNavigationProps> = (props: StreamNavigati
   ) => void = (
     e: React.SyntheticEvent
   ): void => {
+    e.stopPropagation();
     setSearchBar(!searchBar);
   }
 
@@ -303,7 +307,7 @@ const StreamNavigation: React.FC<StreamNavigationProps> = (props: StreamNavigati
             <LogoIconButton
               onClick={toggleSideNavigation}
             >
-              <Logo iconOnly={true} fullWidth='30px' color={props.variant === 'white' ? '#FFF' : theme.palette.primary.main} />
+              <Logo iconOnly={true} fullWidth='30px' color={props.variant === 'white' ? LogoColor.WHITE : LogoColor.MAIN} />
               <Box className={classes.menuIconBadgeContainer}>
                 <MenuIcon
                   className={clsx(
