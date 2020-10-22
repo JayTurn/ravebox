@@ -102,7 +102,6 @@ const useStyles = makeStyles((theme: Theme) =>
       padding: 0
     },
     muteButtonContainer: {
-      marginRight: theme.spacing(2)
     },
     muteIcon: {
       fontSize: '2rem'
@@ -295,6 +294,7 @@ const StreamUser: React.FC<StreamUserProps> = (props: StreamUserProps) => {
                   )}
                 </IconButton>
               </Grid>
+              {/*
               <Grid item>
                 <IconButton
                   className={clsx(classes.playButton)}
@@ -308,6 +308,7 @@ const StreamUser: React.FC<StreamUserProps> = (props: StreamUserProps) => {
                   )}
                 </IconButton>
               </Grid>
+              */}
             </Grid>
           </Grid>
         </Grid>

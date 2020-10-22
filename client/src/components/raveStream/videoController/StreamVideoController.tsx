@@ -158,7 +158,7 @@ const StreamVideoController: React.FC<StreamVideoControllerProps> = (props: Stre
 
   const [showOverlay, setShowOverlay] = React.useState<boolean>(true);
 
-  const [playing, setPlaying] = React.useState<boolean>(false);
+  const [playing, setPlaying] = React.useState<boolean>(true);
 
   const activeIndex: number = props.activeIndex || 0;
 

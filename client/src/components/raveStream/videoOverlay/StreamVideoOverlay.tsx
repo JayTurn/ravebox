@@ -15,9 +15,11 @@ import {
   useTheme,
   withStyles
 } from '@material-ui/core/styles';
+import Fade from '@material-ui/core/Fade';
 import Grid from '@material-ui/core/Grid';
 import IconButton from '@material-ui/core/IconButton';
 import PlayArrowRoundedIcon from '@material-ui/icons/PlayArrowRounded';
+import PauseRoundedIcon from '@material-ui/icons/PauseRounded';
 import Typography from '@material-ui/core/Typography';
 import * as React from 'react';
 import {
@@ -106,6 +108,7 @@ const useStyles = makeStyles((theme: Theme) =>
       padding: theme.spacing(1)
     },
     playIcon: {
+      color: `rgba(255,255,255,.8)`,
       height: 60,
       width: 60
     },
@@ -149,20 +152,56 @@ const StreamVideoOverlay: React.FC<StreamVideoOverlayProps> = (props: StreamVide
 
   const [visible, setVisible] = React.useState<boolean>(props.show);
 
+  const [startX, setStartX] = React.useState<number>(0);
+  const [startY, setStartY] = React.useState<number>(0);
+
   /**
-   * Handles clicking the overlay to play and pause video.
+   * Handles mouse down handling.
    */
-  const handleClick: (
-    e: React.SyntheticEvent
+  const handleMouseDown: (
+    e: React.MouseEvent
   ) => void = (
-    e: React.SyntheticEvent
+    e: React.MouseEvent
   ): void => {
+    setStartX(e.clientX);
+    setStartY(e.clientY);
+  }
+
+  /**
+   * Handles mouse up handling.
+   */
+  const handleMouseUp: (
+    e: React.MouseEvent
+  ) => void = (
+    e: React.MouseEvent
+  ): void => {
+    const xDiff: number = Math.abs(e.clientX - startX),
+          yDiff: number = Math.abs(e.clientY - startY);
+
+    if (xDiff < 5 && yDiff < 5) {
+      // Play the video if the overlay is showing.
+      if (visible) {
+        if (props.playing) {
+          props.play(false);
+        } else {
+          props.play(true);
+          setVisible(false);
+        }
+      } else {
+        if (props.playing) {
+          setVisible(true);
+        } 
+      }
+    }
+
+    /*
     if (props.overlayState === SwipeView.VIDEO) {
       setVisible(!visible);
     } else {
       e.stopPropagation();
       setVisible(false);
     }
+    */
   }
 
   /**
@@ -250,7 +289,6 @@ const StreamVideoOverlay: React.FC<StreamVideoOverlayProps> = (props: StreamVide
     <Box
       {...swipeableHandlers}
       className={clsx(classes.container)}
-      onClick={handleClick}
     >
       {props.overlayState !== SwipeView.VIDEO &&
         <Box className={clsx(
@@ -275,6 +313,8 @@ const StreamVideoOverlay: React.FC<StreamVideoOverlayProps> = (props: StreamVide
               [classes.overlaySwiped]: props.overlayState !== SwipeView.VIDEO
             }
           )}
+          onMouseDown={handleMouseDown}
+          onMouseUp={handleMouseUp}
           container
           alignItems='stretch'
           style={{opacity: visible ? 1 : 0}}
