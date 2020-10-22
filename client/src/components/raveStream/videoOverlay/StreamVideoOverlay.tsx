@@ -82,10 +82,10 @@ const useStyles = makeStyles((theme: Theme) =>
       fontWeight: 800
     },
     container: {
-      height: 'calc(100vh)',
-      maxHeight: 'calc(100vh); max-height: -webkit-fill-available;',
-      minHeight: 'calc(100vh); min-height: -webkit-fill-available;',
-      position: 'absolute',
+      height: '100%',
+      //maxHeight: 'calc(100vh); max-height: -webkit-fill-available;',
+      //minHeight: 'calc(100vh); min-height: -webkit-fill-available;',
+      position: 'fixed',
       transition: `opacity 300ms ease-in-out`,
       width: 'calc(100vw)',
       zIndex: 5

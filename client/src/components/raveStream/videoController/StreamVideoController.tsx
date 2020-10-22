@@ -59,11 +59,11 @@ const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     container: {
       backgroundColor: 'black',
-      height: 'calc(100vh)',
+      height: '100%',
       left: 0,
-      maxHeight: 'calc(100vh); max-height: -webkit-fill-available;',
-      minHeight: 'calc(100vh); min-height: -webkit-fill-available;',
-      position: 'absolute',
+      //maxHeight: 'calc(100vh); max-height: -webkit-fill-available;',
+      //minHeight: 'calc(100vh); min-height: -webkit-fill-available;',
+      position: 'fixed',
       overflow: 'hidden',
       transition: 'transform 300ms ease-in-out',
       zIndex: 3
@@ -72,10 +72,10 @@ const useStyles = makeStyles((theme: Theme) =>
       color: theme.palette.common.white
     },
     item: {
-      height: 'calc(100vh)',
-      maxHeight: 'calc(100vh); max-height: -webkit-fill-available;',
-      minHeight: 'calc(100vh); min-height: -webkit-fill-available;',
-      position: 'relative'
+      height: '100%',
+      //maxHeight: 'calc(100vh); max-height: -webkit-fill-available;',
+      //minHeight: 'calc(100vh); min-height: -webkit-fill-available;',
+      position: 'fixed'
     },
     shifted: {
       borderRadius: 10

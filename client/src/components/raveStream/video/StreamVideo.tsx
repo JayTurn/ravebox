@@ -55,10 +55,10 @@ const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     container: {
       backgroundColor: 'black',
-      height: 'calc(100vh)',
-      maxHeight: 'calc(100vh); max-height: -webkit-fill-available;',
-      minHeight: 'calc(100vh); min-height: -webkit-fill-available;',
-      position: 'absolute',
+      height: '100%',
+      //maxHeight: 'calc(100vh); max-height: -webkit-fill-available;',
+      //minHeight: 'calc(100vh); min-height: -webkit-fill-available;',
+      position: 'fixed',
       overflowY: 'auto',
       transition: 'transform 300ms ease-in-out',
       width: 'calc(100vw)',

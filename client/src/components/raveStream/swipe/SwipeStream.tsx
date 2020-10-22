@@ -75,11 +75,11 @@ import {
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     container: {
-      height: 'calc(100vh)',
-      minHeight: 'calc(100vh); min-height: -webkit-fill-available;',
-      maxHeight: 'calc(100vh); max-height: -webkit-fill-available;',
+      height: '100%',
+      //minHeight: 'calc(100vh); min-height: -webkit-fill-available;',
+      //maxHeight: 'calc(100vh); max-height: -webkit-fill-available;',
       overflow: 'hidden',
-      position: 'relative',
+      position: 'fixed',
       top: 0,
       width: 'calc(100vw)',
       zIndex: 1
