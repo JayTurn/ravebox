@@ -20,9 +20,10 @@ import {
   useTheme,
   withStyles
 } from '@material-ui/core/styles';
+import { frontloadConnect } from 'react-frontload';
 import { Helmet } from 'react-helmet';
 import * as React from 'react';
-import { frontloadConnect } from 'react-frontload';
+import { Route } from 'react-router-dom';
 import useMediaQuery from '@material-ui/core/useMediaQuery';
 import { withRouter } from 'react-router';
 
@@ -39,6 +40,7 @@ import StreamReviewDetails from '../reviewDetails/StreamReviewDetails';
 import StreamVideoController from '../videoController/StreamVideoController';
 
 // Enumerators.
+import { RaveStreamType } from '../RaveStream.enum';
 import {
   RequestType,
   RetrievalStatus
@@ -101,6 +103,35 @@ const useStyles = makeStyles((theme: Theme) =>
 );
 
 /**
+ * Formats the url.
+ */
+const formatURL: (
+  params: RaveStreamURLParams
+) => (
+  ravePath: string
+) => string = (
+  params: RaveStreamURLParams
+) => (
+  ravePath: string
+): string => {
+  let path: string = `/stream/${params.streamType}`;
+
+  if (params.firstPath) {
+    path += `/${params.firstPath}`;
+  }
+
+  if (params.secondPath) {
+    path += `/${params.secondPath}`;
+  }
+
+  if (ravePath) {
+    path += `/${ravePath}`;
+  }
+
+  return path;
+}
+
+/**
  * Loads the rave stream from the api before rendering.
  * 
  * @param { SwipeStreamProps } props - the swipe stream properties.
@@ -160,10 +191,18 @@ const SwipeStream: React.FC<SwipeStreamProps> = (props: SwipeStreamProps) => {
 
   const activeIndex: number = props.activeIndex || 0;
 
+  const [ravePath, setRavePath] = React.useState<string>('');
+
   /**
    * Track the stream view.
    */
   React.useEffect(() => {
+
+    if (props.review && props.review.url !== ravePath) {
+      const path: string = formatURL(props.match.params)(props.review.url);
+      setRavePath(props.review.url);
+      props.history.push(path);
+    }
 
     // Track the category list page view.
     if (!pageViewed && product._id) {
@@ -191,7 +230,7 @@ const SwipeStream: React.FC<SwipeStreamProps> = (props: SwipeStreamProps) => {
       setPageViewed(true);
 
     }
-  }, [pageViewed, product]);
+  }, [pageViewed, product, props.match.params, props.review, ravePath]);
 
   /**
    * Sets the video view position.
@@ -219,7 +258,9 @@ const SwipeStream: React.FC<SwipeStreamProps> = (props: SwipeStreamProps) => {
       </Box>
       {props.raveStream && props.raveStream.reviews && props.raveStream.reviews.length > 0 &&
         <Box className={clsx(classes.detailsContainer)} style={{zIndex: swipeView === SwipeView.REVIEW ? 2 : 1}}>
-          <StreamReviewDetails review={{...props.raveStream.reviews[activeIndex]}} />
+          <Route path={`${props.match.path}/${props.raveStream.reviews[activeIndex].url}`}>
+            <StreamReviewDetails review={{...props.raveStream.reviews[activeIndex]}} />
+          </Route>
         </Box>
       }
     </Box>
@@ -248,10 +289,17 @@ const mapStateToProps = (state: any, ownProps: SwipeStreamProps) => {
   const raveStream: RaveStream = state.raveStream ? state.raveStream.raveStream : undefined,
         activeIndex: number = state.raveStream ? state.raveStream.active : 0;
 
+  let review: Review | undefined;
+  
+  if (raveStream && raveStream.reviews.length > 0) {
+    review = {...raveStream.reviews[activeIndex]};
+  }
+
   return {
     ...ownProps,
     activeIndex,
-    raveStream
+    raveStream,
+    review
   };
 };
 
