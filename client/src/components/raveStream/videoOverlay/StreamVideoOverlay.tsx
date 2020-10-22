@@ -93,7 +93,8 @@ const useStyles = makeStyles((theme: Theme) =>
       zIndex: 5
     },
     contentContainer: {
-      height: '100%'
+      height: '100%',
+      zIndex: 1
     },
     overlaySwiped: {
       backgroundColor: `rgba(0,0,0,0.8)`,
@@ -129,7 +130,8 @@ const useStyles = makeStyles((theme: Theme) =>
       padding: theme.spacing(0, 2, 0)
     },
     userContainer: {
-      alignSelf: 'flex-end'
+      alignSelf: 'flex-end',
+      zIndex: 2
     }
   })
 );

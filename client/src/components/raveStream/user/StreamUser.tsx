@@ -197,9 +197,23 @@ const StreamUser: React.FC<StreamUserProps> = (props: StreamUserProps) => {
     e: React.SyntheticEvent
   ): void => {
     e.stopPropagation();
+
     if (props.mute) {
       props.mute(!props.muted);
     }
+
+    return;
+  }
+
+  /**
+   * Handles mouse down and mouse up events to stop proagation.
+   */
+  const handleMouse: (
+    e: React.MouseEvent
+  ) => void = (
+    e: React.MouseEvent
+  ): void => {
+    e.stopPropagation();
   }
 
   return (
@@ -286,6 +300,8 @@ const StreamUser: React.FC<StreamUserProps> = (props: StreamUserProps) => {
                   className={clsx(classes.muteButton)}
                   title='Mute audio'
                   onClick={handleMute}
+                  onMouseDown={handleMouse}
+                  onMouseUp={handleMouse}
                 >
                   {props.muted ? (
                     <VolumeOffRoundedIcon className={clsx(classes.muteIcon)}/>

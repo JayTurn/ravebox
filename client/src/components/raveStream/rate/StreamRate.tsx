@@ -224,6 +224,17 @@ const StreamRate: React.FC<StreamRateProps> = (props: StreamRateProps) => {
   }
 
   /**
+   * Handles mouse down and mouse up events to stop proagation.
+   */
+  const handleMouse: (
+    e: React.MouseEvent
+  ) => void = (
+    e: React.MouseEvent
+  ): void => {
+    e.stopPropagation();
+  }
+
+  /**
    * Handles the down vote event.
    */
   const handleDownvote: (
@@ -301,6 +312,8 @@ const StreamRate: React.FC<StreamRateProps> = (props: StreamRateProps) => {
                     }
                   )}
                   onClick={handleUpvote}
+                  onMouseDown={handleMouse}
+                  onMouseUp={handleMouse}
                 >
                   <ThumbUpAltRoundedIcon className={clsx(
                     classes.icon, {
@@ -354,6 +367,8 @@ const StreamRate: React.FC<StreamRateProps> = (props: StreamRateProps) => {
                     }
                   )}
                   onClick={handleDownvote}
+                  onMouseDown={handleMouse}
+                  onMouseUp={handleMouse}
                 >
                   <ThumbDownAltRoundedIcon className={clsx(classes.icon)}/>
                 </IconButton>

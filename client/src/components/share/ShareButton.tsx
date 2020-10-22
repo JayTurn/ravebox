@@ -228,6 +228,17 @@ const ShareButton: React.FC<ShareButtonProps> = (props: ShareButtonProps) => {
   };
 
   /**
+   * Handles mouse down and mouse up events to stop proagation.
+   */
+  const handleMouse: (
+    e: React.MouseEvent
+  ) => void = (
+    e: React.MouseEvent
+  ): void => {
+    e.stopPropagation();
+  }
+
+  /**
    * Handles the closing of the popover message.
    */
   const handlePopoverClose: (
@@ -265,6 +276,8 @@ const ShareButton: React.FC<ShareButtonProps> = (props: ShareButtonProps) => {
               color='primary'
               disableElevation
               onClick={navigatorSupported ? handleNavigatorShare : handleDesktopShare}
+              onMouseDown={handleMouse}
+              onMouseUp={handleMouse}
               startIcon={<ShareRoundedIcon />}
               variant='contained'
             >
@@ -281,6 +294,8 @@ const ShareButton: React.FC<ShareButtonProps> = (props: ShareButtonProps) => {
                 classes.iconButton
               )}
               onClick={navigatorSupported ? handleNavigatorShare : handleDesktopShare}
+              onMouseDown={handleMouse}
+              onMouseUp={handleMouse}
             >
               <ShareRoundedIcon className={clsx(classes.icon)} style={{color: props.color || theme.palette.grey.A700}}/>
             </IconButton>
