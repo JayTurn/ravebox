@@ -480,7 +480,7 @@ const AdminProductRow: React.FC<AdminProductRowProps> = (props: AdminProductRowP
                     title="Product name"
                   />
                 </Grid>
-                <Grid item xs={12} lg={6} style={{zIndex: 98}}>
+                <Grid item xs={12} lg={6} style={{zIndex: 97}}>
                   <AdminAutoCompleteField
                     addEnabled={true}
                     addNew={handleProductTypeCreate}
@@ -492,7 +492,7 @@ const AdminProductRow: React.FC<AdminProductRowProps> = (props: AdminProductRowP
                     options={[...productType.tagResultNames]}
                   /> 
                 </Grid>
-                <Grid item xs={12} style={{zIndex: 98}}>
+                <Grid item xs={12} style={{zIndex: 96}}>
                   <Input
                     defaultValue={product.description}
                     handleBlur={updateInputs}
@@ -504,7 +504,7 @@ const AdminProductRow: React.FC<AdminProductRowProps> = (props: AdminProductRowP
                     title="Product description"
                   />
                 </Grid>
-                <Grid item xs={12} style={{zIndex: 98}}>
+                <Grid item xs={12} style={{zIndex: 95}}>
                   <Input
                     defaultValue={product.website}
                     handleBlur={updateInputs}

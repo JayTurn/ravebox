@@ -10,9 +10,9 @@ import * as Mongoose from 'mongoose';
  * Follow interface.
  */
 export interface FollowDocument extends Mongoose.Document {
-  channels: Array<string>;
-  _id: string;
-  user: string;
+  _id: Mongoose.Types.ObjectId;
+  channels: Array<Mongoose.Types.ObjectId>;
+  user: Mongoose.Types.ObjectId;
   details: Following;
 }
 
@@ -20,6 +20,6 @@ export interface FollowDocument extends Mongoose.Document {
  * Follow model.
  */
 export interface Following {
-  _id: string;
-  channels: Array<string>;
+  _id: Mongoose.Types.ObjectId;
+  channels: Array<Mongoose.Types.ObjectId>;
 }

@@ -32,7 +32,7 @@ import {
 } from '../../models/authentication/authentication.interface';
 import {
   ProductDetails,
-  ProductDetailsDocument,
+  ProductDocument,
   ProductUpdates
 } from './product.interface';
 import {
@@ -43,7 +43,7 @@ import {
   ReviewDocument
 } from '../review/review.interface';
 import {
-  TagDetailsDocument
+  TagDocument
 } from '../tag/tag.interface';
 
 // Utilities.
@@ -102,7 +102,7 @@ export default class ProductController {
 
     // Retrieve a product by its public path.
     router.get(
-      `${path}/view/:category/:subCategory/:brand/:productName`,
+      `${path}/view/:brand/:productName`,
       ProductController.RetrieveByURL
     );
 
@@ -138,7 +138,7 @@ export default class ProductController {
     );
 
     // Create a new product from the request data.
-    const newProduct: ProductDetailsDocument = new Product({
+    const newProduct: ProductDocument = new Product({
       name: request.body.name,
       namePartials: namePartials,
       brand: Mongoose.Types.ObjectId(request.body.brandId),
@@ -147,14 +147,14 @@ export default class ProductController {
 
     // Save the new product.
     newProduct.save()
-      .then((productDetails: ProductDetailsDocument) => {
+      .then((productDetails: ProductDocument) => {
         return productDetails.populate({
           path: 'brand',
           model: 'Brand'
         })
         .execPopulate();
       })
-      .then((productDetails: ProductDetailsDocument) => {
+      .then((productDetails: ProductDocument) => {
         // Set the response object.
         const responseObject: ResponseObject = Connect.setResponse({
           data: {
@@ -326,7 +326,7 @@ export default class ProductController {
       path: 'productType',
       model: 'Tag'
     })
-    .then((productDetails: ProductDetailsDocument) => {
+    .then((productDetails: ProductDocument) => {
         // Attach the updated product to the response.
         const responseObject = Connect.setResponse({
           data: {
@@ -401,8 +401,8 @@ export default class ProductController {
         association: TagAssociation.PRODUCT
       })
       .lean()
-      .then((tagDetails: TagDetailsDocument) => {
-        let productTypeTag: TagDetailsDocument;
+      .then((tagDetails: TagDocument) => {
+        let productTypeTag: TagDocument;
 
         // If a matching tag already exists, use that.
         if (tagDetails) {
@@ -435,7 +435,7 @@ export default class ProductController {
           path: 'productType',
           model: 'Tag'
         })
-        .then((productDetails: ProductDetailsDocument) => {
+        .then((productDetails: ProductDocument) => {
 
           // Attach the brands to the response.
           const responseObject = Connect.setResponse({
@@ -498,7 +498,7 @@ export default class ProductController {
         path: 'productType',
         model: 'Tag'
       })
-      .then((productDetails: ProductDetailsDocument) => {
+      .then((productDetails: ProductDocument) => {
         // Attach the brands to the response.
         const responseObject = Connect.setResponse({
           data: {
@@ -561,7 +561,7 @@ export default class ProductController {
     Product.findOne({
       _id: id
     })
-    .then((product: ProductDetailsDocument) => {
+    .then((product: ProductDocument) => {
         // Attach the product to the response.
         const responseObject = Connect.setResponse({
           data: {
@@ -666,9 +666,7 @@ export default class ProductController {
    */
   static RetrieveByURL(request: Request, response: Response): void {
     const brand = request.params.brand,
-          category = request.params.category,
-          productName = request.params.productName,
-          subCategory = request.params.subCategory;
+          productName = request.params.productName;
 
     // If we don't have a product name, return an error.
     if (!productName) {
@@ -692,9 +690,17 @@ export default class ProductController {
     let product: ProductDetails;
 
     Product.findOne({
-      url: `${category}/${subCategory}/${brand}/${productName}`,
+      url: `${brand}/${productName}`,
     })
-    .then((productDetails: ProductDetailsDocument) => {
+    .populate({
+      path: 'brand',
+      model: 'Brand'
+    })
+    .populate({
+      path: 'productType',
+      model: 'Tag'
+    })
+    .then((productDetails: ProductDocument) => {
       if (!productDetails) {
         throw new Error('Product not found');
       }

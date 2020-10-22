@@ -8,6 +8,8 @@ import * as Mongoose from 'mongoose';
 
 // Interfaces.
 import {
+  Reviewed,
+  UserStatisticsDetails,
   UserStatisticsDocument
 } from './userStatistics.interface';
 
@@ -38,6 +40,25 @@ const UserStatisticsSchema = new Schema<UserStatisticsDocument>({
 });
 
 UserStatisticsSchema.index({'user': 1, 'reviewRatings.review': 1});
+
+// Define a structure to be used for public details.
+UserStatisticsSchema
+  .virtual('details')
+  .get(function() {
+    const userStatistics: UserStatisticsDetails = {
+      _id: this._id as Mongoose.Types.ObjectId,
+      followers: this.followers as number,
+      ravesCount: this.ravesCount as number,
+      reviews: this.reviews as Array<Reviewed>,
+      user: this.user as Mongoose.Types.ObjectId
+    }
+
+    if (this.invited) {
+      userStatistics.invited = this.invited as Array<Mongoose.Types.ObjectId>;
+    }
+
+    return userStatistics;
+  });
 
 const UserStatistics: Mongoose.Model<UserStatisticsDocument> = Mongoose.model('UserStatistic', UserStatisticsSchema);
 

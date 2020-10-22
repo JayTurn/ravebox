@@ -14,6 +14,7 @@ import Images from '../../shared/images/Images.model';
 import Invitation from '../invitation/invitation.model';
 import LocalController from './authenticate/local.strategy';
 import Logging from '../../shared/logging/Logging.model';
+import * as Mongoose from 'mongoose';
 import {
   Request,
   Response,
@@ -43,16 +44,16 @@ import {
 import {
   FollowDocument
 } from '../follow/follow.interface';
-import { InvitationDetailsDocument } from '../invitation/invitation.interface';
+import { InvitationDocument } from '../invitation/invitation.interface';
 import { ResponseObject } from '../../models/database/connect.interface';
 import {
   ProfileSettings,
   SignupDetails,
   UserChannel,
-  UserDetailsDocument
+  UserDocument
 } from './user.interface';
 import {
-  UserStatistics as UserStats,
+  UserStatisticsDetails as UserStats,
   UserStatisticsDocument
 } from '../userStatistics/userStatistics.interface'
 import {
@@ -149,7 +150,7 @@ export default class UserController {
         path: 'following',
         model: 'Follow'
       })
-      .then((user: UserDetailsDocument) => {
+      .then((user: UserDocument) => {
         // Attach the private user profile to the response.
         responseObject = Connect.setResponse({
           data: {
@@ -217,7 +218,7 @@ export default class UserController {
       _id: invitation,
       status: InvitationStatus.WAITING
     })
-    .then((invitationDetails: InvitationDetailsDocument) => {
+    .then((invitationDetails: InvitationDocument) => {
       // Exit if we don't have any invitation details.
       if (!invitationDetails) {
         throw new Error(`We couldn't validate your invitation`);
@@ -225,12 +226,12 @@ export default class UserController {
 
       return invitationDetails;
     })
-    .then((invitationDetails: InvitationDetailsDocument) => {
+    .then((invitationDetails: InvitationDocument) => {
 
       // Create a new user from the request data.
       const newUserStatistics: UserStatisticsDocument = new UserStatistics(),
             newFollow: FollowDocument = new Follow(),
-            newUser: UserDetailsDocument = new User({
+            newUser: UserDocument = new User({
               ...userDetails,
               statistics: newUserStatistics._id,
               following: newFollow._id
@@ -253,7 +254,7 @@ export default class UserController {
       User.findOne({
         'email': newUser.email
       })
-      .then((user: UserDetailsDocument) => {
+      .then((user: UserDocument) => {
         if (user) {
           // Set the response object.
           const responseObject = Connect.setResponse({
@@ -269,7 +270,7 @@ export default class UserController {
 
         // Save the new user entry.
         newUser.save()
-          .then((user: UserDetailsDocument) => {
+          .then((user: UserDocument) => {
             // Generate a token for the user.
             const token: string = Authenticate.signToken(user.id, user.role[0]),
                 // Decode the token in order to get the expiry.
@@ -301,7 +302,7 @@ export default class UserController {
                   EmailTemplate.SIGNUP
                 );
 
-                UserCommon.SendEmailVerification(user);
+                UserCommon.SendEmailVerification(user.privateProfile);
 
               })
               .catch((error: Error) => {
@@ -334,11 +335,18 @@ export default class UserController {
                 path: 'statistics',
                 model: 'UserStatistic'
               })
-              .then((invitedUserDetails: UserDetailsDocument) => {
-                // Update the user statistics with the added user.
-                const userStats: UserStats = {...invitedUserDetails.statistics};
+              .then((invitedUserDetails: UserDocument) => {
 
-                let invited: Array<string>;
+                let userStats: UserStats;
+
+                if (invitedUserDetails && invitedUserDetails.statistics) {
+                  userStats = {...invitedUserDetails.statistics.details};
+                }
+
+                // Update the user statistics with the added user.
+                //const userStats: UserStats = {...invitedUserDetails.statistics};
+
+                let invited: Array<Mongoose.Types.ObjectId>;
 
                 if (userStats.invited) {
                   invited = [...userStats.invited];
@@ -458,7 +466,7 @@ export default class UserController {
       'handle': request.params.id
     })
     .lean()
-    .then((user: UserDetailsDocument) => {
+    .then((user: UserDocument) => {
       let responseObject: ResponseObject;
 
       if (!user) {
@@ -583,7 +591,7 @@ export default class UserController {
       },
       { new: true, upsert: false }
     )
-    .then((user: UserDetailsDocument) => {
+    .then((user: UserDocument) => {
       // Set the response object.
       const responseObject: ResponseObject = Connect.setResponse({
         data: {
@@ -640,7 +648,7 @@ export default class UserController {
 
     // Search for the user by the email address provided.
     User.findById(request.auth._id)
-    .then((user: UserDetailsDocument) => {
+    .then((user: UserDocument) => {
 
       // If we have found a user.
       if (user) {
@@ -658,10 +666,10 @@ export default class UserController {
         throw new Error('User not found');
       }
     })
-    .then((user: UserDetailsDocument) => {
+    .then((user: UserDocument) => {
 
       // Send the verification email.
-      UserCommon.SendEmailVerification(user);
+      UserCommon.SendEmailVerification(user.privateProfile);
 
       // Set the response object.
       const responseObject: ResponseObject = Connect.setResponse({
@@ -736,7 +744,7 @@ export default class UserController {
       new: true,
       upsert: false
     })
-    .then((user: UserDetailsDocument) => {
+    .then((user: UserDocument) => {
 
       // Define the response object.
       let responseObject: ResponseObject;
@@ -797,7 +805,7 @@ export default class UserController {
 
     // Retrieve the current logged in user.
     User.findById(request.auth._id)
-      .then((user: UserDetailsDocument) => {
+      .then((user: UserDocument) => {
         user.authenticate(oldPassword, (error: Error, verified: boolean) => {
           if (error) {
             throw error;
@@ -816,7 +824,7 @@ export default class UserController {
                   upsert: false
                 }
               )
-              .then((user: UserDetailsDocument) => {
+              .then((user: UserDocument) => {
                 // Set the response object.
                 const responseObject = Connect.setResponse({
                   data: {
@@ -903,7 +911,7 @@ export default class UserController {
       _id: _id,
       email: email
     })
-    .then((user: UserDetailsDocument) => {
+    .then((user: UserDocument) => {
 
       // Define the response object.
       let responseObject: ResponseObject;
@@ -959,7 +967,7 @@ export default class UserController {
 
     // Retrieve the current logged in user.
     User.findById(request.auth._id)
-      .then((user: UserDetailsDocument) => {
+      .then((user: UserDocument) => {
         user.authenticate(password, (error: Error, verified: boolean) => {
           if (error) {
             throw error;
@@ -1024,7 +1032,7 @@ export default class UserController {
     User.findOne({
       'email': email,
     })
-    .then((user: UserDetailsDocument) => {
+    .then((user: UserDocument) => {
 
       // If we have found a user.
       if (user) {
@@ -1100,7 +1108,7 @@ export default class UserController {
       _id: _id,
       email: email
     })
-    .then((user: UserDetailsDocument) => {
+    .then((user: UserDocument) => {
 
       if (!user) {
         throw new Error(`User doesn't exsit`);
@@ -1182,7 +1190,7 @@ export default class UserController {
       path: 'statistics',
       model: 'UserStatistic'
     })
-    .then((userDetails: UserDetailsDocument) => {
+    .then((userDetails: UserDocument) => {
 
       // Set the response object.
       const responseObject: ResponseObject = Connect.setResponse({
@@ -1255,7 +1263,7 @@ export default class UserController {
       path: 'statistics',
       model: 'UserStatistic'
     })
-    .then((userDetails: UserDetailsDocument) => {
+    .then((userDetails: UserDocument) => {
       // Add the public user details to the channel object.
       if (userDetails) {
         channel.profile = {...userDetails.publicProfile};
@@ -1382,7 +1390,7 @@ export default class UserController {
       path: 'following',
       model: 'Follow'
     })
-    .then((userDocument: UserDetailsDocument) => {
+    .then((userDocument: UserDocument) => {
 
       if (userDocument.following.channels) {
         return userDocument.following.channels;
@@ -1390,7 +1398,7 @@ export default class UserController {
         return [];
       }
     })
-    .then((users: Array<string>) => {
+    .then((users: Array<Mongoose.Types.ObjectId>) => {
       if (users.length <= 0) {
         // Return the updated list of followers.
         const responseObject: ResponseObject = Connect.setResponse({

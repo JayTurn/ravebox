@@ -58,6 +58,7 @@ const InvitationRequestSuccess = loadable(() => import('./invitation/InvitationR
 const Login = loadable(() => import('./user/login/Login'));
 const MobileNavigation = loadable(() => import('../components/navigation/mobile/MobileNavigation'));
 const MyReviews = loadable(() => import('./user/reviews/MyReviews'));
+const RaveStream = loadable(() => import('./stream/RaveStream'));
 const PageNotFound = loadable(() => import('./page-not-found/PageNotFound'));
 const PasswordReset = loadable(() => import('./user/reset/PasswordReset'));
 const PasswordResetRequest = loadable(() => import('./user/reset/PasswordResetRequest'));
@@ -143,6 +144,31 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
 }));
 
 /**
+ * Determines if default navigation is shown.
+ *
+ * @param { string } path - the path we're checking.
+ * @param { isLargeScreen } boolean - is this a large screen.
+ *
+ * @return boolean
+ */
+const displayNavigation: (
+  path: string
+) => (
+  isLargeScreen: boolean
+) => boolean = (
+  path: string
+) => (
+  isLargeScreen: boolean
+): boolean => {
+
+  if (isLargeScreen) {
+    return true;
+  }
+
+  return !path.startsWith('/stream');
+}
+
+/**
  * Application class.
  * @class App
  */
@@ -167,6 +193,18 @@ const App: React.FC<AppProps> = (props: AppProps) => {
   const [selectedTheme, setSelectedTheme] = React.useState<Theme>(DesktopRaveboxTheme);
 
   const [chooseTheme, setChooseTheme] = React.useState<number>(-1);
+
+  const [showNavigation, setShowNavigation] = React.useState<boolean>(
+    displayNavigation(props.location.pathname)(largeScreen)
+  );
+
+  /**
+   * Detect changes to the location and determine if we should show the
+   * main app navigation.
+   */
+  React.useEffect(() => props.history.listen(() => {
+    setShowNavigation(displayNavigation(props.location.pathname)(largeScreen));
+  }));
 
   React.useEffect(() => {
     if (chooseTheme < 0) {
@@ -198,7 +236,9 @@ const App: React.FC<AppProps> = (props: AppProps) => {
               <link rel='canonical' href='https://ravebox.io' />
             </Helmet>
             <ScrollToTop />
-            <TopNavigation />
+            {showNavigation &&
+              <TopNavigation />
+            }
             {largeScreen ? (
               <SideNavigation expanded={false} />
             ) : (
@@ -213,6 +253,9 @@ const App: React.FC<AppProps> = (props: AppProps) => {
                 render={(route: RouteComponentProps) => {
                   return (
                     <Switch location={route.location}>
+                      <Route path="/stream/:streamType?/:firstPath?/:secondPath?/:thirdPath?">
+                        <RaveStream />
+                      </Route>
                       <PrivateRoute path="/admin" admin={true}>
                         <Admin />
                       </PrivateRoute>
@@ -285,7 +328,7 @@ const App: React.FC<AppProps> = (props: AppProps) => {
                       <PrivateRoute exact={true} path="/product/:id/review">
                         <AddReview />
                       </PrivateRoute>
-                      <Route exact={true} path="/product/:category/:subCategory/:brand/:productName">
+                      <Route exact={true} path="/product/:brand/:productName">
                         <ViewProduct />
                       </Route>
                       <PrivateRoute exact={true} path="/review/edit/:id">

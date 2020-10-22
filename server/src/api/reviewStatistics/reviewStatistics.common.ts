@@ -7,6 +7,12 @@
 import * as Jwt from 'jsonwebtoken';
 import EnvConfig from '../../config/environment/environmentBaseConfig';
 
+// Interfaces.
+import {
+  ReviewStatisticsDetails,
+  ReviewStatisticsDocument
+} from './reviewStatistics.interface';
+
 /**
  * ReviewStatisticsCommon class.
  */
@@ -35,7 +41,7 @@ export default class ReviewStatisticsCommon {
    */
   static RatingAllowed(created: number, duration: number): boolean {
     // Define the values to evaluate the minimum duration.
-    const minimumDuration = Math.floor(duration / 2),
+    const minimumDuration = Math.floor(15),
           current: number = Math.floor(Date.now() / 1000),
           difference: number = current - created;
 
@@ -47,4 +53,35 @@ export default class ReviewStatisticsCommon {
     }
     return allowed;
   }
+
+  /**
+   * Retrieve the review statistics details from a document.
+   *
+   * @param { ReviewStatisticsDocument | ReviewStatisticsDetails } product - the product object.
+   *
+   * @return ReviewStatisticsDetails
+   */
+  static RetrieveDetailsFromDocument(
+    reviewStatisticsDocument: ReviewStatisticsDetails | ReviewStatisticsDocument
+  ): ReviewStatisticsDetails {
+    if (!ReviewStatisticsCommon.isDocument(reviewStatisticsDocument)) {
+      return reviewStatisticsDocument as ReviewStatisticsDetails;
+    }
+
+    return (reviewStatisticsDocument as ReviewStatisticsDocument).details;
+  }
+
+  /**
+   * Checks if the review statistics is a document or details.
+   */
+  static isDocument(
+    reviewStatistics: ReviewStatisticsDetails | ReviewStatisticsDocument
+  ): reviewStatistics is ReviewStatisticsDocument {
+    if ((reviewStatistics as ReviewStatisticsDocument).details) {
+      return true;
+    } else {
+      return false;
+    }
+  }
 }
+

@@ -6,7 +6,7 @@
 // Import the dependent modules.
 import {
   ChunkExtractor,
-  ChunkExtractorManager 
+  ChunkExtractorManager
 } from '@loadable/server';
 import compression from 'compression';
 import express from 'express';
@@ -119,7 +119,7 @@ const server = express()
                 window.fwSettings={
                 'widget_id':51000000451
                 };
-                !function(){if("function"!=typeof window.FreshworksWidget){var n=function(){n.q.push(arguments)};n.q=[],window.FreshworksWidget=n}}() 
+                !function(){if("function"!=typeof window.FreshworksWidget){var n=function(){n.q.push(arguments)};n.q=[],window.FreshworksWidget=n}}()
               </script>
               <script type='text/javascript' src='https://aus-widget.freshworks.com/widgets/51000000451.js' async defer></script>`
              : ''}

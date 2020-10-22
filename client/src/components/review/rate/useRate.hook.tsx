@@ -34,7 +34,7 @@ import { NumericSuffix } from '../../../utils/display/numeric/Numeric';
 export function useRate(params: RatingParams) {
 
   // Capture the review id from the parameters.
-  const { reviewId } = {...params};
+  const [reviewId, setReviewId] = React.useState<string>(params.reviewId);
 
   // Add the safety check to ensure the component is still mounted.
   const isMounted = useIsMounted();
@@ -45,7 +45,47 @@ export function useRate(params: RatingParams) {
   });
 
   // Define the retrieval status to be used for rating requests.
-  const [retrieved, setRetrieved] = React.useState(RetrievalStatus.REQUESTED); 
+  const [retrieved, setRetrieved] = React.useState(RetrievalStatus.REQUESTED);
+
+  const [submitting, setSubmitting] = React.useState<boolean>(false);
+
+  const [rated, setRated] = React.useState<Rating | null>(null);
+
+  const [allowed, setAllowed] = React.useState<boolean>(false);
+
+  /**
+   * Performs any submissions once the allowed state gets updated.
+   */
+  const ratingAllowed: (
+    value: boolean
+  ) => (
+    token: string
+  ) => void = (
+    value: boolean
+  ) => (
+    token: string
+  ): void => {
+
+    setAllowed(value);
+
+    // If we've previously selected a rating, submit it.
+    if (rated) {
+      rate(rated)(token)(true);
+    }
+  }
+
+  /**
+   * Update the retrieved state if the new revie doesn't match the existing
+   * one.
+   */
+  React.useEffect(() => {
+
+    if (params.reviewId !== reviewId) {
+      setReviewId(params.reviewId);
+      setRetrieved(RetrievalStatus.REQUESTED);
+    }
+
+  }, [params.reviewId, reviewId]);
 
   /**
    * Handle state updates based on the presence of a review.
@@ -96,14 +136,48 @@ export function useRate(params: RatingParams) {
    * Performs an api request to rate a review using the token provided.
    */
   const rate: (
-    rating: Rating
+    rating: Rating | null
   ) => (
     token: string
+  ) => (
+    submit: boolean
   ) => void = (
-    rating: Rating
+    rating: Rating | null
   ) => (
     token: string
+  ) => (
+    submit: boolean
   ): void => {
+
+    if (!rated) {
+      if (rating === Rating.HELPFUL) {
+        setRatingResults({
+          ...ratingResults,
+          up: parseInt(ratingResults.up) <= 0 ? `1` : `${parseInt(ratingResults.up) + 1}`
+        });
+        setRated(rating);
+      }
+      if (rating === Rating.UNHELPFUL) {
+        setRatingResults({
+          ...ratingResults,
+          down: parseInt(ratingResults.down) <= 0 ? `0` : `${parseInt(ratingResults.down) - 1}`
+        });
+      }
+    } else {
+      if (rated === Rating.HELPFUL) {
+        if (!rating) {
+          setRatingResults({
+            ...ratingResults,
+            up: parseInt(ratingResults.up) <= 0 ? `0` : `${parseInt(ratingResults.up) - 1}`
+          });
+        }
+      }
+    }
+
+
+    if (!allowed && !submit) {
+      return;
+    }
 
     // Prevent the rating if we don't have a token.
     if (!token) {
@@ -132,6 +206,7 @@ export function useRate(params: RatingParams) {
           userRating: response.results.userRating
         });
       }
+      setSubmitting(false);
     })
     .catch((error: Error) => {
       console.log(error);
@@ -139,9 +214,12 @@ export function useRate(params: RatingParams) {
   }
 
   return {
+    ratingAllowed,
     ratingResults,
     rate,
+    rated,
     retrieved,
+    setRated,
     setRatingResults
   };
 }

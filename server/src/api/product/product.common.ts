@@ -3,12 +3,23 @@
  * Common functions performed with a product document.
  */
 
+// Enumerators.
+import { LogLevel } from '../../shared/logging/Logging.enum';
+
 // Interfaces.
 import { Category } from './product.interface';
 import { 
   ProductDetails,
-  ProductDetailsDocument
+  ProductDocument
 } from './product.interface';
+
+// Models.
+import Product from './product.model';
+import Connect from '../../models/database/connect.model';
+import Logging from '../../shared/logging/Logging.model';
+
+// Utilities.
+import Formatting from '../../shared/formatting/formatting.model';
 
 /**
  * ProductCommon class.
@@ -51,7 +62,7 @@ export default class ProductCommon {
    * @return Array<ProductDetails>
    */
   static RetrieveProductDetailsFromDocuments(
-    productDocuments: Array<ProductDetails | ProductDetailsDocument>
+    productDocuments: Array<ProductDetails | ProductDocument>
   ): Array<ProductDetails> {
 
     if (productDocuments.length <= 0) {
@@ -63,12 +74,8 @@ export default class ProductCommon {
     let i = 0;
 
     do {
-      let current: ProductDetails;
-      if (ProductCommon.isDocument(productDocuments[i])) {
-        current = (productDocuments[i] as ProductDetailsDocument).details;
-      } else {
-        current = (productDocuments[i] as ProductDetails);
-      }
+      const current: ProductDetails = ProductCommon
+        .RetrieveDetailsFromDocument(productDocuments[i]);
 
       products.push({...current});
 
@@ -80,15 +87,83 @@ export default class ProductCommon {
   }
 
   /**
+   * Retrieve the product details from a document.
+   *
+   * @param { ProductDocument | ProductDetails } product - the product object.
+   *
+   * @return ProductDetails
+   */
+  static RetrieveDetailsFromDocument(
+    productDocument: ProductDetails | ProductDocument
+  ): ProductDetails {
+    if (!ProductCommon.isDocument(productDocument)) {
+      return productDocument as ProductDetails;
+    }
+
+    return (productDocument as ProductDocument).details;
+  }
+
+  /**
    * Checks if the product is a document or details.
    */
   static isDocument(
-    product: ProductDetails | ProductDetailsDocument
-  ): product is ProductDetailsDocument {
-    if ((product as ProductDetailsDocument).details) {
+    product: ProductDetails | ProductDocument
+  ): product is ProductDocument {
+    if ((product as ProductDocument).details) {
       return true;
     } else {
       return false;
     }
+  }
+
+  /**
+   * Handles the updating of urls on updates.
+   *
+   * @param { ProductDocument } product - the product we're updating.
+   *
+   * @return Promise<ProductDocument>
+   */
+  static async UpdateDocumentURL(
+    product: ProductDocument
+  ): Promise<ProductDocument> {
+
+    // Create a raw name to be used for creating a URL formatted product.
+    // This will be stored in the model so we can append a numeric value in the
+    // URL for products that have matching names.
+    const nameRaw = Formatting.URLString(product.name);
+
+    // Check if a product already exists with this url and append an
+    // incremented count if it does.
+    await Product.count({
+      nameRaw: nameRaw
+    })
+    .then((count: number) => {
+
+      // Set the url.
+      if (count <= 0) {
+        product.url = nameRaw;
+      } else {
+        product.url = `${nameRaw}_${count++}`;
+      }
+
+      // Set the raw name.
+      product.nameRaw = nameRaw;
+    })
+    .catch((error: Error) => {
+
+      // Return an error indicating the products couldn't be queried.
+      const responseObject = Connect.setResponse({
+        data: {
+          errorCode: `PRODUCT_URL_UPDATE_FAILED_COUNT`,
+          message: 'There was a problem counting the products with matching urls'
+        },
+        error: error
+      }, 401, 'There was a problem counting the products with matching urls');
+
+      Logging.Send(LogLevel.ERROR, responseObject);
+
+    });
+
+    return product;
   }
 }

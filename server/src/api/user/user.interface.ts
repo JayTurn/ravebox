@@ -16,11 +16,12 @@ import {
 } from '../follow/follow.interface';
 import { ReviewDetails } from '../review/review.interface';
 import {
-  UserStatistics,
+  UserStatisticsDetails,
   UserStatisticsDocument
 } from '../userStatistics/userStatistics.interface';
 
-export interface UserDetailsDocument extends Mongoose.Document {
+export interface UserDocument extends Mongoose.Document {
+  _id: Mongoose.Types.ObjectId;
   about: string;
   avatar: string;
   authenticate: Function;
@@ -31,7 +32,6 @@ export interface UserDetailsDocument extends Mongoose.Document {
   expires: number;
   following: FollowDocument;
   handle: string;
-  _id: string;
   links: Array<LinkDetails>;
   oldEmail: string;
   password: string;
@@ -53,7 +53,7 @@ export interface PrivateUserDetails {
   emailVerified: boolean;
   expires: number;
   following?: Following;
-  statistics?: UserStatistics;
+  statistics?: UserStatisticsDetails;
 }
 
 export interface PublicUserDetails {
@@ -63,7 +63,7 @@ export interface PublicUserDetails {
   handle: string;
   links?: Array<LinkDetails>;
   profileImage?: string;
-  statistics?: UserStatistics;
+  statistics?: UserStatisticsDetails;
 }
 
 export interface AuthenticatedUserDetails {

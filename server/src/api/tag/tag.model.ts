@@ -5,7 +5,6 @@
 
 // Modules.
 import * as Mongoose from 'mongoose';
-import TagCommon from './tag.common';
 
 // Enumerators.
 import {
@@ -15,8 +14,7 @@ import {
 
 // Interfaces.
 import {
-  TagDetails,
-  TagDetailsDocument
+  TagDocument
 } from './tag.interface';
 
 // Get the Mongoose Shema method.
@@ -82,7 +80,7 @@ TagSchema
   });
 
 // Declare the tag mongoose model.
-const Tag: Mongoose.Model<TagDetailsDocument> = Mongoose.model('Tag', TagSchema);
+const Tag: Mongoose.Model<TagDocument> = Mongoose.model('Tag', TagSchema);
 
 // Declare the Tag mongoose model.
 export default Tag;

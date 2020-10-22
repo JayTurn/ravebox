@@ -13,9 +13,9 @@ import { InvitationStatus } from './invitation.enum';
 /**
  * Mongoose Invitation document.
  */
-export interface InvitationDetailsDocument extends Mongoose.Document {
+export interface InvitationDocument extends Mongoose.Document {
   email: string;
-  invitedBy: string;
+  invitedBy: Mongoose.Types.ObjectId;
   existingChannel: number;
   status: InvitationStatus;
 }

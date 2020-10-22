@@ -21,8 +21,10 @@ export interface RaveVideoProps {
  * Video progress interface.
  */
 export interface VideoProgress {
-  played: number,
-  playedSeconds: number,
+  _id?: string;
   loaded: number,
   loadedSeconds: number
+  played: number,
+  playedSeconds: number,
+  videoDuration?: number;
 }

@@ -13,7 +13,7 @@ import { CollectionContext } from './collection.enum';
 import { PublicUserDetails } from '../user/user.interface';
 import {
   ProductDetails,
-  ProductDetailsDocument
+  ProductDocument
 } from '../product/product.interface';
 import { ReviewDetails } from '../review/review.interface';
 
@@ -38,7 +38,7 @@ export interface CollectionDetails {
   _id: Mongoose.Types.ObjectId;
   context: CollectionContext;
   owner: PublicUserDetails;
-  products: Array<ProductDetails | ProductDetailsDocument>;
+  products: Array<ProductDetails | ProductDocument>;
   reviews: Array<ReviewDetails>;
   title: string;
 }

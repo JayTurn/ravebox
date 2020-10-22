@@ -15,6 +15,9 @@ import {
 import Grid from '@material-ui/core/Grid';
 import * as React from 'react';
 
+// Enumerators.
+import { LogoColor } from '../../logo/Logo.enum';
+
 // Components.
 import Logo from '../../logo/Logo';
 
@@ -29,7 +32,7 @@ const ScreenTransition: React.FC = () => {
     <Grid container direction='column'>
       <Grid item xs={12}>
         <Box className={'screen-transition'}>           
-          <Logo iconOnly={true} fullWidth='60px' />
+          <Logo iconOnly={true} fullWidth='60px' color={LogoColor.MAIN} />
         </Box>
       </Grid>
     </Grid>

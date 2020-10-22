@@ -9,7 +9,7 @@ import * as Mongoose from 'mongoose';
 import { InvitationStatus } from './invitation.enum';
 
 // Interfaces.
-import { InvitationDetailsDocument } from './invitation.interface';
+import { InvitationDocument } from './invitation.interface';
 
 // Get the Mongoose Shema method.
 const Schema = Mongoose.Schema;
@@ -35,7 +35,7 @@ const InvitationSchema = new Schema({
 });
 
 // Declare the invitation mongoose model.
-const Invitation: Mongoose.Model<InvitationDetailsDocument> = Mongoose.model('Invitation', InvitationSchema);
+const Invitation: Mongoose.Model<InvitationDocument> = Mongoose.model('Invitation', InvitationSchema);
 
 // Declare the Invitation mongoose model.
 export default Invitation;

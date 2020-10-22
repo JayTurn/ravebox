@@ -68,8 +68,6 @@ export interface ProductByIdMatchParams {
 }
 
 export interface ProductByURLMatchParams {
-  category: string;
-  subCategory: string;
   brand: string;
   productName: string;
 }

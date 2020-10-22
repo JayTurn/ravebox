@@ -6,6 +6,7 @@
 // Modules.
 import Connect from '../../models/database/connect.model';
 import Logging from '../../shared/logging/Logging.model';
+import * as Mongoose from 'mongoose';
 import {
   NextFunction,
   Response
@@ -22,6 +23,7 @@ import {
 } from '../../models/authentication/authentication.interface';
 import {
   Reviewed,
+  UserStatisticsDetails,
   UserStatisticsDocument
 } from './userStatistics.interface';
 
@@ -33,8 +35,8 @@ export default class UserStatisticsCommon {
    * Increments the viewing statistics for a review.
    */
   static AddReviewWatchEvent(
-    reviewId: string,
-    userId: string
+    reviewId: Mongoose.Types.ObjectId,
+    userId: Mongoose.Types.ObjectId
   ): void {
     // Load the reviews.
     UserStatistics.findOne({
@@ -90,7 +92,10 @@ export default class UserStatisticsCommon {
    * @param { string } userId - the id of the user statistic to increment.
    * @param { number } value - the number to be incremented.
    */
-  static IncrementFollowers(userId: string, value: number): void {
+  static IncrementFollowers(
+    userId: Mongoose.Types.ObjectId,
+    value: number
+  ): void {
     UserStatistics.findOne({
       user: userId
     })
@@ -193,6 +198,11 @@ export default class UserStatisticsCommon {
     statistics: UserStatisticsDocument
   ): void {
 
+    // There's nothing we can do here without a statistics document.
+    if (!statistics) {
+      return;
+    }
+
     // Update the user's rating with the new value.
     UserStatistics.updateOne({
       user: statistics.user,
@@ -219,14 +229,14 @@ export default class UserStatisticsCommon {
   /**
    * Updates the review array with new view data.
    *
-   * @param { Array<ReviewStatistics> } statistics - the review statistics.
+   * @param { Array<UserStatistics> } statistics - the review statistics.
    * @param { string } reviewId - the id of the review.
    *
-   * @return Array<ReviewStatistics>
+   * @return Array<UserStatistics>
    */
   static IncrementReviewWatch(
     reviews: Array<Reviewed>,
-    reviewId: string
+    reviewId: Mongoose.Types.ObjectId
   ): Array<Reviewed> {
     const updated: Array<Reviewed> = [...reviews];
 
@@ -269,7 +279,7 @@ export default class UserStatisticsCommon {
    * @return RationOptions | undefined
    */
   static RetriveReview(
-    reviewId: string,
+    reviewId: Mongoose.Types.ObjectId,
     reviews: Array<Reviewed>
   ): Reviewed | undefined {
     // Loop through the list of reviews and return the current rating option
@@ -299,7 +309,7 @@ export default class UserStatisticsCommon {
    * @return RationOptions | undefined
    */
   static RetriveReviewRating(
-    reviewId: string,
+    reviewId: Mongoose.Types.ObjectId,
     reviews: Array<Reviewed>
   ): RatingOptions | undefined {
     // Loop through the list of reviews and return the current rating option
@@ -350,6 +360,36 @@ export default class UserStatisticsCommon {
           return next();
         }
       })
+    }
+  }
+
+  /**
+   * Retrieve the review statistics details from a document.
+   *
+   * @param { UserStatisticsDocument | UserStatisticsDetails } product - the product object.
+   *
+   * @return UserStatisticsDetails
+   */
+  static RetrieveDetailsFromDocument(
+    userStatisticsDocument: UserStatisticsDetails | UserStatisticsDocument
+  ): UserStatisticsDetails {
+    if (!UserStatisticsCommon.isDocument(userStatisticsDocument)) {
+      return userStatisticsDocument as UserStatisticsDetails;
+    }
+
+    return (userStatisticsDocument as UserStatisticsDocument).details;
+  }
+
+  /**
+   * Checks if the review statistics is a document or details.
+   */
+  static isDocument(
+    userStatistics: UserStatisticsDetails | UserStatisticsDocument
+  ): userStatistics is UserStatisticsDocument {
+    if ((userStatistics as UserStatisticsDocument).details) {
+      return true;
+    } else {
+      return false;
     }
   }
 }

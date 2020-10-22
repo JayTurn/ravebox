@@ -67,6 +67,7 @@ export function useGenerateRatingToken() {
   }
 
   return {
+    setToken,
     token,
     generateToken
   };

@@ -12,7 +12,13 @@ import * as _ from 'lodash';
 import { UserRole } from './user.enum';
 
 // Interfaces.
-import { UserDetailsDocument } from './user.interface';
+import {
+  PublicUserDetails,
+  UserDocument
+} from './user.interface';
+
+// Models.
+import UserStatisticsCommon from '../userStatistics/userStatistics.common';
 
 // Import additional subschemas.
 //import Name from '../../../shared/schemas/name.schema';
@@ -96,12 +102,19 @@ UserSchema
 UserSchema
   .virtual('publicProfile')
   .get(function() {
-    return {
-      '_id': this._id,
-      'avatar': this.avatar,
-      'handle': this.handle,
-      'statistics': this.statistics
+
+    const publicUserDetails: PublicUserDetails = {
+      _id: this._id as string,
+      avatar: this.avatar as string,
+      handle: this.handle as string
     };
+
+    if (this.statistics && this.statistics.user) {
+      //const statistics: UserStatistics = 
+      publicUserDetails.statistics = UserStatisticsCommon.RetrieveDetailsFromDocument(this.statistics);
+    }
+
+    return publicUserDetails;
   });
 
 // Define fullname profile handling.
@@ -158,7 +171,7 @@ UserSchema
     // Return the result from attempting to find the email address in the
     // database.
     return (): void => this.constructor.findOne({email: email})
-      .then((user: UserDetailsDocument) => {
+      .then((user: UserDocument) => {
         // If a user was found.
         if (user) {
           // If this schema id and user id match, assume we are updating an
@@ -183,8 +196,8 @@ UserSchema
  * Pre-Save hook to manage password encryption before storing.
  */
 UserSchema
-  .pre<UserDetailsDocument>('save', function(next: Mongoose.HookNextFunction) {
-    let _this: UserDetailsDocument;
+  .pre<UserDocument>('save', function(next: Mongoose.HookNextFunction) {
+    let _this: UserDocument;
 
     if (this.role.lastIndexOf(UserRole.YOUTUBE) >= 0) {
       next();
@@ -407,7 +420,7 @@ UserSchema.statics = {
 };
 
 // Declare the User mongoose model.
-const User: Mongoose.Model<UserDetailsDocument> = Mongoose.model('User', UserSchema);
+const User: Mongoose.Model<UserDocument> = Mongoose.model('User', UserSchema);
 
 // Declare the User mongoose model.
 export default User;

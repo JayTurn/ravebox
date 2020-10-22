@@ -22,7 +22,7 @@ import {
 } from '../../models/authentication/authentication.interface';
 import {
   BrandDetails,
-  BrandDetailsDocument
+  BrandDocument
 } from './brand.interface';
 import {
   ResponseObject
@@ -153,13 +153,13 @@ export default class BrandController {
       brandDetails.name);
 
     // Create a new product from the request data.
-    const newBrand: BrandDetailsDocument = new Brand({
+    const newBrand: BrandDocument = new Brand({
       ...brandDetails
     });
 
     // Save the new brand.
     newBrand.save()
-      .then((brand: BrandDetailsDocument) => {
+      .then((brand: BrandDocument) => {
         // Set the response object.
         const responseObject: ResponseObject = Connect.setResponse({
           data: {

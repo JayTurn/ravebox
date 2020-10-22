@@ -28,6 +28,7 @@ import {
 
 // Utilities.
 import { emptyProduct } from './Product.common';
+import { ViewStatus } from '../../utils/display/view/View';
 
 /**
  * Returns a product if it exists using the url.
@@ -43,7 +44,7 @@ export function useRetrieveProductByURL(params: RetrieveProductByURLParams) {
     requested,
   } = {...params};
 
-  const path: string = `${requested.category}/${requested.subCategory}/${requested.brand}/${requested.productName}`;
+  const path: string = `${requested.brand}/${requested.productName}`;
 
   // Define the retrieval status to be used for view rendering.
   const [retrieved, setRetrieved] = React.useState(RetrievalStatus.NOT_REQUESTED);
@@ -124,7 +125,7 @@ export function useRetrieveProductByURL(params: RetrieveProductByURLParams) {
 
   return {
     product,
-    productStatus: retrieved,
+    productStatus: ViewStatus(retrieved),
     reviews
   }
 }

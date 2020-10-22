@@ -26,17 +26,17 @@ import {
 } from './search.interface';
 import {
   BrandDetails,
-  BrandDetailsDocument
+  BrandDocument
 } from '../brand/brand.interface';
 import { CategorizedReviewGroup } from '../review/review.interface';
 import {
   ProductDetails,
-  ProductDetailsDocument
+  ProductDocument
 } from '../product/product.interface';
 import { ResponseObject } from '../../models/database/connect.interface';
 import {
   TagDetailsLight,
-  TagDetailsDocument
+  TagDocument
 } from '../tag/tag.interface';
 
 /**
@@ -228,7 +228,7 @@ export default class SearchController {
       namePartials: regEx,
     })
     .limit(8)
-    .then((brandDetails: Array<BrandDetailsDocument>) => {
+    .then((brandDetails: Array<BrandDocument>) => {
 
       // If we found brands, loop through them and add them to the
       // search results array.
@@ -236,9 +236,9 @@ export default class SearchController {
         let i = 0;
 
         do {
-          const current: BrandDetails = brandDetails[i];
+          const current: BrandDetails = brandDetails[i].details;
 
-          searchResults.push(current.details);
+          searchResults.push(current);
 
           i++;
         } while (i < brandDetails.length);
@@ -316,7 +316,7 @@ export default class SearchController {
       model: 'Brand'
     })
     .limit(8)
-    .then((productDetails: Array<ProductDetailsDocument>) => {
+    .then((productDetails: Array<ProductDocument>) => {
 
       // If we found products, loop through them and add them to the
       // search results array.
@@ -324,7 +324,7 @@ export default class SearchController {
         let i = 0;
 
         do {
-          const current: ProductDetailsDocument = productDetails[i];
+          const current: ProductDocument = productDetails[i];
 
           searchResults.push(current.details);
 
@@ -403,7 +403,7 @@ export default class SearchController {
       association: association
     })
     .limit(8)
-    .then((tagDetails: Array<TagDetailsDocument>) => {
+    .then((tagDetails: Array<TagDocument>) => {
 
       // If we found brands, loop through them and add them to the
       // search results array.
@@ -411,7 +411,7 @@ export default class SearchController {
         let i = 0;
 
         do {
-          const current: TagDetailsDocument = tagDetails[i];
+          const current: TagDocument = tagDetails[i];
 
           searchResults.push(current.light);
 

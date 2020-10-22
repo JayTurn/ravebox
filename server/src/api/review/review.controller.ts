@@ -32,7 +32,7 @@ import {
   AuthenticatedUserRequest
 } from '../../models/authentication/authentication.interface';
 import {
-  ProductDetailsDocument
+  ProductDocument
 } from '../product/product.interface';
 import {
   PrivateReviewDetails,
@@ -48,7 +48,7 @@ import {
   SNSConfirmation,
   SNSNotification
 } from '../../shared/sns/sns.interface';
-import { UserDetailsDocument } from '../user/user.interface';
+import { UserDocument } from '../user/user.interface';
 import { VideoUploadMetadata } from '../../shared/video/Video.interface';
 
 // Import the SNS validator module to confirm the authenticity of SNS messages.
@@ -498,14 +498,10 @@ export default class ReviewController {
    * The response object.
    */
   static RetrieveByURL(request: Request, response: Response): void {
-    const brand = request.params.brand,
-          productName = request.params.productName,
-          reviewTitle = request.params.reviewTitle;
-
-    const path = ReviewCommon.formatReviewURL(productName, brand, reviewTitle);
+    const reviewTitle: string = request.params.reviewTitle;
 
     Review.findOne({
-      url: path,
+      url: reviewTitle,
       published: Workflow.PUBLISHED
     })
     .populate({
@@ -548,7 +544,7 @@ export default class ReviewController {
             errorCode: 'REVIEW_NOT_FOUND',
             message: 'There was a problem retrieving this review'
           },
-        }, 404, `${path} review not found`);
+        }, 404, `${reviewTitle} review not found`);
 
         Logging.Send(LogLevel.WARNING, responseObject);
 
@@ -766,7 +762,7 @@ export default class ReviewController {
       handle: handle,
       published: Workflow.PUBLISHED
     })
-    .then((user: UserDetailsDocument) => {
+    .then((user: UserDocument) => {
       return Review.find({
         user: user._id,
         published: Workflow.PUBLISHED
@@ -974,10 +970,10 @@ export default class ReviewController {
       }
 
       productPromises.push(Product.find(query)
-        .then((products: Array<ProductDetailsDocument>) => {
+        .then((products: Array<ProductDocument>) => {
 
           // Collect all of the product id's matching the category.
-          const productIdList: Array<string> = products.map((item: ProductDetailsDocument) => item._id);
+          const productIdList: Array<string> = products.map((item: ProductDocument) => item._id);
 
           return Review.find({
             product: {

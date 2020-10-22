@@ -6,7 +6,6 @@
 import Authenticate from '../../models/authentication/authenticate.model';
 import Connect from '../../models/database/connect.model';
 import Logging from '../../shared/logging/Logging.model';
-import * as Mongoose from 'mongoose';
 import {
   //NextFunction,
   Request,
@@ -14,7 +13,6 @@ import {
   Router
 } from 'express';
 import Tag from './tag.model';
-import TagCommon from './tag.common';
 
 // Enumerators.
 import { LogLevel } from '../../shared/logging/Logging.enum';
@@ -28,8 +26,7 @@ import {
 } from '../../models/authentication/authentication.interface';
 import {
   TagDetails,
-  TagDetailsDocument,
-  TagUpdates
+  TagDocument,
 } from './tag.interface';
 import {
   ResponseObject
@@ -137,8 +134,8 @@ export default class TagController {
       association: association
     })
     .lean()
-    .then((tagDetails: TagDetailsDocument) => {
-      let tag: TagDetailsDocument;
+    .then((tagDetails: TagDocument) => {
+      let tag: TagDocument;
 
       // If a matching tag already exists, use that.
       if (tagDetails) {
@@ -157,7 +154,7 @@ export default class TagController {
         return tag.save();
       }
     })
-    .then((tagDetails: TagDetailsDocument) => {
+    .then((tagDetails: TagDocument) => {
 
       // If we had a linkFrom id, we need to update that tag accordingly.
       Tag.findOneAndUpdate({
@@ -318,7 +315,7 @@ export default class TagController {
       new: true,
       upsert: false
     })
-    .then((tagDetails: TagDetailsDocument) => {
+    .then((tagDetails: TagDocument) => {
       if (tagDetails) {
         // Set the response object.
         const responseObject: ResponseObject = Connect.setResponse({
@@ -432,7 +429,7 @@ export default class TagController {
       new: true,
       upsert: false
     })
-    .then((tagDetails: TagDetailsDocument) => {
+    .then((tagDetails: TagDocument) => {
       if (tagDetails) {
         // Set the response object.
         const responseObject: ResponseObject = Connect.setResponse({

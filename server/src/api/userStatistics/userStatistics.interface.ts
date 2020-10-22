@@ -16,29 +16,31 @@ import {
  * User statistics document model interface.
  */
 export interface UserStatisticsDocument extends Mongoose.Document {
+  details: UserStatisticsDetails;
   followers: number;
-  invited?: Array<string>;
+  invited?: Array<Mongoose.Types.ObjectId>;
   ravesCount: number;
   reviews: Array<Reviewed>;
-  user: string;
+  user: Mongoose.Types.ObjectId;
 }
 
 /**
  * User statistics.
  */
-export interface UserStatistics {
+export interface UserStatisticsDetails {
+  _id: Mongoose.Types.ObjectId;
   followers: number;
-  invited?: Array<string>;
+  invited?: Array<Mongoose.Types.ObjectId>;
   ravesCount: number;
   reviews: Array<Reviewed>;
-  user: string;
+  user: Mongoose.Types.ObjectId;
 }
 
 /**
  * Review ratings.
  */
 export interface Reviewed {
-  review: string;
+  review: Mongoose.Types.ObjectId;
   rating?: RatingOptions;
   watchPercentage?: number;
   watchSeconds?: number;

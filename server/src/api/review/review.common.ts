@@ -6,6 +6,7 @@
 // Modules.
 import Connect from '../../models/database/connect.model';
 import Logging from '../../shared/logging/Logging.model';
+import * as Mongoose from 'mongoose';
 import Notifications from '../../shared/notifications/Notifications.model';
 import Review from './review.model';
 
@@ -22,6 +23,7 @@ import { Category } from '../product/product.interface';
 import {
   CategorizedReviewGroup,
   ProductReviewGroup,
+  ReviewDetails,
   ReviewDocument,
   ReviewGroup,
   ReviewGroupItem,
@@ -33,6 +35,9 @@ import {
 import {
   PublicUserDetails
 } from '../user/user.interface';
+
+// Utilities.
+import Formatting from '../../shared/formatting/formatting.model';
 
 /**
  * ReviewCommon class.
@@ -276,7 +281,7 @@ export default class ReviewCommon {
 
       // Create an array of promises to be resolved based on the array of
       // product ids provided.
-      const productIds: Array<string> = [];
+      const productIds: Array<Mongoose.Types.ObjectId> = [];
 
       let i = 0;
 
@@ -425,28 +430,92 @@ export default class ReviewCommon {
   }
 
   /**
-   * Formats the product, brand and review title for a url.
+   * Formats a list of reviews to be returned in a stream.
    *
-   * @param { string } product - the name of the product.
-   * @param { string } brand - the name of the brand.
-   * @param { string } title - the title of the review.
+   * @param { Array<ReviewDocument> } reviewDocuments - the list of reviews.
    *
-   * @return string
+   * @return Array<ReviewDetails>
    */
-  static formatReviewURL(
-    product: string,
-    brand: string,
-    title: string
-  ): string {
-    // Format the product name, brand and review and concatenate them into
-    // a single url string.
-    const productName: string = product.split(' ').join('-')
-            .split('&').join('and').toLowerCase(),
-          brandName: string = encodeURIComponent(brand.split(' ').join('-')
-            .split('&').join('and').toLowerCase()),
-          reviewTitle: string = encodeURIComponent(title.split(' ').join('-')
-            .split('&').join('and').toLowerCase());
+  static FormatStreamReviews(
+    reviewDocuments: Array<ReviewDocument>,
+    firstReviewURL?: string
+  ): Array<ReviewDetails> {
 
-    return `${brandName}/${productName}/${reviewTitle}`;
+    const reviews: Array<ReviewDetails> = [];
+
+    if (reviewDocuments.length <= 0) {
+      return reviews;
+    }
+
+    const firstReviewPath: string = firstReviewURL ? `${reviewDocuments[0].product.url}/firstReviewURL` : '';
+
+    let i = 0;
+
+    do {
+      const current: ReviewDetails = {
+        ...reviewDocuments[i].details,
+      };
+
+      if (current.url === firstReviewPath) {
+        reviews.unshift({...current});
+      } else {
+        reviews.push({...current});
+      }
+
+      i++;
+    } while (i < reviewDocuments.length);
+
+    return reviews;
+  }
+
+  /**
+   * Handles the updating of urls on updates.
+   *
+   * @param { ReviewDocument } review - the review we're updating.
+   *
+   * @return Promise<ReviewDocument>
+   */
+  static async UpdateReviewURL(
+    review: ReviewDocument
+  ): Promise<ReviewDocument> {
+
+    // Create a raw title to be used for creating a URL formatted title.
+    // This will be stored in the model so we can append a numeric value in the
+    // URL for reviews that have similar titles.
+    const titleRaw = Formatting.URLString(review.title);
+
+    // Check if a review already exists with this url and append an
+    // incremented count if it does.
+    await Review.count({
+      titleRaw: titleRaw
+    })
+    .then((count: number) => {
+
+      // Set the url.
+      if (count <= 0) {
+        review.url = titleRaw;
+      } else {
+        review.url = `${titleRaw}_${count++}`;
+      }
+
+      // Set the raw title.
+      review.titleRaw = titleRaw;
+    })
+    .catch((error: Error) => {
+
+      // Return an error indicating the reviews couldn't be queried.
+      const responseObject = Connect.setResponse({
+        data: {
+          errorCode: `REVIEW_SAVE_FAILED_COUNT`,
+          message: 'There was a problem creating the review'
+        },
+        error: error
+      }, 401, 'There was a problem creating this review');
+
+      Logging.Send(LogLevel.ERROR, responseObject);
+
+    });
+
+    return review;
   }
 }

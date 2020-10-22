@@ -9,6 +9,7 @@ import Authenticate from '../../models/authentication/authenticate.model';
 import Connect from '../../models/database/connect.model';
 import Follow from './follow.model';
 import Logging from '../../shared/logging/Logging.model';
+import * as Mongoose from 'mongoose';
 import {
   Request,
   Response,
@@ -30,7 +31,7 @@ import {
 } from './follow.interface';
 import { ResponseObject } from '../../models/database/connect.interface';
 import {
-  UserDetailsDocument
+  UserDocument
 } from '../user/user.interface';
 
 /**
@@ -94,7 +95,7 @@ export default class FollowController {
     User.findOne({
       _id: id
     })
-    .then((channel: UserDetailsDocument) => {
+    .then((channel: UserDocument) => {
 
       if (!channel) {
         throw new Error('Channel not found');
@@ -108,7 +109,7 @@ export default class FollowController {
         path: 'following',
         model: 'Follow'
       })
-      .then((userDocument: UserDetailsDocument) => {
+      .then((userDocument: UserDocument) => {
 
         const following: Following | undefined = userDocument.following ? userDocument.following.details : undefined;
 
@@ -142,11 +143,11 @@ export default class FollowController {
 
           UserStatisticsCommon.IncrementFollowers(channel._id, index >= 0 ? -1 : 1);
 
-          let channels: Array<string> = [...following.channels];
+          let channels: Array<Mongoose.Types.ObjectId> = [...following.channels];
 
           // If the channel was found we need to remove it.
           if (index >= 0) {
-            channels = channels.filter((value: string) => {
+            channels = channels.filter((value: Mongoose.Types.ObjectId) => {
               return value.toString() !== channel._id.toString();
             });
 

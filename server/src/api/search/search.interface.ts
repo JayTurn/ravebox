@@ -3,6 +3,9 @@
  * Interfaces for the search results.
  */
 
+// Modules.
+import * as Mongoose from 'mongoose';
+
 // Enumerators.
 import { ResultType } from './search.enum';
 
@@ -29,7 +32,7 @@ export interface ExploreResults {
  * Individual autocomplete result.
  */
 export interface AutocompleteItem {
-  id: string;
+  id: Mongoose.Types.ObjectId;
   resultType: ResultType;
   title: string;
   url?: string;
