@@ -47,10 +47,13 @@ const useStyles = makeStyles((theme: Theme) =>
       backgroundColor: theme.palette.background.default,
       height: 'calc(100vh)',
       overflowY: 'auto',
-      paddingTop: 40,
+    },
+    followContainer: {
+      marginTop: theme.spacing(2)
     },
     userContainer: {
-      padding: theme.spacing(4, 1, 0)
+      backgroundColor: `rgba(0,0,0,0.04)`,
+      padding: theme.spacing(10, 1, 2)
     }
   })
 );
@@ -79,22 +82,26 @@ const StreamReviewDetails: React.FC<StreamReviewDetailsProps> = (props: StreamRe
     >
       <Grid item xs={12}>
         {user &&
-          <Grid
-            alignItems='center'
-            className={classes.userContainer}
-            container 
-            justify='space-between'
-          >
-            <Grid item>
-                <StreamUserProfile user={user} />
+          <Grid container>
+            <Grid item xs={12}>
+              <Grid
+                alignItems='center'
+                className={classes.userContainer}
+                container 
+                justify='space-between'
+              >
+                <Grid item xs={12}>
+                    <StreamUserProfile user={user} />
+                </Grid>
+                <Grid className={clsx(classes.followContainer)} item xs={12}>
+                  <FollowButton
+                    id={user._id}
+                    handle={user.handle}
+                    followType={FollowType.CHANNEL}
+                  />
+                </Grid> 
+              </Grid>
             </Grid>
-            <Grid item>
-              <FollowButton
-                id={user._id}
-                handle={user.handle}
-                followType={FollowType.CHANNEL}
-              />
-            </Grid> 
           </Grid>
         }
       </Grid>

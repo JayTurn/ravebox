@@ -29,17 +29,24 @@ import { ProductImagesProps } from './ProductImages.interface';
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     cardContainer: {
-      borderRadius: 0,
-      borderRight: `4px solid ${theme.palette.common.white}`,
-      boxShadow: 'none',
+      borderRadius: 10,
+      boxShadow: `0 1px 1px rgba(0,0,0,0.15)`,
       display: 'inline-block',
-      width: `calc(100vw * .6)`
+      margin: theme.spacing(0, .5),
+      width: `calc(100vw * .4)`,
+      '&:first-child': {
+        marginLeft: theme.spacing(1)
+      },
+      '&:last-child': {
+        marginRight: theme.spacing(1)
+      }
     },
     cardMedia: {
       paddingTop: '100%'
     },
     scrollableWrapper: {
       overflow: 'hidden',
+      padding: theme.spacing(0),
       width: '100%'
     },
     scrollableContainer: {

@@ -42,8 +42,8 @@ const useStyles = makeStyles((theme: Theme) =>
     avatar: {
       fontSize: '.9rem',
       fontWeight: 600,
-      height: theme.spacing(6),
-      width: theme.spacing(6)
+      height: theme.spacing(11.5),
+      width: theme.spacing(11.5)
     },
     avatarIcon: {
       backgroundColor: theme.palette.common.white,
@@ -51,12 +51,12 @@ const useStyles = makeStyles((theme: Theme) =>
       color: theme.palette.grey.A700,
       fontSize: '.9rem',
       fontWeight: 600,
-      height: theme.spacing(6),
-      width: theme.spacing(6)
+      height: theme.spacing(11.5),
+      width: theme.spacing(11.5)
     },
     handleText: {
       display: 'block',
-      fontSize: '1rem',
+      fontSize: '1.4rem',
       fontWeight: 700,
     },
     linkText: {
@@ -73,7 +73,7 @@ const useStyles = makeStyles((theme: Theme) =>
       padding: theme.spacing(1, 0, 0)
     },
     userStatisticsText: {
-      fontSize: '.7rem',
+      fontSize: '.8rem',
       fontWeight: 600,
       textTransform: 'uppercase'
     }
@@ -151,13 +151,12 @@ const StreamUserProfile: React.FC<StreamUserProfileProps> = (props: StreamUserPr
   return (
     <Grid
       container
-      direction='column'
+      direction='row'
     >
       <Grid item xs={12}>
         <Grid
           alignItems='center'
           container
-          direction='row'
           style={{flexWrap: 'nowrap', maxWidth: '100%'}}
         >
           <Grid item>
@@ -167,7 +166,7 @@ const StreamUserProfile: React.FC<StreamUserProfileProps> = (props: StreamUserPr
               <Avatar alt={props.user.handle} className={classes.avatarIcon}>{firstLetter}</Avatar>
             )}
           </Grid>
-          <Grid item style={{flexGrow: 1, minWidth: 0, marginLeft: theme.spacing(1)}}>
+          <Grid item style={{flexGrow: 1, minWidth: 0, marginLeft: theme.spacing(2)}}>
             <Typography variant='body2' className={classes.handleText}>
               {props.user.handle}
             </Typography>
@@ -176,8 +175,6 @@ const StreamUserProfile: React.FC<StreamUserProfileProps> = (props: StreamUserPr
                 {statisticsText}
               </Typography>
             }
-          </Grid>
-          <Grid item style={{flexGrow: 0}}>
           </Grid>
         </Grid>
       </Grid>

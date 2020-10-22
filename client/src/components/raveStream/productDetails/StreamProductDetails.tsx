@@ -20,6 +20,7 @@ import * as React from 'react';
 
 // Components.
 import StreamNavigation from '../navigation/StreamNavigation';
+import ProductDescription from '../productDescription/ProductDescription';
 import ProductImages from '../productImages/ProductImages';
 
 // Enumerators.
@@ -45,12 +46,14 @@ const useStyles = makeStyles((theme: Theme) =>
     container: {
       backgroundColor: theme.palette.background.default,
       height: 'calc(100vh)',
-      overflowY: 'auto'
+      overflowY: 'auto',
+      paddingBottom: theme.spacing(9)
     },
     paddedContent: {
       padding: theme.spacing(0, 1)
     },
     subtitle: {
+      display: 'block',
       fontSize: '1rem',
       fontWeight: 600
     },
@@ -58,7 +61,7 @@ const useStyles = makeStyles((theme: Theme) =>
       fontWeight: 400
     },
     titleContainer: {
-      margin: theme.spacing(1, 0),
+      margin: theme.spacing(2, 0),
     },
   })
 );
@@ -88,9 +91,6 @@ const StreamProductDetails: React.FC<StreamProductDetailsProps> = (props: Stream
           title={props.raveStream ? props.raveStream.title : ''}
           variant='colored'
         />
-        {props.product.images && props.product.images.length > 0 &&
-          <ProductImages images={props.product.images} />
-        }
         <Grid container>
           <Grid item xs={12} className={clsx(
             classes.paddedContent,
@@ -102,6 +102,12 @@ const StreamProductDetails: React.FC<StreamProductDetailsProps> = (props: Stream
             </Typography>
           </Grid>
         </Grid>
+        {props.product.images && props.product.images.length > 0 &&
+          <ProductImages images={props.product.images} />
+        }
+        {props.product.description &&
+          <ProductDescription description={props.product.description} />
+        }
       </Grid>
     </Grid>
   );
