@@ -61,6 +61,8 @@ const useStyles = makeStyles((theme: Theme) =>
       backgroundColor: 'black',
       height: 'calc(100vh)',
       left: 0,
+      maxHeight: 'calc(100vh); max-height: -webkit-fill-available;',
+      minHeight: 'calc(100vh); min-height: -webkit-fill-available;',
       position: 'absolute',
       overflow: 'hidden',
       transition: 'transform 300ms ease-in-out',
@@ -71,6 +73,8 @@ const useStyles = makeStyles((theme: Theme) =>
     },
     item: {
       height: 'calc(100vh)',
+      maxHeight: 'calc(100vh); max-height: -webkit-fill-available;',
+      minHeight: 'calc(100vh); min-height: -webkit-fill-available;',
       position: 'relative'
     },
     shifted: {
@@ -103,9 +107,9 @@ const setSwipePosition: (
 ): string => {
   switch (showing) {
     case SwipeView.PRODUCT:
-      return 'translate3d(0, calc(100vh - 50px), 0)';
+      return 'translate3d(0, 93%, 0)';
     case SwipeView.REVIEW:
-      return 'translate3d(0, calc(-100vh + 50px), 0)';
+      return 'translate3d(0, -93%, 0)';
     default:
       return 'translate3d(0, 0, 0)';
   }

@@ -49,6 +49,9 @@ import ProfileMenu from '../../user/profileMenu/ProfileMenu';
 //import SearchField from '../../search/field/SearchField';
 import ImpersonateUser from '../../admin/impersonateUser/ImpersonateUser';
 
+// Enumerators.
+import { LogoColor } from '../../logo/Logo.enum';
+
 // Interfaces.
 import {
   NavigationScrollProps,
@@ -268,7 +271,7 @@ const TopNavigation: React.FC<TopNavigationProps> = (props: TopNavigationProps) 
                     style={{paddingTop: '5px'}}
                   >
                     <NavLink to="/" exact activeClassName='active'>
-                      <Logo iconOnly={false} fullWidth='130px'/>
+                      <Logo iconOnly={false} fullWidth='130px' color={LogoColor.MAIN}/>
                     </NavLink>
                   </LogoButton>
                 }
@@ -331,7 +334,7 @@ const TopNavigation: React.FC<TopNavigationProps> = (props: TopNavigationProps) 
                       disableElevation={true}
                     >
                       <NavLink to="/" exact activeClassName='active'>
-                        <Logo iconOnly={true} fullWidth='30px'/>
+                        <Logo iconOnly={true} fullWidth='30px' color={LogoColor.MAIN} />
                       </NavLink>
                     </LogoButton>
                   }

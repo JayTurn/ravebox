@@ -83,6 +83,8 @@ const useStyles = makeStyles((theme: Theme) =>
     },
     container: {
       height: 'calc(100vh)',
+      maxHeight: 'calc(100vh); max-height: -webkit-fill-available;',
+      minHeight: 'calc(100vh); min-height: -webkit-fill-available;',
       position: 'absolute',
       transition: `opacity 300ms ease-in-out`,
       width: 'calc(100vw)',
@@ -210,6 +212,7 @@ const StreamVideoOverlay: React.FC<StreamVideoOverlayProps> = (props: StreamVide
       case 'Down':
         if (props.overlayState === SwipeView.VIDEO) {
           props.down();
+          setVisible(false);
         } else {
           props.center();
           setVisible(true);
@@ -225,6 +228,7 @@ const StreamVideoOverlay: React.FC<StreamVideoOverlayProps> = (props: StreamVide
         break;
       case 'Up':
         if (props.overlayState === SwipeView.VIDEO) {
+          setVisible(false);
           props.up();
         } else {
           props.center();

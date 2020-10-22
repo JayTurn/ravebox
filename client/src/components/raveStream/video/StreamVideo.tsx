@@ -56,6 +56,8 @@ const useStyles = makeStyles((theme: Theme) =>
     container: {
       backgroundColor: 'black',
       height: 'calc(100vh)',
+      maxHeight: 'calc(100vh); max-height: -webkit-fill-available;',
+      minHeight: 'calc(100vh); min-height: -webkit-fill-available;',
       position: 'absolute',
       overflowY: 'auto',
       transition: 'transform 300ms ease-in-out',

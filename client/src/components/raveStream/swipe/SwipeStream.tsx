@@ -76,6 +76,8 @@ const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     container: {
       height: 'calc(100vh)',
+      minHeight: 'calc(100vh); min-height: -webkit-fill-available;',
+      maxHeight: 'calc(100vh); max-height: -webkit-fill-available;',
       overflow: 'hidden',
       position: 'relative',
       top: 0,

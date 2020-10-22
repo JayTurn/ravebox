@@ -2,3 +2,11 @@
  * App.scss
  * Base styles for the App component.
  */
+html {
+  height: -webkit-fill-available;
+}
+
+body {
+  min-height: 100vh;
+  min-height: -webkit-fill-available;
+}

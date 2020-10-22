@@ -42,6 +42,7 @@ import ListTitle from '../../components/elements/listTitle/ListTitle';
 
 // Enumerators.
 import { ColorStyle } from '../../components/elements/contentBlock/ContentBlock.enum';
+import { LogoColor } from '../../components/logo/Logo.enum';
 import {
   PresentationType,
   ReviewListType
@@ -231,6 +232,7 @@ const Home: React.FC<HomeProps> = (props: HomeProps) => {
         >
           <Grid item xs={12}>
             <Logo
+              color={LogoColor.MAIN}
               fullWidth={largeScreen ? '270px' : '200px'}
               iconOnly={false}
             /> 
