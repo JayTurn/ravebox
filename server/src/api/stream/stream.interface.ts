@@ -19,3 +19,8 @@ export interface StreamData {
   reviews: Array<ReviewDetails>;
   streamType: StreamType;
 }
+
+export interface StreamListItem {
+  streamType: StreamType;
+  id: string;
+}

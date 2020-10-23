@@ -12,6 +12,7 @@ import { RaveStreamVerb } from './Actions.enum';
 // Interfaces.
 import {
   RaveStream,
+  RaveStreamList
 } from '../../components/raveStream/RaveStream.interface';
 import {
   RaveStreamStore,
@@ -68,6 +69,31 @@ export default combineReducers<RaveStreamStore, RaveStreamAction>({
         return action.payload;
       default:
         return raveStream;
+    }
+  },
+
+  /**
+   * Define the loaded rave stream list reducer.
+   *
+   * @param { RaveStreamList } state - the current rave stream list.
+   * @param { RaveStreamAction } action - the update action.
+   *
+   * @return RaveStreamList
+   */
+  raveStreamList: (
+    raveStreamList: RaveStreamList = {
+      title: '',
+      raveStreams: [JSON.parse(JSON.stringify(emptyStream))]
+    },
+    action: RaveStreamAction
+  ) => {
+    // Update the configuration based on the redux action triggered.
+    switch (action.type) {
+      case RaveStreamVerb.UPDATE_LIST:
+        // Append the new value to the list of watched items.
+        return action.payload;
+      default:
+        return raveStreamList;
     }
   }
 });

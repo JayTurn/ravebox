@@ -22,7 +22,10 @@ import {
   ReviewDetails,
   ReviewDocument
 } from '../review/review.interface';
-import { StreamData } from './stream.interface';
+import {
+  StreamData,
+  StreamListItem
+} from './stream.interface';
 
 // Models.
 import ProductCommon from '../product/product.common';
@@ -31,6 +34,7 @@ import Logging from '../../shared/logging/Logging.model';
 import Product from '../product/product.model';
 import Review from '../review/review.model';
 import ReviewCommon from '../review/review.common';
+import StreamCommon from './stream.common';
 
 /**
  * Routing controller for streams.
@@ -57,6 +61,12 @@ export default class StreamController {
     router.get(
       `${path}/product/:brand/:productName/:reviewTitle?`,
       StreamController.Product
+    );
+
+    // Retrieve a list of streams.
+    router.post(
+      `${path}/list`,
+      StreamController.List
     );
   }
 
@@ -193,5 +203,64 @@ export default class StreamController {
         
       return;
     })
+  }
+  
+  /**
+   * Retrieves a list of streams.
+   *
+   * @param {object} req
+   * The request object.
+   *
+   * @param {object} res
+   * The response object.
+   */
+  static List(request: Request, response: Response): void {
+    const list: Array<StreamListItem> = request.body.list;
+
+    if (!list || list.length <= 0) {
+      // Set the response object.
+      const responseObject: ResponseObject = Connect.setResponse({
+        data: {
+          errorCode: `STREAM_ITEMS_MISSING_FROM_REQUEST`,
+          message: `The list of streams to be requested was empty`
+        },
+      }, 404, `The list of streams to be requested was empty`);
+
+      Logging.Send(LogLevel.WARNING, responseObject);
+
+      // Return the response for the authenticated user.
+      response.status(responseObject.status).json(responseObject.data);
+        
+      return;
+    }
+
+    StreamCommon.RetrieveStreamLists(list)
+      .then((streamLists: Array<StreamData>) => {
+
+        // Set the response object.
+        const responseObject: ResponseObject = Connect.setResponse({
+          data: {
+            raveStreams: streamLists
+          }
+        }, 200, 'Stream lists retrieved successfully');
+
+        // Return the response for the authenticated user.
+        response.status(responseObject.status).json(responseObject.data);
+      })
+      .catch((error: Error) => {
+        // Set the response object.
+        const responseObject: ResponseObject = Connect.setResponse({
+          data: {
+            errorCode: `STREAM_LISTS_FAILED`,
+            message: `There was a problem loading this list of streams.`
+          },
+          error
+        }, 404, `There was a problem loading this list of streams.`);
+
+        Logging.Send(LogLevel.ERROR, responseObject);
+
+        // Return the response for the authenticated user.
+        response.status(responseObject.status).json(responseObject.data);
+      });
   }
 }

@@ -46,3 +46,42 @@ export interface RetrieveStreamByURLParams {
   setActiveRaveStream?: (raveStream: RaveStream) => void;
   setActiveRave?: (index: number) => void;
 }
+
+/**
+ * Retrive the product stream by URL parameters.
+ */
+export interface RetrieveStreamByListParams {
+  existing?: Array<RaveStream>;
+  requested: Array<RaveStreamListItem>;
+  list: string;
+}
+
+/**
+ * Rave stream list item parameters.
+ */
+export interface RaveStreamListItem {
+  streamType: RaveStreamType;
+  id: string;
+}
+
+/**
+ * Rave stream list params.
+ */
+export interface RaveStreamListParams {
+  list: Array<RaveStreamListItem>;
+}
+
+/**
+ * Rave stream list response.
+ */
+export interface RaveStreamListResponse {
+  list: Array<RaveStream>;
+}
+
+/**
+ * Rave stream list.
+ */
+export interface RaveStreamList {
+  title: string;
+  raveStreams: Array<RaveStream>;
+}

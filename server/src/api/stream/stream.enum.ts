@@ -10,5 +10,5 @@
 export enum StreamType {
   CATEGORY = 'category',
   PRODUCT = 'product',
-  PRODUCT_TYPE = 'product-type'
+  PRODUCT_TYPE = 'product_type'
 }

@@ -9,6 +9,7 @@ import { RaveStreamType } from './RaveStream.enum';
 // Interfaces.
 import {
   RaveStream,
+  RaveStreamListItem,
   RaveStreamURLParams
 } from './RaveStream.interface';
 
@@ -54,4 +55,21 @@ export const buildRaveStreamPath: (
   }
 
   return path;
+}
+
+/**
+ * Builds a list of rave streams to be requested
+ */
+export const getHomeStreamList: (
+) => Array<RaveStreamListItem> = (
+): Array<RaveStreamListItem> => {
+  let list: Array<RaveStreamListItem> = [{
+    streamType: RaveStreamType.PRODUCT,
+    id: 'powerbeats_pro'
+  }, {
+    streamType: RaveStreamType.PRODUCT_TYPE,
+    id: 'phone'
+  }];
+
+  return list;
 }

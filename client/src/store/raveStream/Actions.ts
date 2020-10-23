@@ -11,7 +11,8 @@ import { RaveStreamVerb } from './Actions.enum';
 
 // Dependent interfaces.
 import {
-  RaveStream
+  RaveStream,
+  RaveStreamList
 } from '../../components/raveStream/RaveStream.interface';
 
 /**
@@ -29,3 +30,11 @@ export const update = (raveStream: RaveStream) => action(
  */
 export const updateActive = (index: number) => action(
   RaveStreamVerb.UPDATE_ACTIVE, index);
+
+/**
+ * Updates a list of streams.
+ *
+ * @param { RaveStreamList } raveStreamList - the list of rave streams.
+ */
+export const updateList = (raveStreamList: RaveStreamList) => action(
+  RaveStreamVerb.UPDATE_LIST, raveStreamList);
