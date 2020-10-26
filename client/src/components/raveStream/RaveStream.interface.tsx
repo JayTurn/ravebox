@@ -51,9 +51,9 @@ export interface RetrieveStreamByURLParams {
  * Retrive the product stream by URL parameters.
  */
 export interface RetrieveStreamByListParams {
-  existing?: Array<RaveStream>;
-  requested: Array<RaveStreamListItem>;
-  list: string;
+  queries: Array<RaveStreamListItem>;
+  name: string;
+  updateList?: (raveStreams: RaveStreamList) => void;
 }
 
 /**
@@ -75,7 +75,8 @@ export interface RaveStreamListParams {
  * Rave stream list response.
  */
 export interface RaveStreamListResponse {
-  list: Array<RaveStream>;
+  raveStreams: Array<RaveStream>;
+  title: string;
 }
 
 /**

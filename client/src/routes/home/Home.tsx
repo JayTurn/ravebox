@@ -38,6 +38,7 @@ import ContentBlock from '../../components/elements/contentBlock/ContentBlock';
 import Logo from '../../components/logo/Logo';
 import ListByQuery from '../../components/review/listByQuery/ListByQuery';
 import ListTitle from '../../components/elements/listTitle/ListTitle';
+import StreamCardHolder from '../../components/raveStream/cardHolder/StreamCardHolder';
 
 // Enumerators.
 import { ColorStyle } from '../../components/elements/contentBlock/ContentBlock.enum';
@@ -52,6 +53,7 @@ import {
 import { RequestType } from '../../utils/api/Api.enum';
 import { ScreenContext } from '../../components/review/Review.enum';
 import { StyleType } from '../../components/elements/link/Link.enum';
+import { ViewState } from '../../utils/display/view/ViewState.enum';
 
 // Hooks.
 import { useAnalytics } from '../../components/analytics/Analytics.provider';
@@ -63,6 +65,7 @@ import {
 import { AnalyticsContextProps } from '../../components/analytics/Analytics.interface';
 import { HomeProps } from './Home.interface';
 import {
+  RaveStream,
   RaveStreamList,
   RaveStreamListItem
 } from '../../components/raveStream/RaveStream.interface';
@@ -97,8 +100,16 @@ const useStyles = makeStyles((theme: Theme) =>
       fontSize: '2.5rem',
       marginTop: theme.spacing(6),
     },
+    cardBackground: {
+      backgroundColor: '#f4f4f4',
+      '&:first-child': {
+        paddingTop: theme.spacing(.5)
+      },
+      '&:last-child': {
+        paddingBottom: theme.spacing(.5)
+      }
+    },
     container: {
-      flexWrap: 'nowrap'
     },
     containerPadding: {
       paddingLeft: theme.spacing(2),
@@ -126,6 +137,12 @@ const useStyles = makeStyles((theme: Theme) =>
       fontSize: '2.5rem',
       marginTop: theme.spacing(10),
       marginBottom: theme.spacing(10),
+    },
+    spaceAbove: {
+      paddingTop: theme.spacing(.5)
+    },
+    spaceBelow: {
+      paddingBottom: theme.spacing(.5)
     },
     tempCategorySmall: {
       marginBottom: theme.spacing(-2.5)
@@ -176,11 +193,11 @@ const Home: React.FC<HomeProps> = (props: HomeProps) => {
         list: Array<RaveStreamListItem> = getHomeStreamList(); 
 
   const {
-    raveStreams,
     raveStreamsStatus
   } = useRetrieveRaveStreamByList({
-    requested: list,
-    list: 'home'
+    queries: list,
+    name: 'home',
+    updateList: props.updateList
   });
 
   /*
@@ -221,7 +238,6 @@ const Home: React.FC<HomeProps> = (props: HomeProps) => {
     <Grid
       className={clsx(classes.container)}
       container
-      direction='column'
     >
       <Grid item xs={12} className={clsx(
           classes.introContainer,
@@ -266,6 +282,36 @@ const Home: React.FC<HomeProps> = (props: HomeProps) => {
           </Grid>
         </Grid>
       </Grid>
+      {raveStreamsStatus === ViewState.WAITING &&
+        <Grid item xs={12}>
+          Add loading state here...
+        </Grid>
+      }
+      {raveStreamsStatus === ViewState.FOUND &&
+        <React.Fragment>
+          {props.raveStreamList && props.raveStreamList.raveStreams.length > 0 &&
+            <React.Fragment>
+              {props.raveStreamList.raveStreams.map((raveStream: RaveStream, index: number) => (
+                <Grid item xs={12}
+                  className={clsx(
+                    classes.cardBackground, {
+                      [classes.spaceAbove]: index === 0,
+                      [classes.spaceBelow]: props.raveStreamList && index === props.raveStreamList.raveStreams.length - 1  
+                    }
+                  )}
+                  key={index}
+                >
+                  <StreamCardHolder
+                    title={raveStream.title}
+                    streamType={raveStream.streamType}
+                    reviews={[...raveStream.reviews]}
+                  />
+                </Grid>
+              ))}
+            </React.Fragment>
+          }
+        </React.Fragment>
+      }
       {/*
       <Grid item xs={12} className={clsx({
         [classes.tempCategorySmall]: !largeScreen

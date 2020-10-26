@@ -49,21 +49,16 @@ export function useRetrieveRaveStreamByList(
 
   // Format the api request path.
   const {
-    existing,
-    requested,
+    queries,
+    name,
+    updateList
   } = {...params};
 
   // Define a state for the url parameters to track changes.
-  const [requestParams, setRequestParams] = React.useState<Array<RaveStreamListItem>>([...requested]);
+  const [requestParams, setRequestParams] = React.useState<Array<RaveStreamListItem>>(queries);
 
   // Define the retrieval status to be used for view rendering.
   const [retrieved, setRetrieved] = React.useState(RetrievalStatus.REQUESTED);
-
-  // Define the rave stream to be set using the existing value if it has
-  // been preloaded via sever side rendering.
-  const [raveStreams, setRaveStreams] = React.useState<Array<RaveStream>|null>(
-    existing ? existing : null
-  );
 
   /**
    * Handle state updates to the url parameters and request status.
@@ -84,24 +79,39 @@ export function useRetrieveRaveStreamByList(
       .then((response: RaveStreamListResponse) => {
         // If we have a rave stream, set rave stream the in the redux store and the
         // local state.
-        if (response.list) {
-          setRaveStreams({...response.list});
+        if (response.raveStreams && updateList) {
+          updateList({
+            raveStreams: [...response.raveStreams],
+            title: name
+          });
           setRetrieved(RetrievalStatus.SUCCESS);
         } else {
-          // We didn't return an active rave stream so return a not found
-          // state.
-          setRaveStreams(null);
+          if (updateList) {
+            // We didn't return an active rave stream so return a not found
+            // state.
+            updateList({
+              title: name,
+              raveStreams: []
+            });
+          }
           setRetrieved(RetrievalStatus.NOT_FOUND);
         }
       })
       .catch((error: Error) => {
+        if (updateList) {
+          // We didn't return an active rave stream so return a not found
+          // state.
+          updateList({
+            title: name,
+            raveStreams: []
+          });
+        }
         setRetrieved(RetrievalStatus.FAILED);
       });
     }
   }, [retrieved]);
 
   return {
-    raveStreams,
     raveStreamsStatus: ViewStatus(retrieved)
   }
 }
