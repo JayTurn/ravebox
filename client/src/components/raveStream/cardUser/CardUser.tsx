@@ -35,20 +35,17 @@ import { CardUserProps } from './CardUser.interface';
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     avatar: {
-      border: `1px solid ${theme.palette.common.white}`,
+      boxShadow: `0 1px 1px rgba(0,0,0,0.25)`,
       height: theme.spacing(5),
       width: theme.spacing(5)
     },
     avatarIcon: {
-      border: `2px solid ${theme.palette.secondary.main}`,
       fontSize: '.9rem',
       fontWeight: 600,
       height: theme.spacing(5),
       width: theme.spacing(5)
     },
     container: {
-      backgroundColor: theme.palette.common.white,
-      borderRadius: 20
     },
     handleContainer: {
       margin: theme.spacing(0, 2, 0, .5)

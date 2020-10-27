@@ -101,7 +101,8 @@ const useStyles = makeStyles((theme: Theme) =>
       marginTop: theme.spacing(6),
     },
     cardBackground: {
-      backgroundColor: '#f4f4f4',
+      backgroundColor: `rgba(100,106,240, .1)`,
+      //backgroundColor: '#f4f4f4',
       '&:first-child': {
         paddingTop: theme.spacing(.5)
       },

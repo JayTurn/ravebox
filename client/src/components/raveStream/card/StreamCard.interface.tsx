@@ -4,7 +4,7 @@
  */
 
 // Modules.
-//import { RouteComponentProps } from 'react-router';
+import { RouteComponentProps } from 'react-router';
 
 // Enumerators.
 import { CardPosition } from '../card/StreamCard.enum';
@@ -16,7 +16,7 @@ import { Review } from '../../review/Review.interface';
 /**
  * Stream card properties.
  */
-export interface StreamCardProps {
+export interface StreamCardProps extends RouteComponentProps {
   active: boolean;
   positioning: CardPosition; 
   review: Review

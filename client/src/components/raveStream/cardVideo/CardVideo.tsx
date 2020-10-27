@@ -16,8 +16,10 @@ import {
   withStyles
 } from '@material-ui/core/styles';
 import Grid from '@material-ui/core/Grid';
+import Player from 'react-player';
 import * as React from 'react';
 import Typography from '@material-ui/core/Typography';
+import { withRouter } from 'react-router';
 
 // Components.
 import CardUser from '../cardUser/CardUser';
@@ -35,43 +37,13 @@ import { CardVideoProps } from './CardVideo.interface';
  */
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
-    brandText: {
-      display: 'block',
-      fontSize: '.8rem',
-      fontWeight: 600
-    },
-    buttonElement: {
-      fontWeight: 700,
-      '&.MuiButton-root': {
-        borderRadius: 20,
-        boxShadow: `0 1px 4px rgba(0,0,0,0.2)`
-      }
-    },
-    buttonContainer: {
-      bottom: 20,
-      right: 20,
-      position: 'absolute',
-      zIndex: 2
-    },
     container: {
       borderRadius: 20,
-      height: 330,
+      height: 240,
       overflow: 'hidden',
+      margin: theme.spacing(0, 1),
       position: 'relative',
-      width: '100%'
-    },
-    productContainer: {
-      backgroundColor: theme.palette.common.white,
-      borderRadius: 5,
-      top: 20,
-      left: 20,
-      padding: theme.spacing(1),
-      position: 'absolute',
-      zIndex: 2
-    },
-    productTitle: {
-      fontSize: '1.1rem',
-      fontWeight: 500
+      width: 'calc(100% - 16px)'
     },
     thumbnailContainer: {
       backgroundSize: 'cover',
@@ -83,14 +55,15 @@ const useStyles = makeStyles((theme: Theme) =>
       position: 'absolute',
       top: 0,
       width: '100%',
-      zIndex: 1
-    },
-    userContainer: {
-      bottom: 20,
-      left: 20,
-      position: 'absolute',
       zIndex: 2
     },
+    videoContainer: {
+      height: '100%',
+      left: 0,
+      position: 'absolute',
+      width: '100%',
+      zIndex: 1
+    }
   })
 );
 
@@ -107,36 +80,48 @@ const CardVideo: React.FC<CardVideoProps> = (props: CardVideoProps) => {
     review
   } = {...props};
 
+  // Define the player reference to be used for video controls.
+  const playerRef = React.useRef<Player>(null);
+
+  // Define the player controls.
+  const [config, setConfig] = React.useState({
+    controls: false,
+    file: {
+      forceHLS: true
+    },
+    height: '100%',
+    muted: true,
+    playing: props.active && props.playing,
+    playsinline: true,
+    url: props.review.videoURL,
+    volume: 1,
+    width: 'auto',
+    youtube: {
+      playerVars: {
+        iv_load_policy: 3,
+        modestbranding: 1
+      }
+    }
+  });
+
+
   return (
     <Box className={clsx(classes.container)}>
-      <Box className={clsx(classes.productContainer)}>
-        {review.product &&
-          <Typography variant='h3' className={clsx(classes.productTitle)}>
-            <Box component='span' className={clsx(classes.brandText)}>
-              {review.product.brand.name}
-            </Box>
-            {review.product.name}
-          </Typography>
-        }
-      </Box>
-      <Box className={clsx(classes.userContainer)}>
-        <CardUser review={{...review}} />
-      </Box>
-      <Box className={clsx(classes.buttonContainer)}>
-        <StyledButton
-          className={clsx(classes.buttonElement)}
-          clickAction={() => {}}
-          color='secondary'
-          title='Watch'
-        />
-      </Box>
       <Box
         className={clsx(classes.thumbnailContainer)}
         style={{backgroundImage: `url(${review.thumbnail})`}}
       >
       </Box>
+      <Box className={clsx(classes.videoContainer)}>
+        <Player
+          {...config}
+          progressInterval={5000}
+          ref={playerRef}
+          style={{position: 'absolute', top: 0, left: 0, height: 'auto !important'}}
+        />
+      </Box>
     </Box>
   );
 }
 
-export default CardVideo;
+export default withRouter(CardVideo);

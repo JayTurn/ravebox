@@ -12,6 +12,7 @@ import {
   RaveStreamListItem,
   RaveStreamURLParams
 } from './RaveStream.interface';
+import { Review } from '../review/Review.interface';
 
 /**
  * Creates an empty rave Stream object for use in object definitions.
@@ -56,6 +57,55 @@ export const buildRaveStreamPath: (
 
   return path;
 }
+
+/**
+ * Builds the url to the specific rave stream.
+ *
+ * @param { RaveStreamType } streamType - the stream type.
+ * @param { Review } review - the review.
+ *
+ * @return string
+ */
+export const buildURLForStream: (
+  streamType: RaveStreamType
+) => (
+  review: Review
+) => (
+  single: boolean
+) => string = (
+  streamType: RaveStreamType
+) => (
+  review: Review
+) => (
+  single: boolean
+): string => {
+  let path: string = `/stream/${streamType}/`;
+
+  if (!review) {
+    return path;
+  }
+
+  switch (streamType) {
+    case RaveStreamType.PRODUCT:
+      if (review.product) {
+        path += `${review.product.brand.url}/${review.product.url}`;
+      }
+      break;
+    case RaveStreamType.PRODUCT_TYPE:
+      if (review.product) {
+        path += `${encodeURI(review.product.productType.name)}`;
+      }
+      break;
+    default:
+  }
+
+  if (single) {
+    path += `/${review.url}`;
+  }
+
+  return path;
+}
+
 
 /**
  * Builds a list of rave streams to be requested

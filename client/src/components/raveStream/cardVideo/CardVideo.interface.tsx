@@ -4,7 +4,7 @@
  */
 
 // Modules.
-//import { RouteComponentProps } from 'react-router';
+import { RouteComponentProps } from 'react-router';
 
 // Enumerators.
 import { RaveStreamType } from '../RaveStream.enum';
@@ -15,7 +15,9 @@ import { Review } from '../../review/Review.interface';
 /**
  * Card video properties.
  */
-export interface CardVideoProps {
+export interface CardVideoProps extends RouteComponentProps {
   active: boolean;
+  playing: boolean;
   review: Review;
+  url: string;
 }
