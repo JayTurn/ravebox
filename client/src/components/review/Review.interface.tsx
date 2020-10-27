@@ -32,8 +32,10 @@ export interface Review {
   title: string;
   url: string;
   user?: PublicProfile;
-  videoURL?: string;
+  videoHeight?: number;
   videoType: VideoType;
+  videoURL?: string;
+  videoWidth?: number;
 }
 
 /**

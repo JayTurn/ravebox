@@ -75,7 +75,8 @@ const useStyles = makeStyles((theme: Theme) =>
     },
     cardsContainer: {
       position: 'relative',
-      height: 340
+      height: 0,
+      paddingTop: '88.25%'
     },
     cardStepper: {
       backgroundColor: 'transparent',
@@ -259,7 +260,7 @@ const StreamCardHolder: React.FC<StreamCardHolderProps> = (
         <React.Fragment>
           <Grid item xs={12}
             className={classes.cardsContainer}
-            style={{height: streamType === RaveStreamType.PRODUCT ? 290 : 330}}
+            style={{paddingTop: streamType === RaveStreamType.PRODUCT ? `calc(82.5% + 40px)` : `calc(82.5% + 75px)`}}
           >
             <Box {...swipeableHandlers}>
               {props.reviews.map((review: Review, index: number) => (

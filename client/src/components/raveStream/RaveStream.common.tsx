@@ -106,7 +106,6 @@ export const buildURLForStream: (
   return path;
 }
 
-
 /**
  * Builds a list of rave streams to be requested
  */
@@ -122,4 +121,29 @@ export const getHomeStreamList: (
   }];
 
   return list;
+}
+
+/**
+ * Calculates the ratio of the video dimensions.
+ *
+ * @param { number } width - the video width.
+ * @param { number } height - the video height.
+ *
+ * @return number
+ */
+export const calculateVideoRatio: (
+  width: number | undefined
+) => (
+  height: number | undefined
+) => number = (
+  width: number | undefined
+) => (
+  height: number | undefined
+): number => {
+
+  if (!width || !height) {
+    return 0;
+  }
+
+  return width / height;
 }

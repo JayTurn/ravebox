@@ -127,7 +127,9 @@ ReviewSchema
     let endTime = 0, 
         startTime = 0,
         thumbnailURL = '',
-        videoURL = '';
+        videoHeight = 0,
+        videoURL = '',
+        videoWidth = 0;
 
     if (this.videoType === VideoType.YOUTUBE) {
       if (this.youtube) {
@@ -138,6 +140,8 @@ ReviewSchema
     } else {
       if (this.video && this.video.egressEndpoints) {
         videoURL = this.video.egressEndpoints.HLS;
+        videoHeight = this.video.srcHeight;
+        videoWidth = this.video.srcWidth;
       }
     }
 
@@ -168,8 +172,10 @@ ReviewSchema
       title: this.title,
       url: this.url,
       user: user,
+      videoHeight: videoHeight,
       videoType: this.videoType,
-      videoURL: videoURL
+      videoURL: videoURL,
+      videoWidth: videoWidth,
     }
 
     if (this.description) {
