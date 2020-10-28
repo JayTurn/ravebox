@@ -46,6 +46,12 @@ export default class StreamController {
 
     // Retrieve a product stream.
     router.get(
+      `${path}/collection/:collectionContext/:brand/:productName/:reviewURL?`,
+      StreamController.Collection
+    );
+
+    // Retrieve a product stream.
+    router.get(
       `${path}/product/:brand/:productName/:reviewURL?`,
       StreamController.Product
     );
@@ -69,6 +75,80 @@ export default class StreamController {
    */
   static getStatus(req: Request, res: Response): void {
     res.status(200).json({'body': 'Stream api healthy'});
+  }
+
+  /**
+   * Retrieves a collection stream.
+   *
+   * @param {object} req
+   * The request object.
+   *
+   * @param {object} res
+   * The response object.
+   */
+  static Collection(request: Request, response: Response): void {
+    const collectionContext: string = request.params.collectionContext,
+          brand: string = request.params.brand, 
+          productName: string = request.params.productName,
+          reviewURL: string = request.params.reviewURL;
+
+    if (!collectionContext || !brand || !productName) {
+      // Set the response object.
+      const responseObject: ResponseObject = Connect.setResponse({
+        data: {
+          errorCode: 'PRODUCT_STREAM_NOT_FOUND',
+          message: 'There was a problem retrieving reviews for this product'
+        },
+      }, 404, `${brand} or ${productName} was missing from the request`);
+
+      Logging.Send(LogLevel.WARNING, responseObject);
+
+      // Return the response for the authenticated user.
+      response.status(responseObject.status).json(responseObject.data);
+        
+      return;
+    }
+
+    StreamCommon.RetrieveCollectionStream({
+      brand: brand,
+      collectionContext: collectionContext,
+      product: productName,
+      streamType: StreamType.COLLECTION
+    })
+    .then((streamData: StreamData) => {
+      if (reviewURL && streamData.reviews.length > 1) {
+        streamData.reviews = StreamCommon.SetFirstReview(
+          streamData.reviews, reviewURL);
+      }
+
+      // Set the response object.
+      const responseObject: ResponseObject = Connect.setResponse({
+        data: {
+          raveStream: streamData
+        }
+      }, 200, 'Stream loaded');
+
+      // Return the response for the authenticated user.
+      response.status(responseObject.status).json(responseObject.data);
+
+    })
+    .catch((error: Error) => {
+      // Set the response object.
+      const responseObject: ResponseObject = Connect.setResponse({
+        data: {
+          errorCode: 'PRODUCT_STREAM_RETRIEVAL_FAILED',
+          message: 'There was a problem retrieving reviews for this product stream'
+        },
+        error: error
+      }, 404, `There was a problem locating a stream for ${brand} ${productName}`);
+
+      Logging.Send(LogLevel.WARNING, responseObject);
+
+      // Return the response for the authenticated user.
+      response.status(responseObject.status).json(responseObject.data);
+        
+      return;
+    })
   }
 
   /**

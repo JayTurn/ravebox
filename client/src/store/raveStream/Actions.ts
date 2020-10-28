@@ -14,6 +14,9 @@ import {
   RaveStream,
   RaveStreamList
 } from '../../components/raveStream/RaveStream.interface';
+import {
+  Product
+} from '../../components/product/Product.interface';
 
 /**
  * Updates the active stream in the redux store.
@@ -38,3 +41,11 @@ export const updateActive = (index: number) => action(
  */
 export const updateList = (raveStreamList: RaveStreamList) => action(
   RaveStreamVerb.UPDATE_LIST, raveStreamList);
+
+/**
+ * Updates the product associated with rave stream in the redux store.
+ *
+ * @param { Product } product - the product to be made active.
+ */
+export const updateProduct = (product: Product) => action(
+  RaveStreamVerb.UPDATE_PRODUCT, product);

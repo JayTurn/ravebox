@@ -176,7 +176,8 @@ const StreamCardHolder: React.FC<StreamCardHolderProps> = (
 
   const [activeIndex, setActiveIndex] = React.useState<number>(0);
 
-  const path: string = buildURLForStream(streamType)(reviews[0])(false);
+  const path: string = buildURLForStream(
+    streamType)(reviews[0])(false);
 
   /**
    * Handles swipe events.

@@ -55,6 +55,10 @@ export const buildRaveStreamPath: (
     path += `/${params.thirdPath}`;
   }
 
+  if (params.fourthPath) {
+    path += `/${params.fourthPath}`;
+  }
+
   return path;
 }
 
@@ -86,6 +90,14 @@ export const buildURLForStream: (
   }
 
   switch (streamType) {
+    case RaveStreamType.COLLECTON:
+
+      path += `competing/`;
+
+      if (review.product) {
+        path += `${review.product.brand.url}/${review.product.url}`;
+      }
+      break;
     case RaveStreamType.PRODUCT:
       if (review.product) {
         path += `${review.product.brand.url}/${review.product.url}`;
@@ -119,6 +131,11 @@ export const getHomeStreamList: (
   }, {
     streamType: RaveStreamType.PRODUCT_TYPE,
     productType: 'phone'
+  }, {
+    streamType: RaveStreamType.COLLECTON,
+    brand: 'google',
+    collectionContext: 'competing',
+    product: 'pixel_3'
   }];
 
   return list;

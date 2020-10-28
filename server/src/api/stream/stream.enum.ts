@@ -9,6 +9,7 @@
  */
 export enum StreamType {
   CATEGORY = 'category',
+  COLLECTION = 'collection',
   PRODUCT = 'product',
-  PRODUCT_TYPE = 'product_type'
+  PRODUCT_TYPE = 'product_type',
 }

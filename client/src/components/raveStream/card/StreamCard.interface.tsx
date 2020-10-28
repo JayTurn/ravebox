@@ -11,12 +11,15 @@ import { CardPosition } from '../card/StreamCard.enum';
 import { RaveStreamType } from '../RaveStream.enum';
 
 // Interfaces.
+import {
+  RaveStreamURLParams
+} from '../RaveStream.interface';
 import { Review } from '../../review/Review.interface';
 
 /**
  * Stream card properties.
  */
-export interface StreamCardProps extends RouteComponentProps {
+export interface StreamCardProps extends RouteComponentProps<RaveStreamURLParams> {
   active: boolean;
   positioning: CardPosition; 
   review: Review

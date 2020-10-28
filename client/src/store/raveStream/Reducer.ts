@@ -11,6 +11,9 @@ import { RaveStreamVerb } from './Actions.enum';
 
 // Interfaces.
 import {
+  Product
+} from '../../components/product/Product.interface';
+import {
   RaveStream,
   RaveStreamList
 } from '../../components/raveStream/RaveStream.interface';
@@ -20,9 +23,10 @@ import {
 } from './raveStream.interface';
 
 // Utilities.
+import { emptyProduct } from '../../components/product/Product.common';
 import { emptyRaveStream } from '../../components/raveStream/RaveStream.common';
 
-const emptyStream: RaveStream = emptyRaveStream(); 
+const emptyStream: RaveStream = emptyRaveStream();
 
 /**
  * Combines the rave stream reducers to be loaded with the store.
@@ -95,5 +99,27 @@ export default combineReducers<RaveStreamStore, RaveStreamAction>({
       default:
         return raveStreamList;
     }
-  }
+  },
+
+  /**
+   * Define the loaded rave stream product reducer.
+   *
+   * @param { Product } state - the current rave stream product.
+   * @param { RaveStreamAction } action - the filters action.
+   *
+   * @return Product
+   */
+  product: (
+    state: Product = JSON.parse(JSON.stringify(emptyProduct())),
+    action: RaveStreamAction
+  ) => {
+    // Update the configuration based on the redux action triggered.
+    switch (action.type) {
+      case RaveStreamVerb.UPDATE_PRODUCT:
+        // Append the new value to the list of watched items.
+        return action.payload;
+      default:
+        return state;
+    }
+  },
 });

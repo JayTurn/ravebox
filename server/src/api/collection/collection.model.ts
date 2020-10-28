@@ -12,7 +12,7 @@ import { CollectionContext } from './collection.enum';
 
 // Interfaces.
 import {
-  CollectionDetailsDocument
+  CollectionDocument
 } from './collection.interface';
 
 // Get the Mongoose Shema method.
@@ -68,7 +68,7 @@ CollectionSchema
   });
 
 // Declare the collection mongoose model.
-const Collection: Mongoose.Model<CollectionDetailsDocument> = Mongoose.model('Collection', CollectionSchema);
+const Collection: Mongoose.Model<CollectionDocument> = Mongoose.model('Collection', CollectionSchema);
 
 // Declare the collection mongoose model.
 export default Collection;

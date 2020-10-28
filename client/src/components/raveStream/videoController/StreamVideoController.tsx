@@ -26,7 +26,8 @@ import * as React from 'react';
 
 // Actions.
 import {
-  updateActive
+  updateActive,
+  updateProduct
 } from '../../../store/raveStream/Actions';
 
 // Components.
@@ -46,11 +47,15 @@ import { useAnalytics } from '../../../components/analytics/Analytics.provider';
 
 // Interfaces.
 import { AnalyticsContextProps } from '../../../components/analytics/Analytics.interface';
+import { Product } from '../../product/Product.interface';
+import { RaveStream } from '../RaveStream.interface';
+import { Review } from '../../review/Review.interface';
 import {
   StreamVideoControllerProps
 } from './StreamVideoController.interface';
-import { RaveStream } from '../RaveStream.interface';
-import { Review } from '../../review/Review.interface';
+
+// Utilities.
+import { emptyProduct } from '../../product/Product.common';
 
 /**
  * Create the theme styles to be used for the display.
@@ -61,8 +66,6 @@ const useStyles = makeStyles((theme: Theme) =>
       backgroundColor: 'black',
       height: '100%',
       left: 0,
-      //maxHeight: 'calc(100vh); max-height: -webkit-fill-available;',
-      //minHeight: 'calc(100vh); min-height: -webkit-fill-available;',
       position: 'fixed',
       overflow: 'hidden',
       transition: 'transform 300ms ease-in-out',
@@ -73,8 +76,6 @@ const useStyles = makeStyles((theme: Theme) =>
     },
     item: {
       height: '100%',
-      //maxHeight: 'calc(100vh); max-height: -webkit-fill-available;',
-      //minHeight: 'calc(100vh); min-height: -webkit-fill-available;',
       position: 'fixed'
     },
     shifted: {
@@ -168,7 +169,12 @@ const StreamVideoController: React.FC<StreamVideoControllerProps> = (props: Stre
   const handleNext: (
   ) => void = (
   ): void => {
-    if (props.updateActiveIndex) {
+    if (props.updateActiveIndex && props.updateProduct) {
+      if (props.raveStream && props.raveStream.reviews.length > 0) {
+        props.updateProduct(
+          props.raveStream.reviews[activeIndex + 1].product || emptyProduct()
+        );
+      }
       props.updateActiveIndex(activeIndex + 1);
       setPlaying(true);
     }
@@ -177,7 +183,12 @@ const StreamVideoController: React.FC<StreamVideoControllerProps> = (props: Stre
   const handlePrevious: (
   ) => void = (
   ): void => {
-    if (props.updateActiveIndex) {
+    if (props.updateActiveIndex && props.updateProduct) {
+      if (props.raveStream && props.raveStream.reviews.length > 0) {
+        props.updateProduct(
+          props.raveStream.reviews[activeIndex - 1].product || emptyProduct()
+        );
+      }
       props.updateActiveIndex(activeIndex - 1);
       setPlaying(true);
     }
@@ -266,6 +277,7 @@ const mapDispatchToProps = (dispatch: Dispatch<AnyAction>) =>
   bindActionCreators(
     {
       updateActiveIndex: updateActive,
+      updateProduct: updateProduct
     },
     dispatch
   );
@@ -276,11 +288,13 @@ const mapDispatchToProps = (dispatch: Dispatch<AnyAction>) =>
 const mapStateToProps = (state: any, ownProps: StreamVideoControllerProps) => {
   // Retrieve the product stream from the active properties.
   const raveStream: RaveStream = state.raveStream ? state.raveStream.raveStream : undefined,
-        activeIndex: number = state.raveStream ? state.raveStream.active : 0;
+        activeIndex: number = state.raveStream ? state.raveStream.active : 0,
+        product: Product = state.raveStream ? state.raveStream.product : undefined;
 
   return {
     ...ownProps,
     activeIndex,
+    product,
     raveStream
   };
 };

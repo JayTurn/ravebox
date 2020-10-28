@@ -16,6 +16,7 @@ import { Workflow } from '../../shared/enumerators/workflow.enum';
 
 // Interfaces.
 import { BrandDetails } from '../brand/brand.interface';
+import { CollectionDetails } from '../collection/collection.interface';
 import { ProductDetails } from '../product/product.interface';
 import { ResponseObject } from '../../models/database/connect.interface';
 import {
@@ -30,6 +31,7 @@ import { TagDetails } from '../tag/tag.interface';
 
 // Models.
 import Brand from '../brand/brand.model';
+import Collection from '../collection/collection.model';
 import Connect from '../../models/database/connect.model';
 import Logging from '../../shared/logging/Logging.model';
 import Product from '../product/product.model';
@@ -69,6 +71,11 @@ export default class StreamCommon {
             StreamCommon.RetrieveProductTypeStream(current)
           );
           break;
+        case StreamType.COLLECTION:
+          streamListPromises.push(
+            StreamCommon.RetrieveCollectionStream(current)
+          );
+          break;
         default:
       }
 
@@ -76,6 +83,147 @@ export default class StreamCommon {
     } while (i < list.length);
 
     return Promise.all(streamListPromises);
+  }
+
+  /**
+   * Retrieves a list of reviews based on a collection.
+   *
+   * @param { StreamListItem } item - the stream item.
+   *
+   * @return StreamData
+   */
+  static RetrieveCollectionStream(item: StreamListItem): Promise<StreamData> {
+    return new Promise<StreamData>((resolve: Function) => {
+      if (!item.collectionContext || !item.brand || !item.product || !item.streamType) {
+        return resolve();
+      }
+
+      let streamTitle = '';
+
+      Brand.findOne({
+        url: item.brand
+      })
+      .lean()
+      .then((brandDetails: BrandDetails) => {
+        if (!brandDetails) {
+          return resolve();
+        }
+
+        return Product.findOne({
+          brand: brandDetails._id,
+          url: item.product
+        })
+        .lean();
+      })
+      .then((productDetails: ProductDetails) => {
+        if (!productDetails) {
+          return resolve();
+        }
+
+        return Collection.findOne({
+          products: productDetails._id,
+          context: item.collectionContext
+        })
+        .lean();
+      })
+      .then((collectionDetail: CollectionDetails) => {
+        if (!collectionDetail) {
+          return resolve();
+        }
+
+        streamTitle = collectionDetail.title;
+
+        if (collectionDetail.reviews && collectionDetail.reviews.length > 0) {
+          return Review.find({
+            _id: collectionDetail.reviews,
+            published: Workflow.PUBLISHED
+          })
+          .populate({
+            path: 'product',
+            model: 'Product',
+            populate: [{
+              path: 'brand',
+              model: 'Brand'
+            }, {
+              path: 'productType',
+              model: 'Tag'
+            }]
+          })
+          .populate({
+            path: 'statistics',
+            model: 'ReviewStatistic' 
+          })
+          .populate({
+            path: 'user',
+            model: 'User',
+            populate: [{
+              path: 'statistics',
+              model: 'UserStatistic'
+            }]
+          });
+        }
+
+        if (collectionDetail.products && collectionDetail.products.length > 0) {
+          return Review.find({
+            product: collectionDetail.products,
+            published: Workflow.PUBLISHED
+          })
+          .populate({
+            path: 'product',
+            model: 'Product',
+            populate: [{
+              path: 'brand',
+              model: 'Brand'
+            }, {
+              path: 'productType',
+              model: 'Tag'
+            }]
+          })
+          .populate({
+            path: 'statistics',
+            model: 'ReviewStatistic' 
+          })
+          .populate({
+            path: 'user',
+            model: 'User',
+            populate: [{
+              path: 'statistics',
+              model: 'UserStatistic'
+            }]
+          });
+        }
+
+        return resolve();
+      })
+      .then((reviewDocuments: Array<ReviewDocument>) => {
+        const reviews: Array<ReviewDetails> = ReviewCommon
+          .FormatStreamReviews(
+            reviewDocuments,
+          );
+
+        const streamData: StreamData = {
+          title: streamTitle,
+          reviews: reviews,
+          streamType: item.streamType
+        };
+
+        resolve(streamData);
+      })
+      .catch((error: Error) => {
+        // Set the response object.
+        const responseObject: ResponseObject = Connect.setResponse({
+          data: {
+            errorCode: 'COLLECTION_STREAM_RETRIEVAL_FAILED',
+            message: 'There was a problem retrieving reviews for this collection stream'
+          },
+          error: error
+        }, 404, `There was a problem locating a stream for the collection`);
+
+        Logging.Send(LogLevel.WARNING, responseObject);
+
+        resolve();
+      });
+    });
   }
 
   /**

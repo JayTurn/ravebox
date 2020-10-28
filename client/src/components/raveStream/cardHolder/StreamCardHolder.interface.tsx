@@ -10,12 +10,15 @@ import { RouteComponentProps } from 'react-router';
 import { RaveStreamType } from '../RaveStream.enum';
 
 // Interfaces.
+import {
+  RaveStreamURLParams
+} from '../RaveStream.interface';
 import { Review } from '../../review/Review.interface';
 
 /**
  * Stream card properties.
  */
-export interface StreamCardHolderProps extends RouteComponentProps {
+export interface StreamCardHolderProps extends RouteComponentProps<RaveStreamURLParams> {
   title: string;
   reviews: Array<Review>
   streamType: RaveStreamType;

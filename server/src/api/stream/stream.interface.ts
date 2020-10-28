@@ -25,4 +25,5 @@ export interface StreamListItem {
   brand?: string;
   product?: string;
   productType?: string;
+  collectionContext?: string;
 }

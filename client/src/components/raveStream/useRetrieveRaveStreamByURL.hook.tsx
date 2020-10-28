@@ -69,6 +69,7 @@ export function useRetrieveRaveStreamByURL(
   const {
     existing,
     requested,
+    setActiveProduct,
     setActiveRaveStream,
     setActiveRave,
   } = {...params};
@@ -89,7 +90,9 @@ export function useRetrieveRaveStreamByURL(
   const [raveStream, setRaveStream] = React.useState<RaveStream>(existing ? existing : {...emptyRaveStream()});
 
   // Define the active product to be displayed in the stream.
-  const [product, setProduct] = React.useState<Product>(retrieveProductFromStream(existing))
+  //if (existing && setActiveProduct) {
+    //setActiveProduct(retrieveProductFromStream(existing));
+  //}
 
   const [requestedPath, setRequestedPath] = React.useState<string>(path);
 
@@ -101,7 +104,6 @@ export function useRetrieveRaveStreamByURL(
       //setRetrieved(RetrievalStatus.REQUESTED);
     //}
   }, [
-    product,
     productPath,
     requestedPath,
     retrieved
@@ -124,9 +126,9 @@ export function useRetrieveRaveStreamByURL(
         // If we have a rave stream, set rave stream the in the redux store and the
         // local state.
         if (response.raveStream) {
-          if (setActiveRaveStream) {
+          if (setActiveRaveStream && setActiveProduct) {
             setActiveRaveStream({...response.raveStream});
-            setProduct(retrieveProductFromStream(response.raveStream));
+            setActiveProduct(retrieveProductFromStream(response.raveStream));
           }
           setRetrieved(RetrievalStatus.SUCCESS);
 
@@ -144,7 +146,6 @@ export function useRetrieveRaveStreamByURL(
 
   return {
     raveStream,
-    product,
     raveStreamStatus: ViewStatus(retrieved)
   }
 }

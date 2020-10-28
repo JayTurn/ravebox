@@ -20,7 +20,7 @@ import { ReviewDetails } from '../review/review.interface';
 /**
  * Collection mongoose document interface.
  */
-export interface CollectionDetailsDocument extends Mongoose.Document {
+export interface CollectionDocument extends Mongoose.Document {
   _id: Mongoose.Types.ObjectId;
   context: CollectionContext;
   created: Date;
@@ -29,6 +29,7 @@ export interface CollectionDetailsDocument extends Mongoose.Document {
   products: Array<Mongoose.Types.ObjectId>;
   reviews: Array<Mongoose.Types.ObjectId>;
   title: string;
+  url: string;
 }
 
 /**
@@ -41,4 +42,5 @@ export interface CollectionDetails {
   products: Array<ProductDetails | ProductDocument>;
   reviews: Array<ReviewDetails>;
   title: string;
+  url: string;
 }

@@ -25,7 +25,7 @@ import {
 } from '../../models/authentication/authentication.interface';
 import {
   CollectionDetails,
-  CollectionDetailsDocument
+  CollectionDocument
 } from './collection.interface';
 import {
   ResponseObject
@@ -116,14 +116,14 @@ export default class CollectionController {
     }
 
     // Create a new collection from the provided values and save it.
-    const newCollection: CollectionDetailsDocument = new Collection({
+    const newCollection: CollectionDocument = new Collection({
       title: title,
       context: context,
       products: products
     });
 
     newCollection.save()
-      .then((collection: CollectionDetailsDocument) => {
+      .then((collection: CollectionDocument) => {
         // Set the response object.
         const responseObject: ResponseObject = Connect.setResponse({
           data: {
@@ -206,7 +206,7 @@ export default class CollectionController {
         model: 'Tag'
       }]
     })
-    .then((collectionDetails: CollectionDetailsDocument) => {
+    .then((collectionDetails: CollectionDocument) => {
       // Set the response object.
       const responseObject: ResponseObject = Connect.setResponse({
         data: {
@@ -283,7 +283,7 @@ export default class CollectionController {
         model: 'Tag'
       }]
     })
-    .then((collectionDocuments: Array<CollectionDetailsDocument>) => {
+    .then((collectionDocuments: Array<CollectionDocument>) => {
       // Loop through the collections and the products to return their product
       // details.
       const collections: Array<CollectionDetails> = [];

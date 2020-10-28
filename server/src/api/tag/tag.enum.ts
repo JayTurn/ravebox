@@ -10,7 +10,8 @@ export enum TagAssociation {
   CATEGORY = 'category',
   FILTER = 'filter',
   PRODUCT = 'product',
-  REVIEW = 'review'
+  REVIEW = 'review',
+  SUB_CATEGORY = 'sub_category'
 }
 
 /**
