@@ -16,13 +16,14 @@ import {
   withStyles
 } from '@material-ui/core/styles';
 import Grid from '@material-ui/core/Grid';
-import Player from 'react-player';
+import Player from 'react-player/lazy';
 import * as React from 'react';
 import Typography from '@material-ui/core/Typography';
 import { withRouter } from 'react-router';
 
 // Components.
 import CardUser from '../cardUser/CardUser';
+import PlaybackIcon from '../../elements/playbackIcon/PlaybackIcon';
 import StyledButton from '../../elements/buttons/StyledButton';
 
 // Enumerators.
@@ -54,7 +55,9 @@ const useStyles = makeStyles((theme: Theme) =>
       position: 'absolute',
       top: 0,
       width: '100%',
-      zIndex: 5
+      zIndex: 3
+    },
+    player: {
     },
     thumbnailContainer: {
       backgroundSize: 'cover',
@@ -64,16 +67,17 @@ const useStyles = makeStyles((theme: Theme) =>
       left: 0,
       overflow: 'hidden',
       position: 'absolute',
+      transition: 'opacity 200ms ease-in-out',
       top: 0,
       width: '100%',
-      zIndex: 1
+      zIndex: 2
     },
     videoContainer: {
       height: '100%',
       left: 0,
       position: 'absolute',
       width: '100%',
-      zIndex: 2
+      zIndex: 1
     }
   })
 );
@@ -101,17 +105,24 @@ const CardVideo: React.FC<CardVideoProps> = (props: CardVideoProps) => {
   const [startX, setStartX] = React.useState<number>(0);
   const [startY, setStartY] = React.useState<number>(0);
 
+  // Define a first load property to show the thumbnail.
+  const [unplayed, setUnplayed] = React.useState<boolean>(true);
+  const [loading, setLoading] = React.useState<boolean>(false);
+
   // Define the player controls.
   const [config, setConfig] = React.useState({
     controls: false,
     file: {
-      forceHLS: true
+      forceDASH: true,
+      forceHLS: true,
+      hlsOptions: {
+      }
     },
     height: 'calc(100vw * .75)',
     muted: true,
     playing: props.active && props.playing,
     playsinline: true,
-    url: props.review.videoURL,
+    url: '',
     volume: 1,
     width: videoRatio !== 0 ? `calc(${videoRatio * 100}vw)` : `calc(92vw)`,
     youtube: {
@@ -121,7 +132,7 @@ const CardVideo: React.FC<CardVideoProps> = (props: CardVideoProps) => {
       }
     }
   });
-  
+
   /**
    * Handles selecting the overlay to play and pause video.
    */
@@ -146,22 +157,91 @@ const CardVideo: React.FC<CardVideoProps> = (props: CardVideoProps) => {
           yDiff: number = Math.abs(e.clientY - startY);
 
     if (xDiff < 5 && yDiff < 5) {
-      setConfig({
-        ...config,
-        playing: !config.playing
-      });
+      if (unplayed === true) {
+        setLoading(true);
+        setConfig({
+          ...config,
+          url: review.videoURL || '',
+          playing: !config.playing
+        });
+      } else {
+        setConfig({
+          ...config,
+          playing: !config.playing
+        });
+      }
     }
   }
+
+  /**
+   * Handles video buffering.
+   */
+  const handleBuffer: (
+  ) => void = (
+  ): void => {
+    setLoading(true);
+  }
+
+  /**
+   * Handles completion of video buffering.
+   */
+  const handleBufferEnd: (
+  ) => void = (
+  ): void => {
+    setLoading(false);
+  }
+
+  /**
+   * Handles the video when it is ready.
+   */
+  const handleReady: (
+  ) => void = (
+  ): void => {
+    setConfig({
+      ...config,
+      playing: true
+    });
+  }
+
+  const handleStart: (
+  ) => void = (
+  ): void => {
+    setUnplayed(false);
+    setLoading(false);
+  }
+
+  /**
+   * Pause video playback when not the active video.
+   */
+  React.useEffect(() => {
+    // If this isn't the active video, pause playback.
+    if (!props.active) {
+      setConfig({
+        ...config,
+        playing: false
+      });
+    }
+  }, [config.playing, props.active, unplayed])
+
   return (
     <Box className={clsx(classes.container)}>
       <Box
         className={clsx(classes.overlay)} 
         onMouseDown={handleMouseDown}
         onMouseUp={handleMouseUp}
-      />
+      >
+        <PlaybackIcon
+          loading={loading}
+          playing={config.playing}
+          unplayed={unplayed} 
+        />
+      </Box>
       <Box
         className={clsx(classes.thumbnailContainer)}
-        style={{backgroundImage: `url(${review.thumbnail})`}}
+        style={{
+          backgroundImage: `url(${review.thumbnail})`,
+          opacity: unplayed ? 1 : 0
+        }}
       >
       </Box>
       <Box
@@ -172,6 +252,11 @@ const CardVideo: React.FC<CardVideoProps> = (props: CardVideoProps) => {
       >
         <Player
           {...config}
+          className={clsx(classes.player)}
+          onBuffer={handleBuffer}
+          onBufferEnd={handleBufferEnd}
+          onReady={handleReady}
+          onStart={handleStart}
           progressInterval={5000}
           ref={playerRef}
           style={{position: 'absolute', top: 0, left: 0, height: 'auto !important'}}

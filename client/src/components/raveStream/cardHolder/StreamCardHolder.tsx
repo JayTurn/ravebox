@@ -49,7 +49,7 @@ const StyledStepper = withStyles(theme => ({
     backgroundColor: 'transparent',
     borderTop: `1px solid rgba(100, 106, 240, .15)`,
     justifyContent: 'center',
-    marginTop: theme.spacing(2),
+    marginTop: theme.spacing(1),
     padding: theme.spacing(1.5, 0)
   },
   dot: {
@@ -110,9 +110,10 @@ const useStyles = makeStyles((theme: Theme) =>
     streamTitle: {
       //color: theme.palette.common.white,
       color: theme.palette.primary.main,
-      fontSize: '.9rem',
-      fontWeight: 800,
-      margin: theme.spacing(.75, 0)
+      fontSize: '.85rem',
+      fontWeight: 700,
+      margin: theme.spacing(.75, 0),
+      textTransform: 'uppercase'
     },
     streamTitleContainer: {
       //borderTopRightRadius: 5,
@@ -125,7 +126,7 @@ const useStyles = makeStyles((theme: Theme) =>
       //boxShadow: `inset 0px -1px 2px rgba(100,106,240,.15)`,
       borderBottom: `1px solid rgba(100, 106, 240, .15)`,
       marginBottom: theme.spacing(1),
-      padding: theme.spacing(1)
+      padding: theme.spacing(1.25, 1)
       //marginBottom: theme.spacing(1)
     }
   })
@@ -231,7 +232,7 @@ const StreamCardHolder: React.FC<StreamCardHolderProps> = (
           <Grid item className={clsx(classes.streamTitleContainer)}>
             {streamType !== RaveStreamType.PRODUCT ? (
               <Typography variant='h2' className={clsx(classes.streamTitle)}>
-                #{props.title}
+                {props.title}
               </Typography>
             ) : (
               <React.Fragment>
@@ -260,7 +261,7 @@ const StreamCardHolder: React.FC<StreamCardHolderProps> = (
         <React.Fragment>
           <Grid item xs={12}
             className={classes.cardsContainer}
-            style={{paddingTop: streamType === RaveStreamType.PRODUCT ? `calc(82.5% + 40px)` : `calc(82.5% + 75px)`}}
+            style={{paddingTop: streamType === RaveStreamType.PRODUCT ? `calc(82.5% + 40px)` : `calc(82.5% + 85px)`}}
           >
             <Box {...swipeableHandlers}>
               {props.reviews.map((review: Review, index: number) => (
