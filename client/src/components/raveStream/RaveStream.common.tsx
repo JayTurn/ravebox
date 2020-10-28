@@ -93,7 +93,7 @@ export const buildURLForStream: (
       break;
     case RaveStreamType.PRODUCT_TYPE:
       if (review.product) {
-        path += `${encodeURI(review.product.productType.name)}`;
+        path += `${review.product.productType.url}`;
       }
       break;
     default:
@@ -113,11 +113,12 @@ export const getHomeStreamList: (
 ) => Array<RaveStreamListItem> = (
 ): Array<RaveStreamListItem> => {
   let list: Array<RaveStreamListItem> = [{
-    streamType: RaveStreamType.PRODUCT,
-    id: 'powerbeats_pro'
+    brand: 'beats_by_dr._dre',
+    product: 'powerbeats_pro',
+    streamType: RaveStreamType.PRODUCT
   }, {
     streamType: RaveStreamType.PRODUCT_TYPE,
-    id: 'phone'
+    productType: 'phone'
   }];
 
   return list;

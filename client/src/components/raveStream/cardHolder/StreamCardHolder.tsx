@@ -49,7 +49,6 @@ const StyledStepper = withStyles(theme => ({
     backgroundColor: 'transparent',
     borderTop: `1px solid rgba(100, 106, 240, .15)`,
     justifyContent: 'center',
-    marginTop: theme.spacing(1),
     padding: theme.spacing(1.5, 0)
   },
   dot: {
@@ -221,7 +220,7 @@ const StreamCardHolder: React.FC<StreamCardHolderProps> = (
   const swipeableHandlers: SwipeableHandlers = useSwipeable({
     delta: 10,
     onSwiped: handleSwipe,
-    preventDefaultTouchmoveEvent: true,
+    preventDefaultTouchmoveEvent: false,
     trackMouse: true
   });
 

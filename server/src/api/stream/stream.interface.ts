@@ -22,5 +22,7 @@ export interface StreamData {
 
 export interface StreamListItem {
   streamType: StreamType;
-  id: string;
+  brand?: string;
+  product?: string;
+  productType?: string;
 }

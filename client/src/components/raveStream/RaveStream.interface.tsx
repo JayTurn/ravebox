@@ -61,7 +61,9 @@ export interface RetrieveStreamByListParams {
  */
 export interface RaveStreamListItem {
   streamType: RaveStreamType;
-  id: string;
+  brand?: string;
+  product?: string;
+  productType?: string;
 }
 
 /**

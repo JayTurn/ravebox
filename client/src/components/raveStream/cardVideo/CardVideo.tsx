@@ -156,7 +156,7 @@ const CardVideo: React.FC<CardVideoProps> = (props: CardVideoProps) => {
     const xDiff: number = Math.abs(e.clientX - startX),
           yDiff: number = Math.abs(e.clientY - startY);
 
-    if (xDiff < 5 && yDiff < 5) {
+    if (xDiff < 5) {
       if (unplayed === true) {
         setLoading(true);
         setConfig({

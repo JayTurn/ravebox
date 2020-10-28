@@ -52,6 +52,9 @@ const ProductSchema = new Schema({
     default: [],
     index: true
   },
+  nameRaw: {
+    type: String,
+  },
   productType: {
     type: Schema.Types.ObjectId, 
     ref: 'Tag',

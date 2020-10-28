@@ -10,30 +10,17 @@ import { Request, Response, Router } from 'express';
 // Enumerators.
 import { LogLevel } from '../../shared/logging/Logging.enum';
 import { StreamType } from '../stream/stream.enum';
-import { Workflow } from '../../shared/enumerators/workflow.enum';
 
 // Interfaces.
-import {
-  ProductDetails,
-  ProductDocument
-} from '../product/product.interface';
 import { ResponseObject } from '../../models/database/connect.interface';
-import {
-  ReviewDetails,
-  ReviewDocument
-} from '../review/review.interface';
 import {
   StreamData,
   StreamListItem
 } from './stream.interface';
 
 // Models.
-import ProductCommon from '../product/product.common';
 import Connect from '../../models/database/connect.model';
 import Logging from '../../shared/logging/Logging.model';
-import Product from '../product/product.model';
-import Review from '../review/review.model';
-import ReviewCommon from '../review/review.common';
 import StreamCommon from './stream.common';
 
 /**
@@ -59,8 +46,14 @@ export default class StreamController {
 
     // Retrieve a product stream.
     router.get(
-      `${path}/product/:brand/:productName/:reviewTitle?`,
+      `${path}/product/:brand/:productName/:reviewURL?`,
       StreamController.Product
+    );
+
+    // Retrieve a product type stream.
+    router.get(
+      `${path}/product_type/:productType/:reviewURL?`,
+      StreamController.ProductType
     );
 
     // Retrieve a list of streams.
@@ -90,7 +83,7 @@ export default class StreamController {
   static Product(request: Request, response: Response): void {
     const brand: string = request.params.brand, 
           productName: string = request.params.productName,
-          reviewTitle: string = request.params.reviewTitle;
+          reviewURL: string = request.params.reviewURL;
 
     if (!brand || !productName) {
       // Set the response object.
@@ -109,71 +102,16 @@ export default class StreamController {
       return;
     }
 
-    let streamTitle = '';
-
-    // Begin by searching for the product.
-    Product.findOne({
-      url: `${productName}`
+    StreamCommon.RetrieveProductStream({
+      brand: brand,
+      product: productName,
+      streamType: StreamType.PRODUCT
     })
-    .populate({
-      path: 'brand',
-      model: 'Brand'
-    })
-    .then((productDocument: ProductDocument) => {
-      if (!productDocument) {
-        throw new Error(`${brand}/${productName} product doesn't exist`);
+    .then((streamData: StreamData) => {
+      if (reviewURL && streamData.reviews.length > 1) {
+        streamData.reviews = StreamCommon.SetFirstReview(
+          streamData.reviews, reviewURL);
       }
-
-      // Retrieve the product details for the purpose of building the stream
-      // title.
-      const productDetails: ProductDetails = ProductCommon
-        .RetrieveDetailsFromDocument(productDocument);
-      
-      streamTitle = `${productDetails.brand.name} ${productDocument.name}`;
-
-      // Perform a request to find the reviews for this product
-      // and populate all the required fields.
-      return Review.find({
-        product: productDocument._id,
-        published: Workflow.PUBLISHED
-      })
-      .populate({
-        path: 'product',
-        model: 'Product',
-        populate: [{
-          path: 'brand',
-          model: 'Brand'
-        }, {
-          path: 'productType',
-          model: 'Tag'
-        }]
-      })
-      .populate({
-        path: 'statistics',
-        model: 'ReviewStatistic' 
-      })
-      .populate({
-        path: 'user',
-        model: 'User',
-        populate: [{
-          path: 'statistics',
-          model: 'UserStatistic'
-        }]
-      });
-    })
-    .then((reviewDocuments: Array<ReviewDocument>) => {
-      // Format the raves with their respective content.
-      const reviews: Array<ReviewDetails> = ReviewCommon
-        .FormatStreamReviews(
-          reviewDocuments,
-          reviewTitle
-        ); 
-
-      const streamData: StreamData = {
-        title: streamTitle,
-        reviews: reviews,
-        streamType: StreamType.PRODUCT
-      };
 
       // Set the response object.
       const responseObject: ResponseObject = Connect.setResponse({
@@ -195,6 +133,79 @@ export default class StreamController {
         },
         error: error
       }, 404, `There was a problem locating a stream for ${brand} ${productName}`);
+
+      Logging.Send(LogLevel.WARNING, responseObject);
+
+      // Return the response for the authenticated user.
+      response.status(responseObject.status).json(responseObject.data);
+        
+      return;
+    })
+  }
+
+  /**
+   * Retrieves a product type stream.
+   *
+   * @param {object} req
+   * The request object.
+   *
+   * @param {object} res
+   * The response object.
+   */
+  static ProductType(request: Request, response: Response): void {
+    const productType: string = request.params.productType, 
+          reviewURL: string = request.params.reviewURL;
+
+    if (!productType) {
+      // Set the response object.
+      const responseObject: ResponseObject = Connect.setResponse({
+        data: {
+          errorCode: 'PRODUCT_TYPE_STREAM_NOT_FOUND',
+          message: 'There was a problem retrieving reviews for this product type'
+        },
+      }, 404, `Product type was missing from the request`);
+
+      Logging.Send(LogLevel.WARNING, responseObject);
+
+      // Return the response for the authenticated user.
+      response.status(responseObject.status).json(responseObject.data);
+        
+      return;
+    }
+
+    StreamCommon.RetrieveProductTypeStream({
+      productType: productType,
+      streamType: StreamType.PRODUCT_TYPE
+    })
+    .then((streamData: StreamData) => {
+
+      // If a review title was provided, place it at the beginning of the stream
+      // if it exists.
+      if (reviewURL && streamData.reviews.length > 1) {
+        streamData.reviews = StreamCommon.SetFirstReview(
+          streamData.reviews, reviewURL);
+      }
+
+      // Set the response object.
+      const responseObject: ResponseObject = Connect.setResponse({
+        data: {
+          raveStream: streamData
+        }
+      }, 200, 'Stream loaded');
+
+      // Return the response for the authenticated user.
+      response.status(responseObject.status).json(responseObject.data);
+
+    })
+    .catch((error: Error) => {
+      // Set the response object.
+      const responseObject: ResponseObject = Connect.setResponse({
+        data: {
+          errorCode: 'PRODUCT_TYPE_STREAM_RETRIEVAL_FAILED',
+          message: 'There was a problem retrieving reviews for this product type stream'
+        },
+        error: error
+      }, 404, `There was a problem locating a stream for ${productType}`);
 
       Logging.Send(LogLevel.WARNING, responseObject);
 

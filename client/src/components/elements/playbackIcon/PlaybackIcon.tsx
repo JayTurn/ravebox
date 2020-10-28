@@ -74,6 +74,9 @@ const useStyles = makeStyles((theme: Theme) =>
     playContainer: {
       height: '100%',
       textAlign: 'center'
+    },
+    small: {
+      fontSize: '4rem'
     }
   })
 );
@@ -127,10 +130,11 @@ const PlaybackIcon: React.FC<PlaybackIconProps> = (props: PlaybackIconProps) => 
     >
       {props.loading ? (
         <Grid item>
-          <Transition in={props.loading} timeout={100}>
+          <Transition in={props.loading} timeout={0}>
             {(state: string) => (
               <CircularProgress className={clsx(
                 classes.progress, {
+                  [classes.small]: props.size === 'small',
                   [classes.progressEntering]: state === 'entering',
                   [classes.progressEntered]: state === 'entered',
                   [classes.progressExiting]: state === 'exiting',
@@ -143,10 +147,11 @@ const PlaybackIcon: React.FC<PlaybackIconProps> = (props: PlaybackIconProps) => 
       ): (
         <Grid item>
           {props.unplayed ? (
-            <Transition in={props.unplayed} timeout={100}>
+            <Transition in={props.unplayed} timeout={0}>
               {(state: string) => (
                 <PlayArrowRoundedIcon className={clsx(
                   classes.playbackIcon, {
+                    [classes.small]: props.size === 'small',
                     [classes.playbackIconEntering]: state === 'entering',
                     [classes.playbackIconEntered]: state === 'entered',
                     [classes.playbackIconExiting]: state === 'exiting',
@@ -156,12 +161,13 @@ const PlaybackIcon: React.FC<PlaybackIconProps> = (props: PlaybackIconProps) => 
               )}
             </Transition>
           ) : (
-            <Transition in={showPlayButton} timeout={100}>
+            <Transition in={showPlayButton} timeout={0}>
               {(state: string) => (
                 <React.Fragment>
                   {playing ? (
                     <PlayArrowRoundedIcon className={clsx(
                       classes.playbackIcon, {
+                        [classes.small]: props.size === 'small',
                         [classes.playbackIconEntering]: state === 'entering',
                         [classes.playbackIconEntered]: state === 'entered',
                         [classes.playbackIconExiting]: state === 'exiting',
@@ -171,6 +177,7 @@ const PlaybackIcon: React.FC<PlaybackIconProps> = (props: PlaybackIconProps) => 
                   ) : (
                     <PauseRoundedIcon className={clsx(
                       classes.playbackIcon, {
+                        [classes.small]: props.size === 'small',
                         [classes.playbackIconEntering]: state === 'entering',
                         [classes.playbackIconEntered]: state === 'entered',
                         [classes.playbackIconExiting]: state === 'exiting',

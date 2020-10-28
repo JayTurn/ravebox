@@ -15,6 +15,7 @@ import { TagAssociation } from '../tag/tag.enum';
 import { Workflow } from '../../shared/enumerators/workflow.enum';
 
 // Interfaces.
+import { BrandDetails } from '../brand/brand.interface';
 import { ProductDetails } from '../product/product.interface';
 import { ResponseObject } from '../../models/database/connect.interface';
 import {
@@ -28,6 +29,7 @@ import {
 import { TagDetails } from '../tag/tag.interface';
 
 // Models.
+import Brand from '../brand/brand.model';
 import Connect from '../../models/database/connect.model';
 import Logging from '../../shared/logging/Logging.model';
 import Product from '../product/product.model';
@@ -85,20 +87,31 @@ export default class StreamCommon {
    */
   static RetrieveProductStream(item: StreamListItem): Promise<StreamData> {
     return new Promise<StreamData>((resolve: Function) => {
-      if (!item.id || !item.streamType) {
+      if (!item.brand || !item.product || !item.streamType) {
         return resolve();
       }
 
       let streamTitle = '';
 
-      Product.findOne({
-        url: item.id
-      })
-      .populate({
-        path: 'brand',
-        model: 'Brand'
+      Brand.findOne({
+        url: item.brand
       })
       .lean()
+      .then((brandDetails: BrandDetails) => {
+        if (!brandDetails) {
+          return resolve();
+        }
+
+        return Product.findOne({
+          url: item.product,
+          brand: brandDetails._id
+        })
+        .populate({
+          path: 'brand',
+          model: 'Brand'
+        })
+        .lean();
+      })
       .then((product: ProductDetails) => {
         if (!product) {
           return resolve();
@@ -158,7 +171,7 @@ export default class StreamCommon {
             message: 'There was a problem retrieving reviews for this product stream'
           },
           error: error
-        }, 404, `There was a problem locating a stream for ${item.id}`);
+        }, 404, `There was a problem locating a stream for ${item.product}`);
 
         Logging.Send(LogLevel.WARNING, responseObject);
 
@@ -176,14 +189,14 @@ export default class StreamCommon {
    */
   static RetrieveProductTypeStream(item: StreamListItem): Promise<StreamData> {
     return new Promise<StreamData>((resolve: Function) => {
-      if (!item.id || !item.streamType) {
+      if (!item.productType || !item.streamType) {
         return resolve();
       }
 
       let streamTitle = '';
 
       Tag.findOne({
-        name: item.id,
+        name: item.productType,
         association: TagAssociation.PRODUCT
       })
       .lean()
@@ -259,12 +272,46 @@ export default class StreamCommon {
             message: 'There was a problem retrieving reviews for this product stream'
           },
           error: error
-        }, 404, `There was a problem locating a stream for ${item.id}`);
+        }, 404, `There was a problem locating a stream for ${item.productType}`);
 
         Logging.Send(LogLevel.WARNING, responseObject);
 
         resolve();
       });
     });
+  }
+
+  /**
+   * Sets a review to the beginning of the list if it's found.
+   *
+   * @param { Array<ReviewDetails> } reviews - the list of reviews.
+   * @param { string } url - the url of the review to be placed first.
+   *
+   * @return Array<ReviewDetails>
+   */
+  static SetFirstReview(reviews: Array<ReviewDetails>, url: string): Array<ReviewDetails> {
+
+    if (reviews.length <= 0) {
+      return reviews;
+    }
+
+    const sortedReviews: Array<ReviewDetails> = [];
+
+    let i = 0;
+
+    do {
+      const current: ReviewDetails = {...reviews[i]};
+
+      if (current.url === url) {
+        sortedReviews.unshift({...current});
+      } else {
+        sortedReviews.push({...current})
+      }
+
+      i++;
+
+    } while (i < reviews.length);
+
+    return sortedReviews;
   }
 }

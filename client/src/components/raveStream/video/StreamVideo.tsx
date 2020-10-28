@@ -30,6 +30,9 @@ import {
   update
 } from '../../../store/video/Actions';
 
+// Components.
+import PlaybackIcon from '../../elements/playbackIcon/PlaybackIcon';
+
 // Enumerators.
 import { ViewState } from '../../../utils/display/view/ViewState.enum';
 import {
@@ -66,6 +69,14 @@ const useStyles = makeStyles((theme: Theme) =>
     },
     defaultColor: {
       color: theme.palette.common.white
+    },
+    overlay: {
+      height: '100%',
+      left: 0,
+      position: 'absolute',
+      top: 0,
+      width: '100%',
+      zIndex: 3
     },
     subtitle: {
       fontSize: '1rem',
@@ -124,6 +135,10 @@ const StreamVideo: React.FC<StreamVideoProps> = (props: StreamVideoProps) => {
   // Create a page viewed state to avoid duplicate views.
   const [pageViewed, setPageViewed] = React.useState<boolean>(false);
 
+  // Define a first load property to show the thumbnail.
+  const [unplayed, setUnplayed] = React.useState<boolean>(true);
+  const [loading, setLoading] = React.useState<boolean>(false);
+
   // Define the player controls.
   const [config, setConfig] = React.useState({
     controls: false,
@@ -134,7 +149,7 @@ const StreamVideo: React.FC<StreamVideoProps> = (props: StreamVideoProps) => {
     muted: props.muted ? true : false,
     playing: props.active && props.playing,
     playsinline: true,
-    url: props.review.videoURL,
+    url: '',
     volume: 1,
     width: '100%'
   });
@@ -145,6 +160,24 @@ const StreamVideo: React.FC<StreamVideoProps> = (props: StreamVideoProps) => {
   const handleComplete: (
   ) => void = (
   ): void => {
+  }
+
+  /**
+   * Handles video buffering.
+   */
+  const handleBuffer: (
+  ) => void = (
+  ): void => {
+    setLoading(true);
+  }
+
+  /**
+   * Handles completion of video buffering.
+   */
+  const handleBufferEnd: (
+  ) => void = (
+  ): void => {
+    setLoading(false);
   }
 
   /**
@@ -217,12 +250,26 @@ const StreamVideo: React.FC<StreamVideoProps> = (props: StreamVideoProps) => {
   const handleStart: (
   ) => void = (
   ): void => {
+    setUnplayed(false);
+    setLoading(false);
   }
 
   /**
    * Update the playing state.
    */
   React.useEffect(() => {
+
+    if (props.playing && props.active && unplayed) {
+      setConfig({
+        ...config,
+        playing: props.playing,
+        url: props.review.videoURL || ''
+      });
+      setUnplayed(false);
+
+      return;
+    }
+
     if (props.playing !== config.playing) {
       setConfig({
         ...config,
@@ -242,6 +289,16 @@ const StreamVideo: React.FC<StreamVideoProps> = (props: StreamVideoProps) => {
       className={clsx(classes.container)}
       style={{transform: `${setVideoPosition(props.positioning)}`}}
     >
+      <Box
+        className={clsx(classes.overlay)} 
+      >
+        <PlaybackIcon
+          loading={loading}
+          playing={config.playing}
+          size='small'
+          unplayed={false}
+        />
+      </Box>
       <Grid
         className={clsx(classes.videoContainer)}
         container
@@ -252,6 +309,8 @@ const StreamVideo: React.FC<StreamVideoProps> = (props: StreamVideoProps) => {
             <Player
               {...config}
               progressInterval={5000}
+              onBuffer={handleBuffer}
+              onBufferEnd={handleBufferEnd}
               onProgress={handleProgress}
               onReady={handleReady}
               onStart={handleStart}

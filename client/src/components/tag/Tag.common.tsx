@@ -22,6 +22,7 @@ export const emptyTag: (
     name: '',
     labels: [],
     association: TagAssociation.PRODUCT,
-    context: ''
+    context: '',
+    url: ''
   };
 }
