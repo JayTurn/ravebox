@@ -159,6 +159,8 @@ const StreamVideoOverlay: React.FC<StreamVideoOverlayProps> = (props: StreamVide
   const [startX, setStartX] = React.useState<number>(0);
   const [startY, setStartY] = React.useState<number>(0);
 
+  const [overlayTimeout, setOverlayTimeout] = React.useState<ReturnType<typeof setTimeout> | void | null>(null);
+
   /**
    * Handles mouse down handling.
    */
@@ -183,7 +185,15 @@ const StreamVideoOverlay: React.FC<StreamVideoOverlayProps> = (props: StreamVide
           yDiff: number = Math.abs(e.clientY - startY);
 
     if (xDiff < 5 && yDiff < 5) {
-      props.play(!props.playing);
+      if (props.playing) {
+        props.play(false);
+        setVisible(true);
+      } else {
+        props.play(true);
+        setOverlayTimeout(setTimeout(() => {
+          setVisible(false);
+        }, 3000))
+      }
     }
   }
 
@@ -196,11 +206,10 @@ const StreamVideoOverlay: React.FC<StreamVideoOverlayProps> = (props: StreamVide
     e: React.SyntheticEvent
   ): void => {
     e.stopPropagation();
-    if (!props.playing) {
-      props.play(true);
-      setVisible(false);
-    } else {
+    if (props.playing) {
       props.play(false);
+    } else {
+      props.play(true);
     }
   }
 
@@ -243,16 +252,34 @@ const StreamVideoOverlay: React.FC<StreamVideoOverlayProps> = (props: StreamVide
       case 'Left':
         props.next();
         setVisible(false);
-        setTimeout(() => {
-          setVisible(true);
-        }, 300)
+
+        if (overlayTimeout) {
+          setOverlayTimeout(clearTimeout(overlayTimeout));
+
+          setTimeout(() => {
+            setVisible(true);
+            setOverlayTimeout(setTimeout(() => {
+              setVisible(false);
+            }, 3000));
+          }, 300);
+        }
+
         break;
       case 'Right':
         props.previous();
         setVisible(false);
-        setTimeout(() => {
-          setVisible(true);
-        }, 300)
+
+        if (overlayTimeout) {
+          setOverlayTimeout(clearTimeout(overlayTimeout));
+
+          setTimeout(() => {
+            setVisible(true);
+            setOverlayTimeout(setTimeout(() => {
+              setVisible(false);
+            }, 3000));
+          }, 300);
+        }
+
         break;
       case 'Up':
         if (props.overlayState === SwipeView.VIDEO) {
@@ -271,21 +298,29 @@ const StreamVideoOverlay: React.FC<StreamVideoOverlayProps> = (props: StreamVide
    * Handle the overlay state based on whether or not the video is playing.
    */
   React.useEffect(() => {
+    if (unplayed && props.playing) {
+      setUnplayed(false);
+
+      setOverlayTimeout(setTimeout(() => {
+        setVisible(false);
+      }, 3000));
+
+    }
     if (!props.playing && props.overlayState === SwipeView.VIDEO) {
       setVisible(true);
     }
 
     if (props.playing && visible) {
-      setTimeout(() => {
-        setVisible(false);
-      }, 3000);
+      //setOverlayTimeout(setTimeout(() => {
+        //setVisible(false);
+      //}, 3000));
     }
 
     if (props.overlayState !== SwipeView.VIDEO) {
       setVisible(false);
     }
 
-  }, [props.playing, visible, props.overlayState]);
+  }, [props.playing, visible, props.overlayState, unplayed]);
 
   const swipeableHandlers: SwipeableHandlers = useSwipeable({
     delta: 10,
