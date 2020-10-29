@@ -24,10 +24,14 @@ import StyledButton from '../../elements/buttons/StyledButton';
 
 // Enumerators.
 import { RaveStreamType } from '../RaveStream.enum';
+import { Role } from '../../user/User.enum';
 
 // Interfaces.
 import { Review } from '../../review/Review.interface';
 import { CardUserProps } from './CardUser.interface';
+
+// Utilities.
+import { getExternalAvatar } from '../../user/User.common';
 
 /**
  * Create the theme styles to be used for the display.
@@ -74,6 +78,8 @@ const CardUser: React.FC<CardUserProps> = (props: CardUserProps) => {
     review
   } = {...props};
 
+  const avatar: string | undefined = review.user ? getExternalAvatar(review.user) : undefined; 
+
   return (
     <Grid
       container
@@ -84,11 +90,11 @@ const CardUser: React.FC<CardUserProps> = (props: CardUserProps) => {
       {review.user &&
         <React.Fragment>
           <Grid item>
-            {review.user && review.user.avatar ? (
+            {avatar ? (
               <Avatar
                 alt={review.user.handle}
                 className={clsx(classes.avatar)}
-                src={review.user.avatar}
+                src={avatar}
               />
             ) : (
               <Avatar
@@ -104,7 +110,7 @@ const CardUser: React.FC<CardUserProps> = (props: CardUserProps) => {
               className={clsx(classes.handleText)}
               variant='body1'
             >
-              {review.user.handle}
+              {review.user.role === Role.YOUTUBE ? 'youtube' : review.user.handle}
             </Typography>
           </Grid>
         </React.Fragment>

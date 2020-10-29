@@ -15,6 +15,9 @@ import {
 } from '../../utils/api/Api.enum';
 import { VideoType } from '../review/Review.enum';
 
+// Hooks.
+import { useIsMounted } from '../../utils/safety/useIsMounted.hook';
+
 // Interfaces.
 import {
   Product
@@ -54,6 +57,9 @@ export function useRetrieveRaveStreamByList(
     updateList
   } = {...params};
 
+  // Add the safety check to ensure the component is still mounted.
+  const isMounted = useIsMounted();
+
   // Define a state for the url parameters to track changes.
   const [requestParams, setRequestParams] = React.useState<Array<RaveStreamListItem>>(queries);
 
@@ -66,8 +72,10 @@ export function useRetrieveRaveStreamByList(
   React.useEffect(() => {
     // If we haven't performed a request continue.
     if (retrieved === RetrievalStatus.REQUESTED) {
-      // Update the retrieval status to avoid subsequent requests.
-      setRetrieved(RetrievalStatus.WAITING);
+      if (isMounted) {
+        // Update the retrieval status to avoid subsequent requests.
+        setRetrieved(RetrievalStatus.WAITING);
+      }
 
       // Perform the API request to get the rave stream.
       API.requestAPI<RaveStreamListResponse>(`stream/list`, {
@@ -84,7 +92,9 @@ export function useRetrieveRaveStreamByList(
             raveStreams: [...response.raveStreams],
             title: name
           });
-          setRetrieved(RetrievalStatus.SUCCESS);
+          if (isMounted) {
+            setRetrieved(RetrievalStatus.SUCCESS);
+          }
         } else {
           if (updateList) {
             // We didn't return an active rave stream so return a not found
@@ -94,7 +104,9 @@ export function useRetrieveRaveStreamByList(
               raveStreams: []
             });
           }
-          setRetrieved(RetrievalStatus.NOT_FOUND);
+          if (isMounted) {
+            setRetrieved(RetrievalStatus.NOT_FOUND);
+          }
         }
       })
       .catch((error: Error) => {
@@ -109,7 +121,7 @@ export function useRetrieveRaveStreamByList(
         setRetrieved(RetrievalStatus.FAILED);
       });
     }
-  }, [retrieved]);
+  }, [retrieved, isMounted]);
 
   return {
     raveStreamsStatus: ViewStatus(retrieved)

@@ -103,10 +103,15 @@ UserSchema
   .virtual('publicProfile')
   .get(function() {
 
+    const role: UserRole = this.role && this.role.length > 0
+      ? this.role[this.role.length -1]
+      : UserRole.USER; 
+
     const publicUserDetails: PublicUserDetails = {
       _id: this._id as string,
       avatar: this.avatar as string,
-      handle: this.handle as string
+      handle: this.handle as string,
+      role: role
     };
 
     if (this.statistics && this.statistics.user) {

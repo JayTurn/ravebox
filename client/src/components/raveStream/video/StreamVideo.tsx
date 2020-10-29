@@ -51,6 +51,9 @@ import {
 import { Review } from '../../review/Review.interface';
 import { VideoProgress } from '../../raveVideo/RaveVideo.interface';
 
+// Utilities.
+import { calculateVideoRatio } from '../RaveStream.common';
+
 /**
  * Create the theme styles to be used for the display.
  */
@@ -88,9 +91,9 @@ const useStyles = makeStyles((theme: Theme) =>
     },
     videoBox: {
       borderRadius: 10,
-      height: 0,
+      //height: 0,
       overflow: 'hidden',
-      paddingTop: '56.25%',
+      //paddingTop: '56.25%',
       position: 'relative'
     }
   })
@@ -128,6 +131,13 @@ const StreamVideo: React.FC<StreamVideoProps> = (props: StreamVideoProps) => {
   // Define the player reference to be used for video controls.
   const playerRef = React.useRef<Player>(null);
 
+  const videoRatio: number = calculateVideoRatio(
+    props.review.videoWidth)(props.review.videoHeight);
+
+  const height: string = videoRatio !== 0
+    ? `calc(100vw / ${videoRatio})`
+    : `calc(100vw * .5)`; 
+
   // Define the component classes.
   const classes = useStyles(),
         theme = useTheme();
@@ -145,13 +155,13 @@ const StreamVideo: React.FC<StreamVideoProps> = (props: StreamVideoProps) => {
     file: {
       forceHLS: true
     },
-    height: '100%',
+    height: height,
     muted: props.muted ? true : false,
     playing: props.active && props.playing,
     playsinline: true,
     url: '',
     volume: 1,
-    width: '100%'
+    width: 'calc(100vw)'
   });
 
   /**
@@ -305,7 +315,10 @@ const StreamVideo: React.FC<StreamVideoProps> = (props: StreamVideoProps) => {
         alignItems='center'
       >
         <Grid item xs={12}>
-          <Box className={clsx(classes.videoBox)}>
+          <Box
+            className={clsx(classes.videoBox)}
+            style={{height: height}}
+          >
             <Player
               {...config}
               progressInterval={5000}

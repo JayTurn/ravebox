@@ -54,6 +54,7 @@ import { useAnalytics } from '../../../components/analytics/Analytics.provider';
 import {
   useRetrieveRaveStreamByURL 
 } from '../useRetrieveRaveStreamByURL.hook';
+import { useIsMounted } from '../../../utils/safety/useIsMounted.hook';
 
 // Interfaces.
 import { AnalyticsContextProps } from '../../analytics/Analytics.interface';
@@ -216,6 +217,10 @@ const SwipeStream: React.FC<SwipeStreamProps> = (props: SwipeStreamProps) => {
 
   const [ravePath, setRavePath] = React.useState<string>('');
 
+  const isMounted = useIsMounted();
+
+  const [upperOverlay, setUpperOverlay] = React.useState<SwipeView>(SwipeView.PRODUCT);
+
   /**
    * Track the stream view.
    */
@@ -265,7 +270,16 @@ const SwipeStream: React.FC<SwipeStreamProps> = (props: SwipeStreamProps) => {
   ) => void = (
     view: SwipeView
   ): void => {
-    setSwipeView(view);
+    if (isMounted) {
+
+      if (view === SwipeView.VIDEO) {
+        setUpperOverlay(swipeView);
+      } else {
+        setUpperOverlay(view);
+      }
+
+      setSwipeView(view);
+    }
   }
 
   return (
@@ -276,13 +290,13 @@ const SwipeStream: React.FC<SwipeStreamProps> = (props: SwipeStreamProps) => {
           displayChange={handleDisplayChange}
         />
       }
-      <Box className={clsx(classes.detailsContainer)} style={{zIndex: swipeView === SwipeView.PRODUCT ? 2 : 1}}>
+      <Box className={clsx(classes.detailsContainer)} style={{zIndex: upperOverlay === SwipeView.PRODUCT ? 2 : 1}}>
         {props.product &&
           <StreamProductDetails product={{...props.product}} />
         }
       </Box>
       {props.raveStream && props.raveStream.reviews && props.raveStream.reviews.length > 0 &&
-        <Box className={clsx(classes.detailsContainer)} style={{zIndex: swipeView === SwipeView.REVIEW ? 2 : 1}}>
+        <Box className={clsx(classes.detailsContainer)} style={{zIndex: upperOverlay === SwipeView.REVIEW ? 2 : 1}}>
           <Route path={`${props.match.path}/${props.raveStream.reviews[activeIndex].url}`}>
             <StreamReviewDetails review={{...props.raveStream.reviews[activeIndex]}} />
           </Route>

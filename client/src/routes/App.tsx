@@ -203,7 +203,7 @@ const App: React.FC<AppProps> = (props: AppProps) => {
    * main app navigation.
    */
   React.useEffect(() => props.history.listen(() => {
-    setShowNavigation(displayNavigation(props.location.pathname)(largeScreen));
+    setShowNavigation(displayNavigation(props.history.location.pathname)(largeScreen));
   }));
 
   React.useEffect(() => {

@@ -160,7 +160,7 @@ const StreamCard: React.FC<StreamCardProps> = (props: StreamCardProps) => {
                 clickAction={handleNavigate}
                 color='primary'
                 size='small'
-                title='View'
+                title='View rave'
               />
             </Grid>
           </Grid>

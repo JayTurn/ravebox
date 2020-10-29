@@ -15,6 +15,9 @@ import {
 } from '../../utils/api/Api.enum';
 import { VideoType } from '../review/Review.enum';
 
+// Hooks.
+import { useIsMounted } from '../../utils/safety/useIsMounted.hook';
+
 // Interfaces.
 import {
   Product
@@ -74,6 +77,9 @@ export function useRetrieveRaveStreamByURL(
     setActiveRave,
   } = {...params};
 
+  // Add the safety check to ensure the component is still mounted.
+  const isMounted = useIsMounted();
+
   let path: string = buildRaveStreamPath({...requested});
 
   // Define the product path to be used for triggering requests for a stream.
@@ -97,24 +103,16 @@ export function useRetrieveRaveStreamByURL(
   const [requestedPath, setRequestedPath] = React.useState<string>(path);
 
   /**
-   * Handle state updates to the requested path.
-   */
-  React.useEffect(() => {
-    //if (!product.url && retrieved !== RetrievalStatus.WAITING) {
-      //setRetrieved(RetrievalStatus.REQUESTED);
-    //}
-  }, [
-    productPath,
-    requestedPath,
-    retrieved
-  ]);
-
-  /**
    * Handle state updates to the url parameters and request status.
    */
   React.useEffect(() => {
     // If we haven't performed a request continue.
     if (retrieved === RetrievalStatus.REQUESTED) {
+
+      if (!isMounted) {
+        return;
+      }
+      
       // Update the retrieval status to avoid subsequent requests.
       setRetrieved(RetrievalStatus.WAITING);
 
@@ -130,16 +128,23 @@ export function useRetrieveRaveStreamByURL(
             setActiveRaveStream({...response.raveStream});
             setActiveProduct(retrieveProductFromStream(response.raveStream));
           }
-          setRetrieved(RetrievalStatus.SUCCESS);
+
+          if (isMounted) {
+            setRetrieved(RetrievalStatus.SUCCESS);
+          }
 
         } else {
           // We didn't return an active rave stream so return a not found
           // state.
-          setRetrieved(RetrievalStatus.NOT_FOUND);
+          if (isMounted) {
+            setRetrieved(RetrievalStatus.NOT_FOUND);
+          }
         }
       })
       .catch((error: Error) => {
-        setRetrieved(RetrievalStatus.FAILED);
+        if (isMounted) {
+          setRetrieved(RetrievalStatus.FAILED);
+        }
       });
     }
   }, [retrieved]);

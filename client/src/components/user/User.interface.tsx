@@ -31,6 +31,7 @@ export interface PublicProfile {
   avatar?: string;
   handle: string;
   statistics?: ProfileStatistics;
+  role: Role;
 }
 
 /**
