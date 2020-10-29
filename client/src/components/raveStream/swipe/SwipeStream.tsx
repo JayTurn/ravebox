@@ -30,7 +30,8 @@ import { withRouter } from 'react-router';
 // Actions.
 import {
   update,
-  updateActive
+  updateActive,
+  updateProduct
 } from '../../../store/raveStream/Actions';
 
 // Components.
@@ -53,18 +54,20 @@ import { useAnalytics } from '../../../components/analytics/Analytics.provider';
 import {
   useRetrieveRaveStreamByURL 
 } from '../useRetrieveRaveStreamByURL.hook';
+import { useIsMounted } from '../../../utils/safety/useIsMounted.hook';
 
 // Interfaces.
 import { AnalyticsContextProps } from '../../analytics/Analytics.interface';
-import {
-  SwipeStreamProps
-} from './SwipeStream.interface';
+import { Product } from '../../product/Product.interface';
 import {
   RaveStream,
   RaveStreamResponse,
   RaveStreamURLParams
 } from '../RaveStream.interface';
 import { Review } from '../../review/Review.interface';
+import {
+  SwipeStreamProps
+} from './SwipeStream.interface';
 
 // Utilities.
 import {
@@ -116,12 +119,33 @@ const formatURL: (
 ): string => {
   let path: string = `/stream/${params.streamType}`;
 
-  if (params.firstPath) {
-    path += `/${params.firstPath}`;
-  }
+  switch (params.streamType) {
+    case RaveStreamType.COLLECTON:
+      if (params.firstPath) {
+        path += `/${params.firstPath}`;
+      }
+      if (params.secondPath) {
+        path += `/${params.secondPath}`;
+      }
+      if (params.thirdPath) {
+        path += `/${params.thirdPath}`;
+      }
+      break;
+    case RaveStreamType.PRODUCT:
+      if (params.firstPath) {
+        path += `/${params.firstPath}`;
+      }
 
-  if (params.secondPath) {
-    path += `/${params.secondPath}`;
+      if (params.secondPath) {
+        path += `/${params.secondPath}`;
+      }
+      break;
+    case RaveStreamType.PRODUCT_TYPE:
+      if (params.firstPath) {
+        path += `/${params.firstPath}`;
+      }
+      break;
+    default:
   }
 
   if (ravePath) {
@@ -175,12 +199,12 @@ const SwipeStream: React.FC<SwipeStreamProps> = (props: SwipeStreamProps) => {
 
   const {
     raveStream,
-    product,
     raveStreamStatus
   } = useRetrieveRaveStreamByURL({
     existing: props.raveStream ? props.raveStream : undefined,
     setActiveRaveStream: props.updateActiveRaveStream,
     setActiveRave: props.updateActiveIndex,
+    setActiveProduct: props.updateProduct,
     requested: props.match.params
   })
 
@@ -192,6 +216,10 @@ const SwipeStream: React.FC<SwipeStreamProps> = (props: SwipeStreamProps) => {
   const activeIndex: number = props.activeIndex || 0;
 
   const [ravePath, setRavePath] = React.useState<string>('');
+
+  const isMounted = useIsMounted();
+
+  const [upperOverlay, setUpperOverlay] = React.useState<SwipeView>(SwipeView.PRODUCT);
 
   /**
    * Track the stream view.
@@ -205,7 +233,7 @@ const SwipeStream: React.FC<SwipeStreamProps> = (props: SwipeStreamProps) => {
     }
 
     // Track the category list page view.
-    if (!pageViewed && product._id) {
+    if (!pageViewed && props.product && props.product._id) {
 
       /*
       analytics.trackPageView({
@@ -230,7 +258,7 @@ const SwipeStream: React.FC<SwipeStreamProps> = (props: SwipeStreamProps) => {
       setPageViewed(true);
 
     }
-  }, [pageViewed, product, props.match.params, props.review, ravePath]);
+  }, [pageViewed, props.product, props.match.params, props.review, ravePath]);
 
   /**
    * Sets the video view position.
@@ -242,7 +270,16 @@ const SwipeStream: React.FC<SwipeStreamProps> = (props: SwipeStreamProps) => {
   ) => void = (
     view: SwipeView
   ): void => {
-    setSwipeView(view);
+    if (isMounted) {
+
+      if (view === SwipeView.VIDEO) {
+        setUpperOverlay(swipeView);
+      } else {
+        setUpperOverlay(view);
+      }
+
+      setSwipeView(view);
+    }
   }
 
   return (
@@ -253,11 +290,13 @@ const SwipeStream: React.FC<SwipeStreamProps> = (props: SwipeStreamProps) => {
           displayChange={handleDisplayChange}
         />
       }
-      <Box className={clsx(classes.detailsContainer)} style={{zIndex: swipeView === SwipeView.PRODUCT ? 2 : 1}}>
-        <StreamProductDetails product={{...product}} />
+      <Box className={clsx(classes.detailsContainer)} style={{zIndex: upperOverlay === SwipeView.PRODUCT ? 2 : 1}}>
+        {props.product &&
+          <StreamProductDetails product={{...props.product}} />
+        }
       </Box>
       {props.raveStream && props.raveStream.reviews && props.raveStream.reviews.length > 0 &&
-        <Box className={clsx(classes.detailsContainer)} style={{zIndex: swipeView === SwipeView.REVIEW ? 2 : 1}}>
+        <Box className={clsx(classes.detailsContainer)} style={{zIndex: upperOverlay === SwipeView.REVIEW ? 2 : 1}}>
           <Route path={`${props.match.path}/${props.raveStream.reviews[activeIndex].url}`}>
             <StreamReviewDetails review={{...props.raveStream.reviews[activeIndex]}} />
           </Route>
@@ -277,6 +316,7 @@ const mapDispatchToProps = (dispatch: Dispatch<AnyAction>) =>
     {
       updateActiveRaveStream: update,
       updateActiveIndex: updateActive,
+      updateProduct: updateProduct
     },
     dispatch
   );
@@ -287,6 +327,7 @@ const mapDispatchToProps = (dispatch: Dispatch<AnyAction>) =>
 const mapStateToProps = (state: any, ownProps: SwipeStreamProps) => {
   // Retrieve the product stream from the active properties.
   const raveStream: RaveStream = state.raveStream ? state.raveStream.raveStream : undefined,
+        product: Product = state.raveStream ? state.raveStream.product : undefined,
         activeIndex: number = state.raveStream ? state.raveStream.active : 0;
 
   let review: Review | undefined;
@@ -298,6 +339,7 @@ const mapStateToProps = (state: any, ownProps: SwipeStreamProps) => {
   return {
     ...ownProps,
     activeIndex,
+    product,
     raveStream,
     review
   };

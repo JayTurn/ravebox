@@ -7,12 +7,14 @@
 import { RouteComponentProps } from 'react-router';
 
 // Interfaces.
-import { ReviewGroup } from '../../components/review/Review.interface';
+import {
+  RaveStreamList
+} from '../../components/raveStream/RaveStream.interface';
 
 /**
  * Home properties.
  */
 export interface HomeProps extends RouteComponentProps {
-  categoryGroup?: ReviewGroup;
-  updateListByCategory?: (reviews: ReviewGroup) => void;
+  raveStreamList?: RaveStreamList;
+  updateList?: (raveStreamList: RaveStreamList) => void;
 }

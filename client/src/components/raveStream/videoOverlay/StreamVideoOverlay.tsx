@@ -154,6 +154,8 @@ const StreamVideoOverlay: React.FC<StreamVideoOverlayProps> = (props: StreamVide
 
   const [visible, setVisible] = React.useState<boolean>(props.show);
 
+  const [unplayed, setUnplayed] = React.useState<boolean>(true);
+
   const [startX, setStartX] = React.useState<number>(0);
   const [startY, setStartY] = React.useState<number>(0);
 
@@ -181,29 +183,8 @@ const StreamVideoOverlay: React.FC<StreamVideoOverlayProps> = (props: StreamVide
           yDiff: number = Math.abs(e.clientY - startY);
 
     if (xDiff < 5 && yDiff < 5) {
-      // Play the video if the overlay is showing.
-      if (visible) {
-        if (props.playing) {
-          props.play(false);
-        } else {
-          props.play(true);
-          setVisible(false);
-        }
-      } else {
-        if (props.playing) {
-          setVisible(true);
-        } 
-      }
+      props.play(!props.playing);
     }
-
-    /*
-    if (props.overlayState === SwipeView.VIDEO) {
-      setVisible(!visible);
-    } else {
-      e.stopPropagation();
-      setVisible(false);
-    }
-    */
   }
 
   /**
@@ -262,10 +243,16 @@ const StreamVideoOverlay: React.FC<StreamVideoOverlayProps> = (props: StreamVide
       case 'Left':
         props.next();
         setVisible(false);
+        setTimeout(() => {
+          setVisible(true);
+        }, 300)
         break;
       case 'Right':
         props.previous();
         setVisible(false);
+        setTimeout(() => {
+          setVisible(true);
+        }, 300)
         break;
       case 'Up':
         if (props.overlayState === SwipeView.VIDEO) {
@@ -279,6 +266,26 @@ const StreamVideoOverlay: React.FC<StreamVideoOverlayProps> = (props: StreamVide
       default:
     }
   }
+
+  /**
+   * Handle the overlay state based on whether or not the video is playing.
+   */
+  React.useEffect(() => {
+    if (!props.playing && props.overlayState === SwipeView.VIDEO) {
+      setVisible(true);
+    }
+
+    if (props.playing && visible) {
+      setTimeout(() => {
+        setVisible(false);
+      }, 3000);
+    }
+
+    if (props.overlayState !== SwipeView.VIDEO) {
+      setVisible(false);
+    }
+
+  }, [props.playing, visible, props.overlayState]);
 
   const swipeableHandlers: SwipeableHandlers = useSwipeable({
     delta: 10,

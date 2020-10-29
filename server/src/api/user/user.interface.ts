@@ -64,6 +64,7 @@ export interface PublicUserDetails {
   links?: Array<LinkDetails>;
   profileImage?: string;
   statistics?: UserStatisticsDetails;
+  role: UserRole;
 }
 
 export interface AuthenticatedUserDetails {

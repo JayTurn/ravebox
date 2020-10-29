@@ -15,6 +15,9 @@ import {
 } from '../../utils/api/Api.enum';
 import { VideoType } from '../review/Review.enum';
 
+// Hooks.
+import { useIsMounted } from '../../utils/safety/useIsMounted.hook';
+
 // Interfaces.
 import {
   Product
@@ -69,9 +72,13 @@ export function useRetrieveRaveStreamByURL(
   const {
     existing,
     requested,
+    setActiveProduct,
     setActiveRaveStream,
     setActiveRave,
   } = {...params};
+
+  // Add the safety check to ensure the component is still mounted.
+  const isMounted = useIsMounted();
 
   let path: string = buildRaveStreamPath({...requested});
 
@@ -89,23 +96,11 @@ export function useRetrieveRaveStreamByURL(
   const [raveStream, setRaveStream] = React.useState<RaveStream>(existing ? existing : {...emptyRaveStream()});
 
   // Define the active product to be displayed in the stream.
-  const [product, setProduct] = React.useState<Product>(retrieveProductFromStream(existing))
+  //if (existing && setActiveProduct) {
+    //setActiveProduct(retrieveProductFromStream(existing));
+  //}
 
   const [requestedPath, setRequestedPath] = React.useState<string>(path);
-
-  /**
-   * Handle state updates to the requested path.
-   */
-  React.useEffect(() => {
-    //if (!product.url && retrieved !== RetrievalStatus.WAITING) {
-      //setRetrieved(RetrievalStatus.REQUESTED);
-    //}
-  }, [
-    product,
-    productPath,
-    requestedPath,
-    retrieved
-  ]);
 
   /**
    * Handle state updates to the url parameters and request status.
@@ -113,6 +108,11 @@ export function useRetrieveRaveStreamByURL(
   React.useEffect(() => {
     // If we haven't performed a request continue.
     if (retrieved === RetrievalStatus.REQUESTED) {
+
+      if (!isMounted) {
+        return;
+      }
+      
       // Update the retrieval status to avoid subsequent requests.
       setRetrieved(RetrievalStatus.WAITING);
 
@@ -124,27 +124,33 @@ export function useRetrieveRaveStreamByURL(
         // If we have a rave stream, set rave stream the in the redux store and the
         // local state.
         if (response.raveStream) {
-          if (setActiveRaveStream) {
+          if (setActiveRaveStream && setActiveProduct) {
             setActiveRaveStream({...response.raveStream});
-            setProduct(retrieveProductFromStream(response.raveStream));
+            setActiveProduct(retrieveProductFromStream(response.raveStream));
           }
-          setRetrieved(RetrievalStatus.SUCCESS);
+
+          if (isMounted) {
+            setRetrieved(RetrievalStatus.SUCCESS);
+          }
 
         } else {
           // We didn't return an active rave stream so return a not found
           // state.
-          setRetrieved(RetrievalStatus.NOT_FOUND);
+          if (isMounted) {
+            setRetrieved(RetrievalStatus.NOT_FOUND);
+          }
         }
       })
       .catch((error: Error) => {
-        setRetrieved(RetrievalStatus.FAILED);
+        if (isMounted) {
+          setRetrieved(RetrievalStatus.FAILED);
+        }
       });
     }
   }, [retrieved]);
 
   return {
     raveStream,
-    product,
     raveStreamStatus: ViewStatus(retrieved)
   }
 }

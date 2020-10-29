@@ -203,7 +203,7 @@ const App: React.FC<AppProps> = (props: AppProps) => {
    * main app navigation.
    */
   React.useEffect(() => props.history.listen(() => {
-    setShowNavigation(displayNavigation(props.location.pathname)(largeScreen));
+    setShowNavigation(displayNavigation(props.history.location.pathname)(largeScreen));
   }));
 
   React.useEffect(() => {
@@ -253,7 +253,7 @@ const App: React.FC<AppProps> = (props: AppProps) => {
                 render={(route: RouteComponentProps) => {
                   return (
                     <Switch location={route.location}>
-                      <Route path="/stream/:streamType?/:firstPath?/:secondPath?/:thirdPath?">
+                      <Route path="/stream/:streamType?/:firstPath?/:secondPath?/:thirdPath?/:fourthPath?">
                         <RaveStream />
                       </Route>
                       <PrivateRoute path="/admin" admin={true}>

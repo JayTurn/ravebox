@@ -15,13 +15,15 @@ import { TagAssociation } from './tag.enum';
 export interface TagDocument extends Mongoose.Document {
   _id: string;
   association: TagAssociation;
+  context: string;
   details: TagDetails;
   name: string;
   labels: Array<string>;
   light: TagDetailsLight;
-  namePartials: Array<string>;
-  context: string;
   linkFrom: Array<TagDocument>;
+  namePartials: Array<string>;
+  nameRaw: string;
+  url: string;
 }
 
 /**
@@ -34,6 +36,7 @@ export interface TagDetails extends Mongoose.Document {
   labels: Array<string>;
   context: string;
   linkFrom?: Array<TagDetails>;
+  url: string;
 }
 
 /**

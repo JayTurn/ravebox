@@ -38,6 +38,7 @@ import Share from '../../share/ShareButton';
 import StreamRate from '../rate/StreamRate';
 
 // Enumerators
+import { Role } from '../../user/User.enum';
 import {
   ShareStyle,
   ShareType
@@ -56,6 +57,7 @@ import {
   emptyReview,
   formatReviewProperties
 } from '../../review/Review.common';
+import { getExternalAvatar } from '../../user/User.common';
 
 /**
  * Create the theme styles to be used for the display.
@@ -168,6 +170,8 @@ const StreamUser: React.FC<StreamUserProps> = (props: StreamUserProps) => {
   const firstLetter: string = props.review && props.review.user ?
     props.review.user.handle.substr(0,1) : 'R';
 
+  const avatar: string | undefined = props.user ? getExternalAvatar(props.user) : undefined; 
+
   const statistics: string = props.review ? formatStatistics(props.review.user) : '';
 
   // Formats the review event data for tracking purposes.
@@ -232,18 +236,18 @@ const StreamUser: React.FC<StreamUserProps> = (props: StreamUserProps) => {
             <Grid item>
               <Grid container alignItems='center' direction='column'>
                 <Grid item xs={12}>
-                  {props.user.avatar ? (
+                  {avatar ? (
                     <Avatar
                       alt={props.user.handle}
                       className={clsx(classes.avatar)}
-                      src={props.user.avatar}
+                      src={avatar}
                     />
                   ) : (
                     <Avatar
                       alt={props.user.handle}
                       className={clsx(classes.avatarIcon)}
                     >
-                      {firstLetter} 
+                      {props.user.role === Role.YOUTUBE ? 'y' : firstLetter} 
                     </Avatar>
                   )}    
                 </Grid>
@@ -252,7 +256,7 @@ const StreamUser: React.FC<StreamUserProps> = (props: StreamUserProps) => {
                     className={clsx(classes.handleText)}
                     variant='body1'
                   >
-                    {props.user.handle}
+                    {props.user.role === Role.YOUTUBE ? 'youtube' : props.user.handle}
                   </Typography>
                   {/*
                   {statistics &&

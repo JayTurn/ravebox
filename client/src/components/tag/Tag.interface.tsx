@@ -20,6 +20,7 @@ export interface Tag {
   context: string;
   linkFrom?: Array<Tag>;
   linkTo?: Array<Tag>;
+  url: string;
 }
 
 /**

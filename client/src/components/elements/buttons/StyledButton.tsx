@@ -4,10 +4,16 @@
  */
 
 // Modules.
-import * as React from 'react';
+import clsx from 'clsx';
 import Button from '@material-ui/core/Button';
-import { createStyles, makeStyles, withStyles, Theme } from '@material-ui/core/styles';
+import {
+  createStyles,
+  makeStyles,
+  Theme,
+  withStyles
+} from '@material-ui/core/styles';
 import CircularProgress from '@material-ui/core/CircularProgress';
+import * as React from 'react';
 
 // Interfaces.
 import { StyledButtonProps } from './StyledButton.interface';
@@ -22,6 +28,15 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
       left: '50%',
       marginTop: -10,
       marginLeft: -12
+    },
+    floatLeft: {
+      'float': 'left'
+    },
+    floatNone: {
+      'float': 'none'
+    },
+    floatRight: {
+      'float': 'right'
     },
     wrapper: {
       position: 'relative',
@@ -89,7 +104,12 @@ const StyledButton: React.FC<StyledButtonProps> = (props: StyledButtonProps) => 
   const buttonColor = props.color ? props.color : 'primary';
 
   return (
-    <div className={classes.wrapper} style={{float: props.align || 'left'}}>
+    <div className={clsx(
+      classes.wrapper, {
+      [classes.floatLeft]: !props.align || props.align === 'left',
+      [classes.floatRight]: props.align === 'right',
+      [classes.floatNone]: props.align === 'none'
+    })}>
       {props.orientation && props.orientation === 'inline' ? (
         <React.Fragment>
           <HorizontalButtonElement

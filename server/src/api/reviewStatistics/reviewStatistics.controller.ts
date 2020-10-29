@@ -121,10 +121,9 @@ export default class ReviewStatisticsController {
     }
 
     const id: string = decoded.payload.reviewId as string,
-          duration: number = decoded.payload.duration as number,
           created: number = decoded.payload.iat as number;
 
-    const ratingAllowed: boolean = ReviewStatisticsCommon.RatingAllowed(created, duration);
+    const ratingAllowed: boolean = ReviewStatisticsCommon.RatingAllowed(created);
 
     if (!ratingAllowed || !id) {
       // Define the responseObject.

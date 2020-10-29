@@ -7,6 +7,7 @@
 import { RaveStreamType } from './RaveStream.enum';
 
 // Interfaces.
+import { Product } from '../product/Product.interface';
 import {
   Review
 } from '../review/Review.interface';
@@ -28,6 +29,7 @@ export interface RaveStreamURLParams {
   firstPath?: string;
   secondPath?: string;
   thirdPath?: string;
+  fourthPath?: string;
 }
 
 /**
@@ -45,4 +47,48 @@ export interface RetrieveStreamByURLParams {
   requested: RaveStreamURLParams;
   setActiveRaveStream?: (raveStream: RaveStream) => void;
   setActiveRave?: (index: number) => void;
+  setActiveProduct?: (product: Product) => void;
+}
+
+/**
+ * Retrive the product stream by URL parameters.
+ */
+export interface RetrieveStreamByListParams {
+  queries: Array<RaveStreamListItem>;
+  name: string;
+  updateList?: (raveStreams: RaveStreamList) => void;
+}
+
+/**
+ * Rave stream list item parameters.
+ */
+export interface RaveStreamListItem {
+  streamType: RaveStreamType;
+  brand?: string;
+  collectionContext?: string;
+  product?: string;
+  productType?: string;
+}
+
+/**
+ * Rave stream list params.
+ */
+export interface RaveStreamListParams {
+  list: Array<RaveStreamListItem>;
+}
+
+/**
+ * Rave stream list response.
+ */
+export interface RaveStreamListResponse {
+  raveStreams: Array<RaveStream>;
+  title: string;
+}
+
+/**
+ * Rave stream list.
+ */
+export interface RaveStreamList {
+  title: string;
+  raveStreams: Array<RaveStream>;
 }

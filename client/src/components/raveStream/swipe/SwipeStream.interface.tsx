@@ -8,6 +8,9 @@ import { RouteComponentProps } from 'react-router';
 
 // Interfaces.
 import {
+  Product
+} from '../../product/Product.interface';
+import {
   RaveStream,
   RaveStreamURLParams
 } from '../RaveStream.interface';
@@ -18,9 +21,11 @@ import { Review } from '../../review/Review.interface';
  */
 export interface SwipeStreamProps extends RouteComponentProps<RaveStreamURLParams> {
   activeIndex?: number;
+  product?: Product;
   ravePath?: string;
   raveStream?: RaveStream;
   review?: Review;
   updateActiveRaveStream?: (raveStream: RaveStream) => void;
   updateActiveIndex?: (index: number) => void;
+  updateProduct?: (product: Product) => void;
 }

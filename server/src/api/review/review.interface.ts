@@ -76,7 +76,9 @@ export interface ReviewDetails {
   url: string;
   user: PublicUserDetails;
   videoType: VideoType;
+  videoHeight?: number;
   videoURL: string;
+  videoWidth?: number;
   thumbnail: string;
 }
 

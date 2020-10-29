@@ -19,6 +19,9 @@ import * as React from 'react';
 import Typography from '@material-ui/core/Typography';
 import useMediaQuery from '@material-ui/core/useMediaQuery';
 
+// Enumerators.
+import { Role } from '../../user/User.enum';
+
 // Hooks.
 import { useAnalytics } from '../../analytics/Analytics.provider';
 
@@ -31,8 +34,8 @@ import { ProfileStatistics } from '../../user/User.interface';
 import { StreamUserProfileProps } from './StreamUserProfile.interface';
 
 // Utilities.
-//import { formatReviewForTracking } from '../Review.common';
 import { CountIdentifier } from '../../../utils/display/numeric/Numeric';
+import { getExternalAvatar } from '../../user/User.common';
 
 /**
  * Create the theme styles to be used for the display.
@@ -145,6 +148,8 @@ const StreamUserProfile: React.FC<StreamUserProfileProps> = (props: StreamUserPr
   // Retrieve the user's first letter of their name.
   const firstLetter: string = props.user ? props.user.handle.substr(0,1) : 'r';
 
+  const avatar: string | undefined = props.user ? getExternalAvatar(props.user) : undefined; 
+
   // Format the user's statistics.
   const statisticsText: string = formatStatistics(props.user.statistics);
 
@@ -160,15 +165,24 @@ const StreamUserProfile: React.FC<StreamUserProfileProps> = (props: StreamUserPr
           style={{flexWrap: 'nowrap', maxWidth: '100%'}}
         >
           <Grid item>
-            {props.user.avatar ? (
-              <Avatar alt={props.user.handle} className={classes.avatar} src={`${props.user.avatar}`}></Avatar>
+            {avatar ? (
+              <Avatar
+                alt={props.user.handle}
+                className={classes.avatar} 
+                src={avatar}
+              />
             ) : (
-              <Avatar alt={props.user.handle} className={classes.avatarIcon}>{firstLetter}</Avatar>
+              <Avatar
+                alt={props.user.handle}
+                className={classes.avatarIcon}
+              >
+                {props.user.role === Role.YOUTUBE ? 'y' : firstLetter} 
+              </Avatar>
             )}
           </Grid>
           <Grid item style={{flexGrow: 1, minWidth: 0, marginLeft: theme.spacing(2)}}>
             <Typography variant='body2' className={classes.handleText}>
-              {props.user.handle}
+              {props.user.role === Role.YOUTUBE ? 'youtube' : props.user.handle}
             </Typography>
             {props.user.statistics &&
               <Typography variant='body2' className={classes.userStatisticsText}>

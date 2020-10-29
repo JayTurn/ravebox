@@ -8,6 +8,7 @@
  */
 export enum RaveStreamType {
   CATEGORY = 'category',
+  COLLECTON = 'collection',
   PRODUCT = 'product',
   PRODUCT_TYPE = 'product_type'
 }

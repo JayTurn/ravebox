@@ -17,6 +17,9 @@ import {
   TagDocument
 } from './tag.interface';
 
+// Models.
+import TagCommon from '../tag/tag.common';
+
 // Get the Mongoose Shema method.
 const Schema = Mongoose.Schema;
 
@@ -43,6 +46,9 @@ const TagSchema = new Schema({
     type: String,
     default: ''
   },
+  nameRaw: {
+    type: String,
+  },
   namePartials: {
     type: [String],
     default: [],
@@ -51,6 +57,10 @@ const TagSchema = new Schema({
   status: {
     type: TagStatus,
     default: TagStatus.DRAFT
+  },
+  url: {
+    type: String,
+    default: ''
   }
 });
 
@@ -62,7 +72,8 @@ TagSchema
       '_id': this._id,
       'association': this.association,
       'name': this.name,
-      'context': this.context
+      'context': this.context,
+      'url': this.url
     };
   });
 
@@ -75,8 +86,20 @@ TagSchema
       'association': this.association,
       'name': this.name,
       'context': this.context,
-      'linkFrom': this.linkFrom
+      'linkFrom': this.linkFrom,
+      'url': this.url
     };
+  });
+
+/**
+ * Pre-Save hook to set a custom url before saving.
+ */
+TagSchema
+  .pre<TagDocument>('save', async function(next: Mongoose.HookNextFunction) {
+
+    await TagCommon.UpdateDocumentURL(this);
+
+    next();
   });
 
 // Declare the tag mongoose model.
