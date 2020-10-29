@@ -1,6 +1,6 @@
 /**
  * App.tsx
- * Base application routing.
+ * Base application routes.
  */
 
 // Modules.
