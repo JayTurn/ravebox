@@ -159,7 +159,7 @@ const StreamVideoController: React.FC<StreamVideoControllerProps> = (props: Stre
 
   const [showOverlay, setShowOverlay] = React.useState<boolean>(true);
 
-  const [playing, setPlaying] = React.useState<boolean>(true);
+  const [playing, setPlaying] = React.useState<boolean>(false);
 
   const activeIndex: number = props.activeIndex || 0;
 
@@ -171,12 +171,13 @@ const StreamVideoController: React.FC<StreamVideoControllerProps> = (props: Stre
   ): void => {
     if (props.updateActiveIndex && props.updateProduct) {
       if (props.raveStream && props.raveStream.reviews.length > 0) {
-        props.updateProduct(
-          props.raveStream.reviews[activeIndex + 1].product || emptyProduct()
-        );
+        if ((activeIndex + 1) < props.raveStream.reviews.length) {
+          props.updateProduct(
+            props.raveStream.reviews[activeIndex + 1].product || emptyProduct()
+          );
+          props.updateActiveIndex(activeIndex + 1);
+        }
       }
-      props.updateActiveIndex(activeIndex + 1);
-      setPlaying(true);
     }
   }
 
@@ -185,12 +186,13 @@ const StreamVideoController: React.FC<StreamVideoControllerProps> = (props: Stre
   ): void => {
     if (props.updateActiveIndex && props.updateProduct) {
       if (props.raveStream && props.raveStream.reviews.length > 0) {
-        props.updateProduct(
-          props.raveStream.reviews[activeIndex - 1].product || emptyProduct()
-        );
+        if ((activeIndex - 1) >= 0) {
+          props.updateProduct(
+            props.raveStream.reviews[activeIndex - 1].product || emptyProduct()
+          );
+          props.updateActiveIndex(activeIndex - 1);
+        }
       }
-      props.updateActiveIndex(activeIndex - 1);
-      setPlaying(true);
     }
   }
 

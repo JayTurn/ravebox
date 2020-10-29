@@ -84,6 +84,7 @@ const useStyles = makeStyles((theme: Theme) =>
       fontWeight: 800
     },
     container: {
+      backgroundColor: `rgba(0,0,0,0.3)`,
       height: '100%',
       //maxHeight: 'calc(100vh); max-height: -webkit-fill-available;',
       //minHeight: 'calc(100vh); min-height: -webkit-fill-available;',
@@ -192,7 +193,7 @@ const StreamVideoOverlay: React.FC<StreamVideoOverlayProps> = (props: StreamVide
         props.play(true);
         setOverlayTimeout(setTimeout(() => {
           setVisible(false);
-        }, 3000))
+        }, 1000))
       }
     }
   }
@@ -258,9 +259,10 @@ const StreamVideoOverlay: React.FC<StreamVideoOverlayProps> = (props: StreamVide
 
           setTimeout(() => {
             setVisible(true);
+            props.play(true);
             setOverlayTimeout(setTimeout(() => {
               setVisible(false);
-            }, 3000));
+            }, 2000));
           }, 300);
         }
 
@@ -274,9 +276,10 @@ const StreamVideoOverlay: React.FC<StreamVideoOverlayProps> = (props: StreamVide
 
           setTimeout(() => {
             setVisible(true);
+            props.play(true);
             setOverlayTimeout(setTimeout(() => {
               setVisible(false);
-            }, 3000));
+            }, 2000));
           }, 300);
         }
 
@@ -298,8 +301,9 @@ const StreamVideoOverlay: React.FC<StreamVideoOverlayProps> = (props: StreamVide
    * Handle the overlay state based on whether or not the video is playing.
    */
   React.useEffect(() => {
-    if (unplayed && props.playing) {
+    if (unplayed) {
       setUnplayed(false);
+      props.play(true);
 
       setOverlayTimeout(setTimeout(() => {
         setVisible(false);
@@ -333,6 +337,7 @@ const StreamVideoOverlay: React.FC<StreamVideoOverlayProps> = (props: StreamVide
     <Box
       {...swipeableHandlers}
       className={clsx(classes.container)}
+      style={{opacity: visible ? 1 : 0}}
     >
       {props.overlayState !== SwipeView.VIDEO &&
         <Box className={clsx(

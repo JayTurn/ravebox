@@ -85,6 +85,19 @@ const useStyles = makeStyles((theme: Theme) =>
       fontSize: '1rem',
       fontWeight: 600
     },
+    thumbnailContainer: {
+      backgroundSize: 'cover',
+      backgroundRepeat: 'no-repeat',
+      backgroundPosition: 'center center',
+      height: '100%',
+      left: 0,
+      overflow: 'hidden',
+      position: 'absolute',
+      transition: 'opacity 200ms ease-in-out',
+      top: 0,
+      width: '100%',
+      zIndex: 2
+    },
     videoContainer: {
       height: '100%',
       padding: theme.spacing(0, 1)
@@ -308,6 +321,14 @@ const StreamVideo: React.FC<StreamVideoProps> = (props: StreamVideoProps) => {
           size='small'
           unplayed={false}
         />
+      </Box>
+      <Box
+        className={clsx(classes.thumbnailContainer)}
+        style={{
+          backgroundImage: `url(${props.review.thumbnail})`,
+          opacity: unplayed ? 1 : 0
+        }}
+      >
       </Box>
       <Grid
         className={clsx(classes.videoContainer)}
