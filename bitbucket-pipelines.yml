@@ -15,6 +15,7 @@ pipelines:
           - ravebox-staging.zip
       - step:
           name: Deploy the API to AWS
+          deployment: staging
           caches:
             - pip
           script:
@@ -42,6 +43,7 @@ pipelines:
           - ravebox-production.zip
       - step:
           name: Deploy the API to AWS
+          deployment: production
           caches:
             - pip
           script:
