@@ -1,5 +1,5 @@
 /**
- * ProductDescription.tsx
+ * ProductSpecifications.tsx
  * Product images component.
  */
 
@@ -25,7 +25,7 @@ import * as React from 'react';
 import { Role } from '../../user/User.enum';
 
 // Interfaces.
-import { ProductDescriptionProps } from './ProductDescription.interface';
+import { ProductSpecificationsProps } from './ProductSpecifications.interface';
 import { ReviewLink } from '../../review/Review.interface';
 
 /**
@@ -39,7 +39,6 @@ const useStyles = makeStyles((theme: Theme) =>
       color: theme.palette.common.white,
       display: 'inline-block',
       fontSize: '.9rem',
-      fontWeight: 600,
       padding: theme.spacing(1, 3),
       textTransform: 'uppercase',
       '&:hover': {
@@ -93,24 +92,13 @@ const useStyles = makeStyles((theme: Theme) =>
 /**
  * Renders the product images.
  */
-const ProductDescription: React.FC<ProductDescriptionProps> = (props: ProductDescriptionProps) => {
+const ProductSpecifications: React.FC<ProductSpecificationsProps> = (props: ProductSpecificationsProps) => {
   // Define the component classes.
   const classes = useStyles(),
         theme = useTheme();
 
-  // Set an expanded state for the description content.
+  // Set an expanded state for the specifications content.
   const [expanded, setExpanded] = React.useState<boolean>(false);
-
-  const title: string = props.user && props.user.role !== Role.YOUTUBE
-    ? `What ${props.user.handle} says`
-    : `What they say`;
-
-  const user: string = props.user && props.user.role !== Role.YOUTUBE
-    ? props.user.handle
-    : 'the user';
-
-  const reviewLink: ReviewLink | null = props.reviewLinks && props.reviewLinks.length > 0
-    ? props.reviewLinks[0] : null;
   
   /**
    * Handles switching between full and short text.
@@ -128,7 +116,7 @@ const ProductDescription: React.FC<ProductDescriptionProps> = (props: ProductDes
           <Grid item xs={12}>
             <Box className={clsx(classes.titleContainer)}>
               <Typography variant='body1' className={clsx(classes.title)}>
-                {title}
+                Product information
               </Typography>
             </Box>
           </Grid>
@@ -161,48 +149,19 @@ const ProductDescription: React.FC<ProductDescriptionProps> = (props: ProductDes
           </Grid>
         </React.Fragment>
       }
-      {reviewLink && reviewLink.path &&
-        <React.Fragment>
-          {reviewLink.code &&
-            <Grid item xs={12}>
-              <Box className={clsx(classes.titleContainer)}>
-                <Typography variant='body1' className={clsx(classes.title)}>
-                  Promo from {user}
-                </Typography>
-              </Box>
-            </Grid>
-          }
-          {reviewLink.info &&
-            <Grid item xs={12}>
-              {reviewLink.info.split('\n').map((item: string, index: number) => {
-                if (item) {
-                  return (
-                    <Typography
-                      className={clsx(classes.paragraph)}
-                      component='p'
-                      key={index}
-                      variant='body1' 
-                    >
-                      {item}
-                    </Typography>
-                  );
-                }
-              })}
-            </Grid>
-          }
-          <Grid item xs={12} className={clsx(classes.buyButtonContainer)}>
-            <Link
-              className={clsx(classes.buyButton)}
-              href={`https://${reviewLink.path}`} 
-              target='_blank'
-            >
-              Buy
-            </Link>
-          </Grid>
-        </React.Fragment>
+      {props.website &&
+        <Grid item xs={12} className={clsx(classes.buyButtonContainer)}>
+          <Link
+            className={clsx(classes.buyButton)}
+            href={`https://${props.website}`} 
+            target='_blank'
+          >
+            Official website
+          </Link>
+        </Grid>
       }
     </Grid>
   );
 };
 
-export default ProductDescription;
+export default ProductSpecifications;

@@ -21,6 +21,10 @@ import Link from '@material-ui/core/Link';
 import Typography from '@material-ui/core/Typography';
 import * as React from 'react';
 
+// Components.
+import ProductSpecifications from '../productSpecifications/ProductSpecifications';
+import ProductImages from '../productImages/ProductImages';
+
 // Interfaces.
 import { ProductInformationProps } from './ProductInformation.interface';
 import { RaveStream } from '../RaveStream.interface';
@@ -36,7 +40,7 @@ const useStyles = makeStyles((theme: Theme) =>
     cardContainer: {
       backgroundColor: theme.palette.background.default,
       borderRadius: 20,
-      margin: theme.spacing(0, 1)
+      margin: theme.spacing(1)
     }
   })
 );
@@ -52,10 +56,14 @@ const ProductInformation: React.FC<ProductInformationProps> = (props: ProductInf
   return (
     <Grid className={clsx(classes.container)} container>
       <Grid item xs={12} className={clsx(classes.cardContainer)}>
-        <Typography variant='h2'>
-          Official product information
-        </Typography>
+        <ProductSpecifications
+          description={props.product.description}
+          website={props.product.website}
+        />
       </Grid>
+      {props.product.images && props.product.images.length > 0 &&
+        <ProductImages images={props.product.images} />
+      }
     </Grid>
   );
 };

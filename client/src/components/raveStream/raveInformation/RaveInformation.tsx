@@ -61,7 +61,7 @@ const useStyles = makeStyles((theme: Theme) =>
     cardContainer: {
       backgroundColor: theme.palette.background.default,
       borderRadius: 20,
-      margin: theme.spacing(1, 1),
+      margin: theme.spacing(1),
     },
     descriptionCard: {
     },

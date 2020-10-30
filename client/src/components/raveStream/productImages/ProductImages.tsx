@@ -30,32 +30,30 @@ const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     cardContainer: {
       borderRadius: 10,
-      boxShadow: `0 1px 1px rgba(0,0,0,0.15)`,
       display: 'inline-block',
-      margin: theme.spacing(0, .5),
-      width: `calc(100vw * .4)`,
-      '&:first-child': {
-        marginLeft: theme.spacing(1)
-      },
-      '&:last-child': {
-        marginRight: theme.spacing(1)
-      }
+      width: `100%`,
     },
     cardMedia: {
       paddingTop: '100%'
     },
-    scrollableWrapper: {
-      overflow: 'hidden',
-      padding: theme.spacing(0),
-      width: '100%'
+    container: {
+      backgroundColor: theme.palette.background.default,
+      boxShadow: `0px -1px 1px rgba(100,106,240,.15), 0px 1px 3px rgba(100,106,240,.25)`,
+      margin: theme.spacing(1, 0)
     },
-    scrollableContainer: {
-      overflowX: 'scroll',
-      overflowY: 'hidden',
-      '&::-webkit-scrollbar': {
-        display: 'none'
-      },
-      whiteSpace: 'nowrap'
+    gridContainer: {
+      padding: theme.spacing(2, 1)
+    },
+    title: {
+      color: theme.palette.primary.main,
+      fontSize: '.85rem',
+      fontWeight: 700,
+      margin: theme.spacing(.75, 0),
+      textTransform: 'uppercase'
+    },
+    titleContainer: {
+      borderBottom: `1px solid rgba(100, 106, 240, .15)`,
+      padding: theme.spacing(.5, 2)
     }
   })
 );
@@ -68,21 +66,30 @@ const ProductImages: React.FC<ProductImagesProps> = (props: ProductImagesProps) 
   const classes = useStyles(),
         theme = useTheme();
   return (
-    <Box className={clsx(classes.scrollableWrapper)}>
-      <Box className={clsx(classes.scrollableContainer)}>
-        {props.images.map((productImage: ImageAndTitle) => {
-          return (
-            <Card className={clsx(classes.cardContainer)} key={productImage.url}>
-              <CardMedia
-                className={clsx(classes.cardMedia)}
-                image={productImage.url}
-                title={productImage.title}
-              />
-            </Card>
-          );
-        })}
-      </Box>
-    </Box>
+    <Grid container className={clsx(classes.container)}>
+      <Grid item xs={12} className={clsx(classes.titleContainer)}>
+        <Typography variant='body1' className={clsx(classes.title)}>
+          Photos
+        </Typography>
+      </Grid>
+      <Grid item xs={12} className={clsx(classes.gridContainer)}>
+        <Grid container spacing={1}>
+          {props.images.map((productImage: ImageAndTitle) => {
+            return (
+              <Grid item xs={6}>
+                <Card className={clsx(classes.cardContainer)} key={productImage.url}>
+                  <CardMedia
+                    className={clsx(classes.cardMedia)}
+                    image={productImage.url}
+                    title={productImage.title}
+                  />
+                </Card>
+              </Grid>
+            );
+          })}
+        </Grid>
+      </Grid>
+    </Grid>
   );
 };
 
