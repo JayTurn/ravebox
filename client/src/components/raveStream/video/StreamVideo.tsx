@@ -73,6 +73,10 @@ const useStyles = makeStyles((theme: Theme) =>
     defaultColor: {
       color: theme.palette.common.white
     },
+    externalVideo: {
+      left: -15,
+      top: -10
+    },
     overlay: {
       height: '100%',
       left: 0,
@@ -149,7 +153,7 @@ const StreamVideo: React.FC<StreamVideoProps> = (props: StreamVideoProps) => {
 
   const height: string = videoRatio !== 0
     ? `calc(100vw / ${videoRatio})`
-    : `calc(100vw * .5)`; 
+    : `calc(100vw * .5625)`; 
 
   // Define the component classes.
   const classes = useStyles(),
@@ -313,7 +317,11 @@ const StreamVideo: React.FC<StreamVideoProps> = (props: StreamVideoProps) => {
       style={{transform: `${setVideoPosition(props.positioning)}`}}
     >
       <Box
-        className={clsx(classes.overlay)} 
+        className={clsx(
+          classes.overlay, {
+            [classes.externalVideo]: videoRatio === 0
+          }
+        )} 
       >
         <PlaybackIcon
           loading={loading}

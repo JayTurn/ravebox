@@ -230,7 +230,7 @@ const StreamCardHolder: React.FC<StreamCardHolderProps> = (
       <Grid item xs={12} className={clsx(classes.streamTypeContainer)}>
         <Grid container alignItems='center' justify='space-between'>
           <Grid item className={clsx(classes.streamTitleContainer)}>
-            {streamType !== RaveStreamType.PRODUCT ? (
+            {streamType !== RaveStreamType.PRODUCT || props.overrideTitle ? (
               <Typography variant='h2' className={clsx(classes.streamTitle)}>
                 {props.title}
               </Typography>

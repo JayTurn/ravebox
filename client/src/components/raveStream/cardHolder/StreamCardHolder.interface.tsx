@@ -23,4 +23,5 @@ export interface StreamCardHolderProps extends RouteComponentProps<RaveStreamURL
   reviews: Array<Review>
   streamType: RaveStreamType;
   url?: string;
+  overrideTitle?: boolean;
 }

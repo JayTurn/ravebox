@@ -1,0 +1,175 @@
+/**
+ * RaveInformation.tsx
+ * Rave information component.
+ */
+
+// Modules.
+import Avatar from '@material-ui/core/Avatar';
+import Box from '@material-ui/core/Box';
+import Card from '@material-ui/core/Card';
+import CardMedia from '@material-ui/core/CardMedia';
+import clsx from 'clsx';
+import { connect } from 'react-redux';
+import {
+  createStyles,
+  makeStyles,
+  Theme,
+  useTheme,
+  withStyles
+} from '@material-ui/core/styles';
+import Grid from '@material-ui/core/Grid';
+import Link from '@material-ui/core/Link';
+import Typography from '@material-ui/core/Typography';
+import * as React from 'react';
+
+// Components.
+import ProductDescription from '../productDescription/ProductDescription';
+import StreamCardHolder from '../cardHolder/StreamCardHolder';
+
+// Enumerators.
+import { RaveStreamType } from '../RaveStream.enum';
+import { Role } from '../../user/User.enum';
+
+// Interfaces.
+import { RaveInformationProps } from './RaveInformation.interface';
+import { RaveStream } from '../RaveStream.interface';
+import {
+  Review,
+  ReviewLink
+} from '../../review/Review.interface';
+
+// Utilities.
+import { getExternalAvatar } from '../../user/User.common';
+
+/**
+ * Create the theme styles to be used for the display.
+ */
+const useStyles = makeStyles((theme: Theme) =>
+  createStyles({
+    avatar: {
+      height: theme.spacing(5),
+      width: theme.spacing(5)
+    },
+    avatarIcon: {
+      fontSize: '.9rem',
+      fontWeight: 600,
+      height: theme.spacing(5),
+      width: theme.spacing(5)
+    },
+    container: {
+    },
+    cardContainer: {
+      backgroundColor: theme.palette.background.default,
+      borderRadius: 20,
+      margin: theme.spacing(1, 1),
+    },
+    descriptionCard: {
+    },
+    handleText: {
+      fontSize: '1rem',
+      fontWeight: 500
+    },
+    userCard: {
+      padding: theme.spacing(2, 1)
+    },
+  })
+);
+
+/**
+ * Renders the rave information.
+ */
+const RaveInformation: React.FC<RaveInformationProps> = (props: RaveInformationProps) => {
+  // Define the component classes.
+  const classes = useStyles(),
+        theme = useTheme();
+
+  const firstLetter: string = props.review && props.review.user ?
+    props.review.user.handle.substr(0,1) : 'R';
+
+  const avatar: string | undefined = props.review && props.review.user ? getExternalAvatar(props.review.user) : undefined; 
+
+  return (
+    <Grid className={clsx(classes.container)} container>
+      {props.review && props.review.user &&
+        <React.Fragment>
+          <Grid item xs={12} className={clsx(
+            classes.cardContainer,
+            classes.userCard
+          )}>
+            <Grid container>
+              <Grid item xs={12}>
+                <Grid container direction='column' alignItems='center'>
+                  <Grid item>
+                    {avatar ? (
+                      <Avatar
+                        alt={props.review.user.handle}
+                        className={clsx(classes.avatar)}
+                        src={avatar}
+                      />
+                    ) : (
+                      <Avatar
+                        alt={props.review.user.handle}
+                        className={clsx(classes.avatarIcon)}
+                      >
+                        {firstLetter} 
+                      </Avatar>
+                    )}
+                  </Grid>
+                  <Grid item>
+                    <Typography variant='body1' className={clsx(classes.handleText)}>
+                      {props.review.user.role === Role.YOUTUBE ? 'youtube user' : props.review.user.handle}
+                    </Typography>
+                  </Grid>
+                </Grid>
+              </Grid>
+            </Grid>
+          </Grid>
+          {props.review.description &&
+            <Grid item xs={12} className={clsx(
+              classes.cardContainer
+            )}>
+                <ProductDescription
+                  description={props.review.description} 
+                  user={props.review.user}
+                  reviewLinks={props.review.links}
+                />  
+            </Grid>
+          }
+          {props.raveStream &&
+            <StreamCardHolder
+              overrideTitle={true}
+              reviews={[...props.raveStream.reviews]}
+              streamType={RaveStreamType.PRODUCT} 
+              title='More raves'
+            />
+          }
+        </React.Fragment>
+      }
+    </Grid>
+  );
+};
+
+/**
+ * Mapping the state updates to the properties from redux.
+ */
+const mapStateToProps = (state: any, ownProps: RaveInformationProps) => {
+  // Retrieve the current stream from the active properties.
+  const raveStream: RaveStream = state.raveStream ? state.raveStream.raveStream : undefined,
+        activeIndex: number = state.raveStream ? state.raveStream.active : 0;
+
+  let review: Review | undefined; 
+
+  if (raveStream && raveStream.reviews.length > 0) {
+    review = {...raveStream.reviews[activeIndex]};
+  }
+
+  return {
+    ...ownProps,
+    raveStream,
+    review
+  };
+};
+
+export default connect(
+  mapStateToProps
+)(RaveInformation);
