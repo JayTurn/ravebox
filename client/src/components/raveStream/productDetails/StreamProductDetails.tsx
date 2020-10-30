@@ -181,6 +181,7 @@ const StreamProductDetails: React.FC<StreamProductDetailsProps> = (props: Stream
           <Grid item xs={12}>
             <SwipeableViews
               axis={'x'}
+              disabled={true}
               index={activeTab}
               onChangeIndex={handleTabSwitch}
             >
