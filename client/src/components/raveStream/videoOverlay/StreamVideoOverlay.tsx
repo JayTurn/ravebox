@@ -73,7 +73,7 @@ const useStyles = makeStyles((theme: Theme) =>
     },
     backButtonWrapper: {
       left: 0,
-      padding: theme.spacing(2, 1),
+      padding: theme.spacing(2.5, 1),
       position: 'absolute',
       textAlign: 'center',
       width: '100%',

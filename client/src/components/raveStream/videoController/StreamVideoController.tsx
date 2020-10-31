@@ -109,9 +109,9 @@ const setSwipePosition: (
 ): string => {
   switch (showing) {
     case SwipeView.PRODUCT:
-      return 'translate3d(0, calc(100% - 100px), 0)';
+      return 'translate3d(0, calc(100% - 80px), 0)';
     case SwipeView.REVIEW:
-      return 'translate3d(0, calc(-100% + 100px), 0)';
+      return 'translate3d(0, calc(-100% + 80px), 0)';
     default:
       return 'translate3d(0, 0, 0)';
   }
