@@ -53,7 +53,7 @@ const useStyles = makeStyles((theme: Theme) =>
     },
     userContainer: {
       backgroundColor: `rgba(0,0,0,0.04)`,
-      padding: theme.spacing(10, 1, 2)
+      padding: theme.spacing(14, 1, 2)
     }
   })
 );

@@ -62,7 +62,7 @@ import { Review } from '../../review/Review.interface';
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     backButton: {
-      border: `1px solid ${theme.palette.common.white}`,
+      //border: `1px solid ${theme.palette.common.white}`,
       color: theme.palette.common.white
     },
     backButtonBottom: {
@@ -73,7 +73,7 @@ const useStyles = makeStyles((theme: Theme) =>
     },
     backButtonWrapper: {
       left: 0,
-      padding: theme.spacing(1),
+      padding: theme.spacing(2, 1),
       position: 'absolute',
       textAlign: 'center',
       width: '100%',
@@ -346,8 +346,9 @@ const StreamVideoOverlay: React.FC<StreamVideoOverlayProps> = (props: StreamVide
         )}>
           <Button
             className={clsx(classes.backButton)}
+            color={'secondary'}
             onClick={handleDisplayVideo}
-            variant='outlined'
+            variant='contained'
           >
             Back to Rave
           </Button>

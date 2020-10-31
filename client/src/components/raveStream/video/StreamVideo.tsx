@@ -60,7 +60,6 @@ import { calculateVideoRatio } from '../RaveStream.common';
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     container: {
-      backgroundColor: 'black',
       height: '100%',
       //maxHeight: 'calc(100vh); max-height: -webkit-fill-available;',
       //minHeight: 'calc(100vh); min-height: -webkit-fill-available;',
@@ -151,9 +150,10 @@ const StreamVideo: React.FC<StreamVideoProps> = (props: StreamVideoProps) => {
   const videoRatio: number = calculateVideoRatio(
     props.review.videoWidth)(props.review.videoHeight);
 
-  const height: string = videoRatio !== 0
-    ? `calc(100vw / ${videoRatio})`
-    : `calc(100vw * .5625)`; 
+  //const height: string = videoRatio !== 0
+    //? `calc(100vw / ${videoRatio})`
+    //: `calc(100vw * .5625)`; 
+  const height: string = `calc(100w * 56.25)`;
 
   // Define the component classes.
   const classes = useStyles(),

@@ -76,7 +76,7 @@ const ProductImages: React.FC<ProductImagesProps> = (props: ProductImagesProps) 
         <Grid container spacing={1}>
           {props.images.map((productImage: ImageAndTitle) => {
             return (
-              <Grid item xs={6}>
+              <Grid item xs={6} key={productImage.url}>
                 <Card className={clsx(classes.cardContainer)} key={productImage.url}>
                   <CardMedia
                     className={clsx(classes.cardMedia)}

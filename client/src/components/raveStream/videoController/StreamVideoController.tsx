@@ -63,7 +63,8 @@ import { emptyProduct } from '../../product/Product.common';
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     container: {
-      backgroundColor: 'black',
+      backgroundColor: '#1D1D1D',
+      boxShadow: `0 0 25px 0 rgba(0,0,0,1)`,
       height: '100%',
       left: 0,
       position: 'fixed',
@@ -79,7 +80,7 @@ const useStyles = makeStyles((theme: Theme) =>
       position: 'fixed'
     },
     shifted: {
-      borderRadius: 10
+      borderRadius: 20
     },
     subtitle: {
       fontSize: '1rem',
@@ -108,9 +109,9 @@ const setSwipePosition: (
 ): string => {
   switch (showing) {
     case SwipeView.PRODUCT:
-      return 'translate3d(0, 92%, 0)';
+      return 'translate3d(0, calc(100% - 100px), 0)';
     case SwipeView.REVIEW:
-      return 'translate3d(0, -92%, 0)';
+      return 'translate3d(0, calc(-100% + 100px), 0)';
     default:
       return 'translate3d(0, 0, 0)';
   }
