@@ -153,7 +153,7 @@ const StreamVideo: React.FC<StreamVideoProps> = (props: StreamVideoProps) => {
   //const height: string = videoRatio !== 0
     //? `calc(100vw / ${videoRatio})`
     //: `calc(100vw * .5625)`; 
-  const height: string = `calc(100w * 56.25)`;
+  const height: string = `calc(100vw * .5625)`;
 
   // Define the component classes.
   const classes = useStyles(),
