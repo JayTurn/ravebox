@@ -87,9 +87,48 @@ const RaveInformation: React.FC<RaveInformationProps> = (props: RaveInformationP
     props.review.user.handle.substr(0,1) : 'R';
 
   const avatar: string | undefined = props.review && props.review.user ? getExternalAvatar(props.review.user) : undefined; 
+  
+  const ref: React.RefObject<HTMLDivElement> = React.useRef(null);
+
+  const [reviewId, setReviewId] = React.useState<string>('');
+
+  const [height, setHeight] = React.useState<number>(0);
+
+  /**
+   * Handles the updating of the height.
+   */
+  const handleHeightUpdate: (
+  ) => void = (
+  ): void => {
+    if (ref && ref.current) {
+      if (ref.current.clientHeight < 600) {
+        setHeight(600);
+        props.updateHeight(600);
+      } else {
+        setHeight(ref.current.clientHeight);
+        props.updateHeight(ref.current.clientHeight + 30);
+      }
+    }
+  }
+
+  /**
+   * Returns the height of the element when it is loaded.
+   */
+  React.useEffect(() => {
+    if (ref && ref.current) {
+      if (height !== ref.current.clientHeight) {
+        handleHeightUpdate();
+      }
+      if (props.review && props.review._id !== reviewId) {
+        setReviewId(props.review._id);
+        handleHeightUpdate();
+      }
+    }
+
+  }, [height, ref, props.review, reviewId]);
 
   return (
-    <Grid className={clsx(classes.container)} container>
+    <Grid className={clsx(classes.container)} container ref={ref}>
       {props.review && props.review.user &&
         <React.Fragment>
           <Grid item xs={12} className={clsx(
@@ -130,14 +169,14 @@ const RaveInformation: React.FC<RaveInformationProps> = (props: RaveInformationP
             )}>
                 <ProductDescription
                   description={props.review.description} 
-                  user={props.review.user}
                   reviewLinks={props.review.links}
+                  updateHeight={handleHeightUpdate}
+                  user={props.review.user}
                 />  
             </Grid>
           }
           {props.raveStream &&
             <StreamCardHolder
-              overrideTitle={true}
               reviews={[...props.raveStream.reviews]}
               streamType={RaveStreamType.PRODUCT} 
               title='More raves'

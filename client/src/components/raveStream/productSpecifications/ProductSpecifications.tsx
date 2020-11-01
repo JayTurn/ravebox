@@ -107,6 +107,9 @@ const ProductSpecifications: React.FC<ProductSpecificationsProps> = (props: Prod
   ) => void = (
   ): void => {
     setExpanded(!expanded);
+    setTimeout(() => {
+      props.updateHeight();
+    }, 0);
   }
 
   return (

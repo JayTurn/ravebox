@@ -71,10 +71,28 @@ const useStyles = makeStyles((theme: Theme) =>
       fontSize: '1rem',
       fontWeight: 600
     },
+    tab: {
+      float: 'left',
+      width: '50%'
+    },
+    tabContainer: {
+    },
+    tabPanel: {
+      position: 'absolute',
+      top: 0,
+      transition: 'transform 300ms ease-in-out',
+      width: `200%`
+    },
     tabPanelContainer: {
       boxShadow: `inset 0px -1px 3px rgba(100,106,240,.25), inset 0px 1px 1px rgba(100,106,240,.15)`,
       backgroundColor: `rgba(100,106,240, .1)`,
-      padding: theme.spacing(1, 0)
+      overflow: 'hidden',
+      padding: theme.spacing(1, 0),
+      position: 'relative',
+      width: '100%'
+    },
+    tabs: {
+      flexWrap: 'nowrap'
     },
     title: {
       fontWeight: 400,
@@ -85,6 +103,28 @@ const useStyles = makeStyles((theme: Theme) =>
     },
   })
 );
+
+/**
+ * Returns a string or number based on the active tab.
+ *
+ * @param { ProductStreamSection } showing
+ *
+ * @return string
+ */
+const setProductSection: (
+  showing: ProductStreamSection
+) => string = (
+  showing: ProductStreamSection
+): string => {
+  switch (showing) {
+    case ProductStreamSection.RAVES:
+      return 'translate3d(0, 0, 0)';
+    case ProductStreamSection.DETAILS:
+      return 'translate3d(-50%, 0, 0)';
+    default:
+      return 'translate3d(0, 0, 0)';
+  }
+};
 
 /**
  * Renders the product details in the stream.
@@ -103,6 +143,19 @@ const StreamProductDetails: React.FC<StreamProductDetailsProps> = (props: Stream
   const [activeTab, setActiveTab] = React.useState<ProductStreamSection>(
     ProductStreamSection.RAVES);
 
+  const [tabHeight, setTabHeight] = React.useState<number>(0);
+
+  const raveInfoRef: React.RefObject<HTMLDivElement> = React.useRef(null);
+  const productDetailsRef: React.RefObject<HTMLDivElement> = React.useRef(null);
+
+  const [reviewId, setReviewId] = React.useState<string>('');
+
+  const [raveInfoHeight, setRaveInfoHeight] = React.useState<number | null>(null);
+  const [productDetailsHeight, setProductDetailsHeight] = React.useState<number | null>(null);
+
+  const [raveInfoClass, setRaveInfoClass] = React.useState<string>('');
+  const [productDetailsClass, setProductDetailsClass] = React.useState<string>('');
+
   /**
    * Handles switching between tabs.
    *
@@ -117,7 +170,91 @@ const StreamProductDetails: React.FC<StreamProductDetailsProps> = (props: Stream
       return;
     }
     setActiveTab(value);
+    updateTabHeight(value);
   }
+
+  /**
+   * Handles updates to the container height.
+   *
+   * @param { number } - the height to set the container.
+   */
+  const updateTabHeight: (
+    value: ProductStreamSection
+  ) => void = (
+    value: ProductStreamSection
+  ): void => {
+
+    switch (value) {
+      case ProductStreamSection.RAVES:
+        if (raveInfoHeight) {
+          setTabHeight(raveInfoHeight);
+        }
+        /*
+        if (raveInfoRef.current) {
+          if (!raveInfoHeight || raveInfoHeight < 600) {
+            setTabHeight(600);
+          } else {
+            setTabHeight(raveInfoHeight + 100);
+          }
+        }
+        */
+        break;
+      case ProductStreamSection.DETAILS:
+        if (productDetailsHeight) {
+          setTabHeight(productDetailsHeight);
+        }
+        /*
+        if (productDetailsRef.current) {
+          if (!productDetailsHeight || productDetailsHeight < 600) {
+            setTabHeight(600);
+          } else {
+            setTabHeight(productDetailsHeight + 100);
+          }
+        }
+        */
+        break;
+      default:
+    }
+  }
+
+  /**
+   * Handles updating the rave information height.
+   */
+  const handleRaveInfoHeightUpdate: (
+    value: number
+  ) => void = (
+    value: number
+  ): void => {
+    setRaveInfoHeight(value);
+
+    if (activeTab === ProductStreamSection.RAVES) {
+      setTabHeight(value);
+    }
+  }
+
+  /**
+   * Handles updating the product details height.
+   */
+  const handleProductDetailsHeightUpdate: (
+    value: number
+  ) => void = (
+    value: number
+  ): void => {
+    setProductDetailsHeight(value);
+
+    if (activeTab === ProductStreamSection.DETAILS) {
+      setTabHeight(value);
+    }
+  }
+
+  /**
+   * Update the height on the first load.
+   */
+  React.useEffect(() => {
+    //if (props.review && props.review._id !== reviewId) {
+      //setActiveTab()
+    //}
+  }, []);
 
   return (
     <Grid
@@ -177,27 +314,39 @@ const StreamProductDetails: React.FC<StreamProductDetailsProps> = (props: Stream
             </StyledTabs>
           </Grid>
         </Grid>
-        <Grid container className={clsx(classes.tabPanelContainer)}>
-          <Grid item xs={12}>
-            <SwipeableViews
-              axis={'x'}
-              disabled={true}
-              index={activeTab}
-              onChangeIndex={handleTabSwitch}
+        <Box
+          className={clsx(classes.tabPanelContainer)}
+          style={{height: tabHeight}}
+        >
+          <Box
+            className={clsx(classes.tabPanel)}
+            style={{
+              height: tabHeight,
+              transform: `${setProductSection(activeTab)}`
+            }}
+          >
+            <div
+              className={clsx(classes.tab)}
             >
               <RaveInformation
                 index={ProductStreamSection.RAVES}
                 product={props.product}
+                updateHeight={handleRaveInfoHeightUpdate}
                 value={activeTab}
               />
+            </div>
+            <div
+              className={clsx(classes.tab)}
+            >
               <ProductInformation
                 index={ProductStreamSection.DETAILS}
                 product={props.product}
+                updateHeight={handleProductDetailsHeightUpdate}
                 value={activeTab}
               />
-            </SwipeableViews>
-          </Grid>
-        </Grid>
+            </div>
+          </Box>
+        </Box>
       </Grid>
     </Grid>
   );

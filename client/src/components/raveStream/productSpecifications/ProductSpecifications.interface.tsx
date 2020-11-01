@@ -12,5 +12,6 @@ import { ReviewLink } from '../../review/Review.interface';
  */
 export interface ProductSpecificationsProps {
   description?: string;
+  updateHeight: () => void;
   website?: string;
 }

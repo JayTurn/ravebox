@@ -119,6 +119,9 @@ const ProductDescription: React.FC<ProductDescriptionProps> = (props: ProductDes
   ) => void = (
   ): void => {
     setExpanded(!expanded);
+    setTimeout(() => {
+      props.updateHeight();
+    }, 0);
   }
 
   return (

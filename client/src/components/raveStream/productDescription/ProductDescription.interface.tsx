@@ -14,4 +14,5 @@ export interface ProductDescriptionProps {
   description?: string;
   user?: PublicProfile;
   reviewLinks?: Array<ReviewLink>;
+  updateHeight: () => void;
 }

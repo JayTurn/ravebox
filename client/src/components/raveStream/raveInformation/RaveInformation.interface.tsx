@@ -16,5 +16,6 @@ export interface RaveInformationProps {
   product: Product;
   raveStream?: RaveStream;
   review?: Review;
+  updateHeight: (value: number) => void;
   value: number;
 }

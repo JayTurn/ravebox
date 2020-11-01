@@ -12,5 +12,6 @@ import { Product } from '../../product/Product.interface';
 export interface ProductInformationProps {
   index: number;
   product: Product;
+  updateHeight: (value: number) => void;
   value: number;
 }

@@ -53,11 +53,50 @@ const ProductInformation: React.FC<ProductInformationProps> = (props: ProductInf
   const classes = useStyles(),
         theme = useTheme();
 
+  const ref: React.RefObject<HTMLDivElement> = React.useRef(null);
+
+  const [productId, setProductId] = React.useState<string>('');
+
+  const [height, setHeight] = React.useState<number>(0);
+
+  /**
+   * Handles the updating of the height.
+   */
+  const handleHeightUpdate: (
+  ) => void = (
+  ): void => {
+    if (ref && ref.current) {
+      if (ref.current.clientHeight < 600) {
+        setHeight(600);
+        props.updateHeight(600);
+      } else {
+        setHeight(ref.current.clientHeight);
+        props.updateHeight(ref.current.clientHeight + 30);
+      }
+    }
+  }
+
+  /**
+   * Returns the height of the element when it is loaded.
+   */
+  React.useEffect(() => {
+    if (ref && ref.current) {
+      if (height !== ref.current.clientHeight) {
+        handleHeightUpdate();
+      }
+      if (props.product._id !== productId) {
+        setProductId(props.product._id);
+        handleHeightUpdate();
+      }
+    }
+  }, [height, ref, props.product, productId]);
+
   return (
-    <Grid className={clsx(classes.container)} container>
+    <Grid className={clsx(classes.container)} container ref={ref}>
       <Grid item xs={12} className={clsx(classes.cardContainer)}>
         <ProductSpecifications
           description={props.product.description}
+          updateHeight={handleHeightUpdate}
           website={props.product.website}
         />
       </Grid>
