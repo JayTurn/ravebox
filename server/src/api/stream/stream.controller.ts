@@ -5,13 +5,20 @@
  */
 
 // Modules.
+//import * as Mongoose from 'mongoose';
 import { Request, Response, Router } from 'express';
 
 // Enumerators.
+import { CollectionContext } from '../collection/collection.enum';
 import { LogLevel } from '../../shared/logging/Logging.enum';
 import { StreamType } from '../stream/stream.enum';
 
 // Interfaces.
+import { CollectionDetails } from '../collection/collection.interface'
+import {
+  ProductDetails
+  //ProductDocument
+} from '../product/product.interface';
 import { ResponseObject } from '../../models/database/connect.interface';
 import {
   StreamData,
@@ -20,6 +27,7 @@ import {
 
 // Models.
 import Connect from '../../models/database/connect.model';
+import Collection from '../collection/collection.model';
 import Logging from '../../shared/logging/Logging.model';
 import StreamCommon from './stream.common';
 
@@ -66,6 +74,12 @@ export default class StreamController {
     router.post(
       `${path}/list`,
       StreamController.List
+    );
+
+    // Retrieve a list of similar product streams.
+    router.get(
+      `${path}/similar_products/:id`,
+      StreamController.SimilarProducts
     );
   }
 
@@ -353,5 +367,128 @@ export default class StreamController {
         // Return the response for the authenticated user.
         response.status(responseObject.status).json(responseObject.data);
       });
+  }
+  
+  /**
+   * Retrieves a list of similar product streams.
+   *
+   * @param {object} req
+   * The request object.
+   *
+   * @param {object} res
+   * The response object.
+   */
+  static SimilarProducts(request: Request, response: Response): void {
+    const id: string = request.params.id;
+
+    //const list: Array<StreamListItem> = request.body.list;
+
+    if (!id) {
+      // Set the response object.
+      const responseObject: ResponseObject = Connect.setResponse({
+        data: {
+          errorCode: `PRODUCT_ID_MISSING_FROM_REQUEST`,
+          message: `The product id to be requested was missing`
+        },
+      }, 404, `The product id to be requested was missing`);
+
+      Logging.Send(LogLevel.WARNING, responseObject);
+
+      // Return the response for the authenticated user.
+      response.status(responseObject.status).json(responseObject.data);
+        
+      return;
+    }
+
+    // Retrieve a list of competing products from their respective collection.
+    Collection.findOne({
+      products: id,
+      context: CollectionContext.COMPETING
+    })
+    .populate({
+      path: 'products',
+      model: 'Product',
+      populate: {
+        path: 'brand',
+        model: 'Brand'
+      }
+    })
+    .lean()
+    .then((collectionDetails: CollectionDetails) => {
+      if (!collectionDetails || !collectionDetails.products || collectionDetails.products.length <= 0) {
+        // Set the response object.
+        const responseObject: ResponseObject = Connect.setResponse({
+          data: {
+            raveStreams: []
+          }
+        }, 200, 'No similar products were found');
+
+        // Return the response for the authenticated user.
+        return response.status(responseObject.status).json(responseObject.data);
+      }
+
+      // Loop through the products and create a stream list to query. 
+      let i = 0;
+
+      const list: Array<StreamListItem> = [];
+
+      do {
+        const current: ProductDetails = collectionDetails.products[i] as ProductDetails;
+
+        if (current._id.toHexString() !== id) {
+          list.push({
+            streamType: StreamType.PRODUCT,
+            brand: current.brand.url,
+            product: current.url
+          });
+        }
+
+        i++;
+      } while (i < collectionDetails.products.length);
+
+      StreamCommon.RetrieveStreamLists(list)
+        .then((streamLists: Array<StreamData>) => {
+
+            // Set the response object.
+            const responseObject: ResponseObject = Connect.setResponse({
+              data: {
+                raveStreams: streamLists
+              }
+            }, 200, 'Similar product streams retrieved successfully');
+
+            // Return the response for the authenticated user.
+            response.status(responseObject.status).json(responseObject.data);
+          })
+          .catch((error: Error) => {
+            // Set the response object.
+            const responseObject: ResponseObject = Connect.setResponse({
+              data: {
+                errorCode: `SIMILAR_PRODUCT_STREAM_LISTS_FAILED`,
+                message: `There was a problem loading this list of similar product streams.`
+              },
+              error
+            }, 404, `There was a problem loading this list of similar product streams.`);
+
+            Logging.Send(LogLevel.ERROR, responseObject);
+
+            // Return the response for the authenticated user.
+            response.status(responseObject.status).json(responseObject.data);
+          });
+    })
+    .catch((error: Error) => {
+      // Set the response object.
+      const responseObject: ResponseObject = Connect.setResponse({
+        data: {
+          errorCode: `SIMILAR_PRODUCT_COLLECTION_RETRIEVAL_FAILED`,
+          message: `There was a problem loading the product collection.`
+        },
+        error
+      }, 404, `There was a problem loading the product collection.`);
+
+      Logging.Send(LogLevel.ERROR, responseObject);
+
+      // Return the response for the authenticated user.
+      response.status(responseObject.status).json(responseObject.data);
+    });
   }
 }

@@ -25,6 +25,7 @@ import * as React from 'react';
 import StreamNavigation from '../navigation/StreamNavigation';
 import ProductInformation from '../productInformation/ProductInformation';
 import RaveInformation from '../raveInformation/RaveInformation';
+import SimilarProducts from '../similarProducts/SimilarProducts';
 
 // Enumerators.
 import { ProductStreamSection } from './StreamProductDetails.enum';
@@ -73,7 +74,7 @@ const useStyles = makeStyles((theme: Theme) =>
     },
     tab: {
       float: 'left',
-      width: '50%'
+      width: 'calc(100% / 3)'
     },
     tabContainer: {
     },
@@ -81,7 +82,7 @@ const useStyles = makeStyles((theme: Theme) =>
       position: 'absolute',
       top: 0,
       transition: 'transform 300ms ease-in-out',
-      width: `200%`
+      width: `300%`
     },
     tabPanelContainer: {
       boxShadow: `inset 0px -1px 3px rgba(100,106,240,.25), inset 0px 1px 1px rgba(100,106,240,.15)`,
@@ -116,11 +117,16 @@ const setProductSection: (
 ) => string = (
   showing: ProductStreamSection
 ): string => {
+  let value: number = 0;
   switch (showing) {
     case ProductStreamSection.RAVES:
       return 'translate3d(0, 0, 0)';
     case ProductStreamSection.DETAILS:
-      return 'translate3d(-50%, 0, 0)';
+      value = 100 / 3;
+      return `translate3d(calc(-${value}%), 0, 0)`;
+    case ProductStreamSection.SIMILAR:
+      value = (100 / 3) * 2;
+      return `translate3d(calc(-${value}%), 0, 0)`;
     default:
       return 'translate3d(0, 0, 0)';
   }
@@ -145,16 +151,11 @@ const StreamProductDetails: React.FC<StreamProductDetailsProps> = (props: Stream
 
   const [tabHeight, setTabHeight] = React.useState<number>(0);
 
-  const raveInfoRef: React.RefObject<HTMLDivElement> = React.useRef(null);
-  const productDetailsRef: React.RefObject<HTMLDivElement> = React.useRef(null);
-
   const [reviewId, setReviewId] = React.useState<string>('');
 
   const [raveInfoHeight, setRaveInfoHeight] = React.useState<number | null>(null);
   const [productDetailsHeight, setProductDetailsHeight] = React.useState<number | null>(null);
-
-  const [raveInfoClass, setRaveInfoClass] = React.useState<string>('');
-  const [productDetailsClass, setProductDetailsClass] = React.useState<string>('');
+  const [similarProductsHeight, setSimilarProductsHeight] = React.useState<number | null>(null);
 
   /**
    * Handles switching between tabs.
@@ -189,29 +190,16 @@ const StreamProductDetails: React.FC<StreamProductDetailsProps> = (props: Stream
         if (raveInfoHeight) {
           setTabHeight(raveInfoHeight);
         }
-        /*
-        if (raveInfoRef.current) {
-          if (!raveInfoHeight || raveInfoHeight < 600) {
-            setTabHeight(600);
-          } else {
-            setTabHeight(raveInfoHeight + 100);
-          }
-        }
-        */
         break;
       case ProductStreamSection.DETAILS:
         if (productDetailsHeight) {
           setTabHeight(productDetailsHeight);
         }
-        /*
-        if (productDetailsRef.current) {
-          if (!productDetailsHeight || productDetailsHeight < 600) {
-            setTabHeight(600);
-          } else {
-            setTabHeight(productDetailsHeight + 100);
-          }
+        break;
+      case ProductStreamSection.SIMILAR:
+        if (similarProductsHeight) {
+          setTabHeight(similarProductsHeight);
         }
-        */
         break;
       default:
     }
@@ -248,13 +236,29 @@ const StreamProductDetails: React.FC<StreamProductDetailsProps> = (props: Stream
   }
 
   /**
+   * Handles updating the similar products height.
+   */
+  const handleSimilarProductsHeightUpdate: (
+    value: number
+  ) => void = (
+    value: number
+  ): void => {
+    setSimilarProductsHeight(value);
+
+    if (activeTab === ProductStreamSection.SIMILAR) {
+      setTabHeight(value);
+    }
+  }
+
+  /**
    * Update the height on the first load.
    */
   React.useEffect(() => {
-    //if (props.review && props.review._id !== reviewId) {
-      //setActiveTab()
-    //}
-  }, []);
+    if (props.review && props.review._id !== reviewId) {
+      setReviewId(props.review._id);
+      setActiveTab(ProductStreamSection.RAVES);
+    }
+  }, [props.review, reviewId]);
 
   return (
     <Grid
@@ -343,6 +347,14 @@ const StreamProductDetails: React.FC<StreamProductDetailsProps> = (props: Stream
                 product={props.product}
                 updateHeight={handleProductDetailsHeightUpdate}
                 value={activeTab}
+              />
+            </div>
+            <div
+              className={clsx(classes.tab)}
+            >
+              <SimilarProducts
+                product={props.product}
+                updateHeight={handleSimilarProductsHeightUpdate}
               />
             </div>
           </Box>
