@@ -26,6 +26,7 @@ import { StreamReviewDetailsSection } from './StreamReviewDetails.enum';
 // Components.
 import FollowButton from '../../follow/button/FollowButton';
 import StreamUserProfile from '../userProfile/StreamUserProfile';
+import UserAbout from '../userAbout/UserAbout';
 import UserRaves from '../userRaves/UserRaves';
 
 // Enumerators.
@@ -301,25 +302,14 @@ const StreamReviewDetails: React.FC<StreamReviewDetailsProps> = (props: StreamRe
                       user={user}
                       updateHeight={handleRaveHeightUpdate}
                     />
-          {/*
-                    <RaveInformation
-                      index={ProductStreamSection.RAVES}
-                      product={props.product}
-                      value={activeTab}
-                    />
-                    */}
                   </div>
                   <div
                     className={clsx(classes.tab)}
                   >
-          {/*
-                    <ProductInformation
-                      index={ProductStreamSection.DETAILS}
-                      product={props.product}
-                      updateHeight={handleProductDetailsHeightUpdate}
-                      value={activeTab}
+                    <UserAbout
+                      updateHeight={handleAboutHeightUpdate}
+                      user={user}
                     />
-                    */}
                   </div>
                 </Box>
               </Box>
