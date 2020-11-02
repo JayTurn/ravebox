@@ -40,6 +40,7 @@ import {
 
 // Utilities.
 import { getExternalAvatar } from '../../user/User.common';
+import { filterReviews } from '../../review/Review.common';
 
 /**
  * Create the theme styles to be used for the display.
@@ -94,6 +95,8 @@ const RaveInformation: React.FC<RaveInformationProps> = (props: RaveInformationP
 
   const [height, setHeight] = React.useState<number>(0);
 
+  const [reviews, setReviews] = React.useState<Array<Review> | null>();
+
   /**
    * Handles the updating of the height.
    */
@@ -122,6 +125,10 @@ const RaveInformation: React.FC<RaveInformationProps> = (props: RaveInformationP
       if (props.review && props.review._id !== reviewId) {
         setReviewId(props.review._id);
         handleHeightUpdate();
+        
+        if (props.raveStream) {
+          setReviews(filterReviews(props.raveStream.reviews)(props.review._id));
+        }
       }
     }
 
@@ -177,7 +184,7 @@ const RaveInformation: React.FC<RaveInformationProps> = (props: RaveInformationP
           }
           {props.raveStream &&
             <StreamCardHolder
-              reviews={[...props.raveStream.reviews]}
+              reviews={reviews ? [...reviews] : []}
               streamType={RaveStreamType.PRODUCT} 
               title='More raves'
             />

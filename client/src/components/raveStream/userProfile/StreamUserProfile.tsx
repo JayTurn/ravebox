@@ -5,6 +5,7 @@
 
 // Module.
 import Avatar from '@material-ui/core/Avatar';
+import Box from '@material-ui/core/Box';
 import clsx from 'clsx';
 import {
   createStyles,
@@ -116,7 +117,7 @@ const formatStatistics: (
   }
 
   return result;
-} 
+}
 
 
 /**
@@ -131,6 +132,16 @@ const StreamUserProfile: React.FC<StreamUserProfileProps> = (props: StreamUserPr
         theme = useTheme(),
         largeScreen = useMediaQuery(theme.breakpoints.up('sm'));
 
+  // Retrieve the user's first letter of their name.
+  const firstLetter: string = props.user ? props.user.handle.substr(0,1) : 'r';
+
+  const avatar: string | undefined = props.user ? getExternalAvatar(props.user) : undefined;
+
+
+  // Format the user's statistics.
+  const statisticsText: string = formatStatistics(props.user.statistics);
+
+
   /**
    * Tracks the review card navigation event.
    */
@@ -144,14 +155,6 @@ const StreamUserProfile: React.FC<StreamUserProfileProps> = (props: StreamUserPr
     // Track the select event.
     //analytics.trackEvent('select review')(data);
   }
-
-  // Retrieve the user's first letter of their name.
-  const firstLetter: string = props.user ? props.user.handle.substr(0,1) : 'r';
-
-  const avatar: string | undefined = props.user ? getExternalAvatar(props.user) : undefined; 
-
-  // Format the user's statistics.
-  const statisticsText: string = formatStatistics(props.user.statistics);
 
   return (
     <Grid
@@ -168,7 +171,7 @@ const StreamUserProfile: React.FC<StreamUserProfileProps> = (props: StreamUserPr
             {avatar ? (
               <Avatar
                 alt={props.user.handle}
-                className={classes.avatar} 
+                className={classes.avatar}
                 src={avatar}
               />
             ) : (
@@ -176,7 +179,7 @@ const StreamUserProfile: React.FC<StreamUserProfileProps> = (props: StreamUserPr
                 alt={props.user.handle}
                 className={classes.avatarIcon}
               >
-                {props.user.role === Role.YOUTUBE ? 'y' : firstLetter} 
+                {props.user.role === Role.YOUTUBE ? 'y' : firstLetter}
               </Avatar>
             )}
           </Grid>

@@ -81,6 +81,12 @@ export default class StreamController {
       `${path}/similar_products/:id`,
       StreamController.SimilarProducts
     );
+
+    // Retrieve a list of user streams.
+    router.get(
+      `${path}/user/:id`,
+      StreamController.User
+    );
   }
 
   /**
@@ -484,6 +490,68 @@ export default class StreamController {
         },
         error
       }, 404, `There was a problem loading the product collection.`);
+
+      Logging.Send(LogLevel.ERROR, responseObject);
+
+      // Return the response for the authenticated user.
+      response.status(responseObject.status).json(responseObject.data);
+    });
+  }
+
+  /**
+   * Retrieves a list of user streams.
+   *
+   * @param {object} req
+   * The request object.
+   *
+   * @param {object} res
+   * The response object.
+   */
+  static User(request: Request, response: Response): void {
+    const id: string = request.params.id;
+
+    if (!id) {
+      // Set the response object.
+      const responseObject: ResponseObject = Connect.setResponse({
+        data: {
+          errorCode: `USER_ID_MISSING_FROM_REQUEST`,
+          message: `The user id to be requested was missing`
+        },
+      }, 404, `The user id to be requested was missing`);
+
+      Logging.Send(LogLevel.WARNING, responseObject);
+
+      // Return the response for the authenticated user.
+      response.status(responseObject.status).json(responseObject.data);
+        
+      return;
+    }
+
+    StreamCommon.RetrieveUserStreamList({
+      user: id,
+      streamType: StreamType.PRODUCT_TYPE
+    })
+    .then((streamLists: Array<StreamData>) => {
+
+      // Set the response object.
+      const responseObject: ResponseObject = Connect.setResponse({
+        data: {
+          raveStreams: streamLists
+        }
+      }, 200, 'User streams retrieved successfully');
+
+      // Return the response for the authenticated user.
+      response.status(responseObject.status).json(responseObject.data);
+    })
+    .catch((error: Error) => {
+      // Set the response object.
+      const responseObject: ResponseObject = Connect.setResponse({
+        data: {
+          errorCode: `USER_STREAM_RETRIEVAL_FAILED`,
+          message: `There was a problem loading the user streams.`
+        },
+        error
+      }, 404, `There was a problem loading the user streams.`);
 
       Logging.Send(LogLevel.ERROR, responseObject);
 

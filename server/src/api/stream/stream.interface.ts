@@ -26,4 +26,7 @@ export interface StreamListItem {
   product?: string;
   productType?: string;
   collectionContext?: string;
+  user?: string;
 }
+
+export type StreamGroup = Record<string, Array<ReviewDetails>>;

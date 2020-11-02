@@ -12,4 +12,5 @@ export enum StreamType {
   COLLECTION = 'collection',
   PRODUCT = 'product',
   PRODUCT_TYPE = 'product_type',
+  USER = 'user'
 }
