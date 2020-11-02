@@ -424,6 +424,28 @@ const ChangeProfile: React.FC<ChangeProfileProps> = (props: ChangeProfileProps) 
             </Box>
           </Grid>
           <Grid item xs={12} md={6} style={{marginBottom: 40}}>
+            <Input
+              defaultValue={props.profile.about}
+              handleBlur={updateForm}
+              helperText='Enter some information to help people get to know you.'
+              handleFocus={handleFocus}
+              multiline
+              name='about'
+              rows={4}
+              rowsMax={10}
+              type='text'
+              title="About"
+            />
+            <Box style={{marginTop: 20, marginBottom: 40}}>
+              <StyledButton
+                disabled={!changed}
+                title='Save about'
+                clickAction={handleSubmit}
+                submitting={submitting}
+              />
+            </Box>
+          </Grid>
+          <Grid item xs={12} md={6} style={{marginBottom: 40}}>
             <UpdateProfileLinks
               update={updateLinks}
               links={props.profile.links || []}
