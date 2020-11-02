@@ -16,3 +16,18 @@ export enum UserType {
   ANONYMOUS = 'anonymous',
   AUTHENTICATED = 'authenticated'
 }
+
+/**
+ * User link type.
+ */
+export enum UserLinkType {
+  BLOG = 'Blog',
+  FACEBOOK = 'Facebook',
+  INSTAGRAM = 'Instagram',
+  LINKEDIN = 'LinkedIn',
+  PINTEREST = 'Pinterest',
+  TIKTOK = 'TikTok',
+  TWITCH = 'Twitch',
+  TWITTER = 'Twitter',
+  YOUTUBE = 'YouTube'
+}

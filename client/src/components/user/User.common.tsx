@@ -5,7 +5,10 @@
  */
 
 // Enumerators.
-import { Role } from './User.enum';
+import {
+  Role,
+  UserLinkType
+} from './User.enum';
 
 // Interfaces.
 import {
@@ -44,4 +47,45 @@ export const getExternalAvatar: (
   }
 
   return avatar;
+}
+
+/**
+ * Retrieves an external link path.
+ *
+ * @param { UserLinkType } linkType - the chosen link type.
+ *
+ * @return string
+ */
+export const getExternalLinkPath: (
+  linkType: UserLinkType
+) => string = (
+  linkType: UserLinkType
+): string => {
+  let path: string = 'https://';
+  switch (linkType) {
+    case UserLinkType.FACEBOOK:
+      path += 'facebook.com/' 
+      break;
+    case UserLinkType.INSTAGRAM:
+      path += 'instagram.com/' 
+      break;
+    case UserLinkType.LINKEDIN:
+      path += 'linkedin.com/in/' 
+      break;
+    case UserLinkType.PINTEREST:
+      path += 'pinterest.com/' 
+      break;
+    case UserLinkType.TIKTOK:
+      path += 'tiktok.com/@' 
+      break;
+    case UserLinkType.TWITTER:
+      path += 'twitter.com/' 
+      break;
+    case UserLinkType.YOUTUBE:
+      path += 'youtube.com/channel/' 
+      break;
+    default:
+  }
+
+  return path;
 }

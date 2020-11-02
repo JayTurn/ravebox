@@ -7,7 +7,10 @@
 import * as Mongoose from 'mongoose';
 
 // Enumerators.
-import { UserRole } from './user.enum';
+import {
+  UserRole,
+  UserLinkType
+} from './user.enum';
 
 // Interfaces.
 import {
@@ -46,6 +49,7 @@ export interface UserDocument extends Mongoose.Document {
 
 export interface PrivateUserDetails {
   _id: string;
+  about?: string;
   avatar: string;
   handle: string;
   role: Array<UserRole>;
@@ -83,8 +87,10 @@ export interface SignupDetails {
 }
 
 export interface ProfileSettings {
+  about?: string;
   avatar: string;
   handle: string;
+  links?: Array<LinkDetails>;
 }
 
 /**
@@ -99,6 +105,6 @@ export interface UserChannel {
  * Links.
  */
 export interface LinkDetails {
-  title: string;
+  linkType: UserLinkType;
   path: string;
 }

@@ -12,3 +12,18 @@ export enum Role {
   CREATOR = 'creator',
   ADMIN = 'admin'
 }
+
+/**
+ * User link type.
+ */
+export enum UserLinkType {
+  BLOG = 'Blog',
+  FACEBOOK = 'Facebook',
+  INSTAGRAM = 'Instagram',
+  LINKEDIN = 'LinkedIn',
+  PINTEREST = 'Pinterest',
+  TIKTOK = 'TikTok',
+  TWITCH = 'Twitch',
+  TWITTER = 'Twitter',
+  YOUTUBE = 'YouTube'
+}

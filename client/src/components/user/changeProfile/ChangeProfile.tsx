@@ -35,6 +35,7 @@ import ImageUpload from '../../forms/imageUpload/ImageUpload';
 import Input from '../../forms/input/Input';
 import PaddedDivider from '../../elements/dividers/PaddedDivider';
 import StyledButton from '../../elements/buttons/StyledButton';
+import UpdateProfileLinks from '../updateProfileLinks/UpdateProfileLinks';
 
 // Enumerators.
 import { ImageUploadPaths } from '../../forms/imageUpload/ImageUpload.enum';
@@ -49,7 +50,10 @@ import {
   ChangeProfileResponse
 } from './ChangeProfile.interface';
 import { InputData } from '../../forms/input/Input.interface';
-import { PrivateProfile } from '../User.interface';
+import {
+  PrivateProfile,
+  UserLink
+} from '../User.interface';
 import { ValidationSchema } from '../../forms/validation/Validation.interface';
 
 // Validation rules.
@@ -125,6 +129,7 @@ const ChangeProfile: React.FC<ChangeProfileProps> = (props: ChangeProfileProps) 
   // Define the settings to be updated upon save.
   const [settings, updateSettings] = React.useState<PrivateProfile>({
     _id: '',
+    about: '',
     avatar: '',
     email: '',
     emailVerified: false,
@@ -132,6 +137,7 @@ const ChangeProfile: React.FC<ChangeProfileProps> = (props: ChangeProfileProps) 
       channels: []
     },
     handle: '',
+    links: [],
     role: []
   });
 
@@ -243,6 +249,21 @@ const ChangeProfile: React.FC<ChangeProfileProps> = (props: ChangeProfileProps) 
     submitProfile(path);
   }
 
+  /**
+   * Updates the profile links and submits the updated profile.
+   *
+   * @param { Array<UserLink> } links - the users profile links.
+   */
+  const updateLinks: (
+    links: Array<UserLink>
+  ) => void = (
+    links: Array<UserLink>
+  ): void => {
+    const updatedSettings: PrivateProfile = {...settings};
+    updatedSettings.links = [...links];
+    updateSettings(updatedSettings);
+  }
+
   const handleSubmit: (
     e: React.MouseEvent<HTMLButtonElement>
   ) => void = (
@@ -289,8 +310,10 @@ const ChangeProfile: React.FC<ChangeProfileProps> = (props: ChangeProfileProps) 
       },
       method: RequestType.PATCH,
       body: JSON.stringify({
+        about: settings.about,
+        avatar: updatedAvatar ? updatedAvatar : props.profile ? props.profile.avatar : '',
         handle: settings.handle,
-        avatar: updatedAvatar ? updatedAvatar : props.profile ? props.profile.avatar : ''
+        links: settings.links
       })
     })
     .then((response: ChangeProfileResponse) => {
@@ -381,16 +404,16 @@ const ChangeProfile: React.FC<ChangeProfileProps> = (props: ChangeProfileProps) 
             </Grid>
           </Grid>
           <Grid item xs={12} md={6} style={{marginBottom: 40}}>
-              <Input
-                defaultValue={props.profile.handle}
-                handleBlur={updateForm}
-                helperText='This is the name people will know you by on ravebox. It may only contain alphanumeric characters, hyphens and underscores.'
-                handleFocus={handleFocus}
-                name='handle'
-                type='text'
-                title="Handle"
-                validation={validation.handle}
-              />
+            <Input
+              defaultValue={props.profile.handle}
+              handleBlur={updateForm}
+              helperText='This is the name people will know you by on ravebox. It may only contain alphanumeric characters, hyphens and underscores.'
+              handleFocus={handleFocus}
+              name='handle'
+              type='text'
+              title="Handle"
+              validation={validation.handle}
+            />
             <Box style={{marginTop: 20, marginBottom: 40}}>
               <StyledButton
                 disabled={!changed}
@@ -399,6 +422,13 @@ const ChangeProfile: React.FC<ChangeProfileProps> = (props: ChangeProfileProps) 
                 submitting={submitting}
               />
             </Box>
+          </Grid>
+          <Grid item xs={12} md={6} style={{marginBottom: 40}}>
+            <UpdateProfileLinks
+              update={updateLinks}
+              links={props.profile.links || []}
+              submit={submitProfile}
+            />
           </Grid>
         </React.Fragment>
       }
