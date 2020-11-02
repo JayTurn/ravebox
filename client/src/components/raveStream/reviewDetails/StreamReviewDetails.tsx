@@ -15,12 +15,18 @@ import {
   withStyles
 } from '@material-ui/core/styles';
 import Grid from '@material-ui/core/Grid';
+import Tab from '@material-ui/core/Tab';
+import Tabs from '@material-ui/core/Tabs';
 import Typography from '@material-ui/core/Typography';
 import * as React from 'react';
+
+// Enumerators.
+import { StreamReviewDetailsSection } from './StreamReviewDetails.enum';
 
 // Components.
 import FollowButton from '../../follow/button/FollowButton';
 import StreamUserProfile from '../userProfile/StreamUserProfile';
+import UserRaves from '../userRaves/UserRaves';
 
 // Enumerators.
 import {
@@ -38,6 +44,17 @@ import {
 } from './StreamReviewDetails.interface';
 import { Review } from '../../review/Review.interface';
 
+// Override the admin tabs.
+const StyledTabs = withStyles(theme => ({
+  indicator: {
+    backgroundColor: theme.palette.primary.main
+  },
+  root: {
+    //borderBottom: `1px solid ${theme.palette.secondary.main}`
+  }
+}))(Tabs);
+
+
 /**
  * Create the theme styles to be used for the display.
  */
@@ -51,12 +68,57 @@ const useStyles = makeStyles((theme: Theme) =>
     followContainer: {
       marginTop: theme.spacing(2)
     },
+    tab: {
+      float: 'left',
+      width: 'calc(100% / 2)'
+    },
+    tabPanel: {
+      position: 'absolute',
+      top: 0,
+      transition: 'transform 300ms ease-in-out',
+      width: `200%`
+    },
+    tabPanelContainer: {
+      boxShadow: `inset 0px -1px 3px rgba(100,106,240,.25), inset 0px 1px 1px rgba(100,106,240,.15)`,
+      backgroundColor: `rgba(100,106,240, .1)`,
+      overflow: 'hidden',
+      padding: theme.spacing(1, 0),
+      position: 'relative',
+      width: '100%'
+    },
+    tabs: {
+      flexWrap: 'nowrap'
+    },
     userContainer: {
-      backgroundColor: `rgba(0,0,0,0.04)`,
-      padding: theme.spacing(10, 1, 2)
+      //backgroundColor: `rgba(0,0,0,0.04)`,
+      padding: theme.spacing(14, 1, 2)
     }
   })
 );
+
+/**
+ * Returns a string or number based on the active tab.
+ *
+ * @param { StreamReviewDetailsSection } showing
+ *
+ * @return string
+ */
+const setTabSection: (
+  showing: StreamReviewDetailsSection
+) => string = (
+  showing: StreamReviewDetailsSection
+): string => {
+  let value: number = 0;
+  switch (showing) {
+    case StreamReviewDetailsSection.RAVES:
+      return 'translate3d(0, 0, 0)';
+    case StreamReviewDetailsSection.DETAILS:
+      value = 100 / 2;
+      return `translate3d(calc(-${value}%), 0, 0)`;
+    default:
+      return 'translate3d(0, 0, 0)';
+  }
+};
 
 /**
  * Renders the video in the stream.
@@ -73,6 +135,99 @@ const StreamReviewDetails: React.FC<StreamReviewDetailsProps> = (props: StreamRe
   const [pageViewed, setPageViewed] = React.useState<boolean>(false);
 
   const { user } = {...props.review};
+
+  const [activeTab, setActiveTab] = React.useState<StreamReviewDetailsSection>(
+    StreamReviewDetailsSection.RAVES);
+
+  const [tabHeight, setTabHeight] = React.useState<number>(0);
+
+  const [userId, setUserId] = React.useState<string>('');
+
+  const [raveHeight, setRaveHeight] = React.useState<number | null>(null);
+  const [detailsHeight, setDetailsHeight] = React.useState<number | null>(null);
+
+  /**
+   * Handles switching between tabs.
+   *
+   * @param { StreamReviewDetailsSection } value - the selected review section.
+   */
+  const handleTabSwitch: (
+    value: StreamReviewDetailsSection
+  ) => void = (
+    value: StreamReviewDetailsSection
+  ): void => {
+    if (value === activeTab) {
+      return;
+    }
+    setActiveTab(value);
+    updateTabHeight(value);
+  }
+
+  /**
+   * Handles updates to the container height.
+   *
+   * @param { number } - the height to set the container.
+   */
+  const updateTabHeight: (
+    value: StreamReviewDetailsSection
+  ) => void = (
+    value: StreamReviewDetailsSection
+  ): void => {
+
+    switch (value) {
+      case StreamReviewDetailsSection.RAVES:
+        if (raveHeight) {
+          setTabHeight(raveHeight);
+        }
+        break;
+      case StreamReviewDetailsSection.DETAILS:
+        if (detailsHeight) {
+          setTabHeight(detailsHeight);
+        }
+        break;
+      default:
+    }
+  }
+
+  /**
+   * Handles updating the raves tab height.
+   */
+  const handleRaveHeightUpdate: (
+    value: number
+  ) => void = (
+    value: number
+  ): void => {
+    setRaveHeight(value);
+
+    if (activeTab === StreamReviewDetailsSection.RAVES) {
+      setTabHeight(value);
+    }
+  }
+
+  /**
+   * Handles updating the details tab height.
+   */
+  const handleAboutHeightUpdate: (
+    value: number
+  ) => void = (
+    value: number
+  ): void => {
+    setDetailsHeight(value);
+
+    if (activeTab === StreamReviewDetailsSection.DETAILS) {
+      setTabHeight(value);
+    }
+  }
+
+  /**
+   * Update the height on the first load.
+   */
+  React.useEffect(() => {
+    if (user && user._id !== userId) {
+      setUserId(user._id);
+      setActiveTab(StreamReviewDetailsSection.RAVES);
+    }
+  }, [user, userId]);
 
   return (
     <Grid
@@ -101,6 +256,73 @@ const StreamReviewDetails: React.FC<StreamReviewDetailsProps> = (props: StreamRe
                   />
                 </Grid> 
               </Grid>
+            </Grid>
+            <Grid container>
+              <Grid item xs={12}>
+                <StyledTabs
+                  value={activeTab}
+                  variant='scrollable'
+                >
+                  <Tab
+                    disableRipple
+                    id={`review-section-${StreamReviewDetailsSection.RAVES}`}
+                    label='Raves'
+                    onClick={(e: React.SyntheticEvent) => 
+                      handleTabSwitch(StreamReviewDetailsSection.RAVES)
+                    }
+                    value={StreamReviewDetailsSection.RAVES}
+                  />
+                  <Tab
+                    disableRipple
+                    id={`review-section-${StreamReviewDetailsSection.DETAILS}`}
+                    label={`About`}
+                    onClick={(e: React.SyntheticEvent) => 
+                      handleTabSwitch(StreamReviewDetailsSection.DETAILS)
+                    }
+                    value={StreamReviewDetailsSection.DETAILS}
+                  />
+                </StyledTabs>
+              </Grid>
+              <Box
+                className={clsx(classes.tabPanelContainer)}
+                style={{height: tabHeight}}
+              >
+                <Box
+                  className={clsx(classes.tabPanel)}
+                  style={{
+                    height: tabHeight,
+                    transform: `${setTabSection(activeTab)}`
+                  }}
+                >
+                  <div
+                    className={clsx(classes.tab)}
+                  >
+                    <UserRaves
+                      user={user}
+                      updateHeight={handleRaveHeightUpdate}
+                    />
+          {/*
+                    <RaveInformation
+                      index={ProductStreamSection.RAVES}
+                      product={props.product}
+                      value={activeTab}
+                    />
+                    */}
+                  </div>
+                  <div
+                    className={clsx(classes.tab)}
+                  >
+          {/*
+                    <ProductInformation
+                      index={ProductStreamSection.DETAILS}
+                      product={props.product}
+                      updateHeight={handleProductDetailsHeightUpdate}
+                      value={activeTab}
+                    />
+                    */}
+                  </div>
+                </Box>
+              </Box>
             </Grid>
           </Grid>
         }

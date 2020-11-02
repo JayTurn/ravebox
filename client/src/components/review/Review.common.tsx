@@ -113,3 +113,40 @@ export const formatReviewProperties: (
 
   return data;
 }
+
+/**
+ * Returns an array of reviews excluding the one with the id provided.
+ *
+ * @param { Array<Review> } reviews - the list of reviews.
+ * @param { string } id - the id of the review to exclude.
+ */
+export const filterReviews: (
+  reviews: Array<Review>
+) => (
+  id: string
+) => Array<Review> = (
+  reviews: Array<Review>
+) => (
+  id: string
+): Array<Review> => {
+  const updatedReviews: Array<Review> = [];
+
+  if (reviews.length <= 0) {
+    return updatedReviews;
+  }
+
+  let i: number = 0;
+
+  do {
+    const current: Review = reviews[i];
+
+    if (current._id !== id) {
+      updatedReviews.push({...current});
+    }
+    
+    i++;
+  } while (i < reviews.length);
+
+  return updatedReviews;
+}
+

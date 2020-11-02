@@ -63,7 +63,8 @@ import { emptyProduct } from '../../product/Product.common';
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     container: {
-      backgroundColor: 'black',
+      backgroundColor: '#1D1D1D',
+      boxShadow: `0 0 25px 0 rgba(0,0,0,1)`,
       height: '100%',
       left: 0,
       position: 'fixed',
@@ -79,7 +80,7 @@ const useStyles = makeStyles((theme: Theme) =>
       position: 'fixed'
     },
     shifted: {
-      borderRadius: 10
+      borderRadius: 20
     },
     subtitle: {
       fontSize: '1rem',
@@ -108,9 +109,9 @@ const setSwipePosition: (
 ): string => {
   switch (showing) {
     case SwipeView.PRODUCT:
-      return 'translate3d(0, 92%, 0)';
+      return 'translate3d(0, calc(100% - 80px), 0)';
     case SwipeView.REVIEW:
-      return 'translate3d(0, -92%, 0)';
+      return 'translate3d(0, calc(-100% + 80px), 0)';
     default:
       return 'translate3d(0, 0, 0)';
   }
@@ -159,7 +160,7 @@ const StreamVideoController: React.FC<StreamVideoControllerProps> = (props: Stre
 
   const [showOverlay, setShowOverlay] = React.useState<boolean>(true);
 
-  const [playing, setPlaying] = React.useState<boolean>(true);
+  const [playing, setPlaying] = React.useState<boolean>(false);
 
   const activeIndex: number = props.activeIndex || 0;
 
@@ -171,12 +172,13 @@ const StreamVideoController: React.FC<StreamVideoControllerProps> = (props: Stre
   ): void => {
     if (props.updateActiveIndex && props.updateProduct) {
       if (props.raveStream && props.raveStream.reviews.length > 0) {
-        props.updateProduct(
-          props.raveStream.reviews[activeIndex + 1].product || emptyProduct()
-        );
+        if ((activeIndex + 1) < props.raveStream.reviews.length) {
+          props.updateProduct(
+            props.raveStream.reviews[activeIndex + 1].product || emptyProduct()
+          );
+          props.updateActiveIndex(activeIndex + 1);
+        }
       }
-      props.updateActiveIndex(activeIndex + 1);
-      setPlaying(true);
     }
   }
 
@@ -185,12 +187,13 @@ const StreamVideoController: React.FC<StreamVideoControllerProps> = (props: Stre
   ): void => {
     if (props.updateActiveIndex && props.updateProduct) {
       if (props.raveStream && props.raveStream.reviews.length > 0) {
-        props.updateProduct(
-          props.raveStream.reviews[activeIndex - 1].product || emptyProduct()
-        );
+        if ((activeIndex - 1) >= 0) {
+          props.updateProduct(
+            props.raveStream.reviews[activeIndex - 1].product || emptyProduct()
+          );
+          props.updateActiveIndex(activeIndex - 1);
+        }
       }
-      props.updateActiveIndex(activeIndex - 1);
-      setPlaying(true);
     }
   }
 

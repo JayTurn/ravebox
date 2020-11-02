@@ -38,6 +38,7 @@ import ContentBlock from '../../components/elements/contentBlock/ContentBlock';
 import Logo from '../../components/logo/Logo';
 import ListByQuery from '../../components/review/listByQuery/ListByQuery';
 import ListTitle from '../../components/elements/listTitle/ListTitle';
+import LoadingRaveStream from '../../components/placeholders/loadingRaveStream/LoadingRaveStream';
 import StreamCardHolder from '../../components/raveStream/cardHolder/StreamCardHolder';
 
 // Enumerators.
@@ -284,9 +285,23 @@ const Home: React.FC<HomeProps> = (props: HomeProps) => {
         </Grid>
       </Grid>
       {raveStreamsStatus === ViewState.WAITING &&
-        <Grid item xs={12}>
-          Add loading state here...
-        </Grid>
+        <React.Fragment>
+          <Grid item xs={12} className={clsx(
+            classes.cardBackground
+          )}>
+            <LoadingRaveStream />
+          </Grid>
+          <Grid item xs={12} className={clsx(
+            classes.cardBackground
+          )}>
+            <LoadingRaveStream />
+          </Grid>
+          <Grid item xs={12} className={clsx(
+            classes.cardBackground
+          )}>
+            <LoadingRaveStream />
+          </Grid>
+        </React.Fragment>
       }
       {raveStreamsStatus === ViewState.FOUND &&
         <React.Fragment>

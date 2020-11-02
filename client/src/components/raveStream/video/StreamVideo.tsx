@@ -60,7 +60,6 @@ import { calculateVideoRatio } from '../RaveStream.common';
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     container: {
-      backgroundColor: 'black',
       height: '100%',
       //maxHeight: 'calc(100vh); max-height: -webkit-fill-available;',
       //minHeight: 'calc(100vh); min-height: -webkit-fill-available;',
@@ -73,6 +72,10 @@ const useStyles = makeStyles((theme: Theme) =>
     defaultColor: {
       color: theme.palette.common.white
     },
+    externalVideo: {
+      left: -15,
+      top: -10
+    },
     overlay: {
       height: '100%',
       left: 0,
@@ -84,6 +87,19 @@ const useStyles = makeStyles((theme: Theme) =>
     subtitle: {
       fontSize: '1rem',
       fontWeight: 600
+    },
+    thumbnailContainer: {
+      backgroundSize: 'cover',
+      backgroundRepeat: 'no-repeat',
+      backgroundPosition: 'center center',
+      height: '100%',
+      left: 0,
+      overflow: 'hidden',
+      position: 'absolute',
+      transition: 'opacity 200ms ease-in-out',
+      top: 0,
+      width: '100%',
+      zIndex: 2
     },
     videoContainer: {
       height: '100%',
@@ -134,9 +150,10 @@ const StreamVideo: React.FC<StreamVideoProps> = (props: StreamVideoProps) => {
   const videoRatio: number = calculateVideoRatio(
     props.review.videoWidth)(props.review.videoHeight);
 
-  const height: string = videoRatio !== 0
-    ? `calc(100vw / ${videoRatio})`
-    : `calc(100vw * .5)`; 
+  //const height: string = videoRatio !== 0
+    //? `calc(100vw / ${videoRatio})`
+    //: `calc(100vw * .5625)`; 
+  const height: string = `calc(100vw * .5625)`;
 
   // Define the component classes.
   const classes = useStyles(),
@@ -300,7 +317,11 @@ const StreamVideo: React.FC<StreamVideoProps> = (props: StreamVideoProps) => {
       style={{transform: `${setVideoPosition(props.positioning)}`}}
     >
       <Box
-        className={clsx(classes.overlay)} 
+        className={clsx(
+          classes.overlay, {
+            [classes.externalVideo]: videoRatio === 0
+          }
+        )} 
       >
         <PlaybackIcon
           loading={loading}
@@ -308,6 +329,14 @@ const StreamVideo: React.FC<StreamVideoProps> = (props: StreamVideoProps) => {
           size='small'
           unplayed={false}
         />
+      </Box>
+      <Box
+        className={clsx(classes.thumbnailContainer)}
+        style={{
+          backgroundImage: `url(${props.review.thumbnail})`,
+          opacity: unplayed ? 1 : 0
+        }}
+      >
       </Box>
       <Grid
         className={clsx(classes.videoContainer)}

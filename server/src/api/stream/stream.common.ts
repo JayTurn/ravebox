@@ -18,6 +18,7 @@ import { Workflow } from '../../shared/enumerators/workflow.enum';
 import { BrandDetails } from '../brand/brand.interface';
 import { CollectionDetails } from '../collection/collection.interface';
 import { ProductDetails } from '../product/product.interface';
+import { PublicUserDetails } from '../user/user.interface';
 import { ResponseObject } from '../../models/database/connect.interface';
 import {
   ReviewDocument,
@@ -25,6 +26,7 @@ import {
 } from '../review/review.interface';
 import {
   StreamData,
+  StreamGroup,
   StreamListItem
 } from './stream.interface';
 import { TagDetails } from '../tag/tag.interface';
@@ -38,6 +40,7 @@ import Product from '../product/product.model';
 import Review from '../review/review.model'
 import ReviewCommon from '../review/review.common';
 import Tag from '../tag/tag.model';
+import User from '../user/user.model';
 
 /**
  * StreamCommon class.
@@ -430,6 +433,86 @@ export default class StreamCommon {
   }
 
   /**
+   * Retrieves a list of rave streams based on a single user.
+   *
+   * @param { StreamListItem } item - the stream item.
+   *
+   * @return StreamData
+   */
+  static RetrieveUserStreamList(item: StreamListItem): Promise<Array<StreamData>> {
+    return new Promise<Array<StreamData>>((resolve: Function) => {
+      if (!item.user || !item.streamType) {
+        return resolve();
+      }
+
+      User.findOne({
+        _id: item.user
+      })
+      .lean()
+      .then((userDetails: PublicUserDetails) => {
+        if (!userDetails) {
+          return resolve();
+        }
+
+        return Review.find({
+          user: userDetails._id,
+          published: Workflow.PUBLISHED
+        })
+        .populate({
+          path: 'product',
+          model: 'Product',
+          populate: [{
+            path: 'brand',
+            model: 'Brand'
+          }, {
+            path: 'productType',
+            model: 'Tag'
+          }]
+        })
+        .populate({
+          path: 'statistics',
+          model: 'ReviewStatistic' 
+        })
+        .populate({
+          path: 'user',
+          model: 'User',
+          populate: [{
+            path: 'statistics',
+            model: 'UserStatistic'
+          }]
+        });
+      })
+      .then((reviewDocuments: Array<ReviewDocument>) => {
+
+        const reviews: Array<ReviewDetails> = ReviewCommon
+          .FormatStreamReviews(
+            reviewDocuments,
+          );
+
+        // Group the reviews into product type streams.
+        const streamList: Array<StreamData> = StreamCommon
+          .GroupRavesIntoStreams(reviews);
+
+        resolve(streamList);
+      })
+      .catch((error: Error) => {
+        // Set the response object.
+        const responseObject: ResponseObject = Connect.setResponse({
+          data: {
+            errorCode: 'PRODUCT_STREAM_RETRIEVAL_FAILED',
+            message: 'There was a problem retrieving reviews for this product stream'
+          },
+          error: error
+        }, 404, `There was a problem locating a stream for ${item.product}`);
+
+        Logging.Send(LogLevel.WARNING, responseObject);
+
+        resolve();
+      });
+    });
+  }
+
+  /**
    * Sets a review to the beginning of the list if it's found.
    *
    * @param { Array<ReviewDetails> } reviews - the list of reviews.
@@ -461,5 +544,71 @@ export default class StreamCommon {
     } while (i < reviews.length);
 
     return sortedReviews;
+  }
+
+  /**
+   * Loops through a list of raves and places them in product type streams.
+   *
+   * @param { Array<ReviewDetails> } reviews - the reviews to be grouped. 
+   *
+   * @return Array<StreamData>
+   */
+  static GroupRavesIntoStreams(reviews: Array<ReviewDetails>): Array<StreamData> {
+    const streamLists: Array<StreamData> = [];
+         
+    let streamGroup: StreamGroup;
+
+    if (!reviews || reviews.length <= 0) {
+      return streamLists;
+    }
+
+    let i = 0;
+
+    do {
+      const current: ReviewDetails = reviews[i];
+
+      if (!streamGroup) {
+        streamGroup = {
+          [current.product.productType.url]: [{...current}]
+        };
+      } else {
+        if (streamGroup[current.product.productType.url]) {
+          streamGroup[current.product.productType.url].push({...current});
+        } else {
+          streamGroup[current.product.productType.url] = [{...current}];
+        }
+      }
+      i++;
+    } while (i < reviews.length);
+
+    // Loop through the stream groups and separate them into stream lists.
+    const keys: Array<string> = Object.keys(streamGroup);
+
+    if (!keys || keys.length <= 0) {
+      return streamLists;
+    }
+
+    i = 0;
+
+    do {
+      const current: Array<ReviewDetails> = streamGroup[keys[i]];
+
+      let title = '';
+
+      if (current[0]) {
+        title = current[0].product.productType.name;
+      }
+
+      streamLists.push({
+        title: title,
+        reviews: [...current],
+        streamType: StreamType.PRODUCT_TYPE
+      });
+
+      i++;
+    } while (i < keys.length);
+
+    return streamLists;
+    
   }
 }

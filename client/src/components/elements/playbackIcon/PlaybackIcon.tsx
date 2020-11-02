@@ -94,6 +94,8 @@ const PlaybackIcon: React.FC<PlaybackIconProps> = (props: PlaybackIconProps) => 
 
   const [playing, setPlaying] = React.useState<boolean>(props.playing);
 
+  const [firstPlay, setFirstPlay] = React.useState<boolean>(true);
+
   /**
    * Display the playback button when the playing state has changed.
    */
@@ -101,7 +103,8 @@ const PlaybackIcon: React.FC<PlaybackIconProps> = (props: PlaybackIconProps) => 
     if (playing !== props.playing) {
       setPlaying(props.playing);
 
-      if (props.unplayed) {
+      if (props.unplayed || firstPlay) {
+        setFirstPlay(false);
         return;
       }
 
