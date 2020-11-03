@@ -20,7 +20,7 @@ export interface AppProps extends RouteComponentProps {
   profile?: PrivateProfile;
   showLogin?: Function;
   updateImageConfiguration?: Function;
-  updateLoading: (loaded: boolean) => void;
+  updateLoading?: (loaded: boolean) => void;
   updateXsrf?: (token: string) => {};
 }
 
