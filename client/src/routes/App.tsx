@@ -36,6 +36,9 @@ import {
   add
 } from '../store/xsrf/Actions';
 import { updateAPIImageConfig } from '../store/configuration/Actions';
+import {
+  update as updateLoading
+} from '../store/loading/Actions';
 
 // Components.
 const About = loadable(() => import('./about/About'));
@@ -204,6 +207,11 @@ const App: React.FC<AppProps> = (props: AppProps) => {
    */
   React.useEffect(() => props.history.listen(() => {
     setShowNavigation(displayNavigation(props.history.location.pathname)(largeScreen));
+    if (props.history.location.pathname.startsWith('/stream')) {
+      if (props.updateLoading) {
+        props.updateLoading(true);
+      }
+    }
   }));
 
   React.useEffect(() => {
@@ -215,10 +223,8 @@ const App: React.FC<AppProps> = (props: AppProps) => {
       }
       setChooseTheme(1);
     }
-    setTimeout(() => {
-      setAppClasses('app');
-    }, 700);
-  }, [appClasses, chooseTheme]);
+    setAppClasses('app');
+  }, [chooseTheme]);
 
   /**
    * Renders the application.
@@ -363,12 +369,12 @@ const App: React.FC<AppProps> = (props: AppProps) => {
 function mapStatetoProps(state: any, ownProps: AppProps) {
   let profile: PrivateProfile = state.user ? state.user.profile : {_id: '', email: ''};
 
-  const expanded: boolean = state.navigation ? state.navigation.display : false;
+  const expanded: boolean = state.navigation ? state.navigation.display : false
 
   return {
     ...ownProps,
-    profile,
-    expanded
+    expanded,
+    profile
   };
 }
 
@@ -381,6 +387,7 @@ const mapDispatchToProps = (dispatch: Dispatch<AnyAction>) =>
   bindActionCreators(
     {
       login: login,
+      updateLoading: updateLoading,
       updateXsrf: add
     },
     dispatch

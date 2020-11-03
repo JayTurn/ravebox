@@ -24,4 +24,4 @@ const RaveStream: React.FC<RaveStreamProps> = (props: RaveStreamProps) => {
   );
 }
 
-export default withRouter((RaveStream));
+export default withRouter(RaveStream);

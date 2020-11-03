@@ -99,11 +99,11 @@ const UserLinks: React.FC<UserLinksProps> = (props: UserLinksProps) => {
       {props.user.links && props.user.links.length > 0 &&
         <Grid item xs={12}>
           <Grid container className={clsx(classes.linkContainer)}>
-            {props.user.links.map((userLink: UserLink) => {
+            {props.user.links.map((userLink: UserLink, index: number) => {
               const linkPrefix: string = getExternalLinkPath(userLink.linkType);
 
               return (
-                <Grid item xs={12} className={clsx(classes.linkItem)}>
+                <Grid item key={index} xs={12} className={clsx(classes.linkItem)}>
                   <Typography variant='body1'>
                     <Link
                       className={clsx(classes.linkText)}

@@ -21,9 +21,12 @@ import {
   withStyles
 } from '@material-ui/core/styles';
 import { frontloadConnect } from 'react-frontload';
+import Grid from '@material-ui/core/Grid';
 import { Helmet } from 'react-helmet';
+import LinearProgress from '@material-ui/core/LinearProgress';
 import * as React from 'react';
 import { Route } from 'react-router-dom';
+import { Transition } from 'react-transition-group';
 import useMediaQuery from '@material-ui/core/useMediaQuery';
 import { withRouter } from 'react-router';
 
@@ -33,14 +36,19 @@ import {
   updateActive,
   updateProduct
 } from '../../../store/raveStream/Actions';
+import {
+  update as updateLoading
+} from '../../../store/loading/Actions';
 
 // Components.
 import StyledButton from '../../elements/buttons/StyledButton';
 import StreamProductDetails from '../productDetails/StreamProductDetails';
 import StreamReviewDetails from '../reviewDetails/StreamReviewDetails';
 import StreamVideoController from '../videoController/StreamVideoController';
+import LoadingRavebox from '../../placeholders/loadingRavebox/LoadingRavebox';
 
 // Enumerators.
+import { LogoColor } from '../../logo/Logo.enum';
 import { RaveStreamType } from '../RaveStream.enum';
 import {
   RequestType,
@@ -96,10 +104,32 @@ const useStyles = makeStyles((theme: Theme) =>
       top: 0,
       width: '100vw'
     },
-    testContainer: {
-      left: 0,
-      position: 'absolute',
-      top: '30%',
+    loading: {
+      height: '100%',
+    },
+    loadingContainerHidden: {
+      zIndex: 0
+    },
+    loadingContainerEntering: {
+      opacity: 1,
+    },
+    loadingContainerEntered: {
+      opacity: 1,
+    },
+    loadingContainerExiting: {
+      opacity: 1,
+    },
+    loadingContainerExited: {
+      opacity: 0,
+    },
+    loadingContainer: {
+      backgroundColor: theme.palette.background.default,
+      height: '100%',
+      overflow: 'hidden',
+      position: 'fixed',
+      top: 0,
+      transition: `opacity 100ms ease-in-out`,
+      width: 'calc(100vw)',
       zIndex: 5
     }
   })
@@ -221,15 +251,31 @@ const SwipeStream: React.FC<SwipeStreamProps> = (props: SwipeStreamProps) => {
 
   const [upperOverlay, setUpperOverlay] = React.useState<SwipeView>(SwipeView.PRODUCT);
 
+
   /**
    * Track the stream view.
    */
   React.useEffect(() => {
 
     if (props.review && props.review.url !== ravePath) {
+      if (props.updateLoading) {
+        props.updateLoading(true);
+      }
       const path: string = formatURL(props.match.params)(props.review.url);
       setRavePath(props.review.url);
       props.history.push(path);
+    }
+
+    if (props.loading && raveStreamStatus !== ViewState.WAITING) {
+      if (props.updateLoading) {
+        props.updateLoading(false);
+      }
+    }
+
+    if (!props.loading && raveStreamStatus === ViewState.WAITING) {
+      if (props.updateLoading) {
+        props.updateLoading(true);
+      }
     }
 
     // Track the category list page view.
@@ -258,7 +304,17 @@ const SwipeStream: React.FC<SwipeStreamProps> = (props: SwipeStreamProps) => {
       setPageViewed(true);
 
     }
-  }, [pageViewed, props.product, props.match.params, props.review, ravePath]);
+
+
+  }, [
+    pageViewed,
+    props.loading,
+    props.product,
+    props.match.params,
+    props.review,
+    ravePath,
+    raveStreamStatus
+  ]);
 
   /**
    * Sets the video view position.
@@ -284,6 +340,7 @@ const SwipeStream: React.FC<SwipeStreamProps> = (props: SwipeStreamProps) => {
 
   return (
     <Box className={clsx(classes.container)}>
+      <LoadingRavebox title={`Loading stream`} />
       {props.raveStream && props.raveStream.reviews && props.raveStream.reviews.length > 0 &&
         <StreamVideoController
           showing={swipeView}
@@ -316,6 +373,7 @@ const mapDispatchToProps = (dispatch: Dispatch<AnyAction>) =>
     {
       updateActiveRaveStream: update,
       updateActiveIndex: updateActive,
+      updateLoading: updateLoading,
       updateProduct: updateProduct
     },
     dispatch
@@ -327,6 +385,7 @@ const mapDispatchToProps = (dispatch: Dispatch<AnyAction>) =>
 const mapStateToProps = (state: any, ownProps: SwipeStreamProps) => {
   // Retrieve the product stream from the active properties.
   const raveStream: RaveStream = state.raveStream ? state.raveStream.raveStream : undefined,
+        loading: boolean = state.loading ? state.loading.loading : true,
         product: Product = state.raveStream ? state.raveStream.product : undefined,
         activeIndex: number = state.raveStream ? state.raveStream.active : 0;
 
@@ -339,6 +398,7 @@ const mapStateToProps = (state: any, ownProps: SwipeStreamProps) => {
   return {
     ...ownProps,
     activeIndex,
+    loading,
     product,
     raveStream,
     review
