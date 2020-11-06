@@ -31,7 +31,10 @@ import { Review } from '../../review/Review.interface';
 import { CardUserProps } from './CardUser.interface';
 
 // Utilities.
-import { getExternalAvatar } from '../../user/User.common';
+import {
+  getExternalAvatar,
+  formatStatistics
+} from '../../user/User.common';
 
 /**
  * Create the theme styles to be used for the display.
@@ -52,13 +55,19 @@ const useStyles = makeStyles((theme: Theme) =>
     container: {
     },
     handleContainer: {
-      margin: theme.spacing(0, 2, 0, .5)
+      margin: theme.spacing(0, 2, 0, 1)
     },
     handleText: {
-      fontSize: '1rem',
-      fontWeight: 500
+      fontSize: '1.15rem',
+      lineHeight: 1.3,
+      fontWeight: 600
     },
     raveButton: {
+    },
+    userStatisticsText: {
+      fontSize: '.7rem',
+      fontWeight: 600,
+      textTransform: 'uppercase'
     }
   })
 );
@@ -74,9 +83,14 @@ const CardUser: React.FC<CardUserProps> = (props: CardUserProps) => {
   const firstLetter: string = props.review && props.review.user ?
     props.review.user.handle.substr(0,1) : 'R';
 
+
   const {
     review
   } = {...props};
+
+  const statistics: string = review && review.user && review.user.statistics 
+    ? formatStatistics(review.user.statistics)
+    : '';
 
   const avatar: string | undefined = review.user ? getExternalAvatar(review.user) : undefined; 
 
@@ -112,6 +126,11 @@ const CardUser: React.FC<CardUserProps> = (props: CardUserProps) => {
             >
               {review.user.role === Role.YOUTUBE ? 'youtube' : review.user.handle}
             </Typography>
+            {review.user.statistics &&
+              <Typography variant='body2' className={classes.userStatisticsText}>
+                {statistics}
+              </Typography>
+            }
           </Grid>
         </React.Fragment>
       }

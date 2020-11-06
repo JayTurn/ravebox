@@ -48,6 +48,7 @@ export interface RetrieveStreamByURLParams {
   setActiveRaveStream?: (raveStream: RaveStream) => void;
   setActiveRave?: (index: number) => void;
   setActiveProduct?: (product: Product) => void;
+  updateLoading?: (loading: boolean) => void;
 }
 
 /**

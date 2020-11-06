@@ -210,6 +210,7 @@ function mapStatetoProps(state: any, ownProps: LoadingRaveboxProps) {
 
   const loading: boolean = state.loading ? state.loading.loading : true;
 
+  console.log('LOADING_STATE: ', loading);
   return {
     ...ownProps,
     loading

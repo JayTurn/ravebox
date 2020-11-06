@@ -25,7 +25,7 @@ import * as React from 'react';
 // Components.
 import LoadingRaveStream from '../../placeholders/loadingRaveStream/LoadingRaveStream';
 import ProductDescription from '../productDescription/ProductDescription';
-import StreamCardHolder from '../cardHolder/StreamCardHolder';
+import SwipeCardHolder from '../../swipeStream/cardHolder/SwipeCardHolder';
 
 // Enumerators.
 import { RaveStreamType } from '../RaveStream.enum';
@@ -142,7 +142,7 @@ const UserRaves: React.FC<UserRavesProps> = (props: UserRavesProps) => {
               })}
               key={index}
             >
-              <StreamCardHolder
+              <SwipeCardHolder
                 title={raveStream.title}
                 streamType={raveStream.streamType}
                 reviews={[...raveStream.reviews]}

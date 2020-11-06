@@ -20,7 +20,13 @@ import * as React from 'react';
 import Typography from '@material-ui/core/Typography';
 import useMediaQuery from '@material-ui/core/useMediaQuery';
 
+// Components.
+import FollowButton from '../../follow/button/FollowButton';
+
 // Enumerators.
+import {
+  FollowType
+} from '../../follow/FollowType.enum';
 import { Role } from '../../user/User.enum';
 
 // Hooks.
@@ -57,6 +63,9 @@ const useStyles = makeStyles((theme: Theme) =>
       fontWeight: 600,
       height: theme.spacing(11.5),
       width: theme.spacing(11.5)
+    },
+    followContainer: {
+      marginTop: theme.spacing(2)
     },
     handleText: {
       display: 'block',
@@ -194,6 +203,13 @@ const StreamUserProfile: React.FC<StreamUserProfileProps> = (props: StreamUserPr
             }
           </Grid>
         </Grid>
+      </Grid>
+      <Grid item xs={12} className={clsx(classes.followContainer)}>
+        <FollowButton
+          id={props.user._id}
+          handle={props.user.handle}
+          followType={FollowType.CHANNEL}
+        />
       </Grid>
     </Grid>
   );

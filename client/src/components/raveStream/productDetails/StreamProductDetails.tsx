@@ -15,14 +15,14 @@ import {
   withStyles
 } from '@material-ui/core/styles';
 import Grid from '@material-ui/core/Grid';
+import * as React from 'react';
 import SwipeableViews from 'react-swipeable-views';
 import Tab from '@material-ui/core/Tab';
 import Tabs from '@material-ui/core/Tabs';
 import Typography from '@material-ui/core/Typography';
-import * as React from 'react';
 
 // Components.
-import StreamNavigation from '../navigation/StreamNavigation';
+import SwipeNavigation from '../../swipeStream/navigation/SwipeNavigation';
 import ProductInformation from '../productInformation/ProductInformation';
 import RaveInformation from '../raveInformation/RaveInformation';
 import SimilarProducts from '../similarProducts/SimilarProducts';
@@ -267,7 +267,7 @@ const StreamProductDetails: React.FC<StreamProductDetailsProps> = (props: Stream
       container
     >
       <Grid item xs={12}>
-        <StreamNavigation
+        <SwipeNavigation
           title={props.raveStream ? props.raveStream.title : ''}
           variant='colored'
         />

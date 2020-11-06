@@ -239,24 +239,8 @@ const StreamReviewDetails: React.FC<StreamReviewDetailsProps> = (props: StreamRe
       <Grid item xs={12}>
         {user &&
           <Grid container>
-            <Grid item xs={12}>
-              <Grid
-                alignItems='center'
-                className={classes.userContainer}
-                container 
-                justify='space-between'
-              >
-                <Grid item xs={12}>
-                    <StreamUserProfile user={user} />
-                </Grid>
-                <Grid className={clsx(classes.followContainer)} item xs={12}>
-                  <FollowButton
-                    id={user._id}
-                    handle={user.handle}
-                    followType={FollowType.CHANNEL}
-                  />
-                </Grid> 
-              </Grid>
+            <Grid item xs={12} className={clsx(classes.userContainer)}>
+              <StreamUserProfile user={user} />
             </Grid>
             <Grid container>
               <Grid item xs={12}>
@@ -273,15 +257,17 @@ const StreamReviewDetails: React.FC<StreamReviewDetailsProps> = (props: StreamRe
                     }
                     value={StreamReviewDetailsSection.RAVES}
                   />
-                  <Tab
-                    disableRipple
-                    id={`review-section-${StreamReviewDetailsSection.DETAILS}`}
-                    label={`About`}
-                    onClick={(e: React.SyntheticEvent) => 
-                      handleTabSwitch(StreamReviewDetailsSection.DETAILS)
-                    }
-                    value={StreamReviewDetailsSection.DETAILS}
-                  />
+                  {user.about || (user.links && user.links.length > 0) &&
+                    <Tab
+                      disableRipple
+                      id={`review-section-${StreamReviewDetailsSection.DETAILS}`}
+                      label={`About`}
+                      onClick={(e: React.SyntheticEvent) => 
+                        handleTabSwitch(StreamReviewDetailsSection.DETAILS)
+                      }
+                      value={StreamReviewDetailsSection.DETAILS}
+                    />
+                  }
                 </StyledTabs>
               </Grid>
               <Box
@@ -303,14 +289,16 @@ const StreamReviewDetails: React.FC<StreamReviewDetailsProps> = (props: StreamRe
                       updateHeight={handleRaveHeightUpdate}
                     />
                   </div>
-                  <div
-                    className={clsx(classes.tab)}
-                  >
-                    <UserAbout
-                      updateHeight={handleAboutHeightUpdate}
-                      user={user}
-                    />
-                  </div>
+                  {user.about || (user.links && user.links.length > 0) &&
+                    <div
+                      className={clsx(classes.tab)}
+                    >
+                      <UserAbout
+                        updateHeight={handleAboutHeightUpdate}
+                        user={user}
+                      />
+                    </div>
+                  }
                 </Box>
               </Box>
             </Grid>

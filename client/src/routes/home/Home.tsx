@@ -35,11 +35,12 @@ import {
 
 // Components.
 import ContentBlock from '../../components/elements/contentBlock/ContentBlock';
+import DesktopCardHolder from '../../components/desktopStream/cardHolder/DesktopCardHolder'
 import Logo from '../../components/logo/Logo';
 import ListByQuery from '../../components/review/listByQuery/ListByQuery';
 import ListTitle from '../../components/elements/listTitle/ListTitle';
 import LoadingRaveStream from '../../components/placeholders/loadingRaveStream/LoadingRaveStream';
-import StreamCardHolder from '../../components/raveStream/cardHolder/StreamCardHolder';
+import SwipeCardHolder from '../../components/swipeStream/cardHolder/SwipeCardHolder';
 
 // Enumerators.
 import { ColorStyle } from '../../components/elements/contentBlock/ContentBlock.enum';
@@ -102,7 +103,7 @@ const useStyles = makeStyles((theme: Theme) =>
       marginTop: theme.spacing(6),
     },
     cardBackground: {
-      backgroundColor: `rgba(100,106,240, .1)`,
+      backgroundColor: theme.palette.background.paper,
       //backgroundColor: '#f4f4f4',
       '&:first-child': {
         paddingTop: theme.spacing(.5)
@@ -286,17 +287,42 @@ const Home: React.FC<HomeProps> = (props: HomeProps) => {
       </Grid>
       {raveStreamsStatus === ViewState.WAITING &&
         <React.Fragment>
-          <Grid item xs={12} className={clsx(
+          <Grid item xs={12} sm={6} md={3} className={clsx(
             classes.cardBackground
           )}>
             <LoadingRaveStream />
           </Grid>
-          <Grid item xs={12} className={clsx(
+          <Grid item xs={12} sm={6} md={3} className={clsx(
             classes.cardBackground
           )}>
             <LoadingRaveStream />
           </Grid>
-          <Grid item xs={12} className={clsx(
+          <Grid item xs={12} sm={6} md={3} className={clsx(
+            classes.cardBackground
+          )}>
+            <LoadingRaveStream />
+          </Grid>
+          <Grid item xs={12} sm={6} md={3} className={clsx(
+            classes.cardBackground
+          )}>
+            <LoadingRaveStream />
+          </Grid>
+          <Grid item xs={12} sm={6} md={3} className={clsx(
+            classes.cardBackground
+          )}>
+            <LoadingRaveStream />
+          </Grid>
+          <Grid item xs={12} sm={6} md={3} className={clsx(
+            classes.cardBackground
+          )}>
+            <LoadingRaveStream />
+          </Grid>
+          <Grid item xs={12} sm={6} md={3} className={clsx(
+            classes.cardBackground
+          )}>
+            <LoadingRaveStream />
+          </Grid>
+          <Grid item xs={12} sm={6} md={3} className={clsx(
             classes.cardBackground
           )}>
             <LoadingRaveStream />
@@ -317,11 +343,19 @@ const Home: React.FC<HomeProps> = (props: HomeProps) => {
                   )}
                   key={index}
                 >
-                  <StreamCardHolder
-                    title={raveStream.title}
-                    streamType={raveStream.streamType}
-                    reviews={[...raveStream.reviews]}
-                  />
+                  {largeScreen ? (
+                    <DesktopCardHolder
+                      title={raveStream.title}
+                      streamType={raveStream.streamType}
+                      reviews={[...raveStream.reviews]}
+                    />
+                  ) : (
+                    <SwipeCardHolder
+                      title={raveStream.title}
+                      streamType={raveStream.streamType}
+                      reviews={[...raveStream.reviews]}
+                    />
+                  )}
                 </Grid>
               ))}
             </React.Fragment>

@@ -61,6 +61,8 @@ export function useRetrieveSimilarProducts(
 
   const [productId, setProductId] = React.useState<string | null>(product._id);
 
+  const [firstLoad, setFirstLoad] = React.useState<boolean>(true);
+
   /**
    * Perform an update request when the product id changes.
    */
@@ -68,6 +70,10 @@ export function useRetrieveSimilarProducts(
     if (product._id !== productId) {
       setProductId(product._id);
       setRetrieved(RetrievalStatus.REQUESTED);
+    }
+    if (productId && firstLoad) {
+      setRetrieved(RetrievalStatus.REQUESTED);
+      setFirstLoad(false);
     }
   }, [product, productId])
 

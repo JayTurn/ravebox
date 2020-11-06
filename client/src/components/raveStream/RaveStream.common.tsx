@@ -119,6 +119,35 @@ export const buildURLForStream: (
 }
 
 /**
+ * Returns the human readable stream name.
+ *
+ * @param { RaveStreamType } streamType - the stream type.
+ *
+ * @return string
+ */
+export const getStreamName: (
+  streamType: RaveStreamType
+) => string = (
+  streamType: RaveStreamType
+): string => {
+  let name: string = '';
+
+  switch (streamType) {
+    case RaveStreamType.COLLECTON:
+      name = 'Collection';
+    case RaveStreamType.PRODUCT:
+      name = 'Product';
+      break;
+    case RaveStreamType.PRODUCT_TYPE:
+    case RaveStreamType.CATEGORY:
+      name = 'Category';
+      break;
+  }
+
+  return name;
+}
+
+/**
  * Builds a list of rave streams to be requested
  */
 export const getHomeStreamList: (

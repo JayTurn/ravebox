@@ -24,7 +24,7 @@ import * as React from 'react';
 
 // Components.
 import ProductDescription from '../productDescription/ProductDescription';
-import StreamCardHolder from '../cardHolder/StreamCardHolder';
+import SwipeCardHolder from '../../swipeStream/cardHolder/SwipeCardHolder';
 
 // Enumerators.
 import { RaveStreamType } from '../RaveStream.enum';
@@ -183,7 +183,7 @@ const RaveInformation: React.FC<RaveInformationProps> = (props: RaveInformationP
             </Grid>
           }
           {props.raveStream &&
-            <StreamCardHolder
+            <SwipeCardHolder
               reviews={reviews ? [...reviews] : []}
               streamType={RaveStreamType.PRODUCT} 
               title='More raves'

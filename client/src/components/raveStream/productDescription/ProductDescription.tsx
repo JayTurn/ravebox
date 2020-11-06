@@ -63,7 +63,7 @@ const useStyles = makeStyles((theme: Theme) =>
       overflow: 'hidden',
     },
     paragraph: {
-      fontSize: '.9rem',
+      fontSize: '1rem',
       marginBottom: theme.spacing(1),
     },
     showMoreLink: {

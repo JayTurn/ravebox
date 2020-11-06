@@ -75,6 +75,7 @@ export function useRetrieveRaveStreamByURL(
     setActiveProduct,
     setActiveRaveStream,
     setActiveRave,
+    updateLoading
   } = {...params};
 
   // Add the safety check to ensure the component is still mounted.
@@ -112,6 +113,10 @@ export function useRetrieveRaveStreamByURL(
       if (!isMounted) {
         return;
       }
+
+      if (updateLoading) {
+        updateLoading(true);
+      }
       
       // Update the retrieval status to avoid subsequent requests.
       setRetrieved(RetrievalStatus.WAITING);
@@ -131,6 +136,9 @@ export function useRetrieveRaveStreamByURL(
 
           if (isMounted) {
             setRetrieved(RetrievalStatus.SUCCESS);
+            if (updateLoading) {
+              updateLoading(false);
+            }
           }
 
         } else {
@@ -138,12 +146,18 @@ export function useRetrieveRaveStreamByURL(
           // state.
           if (isMounted) {
             setRetrieved(RetrievalStatus.NOT_FOUND);
+            if (updateLoading) {
+              updateLoading(false);
+            }
           }
         }
       })
       .catch((error: Error) => {
         if (isMounted) {
           setRetrieved(RetrievalStatus.FAILED);
+          if (updateLoading) {
+            updateLoading(false);
+          }
         }
       });
     }

@@ -13,6 +13,14 @@ import { VideoVerb } from './Actions.enum';
 import { VideoProgress } from '../../components/raveVideo/RaveVideo.interface';
 
 /**
+ * Switches the current mute state in the redux store.
+ *
+ * @param { boolean } muted - the muted state to be updated.
+ */
+export const mute = (muted: boolean) => action(
+  VideoVerb.MUTE, muted);
+
+/**
  * Updates the current video progress in the redux store.
  *
  * @param { VideoProgress }  - the video progress to be updated.
@@ -21,9 +29,10 @@ export const update = (progress: VideoProgress) => action(
   VideoVerb.UPDATE, progress);
 
 /**
- * Switches the current mute state in the redux store.
+ * Updates the current active video id in the redux store.
  *
- * @param { boolean } muted - the muted state to be updated.
+ * @param { string }  - the id to be updated.
  */
-export const mute = (muted: boolean) => action(
-  VideoVerb.MUTE, muted);
+export const updateActive = (active: string) => action(
+  VideoVerb.UPDATE_ACTIVE, active);
+

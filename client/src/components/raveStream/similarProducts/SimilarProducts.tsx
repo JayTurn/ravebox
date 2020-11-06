@@ -18,7 +18,7 @@ import Typography from '@material-ui/core/Typography';
 import * as React from 'react';
 
 // Components.
-import StreamCardHolder from '../cardHolder/StreamCardHolder';
+import SwipeCardHolder from '../../swipeStream/cardHolder/SwipeCardHolder';
 import LoadingRaveStream from '../../placeholders/loadingRaveStream/LoadingRaveStream';
 
 // Enumerators.
@@ -37,6 +37,16 @@ import { SimilarProductsProps } from './SimilarProducts.interface';
  */
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
+    noResultsContainer: {
+      backgroundColor: theme.palette.background.default,
+      borderRadius: 20,
+      margin: theme.spacing(1),
+      padding: theme.spacing(8, 2),
+      textAlign: 'center'
+    },
+    noResultsText: {
+      fontSize: '1rem'
+    },
     spaceAbove: {
       paddingTop: theme.spacing(.5)
     },
@@ -113,7 +123,7 @@ const SimilarProducts: React.FC<SimilarProductsProps> = (props: SimilarProductsP
           </Grid>
         </React.Fragment>
       }
-      {raveStreamsStatus === ViewState.FOUND &&
+      {raveStreamsStatus === ViewState.FOUND && raveStreams.length > 0 &&
         <React.Fragment>
           {raveStreams.map((raveStream: RaveStream, index: number) => (
             <Grid item xs={12}
@@ -123,7 +133,7 @@ const SimilarProducts: React.FC<SimilarProductsProps> = (props: SimilarProductsP
               })}
               key={index}
             >
-              <StreamCardHolder
+              <SwipeCardHolder
                 title={raveStream.title}
                 streamType={raveStream.streamType}
                 reviews={[...raveStream.reviews]}
@@ -131,6 +141,13 @@ const SimilarProducts: React.FC<SimilarProductsProps> = (props: SimilarProductsP
             </Grid>
           ))}
         </React.Fragment>
+      }
+      {raveStreamsStatus !== ViewState.WAITING && !raveStreams || raveStreams.length <= 0 &&
+        <Grid item xs={12} className={clsx(classes.noResultsContainer)}>
+          <Typography variant='body1' className={clsx(classes.noResultsText)}>
+            Similar products were not found
+          </Typography>
+        </Grid>
       }
     </Grid>
   );

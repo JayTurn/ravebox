@@ -13,8 +13,12 @@ import {
 // Interfaces.
 import {
   PrivateProfile,
+  ProfileStatistics,
   PublicProfile
 } from './User.interface';
+
+// Utilities.
+import { CountIdentifier } from '../../utils/display/numeric/Numeric';
 
 /**
  * Checks if the user has an admin role.
@@ -89,3 +93,40 @@ export const getExternalLinkPath: (
 
   return path;
 }
+
+/**
+ * Formats the display of the user statistics.
+ *
+ * @param { ProfileStatistics } statistics - the user statistics.
+ *
+ * @return string
+ */
+export const formatStatistics: (
+  statistics: ProfileStatistics | undefined
+) => string = (
+  statistics: ProfileStatistics | undefined
+): string => {
+  let result: string = '';
+
+  if (!statistics) {
+    return result;
+  }
+
+  const ravesCount: string = CountIdentifier(statistics.ravesCount)('rave');
+
+  result += ravesCount;
+
+  /*
+  if (statistics.followers > 0) {
+    const followerCount: string = CountIdentifier(statistics.followers)('follower');
+
+    if (statistics.ravesCount > 0) {
+      result += ` | `;
+    }
+
+    result += `${followerCount}`;
+  }
+  */
+
+  return result;
+} 

@@ -35,7 +35,7 @@ import {
 
 // Components.
 import Share from '../../share/ShareButton';
-import StreamRate from '../rate/StreamRate';
+import RateRave from '../../rateRave/RateRave';
 
 // Enumerators
 import { Role } from '../../user/User.enum';
@@ -281,7 +281,7 @@ const StreamUser: React.FC<StreamUserProps> = (props: StreamUserProps) => {
               {props.review && props.review.product && props.user &&
                 <React.Fragment>
                   <Grid item>
-                    <StreamRate review={props.review} />
+                    <RateRave review={props.review} color='white' />
                   </Grid>
                   <Grid item>
                     <Share
