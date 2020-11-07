@@ -38,8 +38,12 @@ export const emptyRaveStream: (
  */
 export const buildRaveStreamPath: (
   params: RaveStreamURLParams
+) => (
+  subtractRave: boolean
 ) => string = (
   params: RaveStreamURLParams
+) => (
+  subtractRave: boolean
 ): string => {
   let path: string = `${params.streamType}`;
 
@@ -52,11 +56,15 @@ export const buildRaveStreamPath: (
   }
 
   if (params.thirdPath) {
-    path += `/${params.thirdPath}`;
+    if (!subtractRave && params.fourthPath) {
+      path += `/${params.thirdPath}`;
+    }
   }
 
   if (params.fourthPath) {
-    path += `/${params.fourthPath}`;
+    if (!subtractRave) {
+      path += `/${params.fourthPath}`;
+    }
   }
 
   return path;

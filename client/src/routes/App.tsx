@@ -36,9 +36,6 @@ import {
   add
 } from '../store/xsrf/Actions';
 import { updateAPIImageConfig } from '../store/configuration/Actions';
-import {
-  update as updateLoading
-} from '../store/loading/Actions';
 
 // Components.
 const About = loadable(() => import('./about/About'));
@@ -207,7 +204,8 @@ const App: React.FC<AppProps> = (props: AppProps) => {
    */
   React.useEffect(() => props.history.listen(() => {
     setShowNavigation(displayNavigation(props.history.location.pathname)(largeScreen));
-    if (props.history.location.pathname.startsWith('/stream')) {
+    if (props.history.location.pathname.startsWith('/stream') 
+      && !props.location.pathname.startsWith('/stream')) {
       if (props.updateLoading) {
         props.updateLoading(true);
       }
@@ -387,7 +385,6 @@ const mapDispatchToProps = (dispatch: Dispatch<AnyAction>) =>
   bindActionCreators(
     {
       login: login,
-      updateLoading: updateLoading,
       updateXsrf: add
     },
     dispatch

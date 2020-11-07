@@ -24,6 +24,13 @@ import * as React from 'react';
 // Components.
 import ProductSpecifications from '../productSpecifications/ProductSpecifications';
 import ProductImages from '../productImages/ProductImages';
+import SwipeCardHolder from '../../swipeStream/cardHolder/SwipeCardHolder';
+
+// Enumerators.
+import { RaveStreamType } from '../RaveStream.enum';
+
+// Hooks.
+import { useRetrieveRaveStreamByProduct } from '../useRetrieveRaveStreamByProduct.hook';
 
 // Interfaces.
 import { ProductInformationProps } from './ProductInformation.interface';
@@ -52,6 +59,13 @@ const ProductInformation: React.FC<ProductInformationProps> = (props: ProductInf
   // Define the component classes.
   const classes = useStyles(),
         theme = useTheme();
+
+  const {
+    productStream,
+    raveStreamsStatus
+  } = useRetrieveRaveStreamByProduct({
+    product: props.product
+  });
 
   const ref: React.RefObject<HTMLDivElement> = React.useRef(null);
 
@@ -102,6 +116,13 @@ const ProductInformation: React.FC<ProductInformationProps> = (props: ProductInf
       </Grid>
       {props.product.images && props.product.images.length > 0 &&
         <ProductImages images={props.product.images} />
+      }
+      {productStream && productStream.reviews &&
+        <SwipeCardHolder
+          reviews={productStream.reviews ? [...productStream.reviews] : []}
+          streamType={RaveStreamType.PRODUCT} 
+          title={`${productStream.title}`}
+        />
       }
     </Grid>
   );

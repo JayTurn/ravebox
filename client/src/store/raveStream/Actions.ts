@@ -14,6 +14,7 @@ import {
   RaveStream,
   RaveStreamList
 } from '../../components/raveStream/RaveStream.interface';
+import { Review } from '../../components/review/Review.interface';
 import {
   Product
 } from '../../components/product/Product.interface';
@@ -49,3 +50,11 @@ export const updateList = (raveStreamList: RaveStreamList) => action(
  */
 export const updateProduct = (product: Product) => action(
   RaveStreamVerb.UPDATE_PRODUCT, product);
+
+/**
+ * Updates the review associated with rave stream in the redux store.
+ *
+ * @param { Review } review - the review to be made active.
+ */
+export const updateReview = (review: Review) => action(
+  RaveStreamVerb.UPDATE_REVIEW, review);

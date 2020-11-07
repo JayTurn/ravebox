@@ -60,6 +60,40 @@ const retrieveProductFromStream: (
 }
 
 /**
+ * Returns the index of the rave based on the url and ravestream.
+ *
+ * @param { string } url - the url to match.
+ * @param { RaveStream } raveStream - the raveStream we're working with.
+ *
+ * @return number
+ */
+const getRaveIndex: (
+  url: string
+) => (
+  raveStream: RaveStream | undefined
+) => number | undefined = (
+  url: string
+) => (
+  raveStream: RaveStream | undefined
+): number | undefined => {
+
+  if (!raveStream || !url || !raveStream.reviews) {
+    return;
+  }
+
+  if (raveStream.reviews.length <= 0) {
+    return;
+  }
+
+  // Find the index of the current review.
+  let index: number = raveStream.reviews.findIndex((review: Review) => {
+    return review.url === url;
+  });
+
+  return index;
+}
+
+/**
  * Returns a rave stream if it exists using the url.
  *
  * @param { RetrieveProductStreamByURLParams } params - the product params.
@@ -71,17 +105,19 @@ export function useRetrieveRaveStreamByURL(
   // Format the api request path.
   const {
     existing,
+    ignoreRavePath,
     requested,
     setActiveProduct,
     setActiveRaveStream,
     setActiveRave,
+    swipeControlled,
     updateLoading
   } = {...params};
 
   // Add the safety check to ensure the component is still mounted.
   const isMounted = useIsMounted();
 
-  let path: string = buildRaveStreamPath({...requested});
+  const [path, setPath] = React.useState<string>(buildRaveStreamPath({...requested})(ignoreRavePath));
 
   // Define the product path to be used for triggering requests for a stream.
   const [productPath, setProductPath] = React.useState<string>(path);
@@ -95,6 +131,72 @@ export function useRetrieveRaveStreamByURL(
   // Define the rave stream to be set using the existing value if it has
   // been preloaded via sever side rendering.
   const [raveStream, setRaveStream] = React.useState<RaveStream>(existing ? existing : {...emptyRaveStream()});
+
+  const [existingPath, setExistingPath] = React.useState<string>('');
+
+  /**
+   * Determine if we should update the active index or request a new RaveStream.
+   *
+   * @param { string } url - the url to be requested.
+   */
+  const loadRave: (
+    url: string
+  ) => (
+    updatedParams: RaveStreamURLParams
+  ) => void = (
+    url: string
+  ) => (
+    updatedParams: RaveStreamURLParams
+  ): void => {
+    const updatedPath: string = buildRaveStreamPath({...updatedParams})(ignoreRavePath);
+
+    if (updatedParams) {
+
+      if (path && path !== updatedPath) {
+        setRequestParams({...updatedParams});
+        setRequestedPath(updatedPath);
+
+        if (path) {
+          setPath(updatedPath);
+        }
+        setTimeout(() => {
+          setRetrieved(RetrievalStatus.REQUESTED);
+        }, 0);
+        return;
+      }
+    } 
+
+    const index: number | undefined = getRaveIndex(url)(existing);
+
+    if (typeof index !== 'number') {
+      return;
+    }
+
+    if (index === -1) {
+      setRequestParams({...requested});
+      setTimeout(() => {
+        setRetrieved(RetrievalStatus.REQUESTED);
+      }, 0);
+      if (path) {
+        setPath(updatedPath);
+      }
+    } else {
+      if (setActiveRave) {
+        setActiveRave(index);
+        if (existing && existing.reviews && existing.reviews[index]) {
+          if (setActiveProduct) {
+            const product: Product | undefined = existing.reviews[index].product;
+            if (product) {
+              setActiveProduct({...product});
+            }
+          }
+        }
+        if (!path) {
+          setPath(updatedPath);
+        }
+      }
+    }
+  }
 
   // Define the active product to be displayed in the stream.
   //if (existing && setActiveProduct) {
@@ -129,7 +231,8 @@ export function useRetrieveRaveStreamByURL(
         // If we have a rave stream, set rave stream the in the redux store and the
         // local state.
         if (response.raveStream) {
-          if (setActiveRaveStream && setActiveProduct) {
+          if (setActiveRaveStream && setActiveProduct && setActiveRave) {
+            setActiveRave(0);
             setActiveRaveStream({...response.raveStream});
             setActiveProduct(retrieveProductFromStream(response.raveStream));
           }
@@ -164,6 +267,7 @@ export function useRetrieveRaveStreamByURL(
   }, [retrieved]);
 
   return {
+    loadRave,
     raveStream,
     raveStreamStatus: ViewStatus(retrieved)
   }

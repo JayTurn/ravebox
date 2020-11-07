@@ -22,8 +22,15 @@ import Typography from '@material-ui/core/Typography';
 import * as React from 'react';
 
 // Components.
-import ProductSpecifications from '../../raveStream/productSpecifications/ProductSpecifications';
+import DesktopCardHolder from '../cardHolder/DesktopCardHolder';
 import DesktopProductImages from '../productImages/DesktopProductImages';
+import ProductSpecifications from '../../raveStream/productSpecifications/ProductSpecifications';
+
+// Enumerators.
+import { RaveStreamType } from '../../raveStream/RaveStream.enum';
+
+// Hooks.
+import { useRetrieveRaveStreamByProduct } from '../../raveStream/useRetrieveRaveStreamByProduct.hook';
 
 // Interfaces.
 import { DesktopProductTabProps } from './DesktopProductTab.interface';
@@ -47,6 +54,10 @@ const useStyles = makeStyles((theme: Theme) =>
       fontSize: '1.2rem',
       padding: theme.spacing(8, 4),
       textAlign: 'center'
+    },
+    raveContainer: {
+      backgroundColor: theme.palette.background.default,
+      padding: theme.spacing(0, 1)
     }
   })
 );
@@ -58,6 +69,13 @@ const DesktopProductTab: React.FC<DesktopProductTabProps> = (props: DesktopProdu
   // Define the component classes.
   const classes = useStyles(),
         theme = useTheme();
+
+  const {
+    productStream,
+    raveStreamsStatus
+  } = useRetrieveRaveStreamByProduct({
+    product: props.product
+  });
 
   const ref: React.RefObject<HTMLDivElement> = React.useRef(null);
 
@@ -110,6 +128,20 @@ const DesktopProductTab: React.FC<DesktopProductTabProps> = (props: DesktopProdu
           </Grid>
           {props.product.images && props.product.images.length > 0 &&
             <DesktopProductImages images={props.product.images} />
+          }
+          {productStream && productStream.reviews &&
+            <Grid item xs={12} className={clsx(classes.raveContainer)}>
+              <DesktopCardHolder
+                lg={4}
+                md={6}
+                sm={12}
+                hideStreamTag={true}
+                overrideTitle={true}
+                reviews={productStream.reviews ? [...productStream.reviews] : []}
+                streamType={RaveStreamType.PRODUCT} 
+                title={`More ${productStream.title} raves`}
+              />
+            </Grid>
           }
         </Grid>
       ) : (

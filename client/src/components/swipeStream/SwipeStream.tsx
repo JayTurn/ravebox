@@ -226,15 +226,17 @@ const SwipeStream: React.FC<SwipeStreamProps> = (props: SwipeStreamProps) => {
         theme = useTheme(),
         largeScreen = useMediaQuery(theme.breakpoints.up('sm'));
 
-  console.log('Large screen?', largeScreen);
   const {
+    loadRave,
     raveStream,
     raveStreamStatus
   } = useRetrieveRaveStreamByURL({
     existing: props.raveStream ? props.raveStream : undefined,
+    ignoreRavePath: true,
     setActiveRaveStream: props.updateActiveRaveStream,
     setActiveRave: props.updateActiveIndex,
     setActiveProduct: props.updateProduct,
+    swipeControlled: true,
     requested: props.match.params,
     updateLoading: props.updateLoading
   })
@@ -243,8 +245,6 @@ const SwipeStream: React.FC<SwipeStreamProps> = (props: SwipeStreamProps) => {
   const [pageViewed, setPageViewed] = React.useState<boolean>(false);
 
   const [swipeView, setSwipeView] = React.useState<SwipeView>(SwipeView.VIDEO);
-
-  const activeIndex: number = props.activeIndex || 0;
 
   const [ravePath, setRavePath] = React.useState<string>('');
 
@@ -257,6 +257,64 @@ const SwipeStream: React.FC<SwipeStreamProps> = (props: SwipeStreamProps) => {
    * Track the stream view.
    */
   React.useEffect(() => {
+
+    if (props.review && props.review.url && ravePath !== props.location.pathname) {
+      // Get the new path and update it in the browser.
+      let path: string = `/stream/${props.match.params.streamType}/${props.match.params.firstPath}`;
+
+      if (props.match.params.secondPath) {
+        path += `/${props.match.params.secondPath}`;
+      }
+
+      let reviewUrl: string = '';
+
+      if (props.match.params.thirdPath) {
+        reviewUrl = props.match.params.thirdPath;
+      }
+      if (props.match.params.fourthPath) {
+        reviewUrl = props.match.params.fourthPath;
+        path += `/${props.match.params.thirdPath}`;
+      }
+
+      loadRave(reviewUrl)(props.match.params);
+      handleDisplayChange(SwipeView.VIDEO);
+      setRavePath(props.location.pathname);
+
+      props.history.push(path);
+    }
+
+    /*
+    if (props.review && props.review.url) {
+      // We are always looking for the last path as it is always unique to the
+      // rave. We check the newly requested url against the current rave url
+      // to determine if we should load a new rave.
+      if (props.match.params.fourthPath) {
+        // If the fourth path doesn't match the review url, we need to
+        // load the new one.
+        if (props.review.url !== ravePath) {
+          // Updates the active index 
+          loadRave(props.review.url)(props.activeIndex);
+          handleDisplayChange(SwipeView.VIDEO);
+          setRavePath(props.match.params.fourthPath);
+        }
+        return;
+      }
+
+      // Check the third path when we don't have a third path.
+      if (props.match.params.thirdPath) {
+        // If the current rave path doesn't match the review url, we need to
+        // load the new one.
+        if (props.review.url !== ravePath) {
+          // Updates the active index 
+          loadRave(props.review.url)(props.activeIndex);
+          handleDisplayChange(SwipeView.VIDEO);
+          setRavePath(props.match.params.thirdPath);
+        }
+
+        return;
+      }
+    }
+    */
 
     // Track the category list page view.
     if (!pageViewed && props.product && props.product._id) {
@@ -334,7 +392,9 @@ const SwipeStream: React.FC<SwipeStreamProps> = (props: SwipeStreamProps) => {
       </Box>
       {props.raveStream && props.raveStream.reviews && props.raveStream.reviews.length > 0 &&
         <Box className={clsx(classes.detailsContainer)} style={{zIndex: upperOverlay === SwipeView.REVIEW ? 2 : 1}}>
-          <StreamReviewDetails review={{...props.raveStream.reviews[activeIndex]}} />
+          {props.review &&
+            <StreamReviewDetails review={{...props.review}} />
+          }
         </Box>
       }
     </Box>

@@ -196,10 +196,12 @@ const DesktopStream: React.FC<DesktopStreamProps> = (props: DesktopStreamProps) 
         largeScreen = useMediaQuery(theme.breakpoints.up('sm'));
 
   const {
+    loadRave,
     raveStream,
     raveStreamStatus
   } = useRetrieveRaveStreamByURL({
     existing: props.raveStream ? props.raveStream : undefined,
+    ignoreRavePath: false,
     setActiveRaveStream: props.updateActiveRaveStream,
     setActiveRave: props.updateActiveIndex,
     setActiveProduct: props.updateProduct,
@@ -209,10 +211,6 @@ const DesktopStream: React.FC<DesktopStreamProps> = (props: DesktopStreamProps) 
   // Create a page viewed state to avoid duplicate views.
   const [pageViewed, setPageViewed] = React.useState<boolean>(false);
 
-  const activeIndex: number = props.activeIndex || 0;
-
-  const [ravePath, setRavePath] = React.useState<string>('');
-
   const isMounted = useIsMounted();
 
   /**
@@ -220,11 +218,42 @@ const DesktopStream: React.FC<DesktopStreamProps> = (props: DesktopStreamProps) 
    */
   React.useEffect(() => {
 
-    if (props.review && props.review.url !== ravePath) {
+    if (props.review && props.review.url) {
+      // We are always looking for the last path as it is always unique to the
+      // rave. We check the newly requested url against the current rave url
+      // to determine if we should load a new rave.
+      if (props.match.params.fourthPath) {
+        // If the fourth path doesn't match the review url, we need to
+        // load the new one.
+        if (props.review.url !== props.match.params.fourthPath) {
+          // Updates the active index 
+          loadRave(props.match.params.fourthPath)(props.match.params);
+        }
+        return;
+      }
+
+      // Check the third path when we don't have a third path.
+      if (props.match.params.thirdPath) {
+        // If the current rave path doesn't match the review url, we need to
+        // load the new one.
+        if (props.review.url !== props.match.params.thirdPath) {
+          // Updates the active index 
+          loadRave(props.match.params.thirdPath);
+        }
+
+        return;
+      }
+    }
+
+
+    /*
+    if (props.review && props.review.url && props.review.url !== ravePath) {
+      loadRave(ravePath);
       const path: string = formatURL(props.match.params)(props.review.url);
       setRavePath(props.review.url);
       props.history.push(path);
     }
+    */
 
     // Track the category list page view.
     if (!pageViewed && props.product && props.product._id) {
@@ -260,7 +289,6 @@ const DesktopStream: React.FC<DesktopStreamProps> = (props: DesktopStreamProps) 
     props.product,
     props.match.params,
     props.review,
-    ravePath,
     raveStreamStatus
   ]);
 

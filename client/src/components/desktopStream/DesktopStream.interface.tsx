@@ -30,4 +30,5 @@ export interface DesktopStreamProps extends RouteComponentProps<RaveStreamURLPar
   updateActiveIndex?: (index: number) => void;
   updateLoading?: (loading: boolean) => void;
   updateProduct?: (product: Product) => void;
+  updateReview?: (review: Review) => void;
 }

@@ -162,21 +162,19 @@ const SwipeVideoController: React.FC<SwipeVideoControllerProps> = (props: SwipeV
 
   const [playing, setPlaying] = React.useState<boolean>(false);
 
-  const activeIndex: number = props.activeIndex || 0;
-
   /**
    * Handles moving to the next video.
    */
   const handleNext: (
   ) => void = (
   ): void => {
-    if (props.updateActiveIndex && props.updateProduct) {
+    if (props.updateActiveIndex && props.updateProduct && typeof props.activeIndex === 'number') {
       if (props.raveStream && props.raveStream.reviews.length > 0) {
-        if ((activeIndex + 1) < props.raveStream.reviews.length) {
+        if ((props.activeIndex + 1) < props.raveStream.reviews.length) {
           props.updateProduct(
-            props.raveStream.reviews[activeIndex + 1].product || emptyProduct()
+            props.raveStream.reviews[props.activeIndex + 1].product || emptyProduct()
           );
-          props.updateActiveIndex(activeIndex + 1);
+          props.updateActiveIndex(props.activeIndex + 1);
         }
       }
     }
@@ -185,13 +183,13 @@ const SwipeVideoController: React.FC<SwipeVideoControllerProps> = (props: SwipeV
   const handlePrevious: (
   ) => void = (
   ): void => {
-    if (props.updateActiveIndex && props.updateProduct) {
+    if (props.updateActiveIndex && props.updateProduct && typeof props.activeIndex === 'number') {
       if (props.raveStream && props.raveStream.reviews.length > 0) {
-        if ((activeIndex - 1) >= 0) {
+        if ((props.activeIndex - 1) >= 0) {
           props.updateProduct(
-            props.raveStream.reviews[activeIndex - 1].product || emptyProduct()
+            props.raveStream.reviews[props.activeIndex - 1].product || emptyProduct()
           );
-          props.updateActiveIndex(activeIndex - 1);
+          props.updateActiveIndex(props.activeIndex - 1);
         }
       }
     }
@@ -253,11 +251,11 @@ const SwipeVideoController: React.FC<SwipeVideoControllerProps> = (props: SwipeV
             <React.Fragment>
               {props.raveStream.reviews.map((review: Review, index: number) => (
                 <React.Fragment key={review._id}>
-                  {index > activeIndex - 2 && index < activeIndex + 2 &&
+                  {typeof props.activeIndex === 'number' && index > props.activeIndex - 2 && index < props.activeIndex + 2 &&
                     <SwipeVideo
-                      active={index === activeIndex}
-                      playing={index === activeIndex ? playing : false}
-                      positioning={setVideoPosition(activeIndex)(index)}
+                      active={index === props.activeIndex}
+                      playing={index === props.activeIndex ? playing : false}
+                      positioning={setVideoPosition(props.activeIndex)(index)}
                       review={review}
                     />
                   }

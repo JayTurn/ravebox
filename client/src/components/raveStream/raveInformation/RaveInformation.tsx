@@ -185,8 +185,8 @@ const RaveInformation: React.FC<RaveInformationProps> = (props: RaveInformationP
           {props.raveStream &&
             <SwipeCardHolder
               reviews={reviews ? [...reviews] : []}
-              streamType={RaveStreamType.PRODUCT} 
-              title='More raves'
+              streamType={RaveStreamType.CATEGORY} 
+              title={`${props.raveStream.title}`}
             />
           }
         </React.Fragment>

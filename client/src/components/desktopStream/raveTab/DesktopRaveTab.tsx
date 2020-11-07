@@ -162,8 +162,8 @@ const DesktopRaveTab: React.FC<DesktopRaveTabProps> = (props: DesktopRaveTabProp
                 hideStreamTag={true}
                 overrideTitle={true}
                 reviews={reviews ? [...reviews] : []}
-                streamType={RaveStreamType.PRODUCT} 
-                title='More raves'
+                streamType={RaveStreamType.CATEGORY} 
+                title={`More raves`}
               />
             </Grid>
           }
