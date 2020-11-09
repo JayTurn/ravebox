@@ -11,6 +11,7 @@ import * as H from 'history';
 // Dependent models.
 import ChannelReducer from './channel/Reducer';
 import DiscoverReducer from './discover/Reducer';
+import LoadingReducer from './loading/Reducer';
 import NavigationReducer from './navigation/Reducer';
 import ProductReducer from './product/Reducer';
 import RaveStreamReducer from './raveStream/Reducer';
@@ -26,6 +27,7 @@ const RootReducer = (history: H.History) =>
     router: connectRouter(history),
     channel: ChannelReducer,
     discover: DiscoverReducer,
+    loading: LoadingReducer,
     navigation: NavigationReducer,
     product: ProductReducer,
     raveStream: RaveStreamReducer,

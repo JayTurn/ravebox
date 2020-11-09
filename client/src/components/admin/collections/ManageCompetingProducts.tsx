@@ -43,6 +43,7 @@ import { ViewState } from '../../../utils/display/view/ViewState.enum';
 
 // Hooks.
 import { useAutocompleteProductSearch } from '../../product/search/useAutocompleteProductSearch.hook';
+import { useIsMounted } from '../../../utils/safety/useIsMounted.hook';
 import { useRetrieveCollectionById } from '../../collection/useRetrieveCollectionById.hook';
 
 // Interfaces.
@@ -121,6 +122,9 @@ const ManageCompetingProducts: React.FC<ManageCompetingProductsProps> = (props: 
   const classes = useStyles(),
         theme = useTheme(),
         largeScreen = useMediaQuery(theme.breakpoints.up('md'));
+
+  // Add the safety check to ensure the component is still mounted.
+  const isMounted = useIsMounted();
 
   // Register the snackbar.
   const { enqueueSnackbar } = useSnackbar();
@@ -260,6 +264,11 @@ const ManageCompetingProducts: React.FC<ManageCompetingProductsProps> = (props: 
       })
     })
     .then((response: CollectionsFormResponse) => {
+
+      if (!isMounted.current) {
+        return;
+      }
+
       // Present any errors that were returned in the response.
       if (response.errorCode) {
         setFormErrorMessages([response.title])
@@ -278,6 +287,11 @@ const ManageCompetingProducts: React.FC<ManageCompetingProductsProps> = (props: 
       setOpen(false);
     })
     .catch((error: Error) => {
+
+      if (!isMounted.current) {
+        return false;
+      }
+
       enqueueSnackbar(`There was a problem creating the ${props.context} collection`, { variant: 'error'});
       setSubmitting(false);
     });

@@ -7,6 +7,7 @@
  * Redux Actions.
  */
 export enum VideoVerb {
+  MUTE = 'video/mute',
   UPDATE = 'video/update',
-  MUTE = 'video/mute'
+  UPDATE_ACTIVE = 'video/active'
 }

@@ -70,12 +70,13 @@ export function useRetrieveRaveStreamByList(
    * Handle state updates to the url parameters and request status.
    */
   React.useEffect(() => {
+    if (!isMounted.current) {
+      return;
+    }
     // If we haven't performed a request continue.
     if (retrieved === RetrievalStatus.REQUESTED) {
-      if (isMounted) {
-        // Update the retrieval status to avoid subsequent requests.
-        setRetrieved(RetrievalStatus.WAITING);
-      }
+      // Update the retrieval status to avoid subsequent requests.
+      setRetrieved(RetrievalStatus.WAITING);
 
       // Perform the API request to get the rave stream.
       API.requestAPI<RaveStreamListResponse>(`stream/list`, {
@@ -85,6 +86,9 @@ export function useRetrieveRaveStreamByList(
         })
       })
       .then((response: RaveStreamListResponse) => {
+        if (!isMounted.current) {
+          return;
+        }
         // If we have a rave stream, set rave stream the in the redux store and the
         // local state.
         if (response.raveStreams && updateList) {
@@ -92,9 +96,7 @@ export function useRetrieveRaveStreamByList(
             raveStreams: [...response.raveStreams],
             title: name
           });
-          if (isMounted) {
-            setRetrieved(RetrievalStatus.SUCCESS);
-          }
+          setRetrieved(RetrievalStatus.SUCCESS);
         } else {
           if (updateList) {
             // We didn't return an active rave stream so return a not found
@@ -104,12 +106,14 @@ export function useRetrieveRaveStreamByList(
               raveStreams: []
             });
           }
-          if (isMounted) {
-            setRetrieved(RetrievalStatus.NOT_FOUND);
-          }
+          setRetrieved(RetrievalStatus.NOT_FOUND);
         }
       })
       .catch((error: Error) => {
+        if (!isMounted.current) {
+          return;
+        }
+
         if (updateList) {
           // We didn't return an active rave stream so return a not found
           // state.
@@ -121,6 +125,7 @@ export function useRetrieveRaveStreamByList(
         setRetrieved(RetrievalStatus.FAILED);
       });
     }
+
   }, [retrieved, isMounted]);
 
   return {

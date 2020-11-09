@@ -61,48 +61,58 @@ export function useRetrieveSimilarProducts(
 
   const [productId, setProductId] = React.useState<string | null>(product._id);
 
+  const [firstLoad, setFirstLoad] = React.useState<boolean>(true);
+
   /**
    * Perform an update request when the product id changes.
    */
   React.useEffect(() => {
+    if (!isMounted.current) {
+      return;
+    }
+
     if (product._id !== productId) {
       setProductId(product._id);
       setRetrieved(RetrievalStatus.REQUESTED);
     }
-  }, [product, productId])
+    if (productId && firstLoad) {
+      setRetrieved(RetrievalStatus.REQUESTED);
+      setFirstLoad(false);
+    }
+  }, [isMounted, product, productId])
 
   /**
    * Handle state updates to the url parameters and request status.
    */
   React.useEffect(() => {
+    if (!isMounted.current) {
+      return;
+    } 
     // If we haven't performed a request continue.
     if (retrieved === RetrievalStatus.REQUESTED && productId) {
-      if (isMounted) {
-        // Update the retrieval status to avoid subsequent requests.
-        setRetrieved(RetrievalStatus.WAITING);
-      }
+      // Update the retrieval status to avoid subsequent requests.
+      setRetrieved(RetrievalStatus.WAITING);
 
       // Perform the API request to get the rave stream.
       API.requestAPI<RaveStreamListResponse>(`stream/similar_products/${product._id}`, {
         method: RequestType.GET,
       })
       .then((response: RaveStreamListResponse) => {
+        if (!isMounted.current) {
+          return;
+        }
         // If we have a rave stream, set rave stream the in the redux store and the
         // local state.
         if (response.raveStreams) {
-          if (isMounted) {
-            setRetrieved(RetrievalStatus.SUCCESS);
-            setRaveStreams(response.raveStreams);
-          }
+          setRetrieved(RetrievalStatus.SUCCESS);
+          setRaveStreams(response.raveStreams);
         } else {
-          if (isMounted) {
-            setRetrieved(RetrievalStatus.NOT_FOUND);
-            setRaveStreams([]);
-          }
+          setRetrieved(RetrievalStatus.NOT_FOUND);
+          setRaveStreams([]);
         }
       })
       .catch((error: Error) => {
-        if (isMounted) {
+        if (!isMounted.current) {
           setRetrieved(RetrievalStatus.FAILED);
           setRaveStreams([]);
         }

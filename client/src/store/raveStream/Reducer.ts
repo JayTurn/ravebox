@@ -13,6 +13,7 @@ import { RaveStreamVerb } from './Actions.enum';
 import {
   Product
 } from '../../components/product/Product.interface';
+import { Review } from '../../components/review/Review.interface';
 import {
   RaveStream,
   RaveStreamList
@@ -25,6 +26,7 @@ import {
 // Utilities.
 import { emptyProduct } from '../../components/product/Product.common';
 import { emptyRaveStream } from '../../components/raveStream/RaveStream.common';
+import { emptyReview } from '../../components/review/Review.common';
 
 const emptyStream: RaveStream = emptyRaveStream();
 
@@ -116,6 +118,28 @@ export default combineReducers<RaveStreamStore, RaveStreamAction>({
     // Update the configuration based on the redux action triggered.
     switch (action.type) {
       case RaveStreamVerb.UPDATE_PRODUCT:
+        // Append the new value to the list of watched items.
+        return action.payload;
+      default:
+        return state;
+    }
+  },
+
+  /**
+   * Define the loaded rave stream review reducer.
+   *
+   * @param { Review } state - the current rave stream review.
+   * @param { RaveStreamAction } action - the filters action.
+   *
+   * @return Review
+   */
+  review: (
+    state: Review = JSON.parse(JSON.stringify(emptyReview())),
+    action: RaveStreamAction
+  ) => {
+    // Update the configuration based on the redux action triggered.
+    switch (action.type) {
+      case RaveStreamVerb.UPDATE_REVIEW:
         // Append the new value to the list of watched items.
         return action.payload;
       default:

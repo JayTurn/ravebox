@@ -24,6 +24,13 @@ import * as React from 'react';
 // Components.
 import ProductSpecifications from '../productSpecifications/ProductSpecifications';
 import ProductImages from '../productImages/ProductImages';
+import SwipeCardHolder from '../../swipeStream/cardHolder/SwipeCardHolder';
+
+// Enumerators.
+import { RaveStreamType } from '../RaveStream.enum';
+
+// Hooks.
+import { useRetrieveRaveStreamByProduct } from '../useRetrieveRaveStreamByProduct.hook';
 
 // Interfaces.
 import { ProductInformationProps } from './ProductInformation.interface';
@@ -36,6 +43,7 @@ import { Review } from '../../review/Review.interface';
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     container: {
+      paddingTop: theme.spacing(1),
     },
     cardContainer: {
       backgroundColor: theme.palette.background.default,
@@ -52,6 +60,13 @@ const ProductInformation: React.FC<ProductInformationProps> = (props: ProductInf
   // Define the component classes.
   const classes = useStyles(),
         theme = useTheme();
+
+  const {
+    productStream,
+    raveStreamsStatus
+  } = useRetrieveRaveStreamByProduct({
+    product: props.product
+  });
 
   const ref: React.RefObject<HTMLDivElement> = React.useRef(null);
 
@@ -71,7 +86,7 @@ const ProductInformation: React.FC<ProductInformationProps> = (props: ProductInf
         props.updateHeight(600);
       } else {
         setHeight(ref.current.clientHeight);
-        props.updateHeight(ref.current.clientHeight + 30);
+        props.updateHeight(ref.current.clientHeight + 100);
       }
     }
   }
@@ -93,15 +108,24 @@ const ProductInformation: React.FC<ProductInformationProps> = (props: ProductInf
 
   return (
     <Grid className={clsx(classes.container)} container ref={ref}>
-      <Grid item xs={12} className={clsx(classes.cardContainer)}>
-        <ProductSpecifications
-          description={props.product.description}
-          updateHeight={handleHeightUpdate}
-          website={props.product.website}
-        />
-      </Grid>
+      {props.product.description &&
+        <Grid item xs={12} className={clsx(classes.cardContainer)}>
+          <ProductSpecifications
+            description={props.product.description}
+            updateHeight={handleHeightUpdate}
+            website={props.product.website}
+          />
+        </Grid>
+      }
       {props.product.images && props.product.images.length > 0 &&
         <ProductImages images={props.product.images} />
+      }
+      {productStream && productStream.reviews &&
+        <SwipeCardHolder
+          reviews={productStream.reviews ? [...productStream.reviews] : []}
+          streamType={RaveStreamType.PRODUCT} 
+          title={`${productStream.title}`}
+        />
       }
     </Grid>
   );

@@ -59,52 +59,56 @@ export function useRetrieveUserRaveStreams(
    * Perform an update request when the user id changes.
    */
   React.useEffect(() => {
-    if (user._id !== userId) {
-      setUserId(user._id);
-      setRetrieved(RetrievalStatus.REQUESTED);
+    if (isMounted.current) {
+      if (user._id !== userId) {
+        setUserId(user._id);
+        setRetrieved(RetrievalStatus.REQUESTED);
+      }
     }
-  }, [user, userId])
+  }, [isMounted, user, userId])
 
   /**
    * Handle state updates to the url parameters and request status.
    */
   React.useEffect(() => {
+    if (!isMounted.current) {
+      return;
+    }
     // If we haven't performed a request continue.
     if (retrieved === RetrievalStatus.REQUESTED && userId) {
-      if (isMounted) {
-        // Update the retrieval status to avoid subsequent requests.
-        setRetrieved(RetrievalStatus.WAITING);
-      }
+      // Update the retrieval status to avoid subsequent requests.
+      setRetrieved(RetrievalStatus.WAITING);
 
       // Perform the API request to get the rave stream.
       API.requestAPI<RaveStreamListResponse>(`stream/user/${user._id}`, {
         method: RequestType.GET,
       })
       .then((response: RaveStreamListResponse) => {
+        if (!isMounted.current) {
+          return;
+        }
         // If we have a rave stream, set rave stream the in the redux store and the
         // local state.
         if (response.raveStreams) {
-          if (isMounted) {
-            setRetrieved(RetrievalStatus.SUCCESS);
-            setRaveStreams(response.raveStreams);
-            updateHeight();
-          }
+          setRetrieved(RetrievalStatus.SUCCESS);
+          setRaveStreams(response.raveStreams);
+          updateHeight();
         } else {
-          if (isMounted) {
-            setRetrieved(RetrievalStatus.NOT_FOUND);
-            setRaveStreams([]);
-            updateHeight();
-          }
-        }
-      })
-      .catch((error: Error) => {
-        if (isMounted) {
-          setRetrieved(RetrievalStatus.FAILED);
+          setRetrieved(RetrievalStatus.NOT_FOUND);
           setRaveStreams([]);
           updateHeight();
         }
+      })
+      .catch((error: Error) => {
+        if (!isMounted.current) {
+          return;
+        }
+        setRetrieved(RetrievalStatus.FAILED);
+        setRaveStreams([]);
+        updateHeight();
       });
     }
+
   }, [retrieved, isMounted]);
 
   return {

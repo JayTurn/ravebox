@@ -13,6 +13,7 @@ import {
   RaveStream,
   RaveStreamList
 } from '../../components/raveStream/RaveStream.interface';
+import { Review } from '../../components/review/Review.interface';
 import {
   Product
 } from '../../components/product/Product.interface';
@@ -30,4 +31,5 @@ export interface RaveStreamStore {
   raveStream: RaveStream;
   raveStreamList: RaveStreamList;
   product: Product;
+  review: Review;
 }

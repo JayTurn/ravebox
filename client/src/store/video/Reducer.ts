@@ -30,6 +30,28 @@ const emptyVideo: VideoProgress = {
  */
 export default combineReducers<VideoStore, VideoAction>({
   /**
+   * Define the active video reducer.
+   *
+   * @param { string } state - the current active video.
+   * @param { VideoAction } action - the update action.
+   *
+   * @return VideoProgress
+   */
+  active: (
+    id: string = '',
+    action: VideoAction
+  ) => {
+    // Update the configuration based on the redux action triggered.
+    switch (action.type) {
+      case VideoVerb.UPDATE_ACTIVE:
+        // Append the new value to the list of watched items.
+        return action.payload;
+      default:
+        return id;
+    }
+  },
+
+  /**
    * Define the video update reducer.
    *
    * @param { VideoProgress } state - the current video progress.

@@ -35,7 +35,7 @@ import {
 
 // Components.
 import Share from '../../share/ShareButton';
-import StreamRate from '../rate/StreamRate';
+import RateRave from '../../rateRave/RateRave';
 
 // Enumerators
 import { Role } from '../../user/User.enum';
@@ -107,6 +107,9 @@ const useStyles = makeStyles((theme: Theme) =>
     },
     muteIcon: {
       fontSize: '2rem'
+    },
+    ratingContainer: {
+      marginRight: theme.spacing(2)
     },
     statisticsText: {
       color: theme.palette.common.white,
@@ -258,16 +261,6 @@ const StreamUser: React.FC<StreamUserProps> = (props: StreamUserProps) => {
                   >
                     {props.user.role === Role.YOUTUBE ? 'youtube' : props.user.handle}
                   </Typography>
-                  {/*
-                  {statistics &&
-                    <Typography
-                      className={clsx(classes.statisticsText)}
-                      variant='body1'
-                    >
-                      {statistics}
-                    </Typography>
-                  }
-                  */}
                 </Grid>
               </Grid>
             </Grid>
@@ -280,8 +273,8 @@ const StreamUser: React.FC<StreamUserProps> = (props: StreamUserProps) => {
             <Grid container justify='flex-start'>
               {props.review && props.review.product && props.user &&
                 <React.Fragment>
-                  <Grid item>
-                    <StreamRate review={props.review} />
+                  <Grid item className={clsx(classes.ratingContainer)}>
+                    <RateRave review={props.review} color='white' />
                   </Grid>
                   <Grid item>
                     <Share

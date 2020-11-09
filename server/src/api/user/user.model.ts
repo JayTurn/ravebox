@@ -93,6 +93,7 @@ UserSchema
       'expires': this.expires,
       'following': this.following,
       'handle': this.handle,
+      'links': this.links,
       'oldEmail': this.oldEmail,
       'statistics': this.statistics
     };
@@ -114,10 +115,19 @@ UserSchema
       role: role
     };
 
+    if (this.about) {
+      publicUserDetails.about = this.about as string;
+    }
+
+    if (this.links) {
+      publicUserDetails.links = this.links;
+    }
+
     if (this.statistics && this.statistics.user) {
       //const statistics: UserStatistics = 
       publicUserDetails.statistics = UserStatisticsCommon.RetrieveDetailsFromDocument(this.statistics);
     }
+
 
     return publicUserDetails;
   });

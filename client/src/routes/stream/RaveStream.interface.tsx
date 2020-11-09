@@ -20,6 +20,6 @@ import {
  * RaveStream properties.
  */
 export interface RaveStreamProps extends RouteComponentProps<RaveStreamURLParams> {
-  raveStream?: RaveStream;
-  updateActiveRaveStream?: (raveStream: RaveStream) => void;
+  loading?: boolean;
+  updateLoading?: (loading: boolean) => void;
 }

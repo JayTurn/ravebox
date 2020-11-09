@@ -580,15 +580,23 @@ export default class UserController {
    * The response object.
    */
   static UpdateProfile(request: AuthenticatedUserRequest, response: Response): void {
-    const settings: ProfileSettings = request.body;
+    const settings: ProfileSettings = {
+      handle: request.body.handle,
+      avatar: request.body.avatar
+    };
+
+    if (request.body.about) {
+      settings.about = request.body.about;
+    }
+
+    if (request.body.links) {
+      settings.links = request.body.links;
+    }
 
     // Find the user and update the profile settings.
     User.findByIdAndUpdate(
       request.auth._id,
-      {
-        handle: settings.handle,
-        avatar: settings.avatar
-      },
+      settings,
       { new: true, upsert: false }
     )
     .then((user: UserDocument) => {

@@ -20,6 +20,7 @@ import {
   useTheme,
   withStyles
 } from '@material-ui/core/styles';
+import Divider from '@material-ui/core/Divider';
 import { frontloadConnect } from 'react-frontload';
 import Grid from '@material-ui/core/Grid';
 import * as React from 'react';
@@ -35,22 +36,17 @@ import {
 
 // Components.
 import ContentBlock from '../../components/elements/contentBlock/ContentBlock';
+import DesktopCardHolder from '../../components/desktopStream/cardHolder/DesktopCardHolder'
 import Logo from '../../components/logo/Logo';
 import ListByQuery from '../../components/review/listByQuery/ListByQuery';
 import ListTitle from '../../components/elements/listTitle/ListTitle';
 import LoadingRaveStream from '../../components/placeholders/loadingRaveStream/LoadingRaveStream';
-import StreamCardHolder from '../../components/raveStream/cardHolder/StreamCardHolder';
+import SwipeCardHolder from '../../components/swipeStream/cardHolder/SwipeCardHolder';
 
 // Enumerators.
 import { ColorStyle } from '../../components/elements/contentBlock/ContentBlock.enum';
 import { LogoColor } from '../../components/logo/Logo.enum';
-import {
-  PresentationType,
-  ReviewListType
-} from '../../components/review/listByQuery/ListByQuery.enum';
-import {
-  QueryPath 
-} from '../../components/review/listByQuery/ListByQuery.enum';
+import { RaveStreamType } from '../../components/raveStream/RaveStream.enum';
 import { RequestType } from '../../utils/api/Api.enum';
 import { ScreenContext } from '../../components/review/Review.enum';
 import { StyleType } from '../../components/elements/link/Link.enum';
@@ -102,7 +98,7 @@ const useStyles = makeStyles((theme: Theme) =>
       marginTop: theme.spacing(6),
     },
     cardBackground: {
-      backgroundColor: `rgba(100,106,240, .1)`,
+      backgroundColor: theme.palette.background.paper,
       //backgroundColor: '#f4f4f4',
       '&:first-child': {
         paddingTop: theme.spacing(.5)
@@ -116,6 +112,11 @@ const useStyles = makeStyles((theme: Theme) =>
     containerPadding: {
       paddingLeft: theme.spacing(2),
       paddingRight: theme.spacing(2)
+    },
+    divider: {
+      color: 'rgba(200, 200, 200)',
+      margin: theme.spacing(0, 2, 0),
+      width: 'calc(100% - 32px)'
     },
     heavy: {
       fontWeight: 700
@@ -286,17 +287,42 @@ const Home: React.FC<HomeProps> = (props: HomeProps) => {
       </Grid>
       {raveStreamsStatus === ViewState.WAITING &&
         <React.Fragment>
-          <Grid item xs={12} className={clsx(
+          <Grid item xs={12} sm={6} md={3} className={clsx(
             classes.cardBackground
           )}>
             <LoadingRaveStream />
           </Grid>
-          <Grid item xs={12} className={clsx(
+          <Grid item xs={12} sm={6} md={3} className={clsx(
             classes.cardBackground
           )}>
             <LoadingRaveStream />
           </Grid>
-          <Grid item xs={12} className={clsx(
+          <Grid item xs={12} sm={6} md={3} className={clsx(
+            classes.cardBackground
+          )}>
+            <LoadingRaveStream />
+          </Grid>
+          <Grid item xs={12} sm={6} md={3} className={clsx(
+            classes.cardBackground
+          )}>
+            <LoadingRaveStream />
+          </Grid>
+          <Grid item xs={12} sm={6} md={3} className={clsx(
+            classes.cardBackground
+          )}>
+            <LoadingRaveStream />
+          </Grid>
+          <Grid item xs={12} sm={6} md={3} className={clsx(
+            classes.cardBackground
+          )}>
+            <LoadingRaveStream />
+          </Grid>
+          <Grid item xs={12} sm={6} md={3} className={clsx(
+            classes.cardBackground
+          )}>
+            <LoadingRaveStream />
+          </Grid>
+          <Grid item xs={12} sm={6} md={3} className={clsx(
             classes.cardBackground
           )}>
             <LoadingRaveStream />
@@ -317,11 +343,25 @@ const Home: React.FC<HomeProps> = (props: HomeProps) => {
                   )}
                   key={index}
                 >
-                  <StreamCardHolder
-                    title={raveStream.title}
-                    streamType={raveStream.streamType}
-                    reviews={[...raveStream.reviews]}
-                  />
+                  {largeScreen ? (
+                    <React.Fragment>
+                      <DesktopCardHolder
+                        hideProductTitles={raveStream.streamType === RaveStreamType.PRODUCT}
+                        title={raveStream.title}
+                        streamType={raveStream.streamType}
+                        reviews={[...raveStream.reviews]}
+                      />
+                      {props.raveStreamList && index !== props.raveStreamList.raveStreams.length - 1 &&
+                        <Divider className={clsx(classes.divider)}/>
+                      }
+                    </React.Fragment>
+                  ) : (
+                    <SwipeCardHolder
+                      title={raveStream.title}
+                      streamType={raveStream.streamType}
+                      reviews={[...raveStream.reviews]}
+                    />
+                  )}
                 </Grid>
               ))}
             </React.Fragment>

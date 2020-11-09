@@ -4,7 +4,10 @@
  */
 
 // Enumerators.
-import { Role } from './User.enum';
+import {
+  Role,
+  UserLinkType
+} from './User.enum';
 
 // Interfaces.
 import { Following } from '../follow/Follow.interface';
@@ -14,11 +17,13 @@ import { Following } from '../follow/Follow.interface';
  */
 export interface PrivateProfile {
   _id: string;
+  about?: string;
   avatar?: string;
   email: string;
   emailVerified: boolean;
   following: Following;  
   handle: string;
+  links?: Array<UserLink>;
   role: Array<Role>;
   statistics?: ProfileStatistics;
 }
@@ -29,7 +34,9 @@ export interface PrivateProfile {
 export interface PublicProfile {
   _id: string;
   avatar?: string;
+  about?: string;
   handle: string;
+  links?: Array<UserLink>;
   statistics?: ProfileStatistics;
   role: Role;
 }
@@ -51,4 +58,9 @@ export interface ProfileReviewStatistics {
 export interface ProfilePresentationStatistics {
   followers: string;
   raves: string;
+}
+
+export interface UserLink {
+  path: string;
+  linkType: UserLinkType;
 }

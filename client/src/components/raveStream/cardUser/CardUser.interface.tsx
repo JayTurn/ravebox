@@ -3,9 +3,6 @@
  * Interface for user information displayed in cards.
  */
 
-// Modules.
-//import { RouteComponentProps } from 'react-router';
-
 // Enumerators.
 import { RaveStreamType } from '../RaveStream.enum';
 
@@ -16,6 +13,5 @@ import { Review } from '../../review/Review.interface';
  * Card user properties.
  */
 export interface CardUserProps {
-  //active: boolean;
   review: Review;
 }
