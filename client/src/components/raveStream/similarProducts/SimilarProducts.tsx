@@ -88,7 +88,7 @@ const SimilarProducts: React.FC<SimilarProductsProps> = (props: SimilarProductsP
         props.updateHeight(600);
       } else {
         setHeight(ref.current.clientHeight);
-        props.updateHeight(ref.current.clientHeight + 30);
+        props.updateHeight(ref.current.clientHeight + 100);
       }
     }
   }

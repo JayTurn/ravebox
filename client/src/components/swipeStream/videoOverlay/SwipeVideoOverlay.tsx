@@ -248,7 +248,7 @@ const SwipeVideoOverlay: React.FC<SwipeVideoOverlayProps> = (props: SwipeVideoOv
       case 'Down':
         if (props.overlayState === SwipeView.VIDEO) {
           props.down();
-          props.hideOverlay();
+          props.hideOverlay(true);
         } else {
           props.center();
           props.showOverlay();
@@ -262,7 +262,7 @@ const SwipeVideoOverlay: React.FC<SwipeVideoOverlayProps> = (props: SwipeVideoOv
         break;
       case 'Up':
         if (props.overlayState === SwipeView.VIDEO) {
-          props.hideOverlay();
+          props.hideOverlay(true);
           props.up();
         } else {
           props.center();

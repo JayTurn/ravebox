@@ -74,6 +74,9 @@ const useStyles = makeStyles((theme: Theme) =>
     userCard: {
       padding: theme.spacing(2, 1)
     },
+    userContainer: {
+      padding: theme.spacing(2)
+    }
   })
 );
 
@@ -110,7 +113,7 @@ const RaveInformation: React.FC<RaveInformationProps> = (props: RaveInformationP
         props.updateHeight(600);
       } else {
         setHeight(ref.current.clientHeight);
-        props.updateHeight(ref.current.clientHeight + 30);
+        props.updateHeight(ref.current.clientHeight + 100);
       }
     }
   }
@@ -142,11 +145,15 @@ const RaveInformation: React.FC<RaveInformationProps> = (props: RaveInformationP
           <Grid item xs={12} className={clsx(
             classes.cardContainer
           )}>
-            <StreamUserProfile
-              showFollow={false}
-              user={props.review.user}
-              variant='small'
-            />
+            <Grid container className={clsx(classes.userContainer)}>
+              <Grid item xs={12}>
+                <StreamUserProfile
+                  showFollow={false}
+                  user={props.review.user}
+                  variant='small'
+                />
+              </Grid>
+            </Grid>
             {props.review.description &&
               <ProductDescription
                 description={props.review.description} 

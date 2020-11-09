@@ -219,7 +219,9 @@ const SwipeVideoController: React.FC<SwipeVideoControllerProps> = (props: SwipeV
   }
 
   const handleHideOverlay: (
+    immediate?: boolean
   ) => void = (
+    immediate?: boolean
   ): void => {
     if (!isMounted.current) {
       return;
@@ -232,16 +234,20 @@ const SwipeVideoController: React.FC<SwipeVideoControllerProps> = (props: SwipeV
         }
       });
     }
+    if (immediate) {
+      setShowOverlay(false);
+    } else {
+      setOverlayTimeout(setTimeout(() => {
+        if (isMounted.current) {
+          setShowOverlay(false);
+        }
 
-    setOverlayTimeout(setTimeout(() => {
-      if (isMounted.current) {
-        setShowOverlay(false);
-      }
+        if (overlayTimeout) {
+          setOverlayTimeout(clearTimeout(overlayTimeout));
+        }
+      }, 3000));
+    }
 
-      if (overlayTimeout) {
-        setOverlayTimeout(clearTimeout(overlayTimeout));
-      }
-    }, 3000));
   }
 
   const handleOverlayDisplay: (

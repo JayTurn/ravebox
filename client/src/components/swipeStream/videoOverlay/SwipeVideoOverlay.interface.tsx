@@ -26,6 +26,6 @@ export interface SwipeVideoOverlayProps {
   review?: Review;
   show: boolean;
   showOverlay: () => void;
-  hideOverlay: () => void;
+  hideOverlay: (immediate?: boolean) => void;
   up: () => void;
 }
