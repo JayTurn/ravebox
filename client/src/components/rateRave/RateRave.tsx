@@ -354,6 +354,8 @@ const RateRave: React.FC<RateRaveProps> = (props: RateRaveProps) => {
                   <Typography variant='body1' className={clsx(
                       classes.countText,
                       {
+                        [classes.textDefault]: !props.color || props.color === 'default',
+                        [classes.textWhite]: props.color && props.color === 'white',
                         [classes.selected]: ratingResults.userRating === Rating.HELPFUL || rated === Rating.HELPFUL
                       }
                     )}

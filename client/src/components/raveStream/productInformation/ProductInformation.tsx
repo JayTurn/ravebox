@@ -43,6 +43,7 @@ import { Review } from '../../review/Review.interface';
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     container: {
+      paddingTop: theme.spacing(1),
     },
     cardContainer: {
       backgroundColor: theme.palette.background.default,
@@ -107,13 +108,15 @@ const ProductInformation: React.FC<ProductInformationProps> = (props: ProductInf
 
   return (
     <Grid className={clsx(classes.container)} container ref={ref}>
-      <Grid item xs={12} className={clsx(classes.cardContainer)}>
-        <ProductSpecifications
-          description={props.product.description}
-          updateHeight={handleHeightUpdate}
-          website={props.product.website}
-        />
-      </Grid>
+      {props.product.description &&
+        <Grid item xs={12} className={clsx(classes.cardContainer)}>
+          <ProductSpecifications
+            description={props.product.description}
+            updateHeight={handleHeightUpdate}
+            website={props.product.website}
+          />
+        </Grid>
+      }
       {props.product.images && props.product.images.length > 0 &&
         <ProductImages images={props.product.images} />
       }

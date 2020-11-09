@@ -37,6 +37,9 @@ import { SimilarProductsProps } from './SimilarProducts.interface';
  */
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
+    container: {
+      paddingTop: theme.spacing(1)
+    },
     noResultsContainer: {
       backgroundColor: theme.palette.background.default,
       borderRadius: 20,
@@ -109,7 +112,7 @@ const SimilarProducts: React.FC<SimilarProductsProps> = (props: SimilarProductsP
   }, [height, ref, props.product, productId]);
   
   return (
-    <Grid container ref={ref}>
+    <Grid container ref={ref} className={clsx(classes.container)}>
       {raveStreamsStatus === ViewState.WAITING &&
         <React.Fragment>
           <Grid item xs={12}>

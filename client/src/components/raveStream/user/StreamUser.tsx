@@ -261,16 +261,6 @@ const StreamUser: React.FC<StreamUserProps> = (props: StreamUserProps) => {
                   >
                     {props.user.role === Role.YOUTUBE ? 'youtube' : props.user.handle}
                   </Typography>
-                  {/*
-                  {statistics &&
-                    <Typography
-                      className={clsx(classes.statisticsText)}
-                      variant='body1'
-                    >
-                      {statistics}
-                    </Typography>
-                  }
-                  */}
                 </Grid>
               </Grid>
             </Grid>
