@@ -240,7 +240,11 @@ const StreamReviewDetails: React.FC<StreamReviewDetailsProps> = (props: StreamRe
         {user &&
           <Grid container>
             <Grid item xs={12} className={clsx(classes.userContainer)}>
-              <StreamUserProfile user={user} />
+              <StreamUserProfile
+                showFollow={true}
+                user={user}
+                variant='large'
+              />
             </Grid>
             <Grid container>
               <Grid item xs={12}>

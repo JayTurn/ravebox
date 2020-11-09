@@ -66,7 +66,7 @@ export interface RetrieveStreamByListParams {
  * Retrive the rave stream by product parameters.
  */
 export interface RetrieveStreamByProductParams {
-  product: Product;
+  product?: Product;
 }
 
 /**

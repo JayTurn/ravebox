@@ -25,5 +25,7 @@ export interface SwipeVideoOverlayProps {
   raveStream?: RaveStream;
   review?: Review;
   show: boolean;
+  showOverlay: () => void;
+  hideOverlay: () => void;
   up: () => void;
 }

@@ -59,7 +59,7 @@ export function useRetrieveRaveStreamByProduct(
   
   const [productStream, setProductStream] = React.useState<RaveStream | null>(null);
 
-  const [productId, setProductId] = React.useState<string | null>(product._id);
+  const [productId, setProductId] = React.useState<string | null>(null);
 
   const [firstLoad, setFirstLoad] = React.useState<boolean>(true);
 
@@ -67,7 +67,10 @@ export function useRetrieveRaveStreamByProduct(
    * Perform an update request when the product id changes.
    */
   React.useEffect(() => {
-    if (product._id !== productId) {
+    if (!isMounted.current) {
+      return;
+    }
+    if (product && product._id !== productId) {
       setProductId(product._id);
       setRetrieved(RetrievalStatus.REQUESTED);
     }
@@ -82,7 +85,7 @@ export function useRetrieveRaveStreamByProduct(
    */
   React.useEffect(() => {
     // If we haven't performed a request continue.
-    if (retrieved === RetrievalStatus.REQUESTED && productId) {
+    if (retrieved === RetrievalStatus.REQUESTED && product && productId) {
       if (isMounted) {
         // Update the retrieval status to avoid subsequent requests.
         setRetrieved(RetrievalStatus.WAITING);

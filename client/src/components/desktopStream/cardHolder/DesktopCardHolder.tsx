@@ -15,7 +15,6 @@ import {
   withStyles
 } from '@material-ui/core/styles';
 import Grid from '@material-ui/core/Grid';
-import Divider from '@material-ui/core/Divider';
 import * as React from 'react';
 import Typography from '@material-ui/core/Typography';
 import { withRouter } from 'react-router';
@@ -53,12 +52,8 @@ const useStyles = makeStyles((theme: Theme) =>
       margin: theme.spacing(1, 0)
     },
     container: {
-      position: 'relative'
-    },
-    divider: {
-      color: 'rgba(200, 200, 200)',
-      margin: theme.spacing(4, 2, 2),
-      width: 'calc(100% - 32px)',
+      position: 'relative',
+      margin: theme.spacing(4, 0)
     },
     productContainer: {
       margin: theme.spacing(.5, 0),
@@ -170,7 +165,7 @@ const DesktopCardHolder: React.FC<DesktopCardHolderProps> = (
         <Grid item xs={12}
           className={classes.cardsContainer}
         >
-          <Grid container justify='flex-start' alignItems='center' spacing={1}>
+          <Grid container justify='flex-start' alignItems='center'>
             {props.reviews.map((review: Review, index: number) => (
               <Grid item
                 xs={props.xs || 12}
@@ -180,6 +175,7 @@ const DesktopCardHolder: React.FC<DesktopCardHolderProps> = (
                 key={review._id}
               >
                 <DesktopCard
+                  hideProductTitles={props.hideProductTitles}
                   review={{...review}}
                   streamType={props.streamType}
                 />
@@ -188,7 +184,6 @@ const DesktopCardHolder: React.FC<DesktopCardHolderProps> = (
           </Grid>
         </Grid>
       }
-      <Divider className={clsx(classes.divider)}/>
     </Grid>
   );
 }

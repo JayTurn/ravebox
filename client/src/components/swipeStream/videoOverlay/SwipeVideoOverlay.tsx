@@ -46,6 +46,7 @@ import { ViewState } from '../../../utils/display/view/ViewState.enum';
 
 // Hooks.
 import { useAnalytics } from '../../../components/analytics/Analytics.provider';
+import { useIsMounted } from '../../../utils/safety/useIsMounted.hook';
 
 // Interfaces.
 import { AnalyticsContextProps } from '../../../components/analytics/Analytics.interface';
@@ -146,12 +147,13 @@ const SwipeVideoOverlay: React.FC<SwipeVideoOverlayProps> = (props: SwipeVideoOv
   const classes = useStyles(),
         theme = useTheme();
 
+  // Add the safety check to ensure the component is still mounted.
+  const isMounted = useIsMounted();
+
   // Create a page viewed state to avoid duplicate views.
   const [pageViewed, setPageViewed] = React.useState<boolean>(false);
 
   const activeIndex: number = props.activeIndex || 0;
-
-  const [visible, setVisible] = React.useState<boolean>(props.show);
 
   const [unplayed, setUnplayed] = React.useState<boolean>(true);
 
@@ -180,18 +182,19 @@ const SwipeVideoOverlay: React.FC<SwipeVideoOverlayProps> = (props: SwipeVideoOv
   ) => void = (
     e: React.MouseEvent
   ): void => {
+    if (!isMounted.current) {
+      return;
+    }
     const xDiff: number = Math.abs(e.clientX - startX),
           yDiff: number = Math.abs(e.clientY - startY);
 
     if (xDiff < 5 && yDiff < 5) {
       if (props.playing) {
         props.play(false);
-        setVisible(true);
+        props.showOverlay();
       } else {
         props.play(true);
-        setOverlayTimeout(setTimeout(() => {
-          setVisible(false);
-        }, 500))
+        props.hideOverlay();
       }
     }
   }
@@ -222,7 +225,7 @@ const SwipeVideoOverlay: React.FC<SwipeVideoOverlayProps> = (props: SwipeVideoOv
   ): void => {
     e.stopPropagation();
     props.center();
-    setVisible(true);
+    props.showOverlay();
   }
 
   /**
@@ -235,6 +238,9 @@ const SwipeVideoOverlay: React.FC<SwipeVideoOverlayProps> = (props: SwipeVideoOv
   ) => void = (
     eventData: EventData
   ): void => {
+    if (!isMounted.current) {
+      return;
+    }
 
     props.play(false);
 
@@ -242,53 +248,25 @@ const SwipeVideoOverlay: React.FC<SwipeVideoOverlayProps> = (props: SwipeVideoOv
       case 'Down':
         if (props.overlayState === SwipeView.VIDEO) {
           props.down();
-          setVisible(false);
+          props.hideOverlay();
         } else {
           props.center();
-          setVisible(true);
+          props.showOverlay();
         }
         break;
       case 'Left':
         props.next();
-        setVisible(false);
-
-        if (overlayTimeout) {
-          setOverlayTimeout(clearTimeout(overlayTimeout));
-
-          setTimeout(() => {
-            setVisible(true);
-            props.play(true);
-            setOverlayTimeout(setTimeout(() => {
-              setVisible(false);
-            }, 2000));
-          }, 300);
-        }
-
         break;
       case 'Right':
         props.previous();
-        setVisible(false);
-
-        if (overlayTimeout) {
-          setOverlayTimeout(clearTimeout(overlayTimeout));
-
-          setTimeout(() => {
-            setVisible(true);
-            props.play(true);
-            setOverlayTimeout(setTimeout(() => {
-              setVisible(false);
-            }, 2000));
-          }, 300);
-        }
-
         break;
       case 'Up':
         if (props.overlayState === SwipeView.VIDEO) {
-          setVisible(false);
+          props.hideOverlay();
           props.up();
         } else {
           props.center();
-          setVisible(true);
+          props.showOverlay();
         }
         break;
       default:
@@ -299,30 +277,31 @@ const SwipeVideoOverlay: React.FC<SwipeVideoOverlayProps> = (props: SwipeVideoOv
    * Handle the overlay state based on whether or not the video is playing.
    */
   React.useEffect(() => {
+    if (!isMounted.current) {
+      return;
+    }
+
     if (unplayed) {
       setUnplayed(false);
       props.play(true);
 
+      /*
       setOverlayTimeout(setTimeout(() => {
-        setVisible(false);
-      }, 3000));
+        if (isMounted.current) {
+          setVisible(false);
+        }
+      }, 5000));
+      */
 
     }
-    if (!props.playing && props.overlayState === SwipeView.VIDEO) {
-      setVisible(true);
-    }
 
-    if (props.playing && visible) {
-      //setOverlayTimeout(setTimeout(() => {
-        //setVisible(false);
-      //}, 3000));
-    }
-
-    if (props.overlayState !== SwipeView.VIDEO) {
-      setVisible(false);
-    }
-
-  }, [props.playing, visible, props.overlayState, unplayed]);
+  }, [
+    isMounted,
+    props.playing,
+    props.overlayState, 
+    props.show,
+    unplayed
+  ]);
 
   const swipeableHandlers: SwipeableHandlers = useSwipeable({
     delta: 10,
@@ -364,7 +343,7 @@ const SwipeVideoOverlay: React.FC<SwipeVideoOverlayProps> = (props: SwipeVideoOv
           onMouseUp={handleMouseUp}
           container
           alignItems='stretch'
-          style={{opacity: visible ? 1 : 0}}
+          style={{opacity: props.show ? 1 : 0}}
         >
           <React.Fragment>
             <Grid item xs={12}>

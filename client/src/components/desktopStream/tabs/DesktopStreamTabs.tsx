@@ -54,7 +54,7 @@ const StyledTabs = withStyles(theme => ({
     backgroundColor: theme.palette.primary.main
   },
   root: {
-    //borderBottom: `1px solid ${theme.palette.secondary.main}`
+    boxShadow: `inset 0 -2px 0 rgba(100, 106, 240, .1)`
   }
 }))(Tabs);
 
@@ -316,7 +316,6 @@ const DesktopStreamTabs: React.FC<DesktopStreamTabsProps> = (props: DesktopStrea
               className={clsx(classes.tab)}
             >
               <DesktopProductTab
-                product={props.product}
                 updateHeight={handleProductDetailsHeightUpdate}
               />
             </div>

@@ -28,6 +28,7 @@ import StyledButton from '../../elements/buttons/StyledButton';
 // Hooks.
 import { useAnalytics } from '../../../components/analytics/Analytics.provider';
 import { useValidation } from '../../forms/validation/useValidation.hook';
+import { useIsMounted } from '../../../utils/safety/useIsMounted.hook';
 
 // Interfaces.
 import {
@@ -99,6 +100,9 @@ const CreateUser: React.FC<CreateUserProps> = (props: CreateUserProps) => {
   const classes = useStyles(),
         theme = useTheme(),
         largeScreen = useMediaQuery(theme.breakpoints.up('md'));
+
+  // Add the safety check to ensure the component is still mounted.
+  const isMounted = useIsMounted();
 
   // Define the analytics context and a tracking event.
   const analytics: AnalyticsContextProps = useAnalytics() as AnalyticsContextProps;
@@ -208,6 +212,9 @@ const CreateUser: React.FC<CreateUserProps> = (props: CreateUserProps) => {
       method: 'POST'
     })
     .then((response: CreateUserFormResponse) => {
+      if (!isMounted.current) {
+        return;
+      }
       // Present any errors that were returned in the response.
       if (response.errorCode) {
         setSubmitting(false);
@@ -227,6 +234,9 @@ const CreateUser: React.FC<CreateUserProps> = (props: CreateUserProps) => {
 
     })
     .catch(() => {
+      if (!isMounted.current) {
+        return;
+      }
       // Present any errors that were returned in the response.
       setSubmitting(false);
       setFormErrorMessages([`Something went wrong. Please try creating the user again.`])

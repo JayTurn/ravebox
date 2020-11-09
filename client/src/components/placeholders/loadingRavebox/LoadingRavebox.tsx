@@ -27,6 +27,9 @@ import Logo from '../../logo/Logo';
 // Enumerators.
 import { LogoColor } from '../../logo/Logo.enum';
 
+// Hooks.
+import { useIsMounted } from '../../../utils/safety/useIsMounted.hook';
+
 // Interfaces.
 import { LoadingRaveboxProps } from './LoadingRavebox.interface';
 
@@ -105,12 +108,21 @@ const LoadingRavebox: React.FC<LoadingRaveboxProps> = (props: LoadingRaveboxProp
 
   const [display, setDisplay] = React.useState<boolean>(props.loading || false);
 
+  // Add the safety check to ensure the component is still mounted.
+  const isMounted = useIsMounted();
+
   /**
    * Update the loading state.
    */
   React.useEffect(() => {
     if (progress <= 0 && !progressInterval) {
+      if (!isMounted.current) {
+        return;
+      }
       setProgressInterval(setInterval(() => {
+        if (!isMounted.current) {
+          return;
+        }
         setProgress((oldProgress: number) => {
           if (oldProgress >= 100) {
             return 100;
@@ -126,9 +138,15 @@ const LoadingRavebox: React.FC<LoadingRaveboxProps> = (props: LoadingRaveboxProp
     }
 
     if (progress >= 100 && progressInterval) {
-      setProgressInterval(
+      if (!isMounted.current) {
+        return;
+      }
+      setProgressInterval(() => {
+        if (!isMounted.current) {
+          return;
+        }
         clearInterval(progressInterval)
-      );
+      });
     }
 
     if (!display && props.loading) {
@@ -137,12 +155,16 @@ const LoadingRavebox: React.FC<LoadingRaveboxProps> = (props: LoadingRaveboxProp
 
     if (display && !props.loading) {
       setTimeout(() => {
+        if (!isMounted.current) {
+          return;
+        }
         setDisplay(false);
       }, 300);
     }
 
   }, [
     display,
+    isMounted,
     progress,
     progressInterval,
     props.loading

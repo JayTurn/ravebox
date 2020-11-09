@@ -78,7 +78,9 @@ import {
 
 // Utilities.
 import {
-  buildRaveStreamPath
+  buildContextPath,
+  buildRaveStreamPath,
+  retrieveRaveURL
 } from '../raveStream/RaveStream.common';
 
 /**
@@ -227,6 +229,7 @@ const SwipeStream: React.FC<SwipeStreamProps> = (props: SwipeStreamProps) => {
         largeScreen = useMediaQuery(theme.breakpoints.up('sm'));
 
   const {
+    isMounted,
     loadRave,
     raveStream,
     raveStreamStatus
@@ -248,8 +251,6 @@ const SwipeStream: React.FC<SwipeStreamProps> = (props: SwipeStreamProps) => {
 
   const [ravePath, setRavePath] = React.useState<string>('');
 
-  const isMounted = useIsMounted();
-
   const [upperOverlay, setUpperOverlay] = React.useState<SwipeView>(SwipeView.PRODUCT);
 
 
@@ -257,8 +258,28 @@ const SwipeStream: React.FC<SwipeStreamProps> = (props: SwipeStreamProps) => {
    * Track the stream view.
    */
   React.useEffect(() => {
+    if (!isMounted) {
+      return;
+    }
 
-    if (props.review && props.review.url && ravePath !== props.location.pathname) {
+    if (props.review && props.review.url) {
+
+      const raveURL: string = retrieveRaveURL(props.match.params);
+
+      if (ravePath !== props.location.pathname) {
+        loadRave(raveURL)(props.match.params);
+
+        const contextPath: string = buildContextPath(props.match.params.streamType)(props.match.params); 
+
+        setRavePath(contextPath);
+
+        handleDisplayChange(SwipeView.VIDEO);
+
+        props.history.push(contextPath);
+      }
+
+      /*
+      && ravePath !== props.location.pathname) {
       // Get the new path and update it in the browser.
       let path: string = `/stream/${props.match.params.streamType}/${props.match.params.firstPath}`;
 
@@ -277,10 +298,8 @@ const SwipeStream: React.FC<SwipeStreamProps> = (props: SwipeStreamProps) => {
       }
 
       loadRave(reviewUrl)(props.match.params);
-      handleDisplayChange(SwipeView.VIDEO);
-      setRavePath(props.location.pathname);
 
-      props.history.push(path);
+      */
     }
 
     /*
@@ -345,6 +364,7 @@ const SwipeStream: React.FC<SwipeStreamProps> = (props: SwipeStreamProps) => {
 
 
   }, [
+    isMounted,
     pageViewed,
     props.loading,
     props.product,

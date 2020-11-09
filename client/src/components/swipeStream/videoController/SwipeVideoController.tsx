@@ -44,6 +44,7 @@ import {
 
 // Hooks.
 import { useAnalytics } from '../../../components/analytics/Analytics.provider';
+import { useIsMounted } from '../../../utils/safety/useIsMounted.hook';
 
 // Interfaces.
 import { AnalyticsContextProps } from '../../../components/analytics/Analytics.interface';
@@ -155,12 +156,17 @@ const SwipeVideoController: React.FC<SwipeVideoControllerProps> = (props: SwipeV
   const classes = useStyles(),
         theme = useTheme();
 
+  // Add the safety check to ensure the component is still mounted.
+  const isMounted = useIsMounted();
+
   // Create a page viewed state to avoid duplicate views.
   const [pageViewed, setPageViewed] = React.useState<boolean>(false);
 
   const [showOverlay, setShowOverlay] = React.useState<boolean>(true);
 
   const [playing, setPlaying] = React.useState<boolean>(false);
+
+  const [overlayTimeout, setOverlayTimeout] = React.useState<ReturnType<typeof setTimeout> | void | null>(null);
 
   /**
    * Handles moving to the next video.
@@ -175,6 +181,8 @@ const SwipeVideoController: React.FC<SwipeVideoControllerProps> = (props: SwipeV
             props.raveStream.reviews[props.activeIndex + 1].product || emptyProduct()
           );
           props.updateActiveIndex(props.activeIndex + 1);
+          setShowOverlay(false);
+          handleOverlayDisplay();
         }
       }
     }
@@ -190,9 +198,66 @@ const SwipeVideoController: React.FC<SwipeVideoControllerProps> = (props: SwipeV
             props.raveStream.reviews[props.activeIndex - 1].product || emptyProduct()
           );
           props.updateActiveIndex(props.activeIndex - 1);
+          setShowOverlay(false);
+          handleOverlayDisplay();
         }
       }
     }
+  }
+
+  const handleShowOverlay: (
+  ) => void = (
+  ): void => {
+    if (overlayTimeout) {
+      setOverlayTimeout(() => {
+        if (isMounted.current) {
+          clearTimeout(overlayTimeout);
+        }
+      });
+    }
+    setShowOverlay(true);
+  }
+
+  const handleHideOverlay: (
+  ) => void = (
+  ): void => {
+    if (!isMounted.current) {
+      return;
+    }
+
+    if (overlayTimeout) {
+      setOverlayTimeout(() => {
+        if (isMounted.current) {
+          clearTimeout(overlayTimeout);
+        }
+      });
+    }
+
+    setOverlayTimeout(setTimeout(() => {
+      if (isMounted.current) {
+        setShowOverlay(false);
+      }
+
+      if (overlayTimeout) {
+        setOverlayTimeout(clearTimeout(overlayTimeout));
+      }
+    }, 3000));
+  }
+
+  const handleOverlayDisplay: (
+  ) => void = (
+  ): void => {
+    if (!isMounted.current) {
+      return;
+    }
+
+    setTimeout(() => {
+      if (!isMounted.current) {
+        return;
+      }
+      handleShowOverlay();
+      handleHideOverlay();
+    }, 300);
   }
 
   const handleShowProduct: (
@@ -238,12 +303,14 @@ const SwipeVideoController: React.FC<SwipeVideoControllerProps> = (props: SwipeV
         <Grid item xs={12} className={clsx(classes.item)}>
           <SwipeVideoOverlay
             down={handleShowProduct}
+            hideOverlay={handleHideOverlay}
             next={handleNext}
             overlayState={props.showing}
             play={handlePlayPause}
             playing={playing}
             previous={handlePrevious}
             show={showOverlay}
+            showOverlay={handleShowOverlay}
             up={handleShowReview}
             center={handleShowVideo}
           />
@@ -254,6 +321,9 @@ const SwipeVideoController: React.FC<SwipeVideoControllerProps> = (props: SwipeV
                   {typeof props.activeIndex === 'number' && index > props.activeIndex - 2 && index < props.activeIndex + 2 &&
                     <SwipeVideo
                       active={index === props.activeIndex}
+                      activeIndex={props.activeIndex}
+                      index={index}
+                      nextVideo={handleNext}
                       playing={index === props.activeIndex ? playing : false}
                       positioning={setVideoPosition(props.activeIndex)(index)}
                       review={review}

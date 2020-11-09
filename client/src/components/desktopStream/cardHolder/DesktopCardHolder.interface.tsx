@@ -19,6 +19,7 @@ import { Review } from '../../review/Review.interface';
  * Stream card properties.
  */
 export interface DesktopCardHolderProps extends RouteComponentProps<RaveStreamURLParams> {
+  hideProductTitles: boolean;
   lg?: 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12;
   md?: 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12;
   overrideTitle?: boolean;
@@ -29,4 +30,5 @@ export interface DesktopCardHolderProps extends RouteComponentProps<RaveStreamUR
   title: string;
   url?: string;
   xs?: 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12;
+  linkContext?: string;
 }

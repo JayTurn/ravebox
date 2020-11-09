@@ -99,7 +99,7 @@ const DesktopCard: React.FC<DesktopCardProps> = (props: DesktopCardProps) => {
 
   return (
     <Grid container className={clsx(classes.container)}>
-      {streamType !== RaveStreamType.PRODUCT &&
+      {!props.hideProductTitles &&
         <Grid item xs={12} className={clsx(classes.productContainer)}>
           {review.product &&
             <Typography variant='h3' className={clsx(classes.productTitle)}>

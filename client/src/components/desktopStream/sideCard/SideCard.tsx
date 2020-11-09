@@ -23,9 +23,8 @@ import Typography from '@material-ui/core/Typography';
 import { withRouter } from 'react-router';
 
 // Components.
-import CardUser from '../../raveStream/cardUser/CardUser';
 import CardVideo from '../../raveStream/cardVideo/CardVideo';
-import StyledButton from '../../elements/buttons/StyledButton';
+import StreamUserProfile from '../../raveStream/userProfile/StreamUserProfile';
 
 // Enumerators.
 import { RaveStreamType } from '../../raveStream/RaveStream.enum';
@@ -65,7 +64,7 @@ const useStyles = makeStyles((theme: Theme) =>
     },
     brandText: {
       display: 'block',
-      fontSize: '.85rem',
+      fontSize: '.9rem',
       fontWeight: 700
     },
     buttonElement: {
@@ -110,12 +109,17 @@ const useStyles = makeStyles((theme: Theme) =>
       top: 0,
       width: '100%'
     },
+    linkContainer: {
+      color: 'inherit',
+      textDecoration: 'none'
+    },
     productContainer: {
       padding: theme.spacing(0, 2, 1)
     },
     productTitle: {
-      fontSize: '.9rem',
-      fontWeight: 500
+      fontSize: '1rem',
+      fontWeight: 500,
+      lineHeight: 1.25
     },
     reviewTitle: {
       fontSize: '1rem',
@@ -176,7 +180,7 @@ const SideCard: React.FC<SideCardProps> = (props: SideCardProps) => {
     streamType
   } = {...props};
 
-  const path: string = buildURLForStream(streamType)(review)(true);
+  const path: string = `${props.contextPath}/${review.url}`;
 
   const firstLetter: string = review && review.user ?
     review.user.handle.substr(0,1) : 'R';
@@ -198,111 +202,64 @@ const SideCard: React.FC<SideCardProps> = (props: SideCardProps) => {
 
   return (
     <React.Fragment>
-      <Grid container className={clsx(classes.container)}>
-        {props.next &&
-          <Grid item xs={12}
-            className={clsx(classes.upNextTitleContainer)}
-          >
-            <Typography className={clsx(classes.upNextTitle)} variant='h3'>
-              Up next
-            </Typography>
-          </Grid>
-        }
-        <Grid item xs={4} className={clsx(classes.imageContainer)}>
-          <img
-            className={clsx(classes.image)}
-            src={review.thumbnail} 
-            alt={`${review.title}`}
-          />
-        </Grid>
-        <Grid item xs={8}
-          className={clsx(classes.textContainer)}
-        >
-          <Grid container justify='space-between'
-            className={clsx(classes.textItems)}
-          >
-            <Grid item xs={12}>  
-              {streamType === RaveStreamType.PRODUCT ? (
-                <Typography variant='h4' className={clsx(classes.reviewTitle)}>
-                  {review.title}
-                </Typography>
-              ): (
-                <React.Fragment>
-                  {review.product &&
-                    <Typography variant='h4' className={clsx(classes.productTitle)}>
-                      <Box component='span' className={clsx(classes.brandText)}>
-                        {review.product.brand.name}
-                      </Box>
-                      {review.product.name}
-                    </Typography>
-                  }
-                </React.Fragment>
-              )}
-            </Grid>
-            {review.user &&
-              <Grid item xs={12}>
-                <Grid container alignItems='center'>
-                  <Grid item className={clsx(classes.handleTextContainer)}>
-                    <Typography
-                      className={clsx(classes.handleText)}
-                      variant='body1'
-                    >
-                      {review.user.role === Role.YOUTUBE ? 'youtube' : review.user.handle}
-                    </Typography>
-                  </Grid>
-                </Grid>
-              </Grid>
-            }
-            {/*
-            <Grid item xs={12}>
-              <NavLink
-                className={clsx(classes.viewLink)}
-                to={path} 
-              >
-                View
-              </NavLink>
-            </Grid>
-            */}
-          </Grid>
-        {/*
-        {streamType !== RaveStreamType.PRODUCT &&
-          <Grid item xs={12} className={clsx(classes.productContainer)}>
-            {review.product &&
-              <Typography variant='h3' className={clsx(classes.productTitle)}>
-                <Box component='span' className={clsx(classes.brandText)}>
-                  {review.product.brand.name}
-                </Box>
-                {review.product.name}
+      <NavLink
+        className={classes.linkContainer}
+        to={path}
+      >
+        <Grid container className={clsx(classes.container)}>
+          {props.next &&
+            <Grid item xs={12}
+              className={clsx(classes.upNextTitleContainer)}
+            >
+              <Typography className={clsx(classes.upNextTitle)} variant='h3'>
+                Up next
               </Typography>
-            }
-          </Grid>
-        }
-        <Grid item xs={12}>
-          <CardVideo
-            active={active}
-            playing={false}
-            review={{...review}}
-            url={path}
-          />  
-        </Grid>
-        <Grid item xs={12} className={clsx(classes.userContainer)}>
-          <Grid container justify='space-between' alignItems='center'>
-            <Grid item>
-              <CardUser review={{...review}} />
             </Grid>
-            <Grid item>
-              <StyledButton
-                className={clsx(classes.buttonElement)}
-                clickAction={handleNavigate}
-                color='primary'
-                size='small'
-                title='View rave'
-              />
+          }
+          <Grid item xs={4} className={clsx(classes.imageContainer)}>
+            <img
+              className={clsx(classes.image)}
+              src={review.thumbnail} 
+              alt={`${review.title}`}
+            />
+          </Grid>
+          <Grid item xs={8}
+            className={clsx(classes.textContainer)}
+          >
+            <Grid container justify='space-between'
+              className={clsx(classes.textItems)}
+            >
+              <Grid item xs={12}>  
+                {streamType === RaveStreamType.PRODUCT ? (
+                  <Typography variant='h4' className={clsx(classes.reviewTitle)}>
+                    {review.title}
+                  </Typography>
+                ): (
+                  <React.Fragment>
+                    {review.product &&
+                      <Typography variant='h4' className={clsx(classes.productTitle)}>
+                        <Box component='span' className={clsx(classes.brandText)}>
+                          {review.product.brand.name}
+                        </Box>
+                        {review.product.name}
+                      </Typography>
+                    }
+                  </React.Fragment>
+                )}
+              </Grid>
+              {review.user &&
+                <Grid item xs={12}>
+                  <StreamUserProfile
+                    showFollow={false}
+                    user={review.user}
+                    variant='side'
+                  />
+                </Grid>
+              }
             </Grid>
           </Grid>
-          */}
         </Grid>
-      </Grid>
+      </NavLink>
       {props.next &&
         <Divider className={clsx(classes.divider)} />
       }

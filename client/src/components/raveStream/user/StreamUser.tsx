@@ -108,6 +108,9 @@ const useStyles = makeStyles((theme: Theme) =>
     muteIcon: {
       fontSize: '2rem'
     },
+    ratingContainer: {
+      marginRight: theme.spacing(2)
+    },
     statisticsText: {
       color: theme.palette.common.white,
       fontSize: '.7rem',
@@ -280,7 +283,7 @@ const StreamUser: React.FC<StreamUserProps> = (props: StreamUserProps) => {
             <Grid container justify='flex-start'>
               {props.review && props.review.product && props.user &&
                 <React.Fragment>
-                  <Grid item>
+                  <Grid item className={clsx(classes.ratingContainer)}>
                     <RateRave review={props.review} color='white' />
                   </Grid>
                   <Grid item>

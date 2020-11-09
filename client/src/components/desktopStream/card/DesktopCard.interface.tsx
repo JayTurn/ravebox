@@ -19,6 +19,7 @@ import { Review } from '../../review/Review.interface';
  * Stream card properties.
  */
 export interface DesktopCardProps extends RouteComponentProps<RaveStreamURLParams> {
+  hideProductTitles: boolean;
   review: Review
   streamType: RaveStreamType;
 }

@@ -19,6 +19,7 @@ import { Review } from '../../review/Review.interface';
  * Stream card properties.
  */
 export interface SideCardProps extends RouteComponentProps<RaveStreamURLParams> {
+  contextPath: string;
   next: boolean;
   review: Review
   streamType: RaveStreamType;

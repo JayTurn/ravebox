@@ -117,10 +117,9 @@ export function useRetrieveRaveStreamByURL(
   // Add the safety check to ensure the component is still mounted.
   const isMounted = useIsMounted();
 
-  const [path, setPath] = React.useState<string>(buildRaveStreamPath({...requested})(ignoreRavePath));
+  const [path, setPath] = React.useState<string>();
 
-  // Define the product path to be used for triggering requests for a stream.
-  const [productPath, setProductPath] = React.useState<string>(path);
+  const [contextPath, setContextPath] = React.useState<string>(buildRaveStreamPath({...requested})(true));
 
   // Define a state for the url parameters to track changes.
   const [requestParams, setRequestParams] = React.useState<RaveStreamURLParams>({...requested});
@@ -133,6 +132,8 @@ export function useRetrieveRaveStreamByURL(
   const [raveStream, setRaveStream] = React.useState<RaveStream>(existing ? existing : {...emptyRaveStream()});
 
   const [existingPath, setExistingPath] = React.useState<string>('');
+
+  const [requestedPath, setRequestedPath] = React.useState<string>(buildRaveStreamPath({...requested})(false));
 
   /**
    * Determine if we should update the active index or request a new RaveStream.
@@ -148,16 +149,24 @@ export function useRetrieveRaveStreamByURL(
   ) => (
     updatedParams: RaveStreamURLParams
   ): void => {
-    const updatedPath: string = buildRaveStreamPath({...updatedParams})(ignoreRavePath);
+    if (!isMounted.current) {
+      return;
+    }
+
+    if (retrieved === RetrievalStatus.WAITING || retrieved === RetrievalStatus.REQUESTED) {
+      return;
+    }
+
+    const updatedPath: string = buildRaveStreamPath({...updatedParams})(true);
 
     if (updatedParams) {
 
-      if (path && path !== updatedPath) {
+      if (contextPath && contextPath !== updatedPath) {
         setRequestParams({...updatedParams});
-        setRequestedPath(updatedPath);
+        setRequestedPath(buildRaveStreamPath({...updatedParams})(false));
 
-        if (path) {
-          setPath(updatedPath);
+        if (contextPath) {
+          setContextPath(updatedPath);
         }
         setTimeout(() => {
           setRetrieved(RetrievalStatus.REQUESTED);
@@ -177,8 +186,8 @@ export function useRetrieveRaveStreamByURL(
       setTimeout(() => {
         setRetrieved(RetrievalStatus.REQUESTED);
       }, 0);
-      if (path) {
-        setPath(updatedPath);
+      if (contextPath) {
+        setContextPath(updatedPath);
       }
     } else {
       if (setActiveRave) {
@@ -191,30 +200,24 @@ export function useRetrieveRaveStreamByURL(
             }
           }
         }
-        if (!path) {
-          setPath(updatedPath);
+        if (!contextPath) {
+          setContextPath(updatedPath);
         }
       }
     }
   }
 
-  // Define the active product to be displayed in the stream.
-  //if (existing && setActiveProduct) {
-    //setActiveProduct(retrieveProductFromStream(existing));
-  //}
-
-  const [requestedPath, setRequestedPath] = React.useState<string>(path);
 
   /**
    * Handle state updates to the url parameters and request status.
    */
   React.useEffect(() => {
+    if (!isMounted.current) {
+      return;
+    }
+
     // If we haven't performed a request continue.
     if (retrieved === RetrievalStatus.REQUESTED) {
-
-      if (!isMounted) {
-        return;
-      }
 
       if (updateLoading) {
         updateLoading(true);
@@ -228,6 +231,11 @@ export function useRetrieveRaveStreamByURL(
         method: RequestType.GET
       })
       .then((response: RaveStreamResponse) => {
+
+        if (!isMounted.current) {
+          return;
+        }
+
         // If we have a rave stream, set rave stream the in the redux store and the
         // local state.
         if (response.raveStream) {
@@ -237,26 +245,23 @@ export function useRetrieveRaveStreamByURL(
             setActiveProduct(retrieveProductFromStream(response.raveStream));
           }
 
-          if (isMounted) {
-            setRetrieved(RetrievalStatus.SUCCESS);
-            if (updateLoading) {
-              updateLoading(false);
-            }
+          setRetrieved(RetrievalStatus.SUCCESS);
+
+          if (updateLoading) {
+            updateLoading(false);
           }
 
         } else {
           // We didn't return an active rave stream so return a not found
           // state.
-          if (isMounted) {
-            setRetrieved(RetrievalStatus.NOT_FOUND);
-            if (updateLoading) {
-              updateLoading(false);
-            }
+          setRetrieved(RetrievalStatus.NOT_FOUND);
+          if (updateLoading) {
+            updateLoading(false);
           }
         }
       })
       .catch((error: Error) => {
-        if (isMounted) {
+        if (isMounted.current) {
           setRetrieved(RetrievalStatus.FAILED);
           if (updateLoading) {
             updateLoading(false);
@@ -264,9 +269,11 @@ export function useRetrieveRaveStreamByURL(
         }
       });
     }
-  }, [retrieved]);
+
+  }, [isMounted, retrieved]);
 
   return {
+    isMounted,
     loadRave,
     raveStream,
     raveStreamStatus: ViewStatus(retrieved)

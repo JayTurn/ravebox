@@ -34,6 +34,7 @@ import { useRetrieveRaveStreamByProduct } from '../../raveStream/useRetrieveRave
 
 // Interfaces.
 import { DesktopProductTabProps } from './DesktopProductTab.interface';
+import { Product } from '../../product/Product.interface';
 import { RaveStream } from '../../raveStream/RaveStream.interface';
 import { Review } from '../../review/Review.interface';
 
@@ -81,6 +82,8 @@ const DesktopProductTab: React.FC<DesktopProductTabProps> = (props: DesktopProdu
 
   const [productId, setProductId] = React.useState<string>('');
 
+  const [streamTitle, setStreamTitle] = React.useState<string>('');
+
   const [height, setHeight] = React.useState<number>(0);
 
   /**
@@ -108,43 +111,27 @@ const DesktopProductTab: React.FC<DesktopProductTabProps> = (props: DesktopProdu
       if (height !== ref.current.clientHeight) {
         handleHeightUpdate();
       }
-      if (props.product._id !== productId) {
+      if (props.product && props.product._id !== productId) {
         setProductId(props.product._id);
-        handleHeightUpdate();
       }
     }
-  }, [height, ref, props.product, productId]);
+  }, [height, ref, props.product, productId, productStream]);
 
   return (
-    <React.Fragment>
-      {props.product.description || (props.product.images && props.product.images.length > 0) ? ( 
-        <Grid className={clsx(classes.container)} container ref={ref}>
-          <Grid item xs={12} className={clsx(classes.cardContainer)}>
-            <ProductSpecifications
-              description={props.product.description}
-              updateHeight={handleHeightUpdate}
-              website={props.product.website}
-            />
-          </Grid>
-          {props.product.images && props.product.images.length > 0 &&
-            <DesktopProductImages images={props.product.images} />
-          }
-          {productStream && productStream.reviews &&
-            <Grid item xs={12} className={clsx(classes.raveContainer)}>
-              <DesktopCardHolder
-                lg={4}
-                md={6}
-                sm={12}
-                hideStreamTag={true}
-                overrideTitle={true}
-                reviews={productStream.reviews ? [...productStream.reviews] : []}
-                streamType={RaveStreamType.PRODUCT} 
-                title={`More ${productStream.title} raves`}
+    <Grid container ref={ref}>
+      {props.product && props.product.description ? (
+        <Grid item xs={12}>
+          <Grid className={clsx(classes.container)} container>
+            <Grid item xs={12} className={clsx(classes.cardContainer)}>
+              <ProductSpecifications
+                description={props.product.description}
+                updateHeight={handleHeightUpdate}
+                website={props.product.website}
               />
             </Grid>
-          }
+          </Grid>
         </Grid>
-      ) : (
+      ) : ( 
         <Grid container ref={ref}>
           <Grid item xs={12}>
             <Typography variant='body1' className={clsx(classes.noInformationText)}>
@@ -153,7 +140,25 @@ const DesktopProductTab: React.FC<DesktopProductTabProps> = (props: DesktopProdu
           </Grid>
         </Grid>
       )}
-    </React.Fragment>
+      {props.product && props.product.images && props.product.images.length > 0 &&
+        <DesktopProductImages images={props.product.images} />
+      }
+      {productStream && productStream.reviews &&
+        <Grid item xs={12} className={clsx(classes.raveContainer)}>
+          <DesktopCardHolder
+            hideProductTitles={true}
+            lg={4}
+            md={6}
+            sm={12}
+            hideStreamTag={true}
+            overrideTitle={true}
+            reviews={productStream.reviews ? [...productStream.reviews] : []}
+            streamType={RaveStreamType.PRODUCT} 
+            title={`More ${productStream.title} raves`}
+          />
+        </Grid>
+      }
+    </Grid>
   );
 };
 
@@ -161,9 +166,11 @@ const DesktopProductTab: React.FC<DesktopProductTabProps> = (props: DesktopProdu
  * Mapping the state updates to the properties from redux.
  */
 const mapStateToProps = (state: any, ownProps: DesktopProductTabProps) => {
+  const product: Product = state.raveStream ? state.raveStream.product : undefined;
 
   return {
-    ...ownProps
+    ...ownProps,
+    product: product
   };
 };
 

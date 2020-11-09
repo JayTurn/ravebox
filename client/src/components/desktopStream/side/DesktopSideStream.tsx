@@ -20,6 +20,7 @@ import Tab from '@material-ui/core/Tab';
 import Tabs from '@material-ui/core/Tabs';
 import Typography from '@material-ui/core/Typography';
 import * as React from 'react';
+import { withRouter } from 'react-router';
 
 // Components.
 import ProductTitle from '../../product/title/ProductTitle';
@@ -43,6 +44,7 @@ import { Review } from '../../review/Review.interface';
 
 // Utilities.
 import {
+  buildContextPath,
   getStreamName
 } from '../../raveStream/RaveStream.common';
 
@@ -139,6 +141,9 @@ const DesktopSideStream: React.FC<DesktopSideStreamProps> = (props: DesktopSideS
     ? getStreamName(raveStream.streamType)
     : '';
 
+  const contextPath: string = raveStream ? buildContextPath(
+    raveStream.streamType)(props.match.params) : '';
+
   /**
    * Update the height on the first load.
    */
@@ -180,6 +185,7 @@ const DesktopSideStream: React.FC<DesktopSideStreamProps> = (props: DesktopSideS
                   return (
                     <React.Fragment key={index}>
                       <SideCard
+                        contextPath={contextPath}
                         next={activeIndex + 1 === index}
                         review={review} 
                         streamType={raveStream.streamType}
@@ -218,6 +224,6 @@ const mapStateToProps = (state: any, ownProps: DesktopSideStreamProps) => {
   };
 };
 
-export default connect(
+export default withRouter(connect(
   mapStateToProps
-)(DesktopSideStream);
+)(DesktopSideStream));

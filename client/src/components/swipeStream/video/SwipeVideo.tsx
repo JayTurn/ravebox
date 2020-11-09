@@ -166,6 +166,8 @@ const SwipeVideo: React.FC<SwipeVideoProps> = (props: SwipeVideoProps) => {
   const [unplayed, setUnplayed] = React.useState<boolean>(true);
   const [loading, setLoading] = React.useState<boolean>(false);
 
+  const [ready, setReady] = React.useState<boolean>(false);
+
   // Define the player controls.
   const [config, setConfig] = React.useState({
     controls: false,
@@ -176,7 +178,7 @@ const SwipeVideo: React.FC<SwipeVideoProps> = (props: SwipeVideoProps) => {
     muted: props.muted ? true : false,
     playing: props.active && props.playing,
     playsinline: true,
-    url: '',
+    url: props.review.videoURL,
     volume: 1,
     width: 'calc(100vw)'
   });
@@ -187,6 +189,7 @@ const SwipeVideo: React.FC<SwipeVideoProps> = (props: SwipeVideoProps) => {
   const handleComplete: (
   ) => void = (
   ): void => {
+    props.nextVideo();
   }
 
   /**
@@ -213,10 +216,12 @@ const SwipeVideo: React.FC<SwipeVideoProps> = (props: SwipeVideoProps) => {
   const handlePlayback: (
   ) => void = (
   ): void => {
-    setConfig({
-      ...config,
-      playing: !config.playing
-    });
+    if (playerRef) {
+      setConfig({
+        ...config,
+        playing: !config.playing
+      });
+    }
   }
 
   /**
@@ -227,7 +232,7 @@ const SwipeVideo: React.FC<SwipeVideoProps> = (props: SwipeVideoProps) => {
   ) => void = (
     state: VideoProgress
   ): void => {
-    if (props.update && props.videoProgress && props.active) {
+    if (props.update && props.videoProgress && props.active && playerRef) {
       props.update({
         ...props.videoProgress,
         _id: props.review._id,
@@ -249,6 +254,8 @@ const SwipeVideo: React.FC<SwipeVideoProps> = (props: SwipeVideoProps) => {
     if (playerRef) {
       const current: Player | null = playerRef.current;
 
+      setReady(true);
+
       if (current) {
         const pl: any = current.getInternalPlayer();
 
@@ -265,6 +272,13 @@ const SwipeVideo: React.FC<SwipeVideoProps> = (props: SwipeVideoProps) => {
             played: 0,
             playedSeconds: 0,
             videoDuration: current.getDuration()
+          });
+        }
+
+        if (props.active && props.playing) {
+          setConfig({
+            ...config,
+            playing: true
           });
         }
       }
@@ -286,18 +300,22 @@ const SwipeVideo: React.FC<SwipeVideoProps> = (props: SwipeVideoProps) => {
    */
   React.useEffect(() => {
 
+    if (!playerRef || !playerRef.current) {
+      return;
+    }
+    /*
     if (props.playing && props.active && unplayed) {
       setConfig({
         ...config,
         playing: props.playing,
-        url: props.review.videoURL || ''
       });
-      setUnplayed(false);
+      //setUnplayed(false);
 
       return;
     }
+    */
 
-    if (props.playing !== config.playing) {
+    if (props.active && props.playing !== config.playing && ready) {
       setConfig({
         ...config,
         playing: props.playing
@@ -309,7 +327,7 @@ const SwipeVideo: React.FC<SwipeVideoProps> = (props: SwipeVideoProps) => {
         muted: props.muted ? true : false
       });
     }
-  }, [config, props.muted, props.playing]);
+  }, [config, props.active, props.muted, props.playing, unplayed, playerRef]);
 
   return (
     <Box
@@ -330,6 +348,7 @@ const SwipeVideo: React.FC<SwipeVideoProps> = (props: SwipeVideoProps) => {
           unplayed={false}
         />
       </Box>
+      {/*
       <Box
         className={clsx(classes.thumbnailContainer)}
         style={{
@@ -338,6 +357,7 @@ const SwipeVideo: React.FC<SwipeVideoProps> = (props: SwipeVideoProps) => {
         }}
       >
       </Box>
+      */}
       <Grid
         className={clsx(classes.videoContainer)}
         container
@@ -353,6 +373,7 @@ const SwipeVideo: React.FC<SwipeVideoProps> = (props: SwipeVideoProps) => {
               progressInterval={5000}
               onBuffer={handleBuffer}
               onBufferEnd={handleBufferEnd}
+              onEnded={handleComplete}
               onProgress={handleProgress}
               onReady={handleReady}
               onStart={handleStart}

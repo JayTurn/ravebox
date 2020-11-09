@@ -24,6 +24,7 @@ import * as React from 'react';
 
 // Components.
 import ProductDescription from '../productDescription/ProductDescription';
+import StreamUserProfile from '../userProfile/StreamUserProfile';
 import SwipeCardHolder from '../../swipeStream/cardHolder/SwipeCardHolder';
 
 // Enumerators.
@@ -139,53 +140,26 @@ const RaveInformation: React.FC<RaveInformationProps> = (props: RaveInformationP
       {props.review && props.review.user &&
         <React.Fragment>
           <Grid item xs={12} className={clsx(
-            classes.cardContainer,
-            classes.userCard
+            classes.cardContainer
           )}>
-            <Grid container>
-              <Grid item xs={12}>
-                <Grid container direction='column' alignItems='center'>
-                  <Grid item>
-                    {avatar ? (
-                      <Avatar
-                        alt={props.review.user.handle}
-                        className={clsx(classes.avatar)}
-                        src={avatar}
-                      />
-                    ) : (
-                      <Avatar
-                        alt={props.review.user.handle}
-                        className={clsx(classes.avatarIcon)}
-                      >
-                        {firstLetter} 
-                      </Avatar>
-                    )}
-                  </Grid>
-                  <Grid item>
-                    <Typography variant='body1' className={clsx(classes.handleText)}>
-                      {props.review.user.role === Role.YOUTUBE ? 'youtube user' : props.review.user.handle}
-                    </Typography>
-                  </Grid>
-                </Grid>
-              </Grid>
-            </Grid>
+            <StreamUserProfile
+              showFollow={false}
+              user={props.review.user}
+              variant='small'
+            />
+            {props.review.description &&
+              <ProductDescription
+                description={props.review.description} 
+                reviewLinks={props.review.links}
+                updateHeight={handleHeightUpdate}
+                user={props.review.user}
+              />  
+            }
           </Grid>
-          {props.review.description &&
-            <Grid item xs={12} className={clsx(
-              classes.cardContainer
-            )}>
-                <ProductDescription
-                  description={props.review.description} 
-                  reviewLinks={props.review.links}
-                  updateHeight={handleHeightUpdate}
-                  user={props.review.user}
-                />  
-            </Grid>
-          }
           {props.raveStream &&
             <SwipeCardHolder
               reviews={reviews ? [...reviews] : []}
-              streamType={RaveStreamType.CATEGORY} 
+              streamType={props.raveStream.streamType} 
               title={`${props.raveStream.title}`}
             />
           }

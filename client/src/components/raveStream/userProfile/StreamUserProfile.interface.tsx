@@ -11,4 +11,6 @@ import { PublicProfile } from '../../user/User.interface';
  */
 export interface StreamUserProfileProps {
   user: PublicProfile;
+  variant: 'side' | 'small' | 'large';
+  showFollow: boolean;
 }

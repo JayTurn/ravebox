@@ -135,7 +135,11 @@ const DesktopRaveTab: React.FC<DesktopRaveTabProps> = (props: DesktopRaveTabProp
           )}>
             <Grid container>
               <Grid item xs={12} className={clsx(classes.userCard)}>
-                <StreamUserProfile user={props.review.user} />
+                <StreamUserProfile
+                  showFollow={true}
+                  user={props.review.user}
+                  variant='large'
+                />
               </Grid>
             </Grid>
           </Grid>
@@ -151,6 +155,7 @@ const DesktopRaveTab: React.FC<DesktopRaveTabProps> = (props: DesktopRaveTabProp
                 />  
             </Grid>
           }
+          {/*
           {props.raveStream &&
             <Grid item xs={12}
               className={clsx(classes.raves)}
@@ -159,14 +164,16 @@ const DesktopRaveTab: React.FC<DesktopRaveTabProps> = (props: DesktopRaveTabProp
                 lg={4}
                 md={6}
                 sm={12}
+                hideProductTitles={false}
                 hideStreamTag={true}
                 overrideTitle={true}
                 reviews={reviews ? [...reviews] : []}
-                streamType={RaveStreamType.CATEGORY} 
+                streamType={props.raveStream.streamType} 
                 title={`More raves`}
               />
             </Grid>
           }
+          */}
         </React.Fragment>
       }
     </Grid>

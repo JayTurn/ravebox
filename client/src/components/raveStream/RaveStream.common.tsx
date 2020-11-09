@@ -47,27 +47,80 @@ export const buildRaveStreamPath: (
 ): string => {
   let path: string = `${params.streamType}`;
 
-  if (params.firstPath) {
-    path += `/${params.firstPath}`;
-  }
+  switch (params.streamType) {
+    case RaveStreamType.COLLECTON:
+      path += `/${params.firstPath}/${params.secondPath}/${params.thirdPath}`;
+      if (!subtractRave && params.fourthPath) {
+        path += `/${params.fourthPath}`;
+      }
+      break;
+    case RaveStreamType.PRODUCT:
+      path += `/${params.firstPath}/${params.secondPath}`;
+      if (!subtractRave && params.thirdPath) {
+        path += `/${params.thirdPath}`;
+      }
+      break;
+    case RaveStreamType.PRODUCT_TYPE:
+      path += `/${params.firstPath}`;
+      if (!subtractRave && params.secondPath) {
+        path += `/${params.secondPath}`;
+      }
+      break;
+    default:
+      if (params.firstPath) {
+        path += `/${params.firstPath}`;
+      }
 
-  if (params.secondPath) {
-    path += `/${params.secondPath}`;
-  }
+      if (params.secondPath) {
+        if (!subtractRave && params.thirdPath) {
+          path += `/${params.secondPath}`;
+        }
+      }
 
-  if (params.thirdPath) {
-    if (!subtractRave && params.fourthPath) {
-      path += `/${params.thirdPath}`;
-    }
-  }
+      if (params.thirdPath) {
+        if (!subtractRave && params.fourthPath) {
+          path += `/${params.thirdPath}`;
+        }
+      }
 
-  if (params.fourthPath) {
-    if (!subtractRave) {
-      path += `/${params.fourthPath}`;
-    }
+      if (params.fourthPath) {
+        if (!subtractRave) {
+          path += `/${params.fourthPath}`;
+        }
+      }
   }
 
   return path;
+}
+
+/**
+ * Retrieves the url of the current rave from the stream path.
+ *
+ * @param { RaveStreamURLParams } params - the URL parameters provided.
+ *
+ * @return string
+ */
+export const retrieveRaveURL: (
+  params: RaveStreamURLParams
+) => string = (
+  params: RaveStreamURLParams
+): string => {
+  let path: string = '';
+
+  switch (params.streamType) {
+    case RaveStreamType.COLLECTON:
+      path = params.fourthPath || '';
+      break;
+    case RaveStreamType.PRODUCT:
+      path = params.thirdPath || '';
+      break;
+    case RaveStreamType.PRODUCT_TYPE:
+      path = params.secondPath || '';
+      break;
+    default:
+  }
+
+  return path
 }
 
 /**
@@ -121,6 +174,39 @@ export const buildURLForStream: (
 
   if (single) {
     path += `/${review.url}`;
+  }
+
+  return path;
+}
+
+/**
+ * Builds a rave path based on the current context.
+ *
+ * @param { RaveStreamType } streamType - the stream type.
+ * @param { RaveStreamURLParams } params - the URL parameters provided.
+ */
+export const buildContextPath: (
+  streamType: RaveStreamType
+) => (
+  params: RaveStreamURLParams
+) => string = (
+  streamType: RaveStreamType
+) => (
+  params: RaveStreamURLParams
+): string => {
+  let path: string = `/stream/${params.streamType}`;
+
+  switch (streamType) {
+    case RaveStreamType.COLLECTON:
+      path += `/${params.firstPath}/${params.secondPath}/${params.thirdPath}`;
+      break;
+    case RaveStreamType.PRODUCT:
+      path += `/${params.firstPath}/${params.secondPath}`;
+      break;
+    case RaveStreamType.PRODUCT_TYPE:
+      path += `/${params.firstPath}`;
+      break;
+    default:
   }
 
   return path;

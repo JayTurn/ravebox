@@ -18,10 +18,13 @@ import { VideoProgress } from '../../raveVideo/RaveVideo.interface';
  */
 export interface SwipeVideoProps {
   active: boolean;
+  activeIndex: number;
+  index: number;
   muted?: boolean;
   playing: boolean;
   positioning: VideoPosition; 
   review: Review;
   update?: (videoProgress: VideoProgress) => void;
   videoProgress?: VideoProgress;
+  nextVideo: () => void;
 }

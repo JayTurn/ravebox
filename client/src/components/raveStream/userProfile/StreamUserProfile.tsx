@@ -52,8 +52,6 @@ const useStyles = makeStyles((theme: Theme) =>
     avatar: {
       fontSize: '.9rem',
       fontWeight: 600,
-      height: theme.spacing(11.5),
-      width: theme.spacing(11.5)
     },
     avatarIcon: {
       backgroundColor: theme.palette.common.white,
@@ -61,20 +59,53 @@ const useStyles = makeStyles((theme: Theme) =>
       color: theme.palette.grey.A700,
       fontSize: '.9rem',
       fontWeight: 600,
+    },
+    avatarSideSize: {
+      height: theme.spacing(4),
+      width: theme.spacing(4)
+    },
+    avatarSmallSize: {
+      height: theme.spacing(6),
+      width: theme.spacing(6)
+    },
+    avatarLargeSize: {
       height: theme.spacing(11.5),
       width: theme.spacing(11.5)
     },
     followContainer: {
       marginTop: theme.spacing(2)
     },
+    handleLarge: {
+      fontSize: '1.4rem',
+      fontWeight: 700
+    },
+    handleSide: {
+      fontSize: '.9rem',
+      fontWeight: 700,
+      lineHeight: 1
+    },
+    handleSmall: {
+      fontSize: '1.15rem',
+      fontWeight: 700
+    },
     handleText: {
       display: 'block',
-      fontSize: '1.4rem',
-      fontWeight: 700,
     },
     linkText: {
       color: theme.palette.text.primary,
       textDecoration: 'none'
+    },
+    statisticsLarge: {
+      fontSize: '.8rem',
+      fontWeight: 600,
+    },
+    statisticsSide: {
+      fontSize: '.75rem',
+      fontWeight: 600,
+    },
+    statisticsSmall: {
+      fontSize: '.8rem',
+      fontWeight: 600,
     },
     title: {
       fontSize: '1rem',
@@ -85,9 +116,20 @@ const useStyles = makeStyles((theme: Theme) =>
     titleContainer: {
       padding: theme.spacing(1, 0, 0)
     },
+    userContainer: {
+      flexGrow: 1,
+      minWidth: 0,
+    },
+    userContainerLarge: {
+      marginLeft: theme.spacing(2)
+    },
+    userContainerSide: {
+      marginLeft: theme.spacing(1)
+    },
+    userContainerSmall: {
+      marginLeft: theme.spacing(2)
+    },
     userStatisticsText: {
-      fontSize: '.8rem',
-      fontWeight: 600,
       textTransform: 'uppercase'
     }
   })
@@ -180,37 +222,71 @@ const StreamUserProfile: React.FC<StreamUserProfileProps> = (props: StreamUserPr
             {avatar ? (
               <Avatar
                 alt={props.user.handle}
-                className={classes.avatar}
+                className={clsx(
+                  classes.avatar, {
+                    [classes.avatarLargeSize]: props.variant === 'large',
+                    [classes.avatarSideSize]: props.variant === 'side',
+                    [classes.avatarSmallSize]: props.variant === 'small'
+                  }
+                )}
                 src={avatar}
               />
             ) : (
               <Avatar
                 alt={props.user.handle}
-                className={classes.avatarIcon}
+                className={clsx(
+                  classes.avatarIcon, {
+                    [classes.avatarLargeSize]: props.variant === 'large',
+                    [classes.avatarSideSize]: props.variant === 'side',
+                    [classes.avatarSmallSize]: props.variant === 'small'
+                  }
+                )}
               >
                 {props.user.role === Role.YOUTUBE ? 'y' : firstLetter}
               </Avatar>
             )}
           </Grid>
-          <Grid item style={{flexGrow: 1, minWidth: 0, marginLeft: theme.spacing(2)}}>
-            <Typography variant='body2' className={classes.handleText}>
+          <Grid item 
+            className={clsx(
+              classes.userContainer, {
+                [classes.userContainerLarge]: props.variant === 'large',
+                [classes.userContainerSide]: props.variant === 'side',
+                [classes.userContainerSmall]: props.variant === 'small'
+              }
+            )}
+          >
+            <Typography variant='body2' className={clsx(
+              classes.handleText, {
+                [classes.handleLarge]: props.variant === 'large',
+                [classes.handleSide]: props.variant === 'side',
+                [classes.handleSmall]: props.variant === 'small'
+              }
+            )}>
               {props.user.role === Role.YOUTUBE ? 'youtube' : props.user.handle}
             </Typography>
             {props.user.statistics &&
-              <Typography variant='body2' className={classes.userStatisticsText}>
+              <Typography variant='body2' className={clsx(
+                classes.userStatisticsText, {
+                  [classes.statisticsLarge]: props.variant === 'large',
+                  [classes.statisticsSide]: props.variant === 'side',
+                  [classes.statisticsSmall]: props.variant === 'small'
+                }
+              )}>
                 {statisticsText}
               </Typography>
             }
           </Grid>
         </Grid>
       </Grid>
-      <Grid item xs={12} className={clsx(classes.followContainer)}>
-        <FollowButton
-          id={props.user._id}
-          handle={props.user.handle}
-          followType={FollowType.CHANNEL}
-        />
-      </Grid>
+      {props.showFollow &&
+        <Grid item xs={12} className={clsx(classes.followContainer)}>
+          <FollowButton
+            id={props.user._id}
+            handle={props.user.handle}
+            followType={FollowType.CHANNEL}
+          />
+        </Grid>
+      }
     </Grid>
   );
 };

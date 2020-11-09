@@ -20,6 +20,7 @@ import {
   useTheme,
   withStyles
 } from '@material-ui/core/styles';
+import Divider from '@material-ui/core/Divider';
 import { frontloadConnect } from 'react-frontload';
 import Grid from '@material-ui/core/Grid';
 import * as React from 'react';
@@ -45,13 +46,7 @@ import SwipeCardHolder from '../../components/swipeStream/cardHolder/SwipeCardHo
 // Enumerators.
 import { ColorStyle } from '../../components/elements/contentBlock/ContentBlock.enum';
 import { LogoColor } from '../../components/logo/Logo.enum';
-import {
-  PresentationType,
-  ReviewListType
-} from '../../components/review/listByQuery/ListByQuery.enum';
-import {
-  QueryPath 
-} from '../../components/review/listByQuery/ListByQuery.enum';
+import { RaveStreamType } from '../../components/raveStream/RaveStream.enum';
 import { RequestType } from '../../utils/api/Api.enum';
 import { ScreenContext } from '../../components/review/Review.enum';
 import { StyleType } from '../../components/elements/link/Link.enum';
@@ -117,6 +112,11 @@ const useStyles = makeStyles((theme: Theme) =>
     containerPadding: {
       paddingLeft: theme.spacing(2),
       paddingRight: theme.spacing(2)
+    },
+    divider: {
+      color: 'rgba(200, 200, 200)',
+      margin: theme.spacing(0, 2, 0),
+      width: 'calc(100% - 32px)'
     },
     heavy: {
       fontWeight: 700
@@ -344,11 +344,17 @@ const Home: React.FC<HomeProps> = (props: HomeProps) => {
                   key={index}
                 >
                   {largeScreen ? (
-                    <DesktopCardHolder
-                      title={raveStream.title}
-                      streamType={raveStream.streamType}
-                      reviews={[...raveStream.reviews]}
-                    />
+                    <React.Fragment>
+                      <DesktopCardHolder
+                        hideProductTitles={raveStream.streamType === RaveStreamType.PRODUCT}
+                        title={raveStream.title}
+                        streamType={raveStream.streamType}
+                        reviews={[...raveStream.reviews]}
+                      />
+                      {props.raveStreamList && index !== props.raveStreamList.raveStreams.length - 1 &&
+                        <Divider className={clsx(classes.divider)}/>
+                      }
+                    </React.Fragment>
                   ) : (
                     <SwipeCardHolder
                       title={raveStream.title}

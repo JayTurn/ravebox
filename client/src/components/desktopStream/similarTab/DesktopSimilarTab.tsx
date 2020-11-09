@@ -145,6 +145,7 @@ const DesktopSimilarTab: React.FC<DesktopSimilarTabProps> = (props: DesktopSimil
                 lg={4}
                 md={6}
                 sm={12}
+                hideProductTitles={false}
                 hideStreamTag={true}
                 overrideTitle={true}
                 streamType={RaveStreamType.COLLECTON}
