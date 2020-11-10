@@ -27,4 +27,5 @@ export interface TopNavigationProps  extends RouteComponentProps {
  */
 export interface NavigationScrollProps {
   children: React.ReactElement;
+  isHomeScreen: boolean;
 }

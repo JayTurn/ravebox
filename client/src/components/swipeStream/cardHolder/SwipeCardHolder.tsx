@@ -40,6 +40,7 @@ import { SwipeCardHolderProps } from './SwipeCardHolder.interface';
 
 // Utilities.
 import { buildURLForStream } from '../../raveStream/RaveStream.common';
+import { Pluralize } from '../../../utils/display/textFormats/TextFormats';
 
 /**
  * Stepper styles.
@@ -170,9 +171,10 @@ const SwipeCardHolder: React.FC<SwipeCardHolderProps> = (
 
   const {
     reviews,
-    streamType,
-    title
+    streamType
   } = {...props};
+
+  const title: string = Pluralize(props.title);
 
   const [activeIndex, setActiveIndex] = React.useState<number>(0);
 
@@ -232,7 +234,7 @@ const SwipeCardHolder: React.FC<SwipeCardHolderProps> = (
           <Grid item className={clsx(classes.streamTitleContainer)}>
             {streamType !== RaveStreamType.PRODUCT || props.overrideTitle ? (
               <Typography variant='h2' className={clsx(classes.streamTitle)}>
-                {props.title}
+                {title}
               </Typography>
             ) : (
               <React.Fragment>
@@ -251,7 +253,7 @@ const SwipeCardHolder: React.FC<SwipeCardHolderProps> = (
             <StyledButton
               clickAction={handleNavigate}
               size='small'
-              title='View all'
+              title='Play all'
               variant='outlined'
             />
           </Grid>

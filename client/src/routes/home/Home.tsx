@@ -31,10 +31,12 @@ import { withRouter } from 'react-router';
 
 // Actions.
 import {
-  updateList,
+  updateCategoryList,
 } from '../../store/raveStream/Actions';
 
 // Components.
+import CategoryStreamTabMenu from '../../components/raveStream/categoryTabMenu/CategoryTabMenu';
+import CategoryTabs from '../../components/raveStream/categoryTabs/CategoryTabs';
 import ContentBlock from '../../components/elements/contentBlock/ContentBlock';
 import DesktopCardHolder from '../../components/desktopStream/cardHolder/DesktopCardHolder'
 import Logo from '../../components/logo/Logo';
@@ -57,13 +59,16 @@ import { useAnalytics } from '../../components/analytics/Analytics.provider';
 import {
   useRetrieveRaveStreamByList
 } from '../../components/raveStream/useRetrieveRaveStreamsByList.hook';
+import {
+  useRetrieveRaveStreamCategoryList
+} from '../../components/raveStream/useRetrieveRaveStreamsCategoryList.hook';
 
 // Interfaces.
 import { AnalyticsContextProps } from '../../components/analytics/Analytics.interface';
 import { HomeProps } from './Home.interface';
 import {
   RaveStream,
-  RaveStreamList,
+  RaveStreamCategoryList,
   RaveStreamListItem
 } from '../../components/raveStream/RaveStream.interface';
 
@@ -107,7 +112,15 @@ const useStyles = makeStyles((theme: Theme) =>
         paddingBottom: theme.spacing(.5)
       }
     },
+    categoryMenuContainer: {
+      backgroundColor: theme.palette.background.paper,
+      padding: theme.spacing(2)
+    },
     container: {
+      paddingTop: 100
+    },
+    containerLarge: {
+      paddingTop: 0
     },
     containerPadding: {
       paddingLeft: theme.spacing(2),
@@ -195,12 +208,18 @@ const Home: React.FC<HomeProps> = (props: HomeProps) => {
         largeScreen = useMediaQuery(theme.breakpoints.up('sm')),
         list: Array<RaveStreamListItem> = getHomeStreamList(); 
 
+  //const {
+    //raveStreamsStatus
+  //} = useRetrieveRaveStreamByList({
+    //queries: list,
+    //name: 'home',
+    //updateList: props.updateList
+  //});
   const {
     raveStreamsStatus
-  } = useRetrieveRaveStreamByList({
-    queries: list,
+  } = useRetrieveRaveStreamCategoryList({
     name: 'home',
-    updateList: props.updateList
+    updateList: props.updateCategoryList
   });
 
   /*
@@ -239,52 +258,11 @@ const Home: React.FC<HomeProps> = (props: HomeProps) => {
    */
   return (
     <Grid
-      className={clsx(classes.container)}
+      className={clsx(classes.container, {
+        [classes.containerLarge]: largeScreen
+      })}
       container
     >
-      <Grid item xs={12} className={clsx(
-          classes.introContainer,
-          {
-            [classes.introContainerLarge]: largeScreen
-          }
-        )}
-      >
-        <Grid
-          container
-          direction='column'
-          alignItems='center'
-        >
-          <Grid item xs={12}>
-            <Logo
-              color={LogoColor.MAIN}
-              fullWidth={largeScreen ? '270px' : '200px'}
-              iconOnly={false}
-            /> 
-          </Grid>
-          <Grid item xs={12}>
-            <Typography variant='h1' className={clsx(
-                classes.introText,
-                {
-                  [classes.introTextLarge]: largeScreen
-                }
-              )}
-            >
-              A new way to discover and compare products.
-            </Typography>
-          </Grid>
-          <Grid item xs={12}>
-            <LinkElement
-              path={'/about'}
-              styleType={StyleType.BUTTON_PRIMARY}
-              title='Tell me more'
-              track={{
-                context: 'home',
-                targetScreen: 'about'
-              }}
-            />
-          </Grid>
-        </Grid>
-      </Grid>
       {raveStreamsStatus === ViewState.WAITING &&
         <React.Fragment>
           <Grid item xs={12} sm={6} md={3} className={clsx(
@@ -331,100 +309,61 @@ const Home: React.FC<HomeProps> = (props: HomeProps) => {
       }
       {raveStreamsStatus === ViewState.FOUND &&
         <React.Fragment>
-          {props.raveStreamList && props.raveStreamList.raveStreams.length > 0 &&
+          {largeScreen &&
             <React.Fragment>
-              {props.raveStreamList.raveStreams.map((raveStream: RaveStream, index: number) => (
-                <Grid item xs={12}
-                  className={clsx(
-                    classes.cardBackground, {
-                      [classes.spaceAbove]: index === 0,
-                      [classes.spaceBelow]: props.raveStreamList && index === props.raveStreamList.raveStreams.length - 1  
-                    }
-                  )}
-                  key={index}
+              <Grid item xs={12} className={clsx(
+                  classes.introContainer,
+                  {
+                    [classes.introContainerLarge]: largeScreen
+                  }
+                )}
+              >
+                <Grid
+                  container
+                  direction='column'
+                  alignItems='center'
                 >
-                  {largeScreen ? (
-                    <React.Fragment>
-                      <DesktopCardHolder
-                        hideProductTitles={raveStream.streamType === RaveStreamType.PRODUCT}
-                        title={raveStream.title}
-                        streamType={raveStream.streamType}
-                        reviews={[...raveStream.reviews]}
-                      />
-                      {props.raveStreamList && index !== props.raveStreamList.raveStreams.length - 1 &&
-                        <Divider className={clsx(classes.divider)}/>
-                      }
-                    </React.Fragment>
-                  ) : (
-                    <SwipeCardHolder
-                      title={raveStream.title}
-                      streamType={raveStream.streamType}
-                      reviews={[...raveStream.reviews]}
+                  <Grid item xs={12}>
+                    <Logo
+                      color={LogoColor.MAIN}
+                      fullWidth={largeScreen ? '270px' : '200px'}
+                      iconOnly={false}
+                    /> 
+                  </Grid>
+                  <Grid item xs={12}>
+                    <Typography variant='h1' className={clsx(
+                        classes.introText,
+                        {
+                          [classes.introTextLarge]: largeScreen
+                        }
+                      )}
+                    >
+                      A new way to discover and compare products.
+                    </Typography>
+                  </Grid>
+                  <Grid item xs={12}>
+                    <LinkElement
+                      path={'/about'}
+                      styleType={StyleType.BUTTON_PRIMARY}
+                      title='Tell me more'
+                      track={{
+                        context: 'home',
+                        targetScreen: 'about'
+                      }}
                     />
-                  )}
+                  </Grid>
                 </Grid>
-              ))}
+              </Grid>
+              <Grid item xs={12} className={clsx(
+                classes.categoryMenuContainer
+              )}>
+                <CategoryStreamTabMenu />
+              </Grid>
             </React.Fragment>
           }
+          <CategoryTabs />
         </React.Fragment>
       }
-      {/*
-      <Grid item xs={12} className={clsx({
-        [classes.tempCategorySmall]: !largeScreen
-      })}>
-        {props.categoryGroup && props.categoryGroup[queries[0]] &&
-          <ListByQuery
-            context={ScreenContext.HOME}
-            listType={ReviewListType.CATEGORY}
-            presentationType={PresentationType.GRID}
-            reviews={props.categoryGroup[queries[0]]}
-            title={
-              <ListTitle
-                title={`Featured`}
-                url={`/categories/${categoryList[0].key}`}
-                presentationType={PresentationType.GRID} 
-              />
-            }
-          />
-        }
-      </Grid>
-      */}
-      {/*
-      <Grid item xs={12}>
-        {props.categoryGroup && props.categoryGroup[queries[0]] &&
-          <ListByQuery
-            context={ScreenContext.HOME}
-            listType={ReviewListType.CATEGORY}
-            presentationType={largeScreen ? PresentationType.GRID : PresentationType.SCROLLABLE}
-            reviews={props.categoryGroup[queries[0]]}
-            title={
-              <ListTitle
-                title={`${categoryList[0].label} raves`}
-                url={`/categories/${categoryList[0].key}`}
-                presentationType={largeScreen ? PresentationType.GRID : PresentationType.SCROLLABLE} 
-              />
-            }
-          />
-        }
-      </Grid>
-      <Grid item xs={12}>
-        {props.categoryGroup && props.categoryGroup[queries[1]] &&
-          <ListByQuery
-            context={ScreenContext.HOME}
-            listType={ReviewListType.CATEGORY}
-            presentationType={largeScreen ? PresentationType.GRID : PresentationType.SCROLLABLE}
-            reviews={props.categoryGroup[queries[1]]}
-            title={
-              <ListTitle
-                title={`${categoryList[1].label} raves`}
-                url={`/categories/${categoryList[1].key}`}
-                presentationType={largeScreen ? PresentationType.GRID : PresentationType.SCROLLABLE} 
-              />
-            }
-          />
-        }
-      </Grid>
-      */}
       <ContentBlock
         background={ColorStyle.SECONDARY}
         title={
@@ -522,10 +461,10 @@ const Home: React.FC<HomeProps> = (props: HomeProps) => {
  *
  */
 function mapStatetoProps(state: any, ownProps: HomeProps) {
-  const raveStreamList: RaveStreamList | undefined = state.raveStream ? state.raveStream.raveStreamList : undefined;
+  const categoryList: Array<RaveStreamCategoryList> = state.raveStream ? state.raveStream.categoryList : [];
   return {
     ...ownProps,
-    raveStreamList 
+    categoryList: categoryList 
   };
 }
 
@@ -537,7 +476,7 @@ function mapStatetoProps(state: any, ownProps: HomeProps) {
 const mapDispatchToProps = (dispatch: Dispatch<AnyAction>) =>
   bindActionCreators(
     {
-      updateList,
+      updateCategoryList,
     },
     dispatch
   );

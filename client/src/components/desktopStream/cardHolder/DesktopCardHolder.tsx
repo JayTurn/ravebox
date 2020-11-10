@@ -37,6 +37,7 @@ import {
   buildURLForStream,
   getStreamName
 } from '../../raveStream/RaveStream.common';
+import { Pluralize } from '../../../utils/display/textFormats/TextFormats';
 
 /**
  * Create the theme styles to be used for the display.
@@ -100,8 +101,9 @@ const DesktopCardHolder: React.FC<DesktopCardHolderProps> = (
   const {
     reviews,
     streamType,
-    title
   } = {...props};
+
+  const title: string = Pluralize(props.title);
 
   const path: string = buildURLForStream(
     streamType)(reviews[0])(false);
@@ -132,7 +134,7 @@ const DesktopCardHolder: React.FC<DesktopCardHolderProps> = (
           <Grid item className={clsx(classes.streamTitleContainer)}>
             {streamType !== RaveStreamType.PRODUCT || props.overrideTitle ? (
               <Typography variant='h2' className={clsx(classes.streamTitle)}>
-                {props.title}
+                {title}
               </Typography>
             ) : (
               <React.Fragment>

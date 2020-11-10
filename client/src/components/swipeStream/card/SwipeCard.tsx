@@ -160,7 +160,7 @@ const SwipeCard: React.FC<SwipeCardProps> = (props: SwipeCardProps) => {
                 clickAction={handleNavigate}
                 color='primary'
                 size='small'
-                title='View rave'
+                title='Play Rave'
               />
             </Grid>
           </Grid>

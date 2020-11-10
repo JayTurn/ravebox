@@ -255,6 +255,9 @@ export const getHomeStreamList: (
     streamType: RaveStreamType.PRODUCT_TYPE,
     productType: 'phone'
   }, {
+    streamType: RaveStreamType.CATEGORY,
+    category: 'shoes'
+  }, {
     streamType: RaveStreamType.COLLECTON,
     brand: 'google',
     collectionContext: 'competing',

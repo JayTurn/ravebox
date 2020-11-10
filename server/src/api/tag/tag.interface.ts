@@ -21,6 +21,7 @@ export interface TagDocument extends Mongoose.Document {
   labels: Array<string>;
   light: TagDetailsLight;
   linkFrom: Array<TagDocument>;
+  linkTo: Array<TagDocument>;
   namePartials: Array<string>;
   nameRaw: string;
   url: string;
@@ -29,7 +30,7 @@ export interface TagDocument extends Mongoose.Document {
 /**
  * Tag details.
  */
-export interface TagDetails extends Mongoose.Document {
+export interface TagDetails {
   _id: string;
   association: TagAssociation;
   name: string;
@@ -42,7 +43,7 @@ export interface TagDetails extends Mongoose.Document {
 /**
  * Tag details.
  */
-export interface TagDetailsLight extends Mongoose.Document {
+export interface TagDetailsLight {
   _id: string;
   association: TagAssociation;
   name: string;

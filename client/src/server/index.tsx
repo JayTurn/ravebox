@@ -114,15 +114,6 @@ const server = express()
            <body ${helmet.bodyAttributes.toString()}>
              <div id="root" class="loader">${markup}</div>
              ${extractor.getScriptTags()}
-             ${process.env.RAZZLE_ENVIRONMENT === 'production' ?
-               `<script>
-                window.fwSettings={
-                'widget_id':51000000451
-                };
-                !function(){if("function"!=typeof window.FreshworksWidget){var n=function(){n.q.push(arguments)};n.q=[],window.FreshworksWidget=n}}()
-              </script>
-              <script type='text/javascript' src='https://aus-widget.freshworks.com/widgets/51000000451.js' async defer></script>`
-             : ''}
            </body>
            <script>
              window.__PRELOADED_STATE__ = ${Serialize(storeState)}

@@ -44,6 +44,7 @@ import { remove } from '../../../store/xsrf/Actions';
 import { toggleSide } from '../../../store/navigation/Actions';
 
 // Components.
+import CategoryStreamTabMenu from '../../raveStream/categoryTabMenu/CategoryTabMenu';
 import Logo from '../../logo/Logo';
 import ProfileMenu from '../../user/profileMenu/ProfileMenu';
 //import SearchField from '../../search/field/SearchField';
@@ -97,6 +98,16 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
     '&.active': {
       color: theme.palette.primary.contrastText,
     }
+  },
+  menu: {
+    height: 50,
+    position: 'fixed',
+    transition: 'transform 100ms ease-in-out',
+    width: '100%',
+    zIndex: 1
+  },
+  menuBorder: {
+    borderBottom: `2px solid ${theme.palette.primary.light}`
   },
   toolbar: {
     minHeight: 52
@@ -155,19 +166,39 @@ const MenuButton = withStyles((theme: Theme) => ({
 }))(Button);
 
 /**
- * Hides the navigation menu on scroll.
+ * Moves the category menu on scroll.
  */
-const HideOnScroll: React.FC<NavigationScrollProps> = (props: NavigationScrollProps) => {
+const MoveOnScroll: React.FC<NavigationScrollProps> = (props: NavigationScrollProps) => {
   // Capture the scroll trigger.
-  const { children } = props;
-  const trigger = useScrollTrigger();
+  const {
+    children,
+    isHomeScreen
+  } = {...props};
+    
+  const trigger = useScrollTrigger(),
+        classes = useStyles();
+
+  return (
+    <Box className={clsx(classes.menu)}
+      style={{transform: trigger ? `translate3d(0,-52px,0)` : `translate3d(0, 0, 0)`}}
+    >
+      <React.Fragment>
+        {children}
+        {isHomeScreen &&
+          <CategoryStreamTabMenu />
+        }
+      </React.Fragment>
+    </Box>
+  )
 
   // Slide the display of the child elements based on the scroll trigger.
+  /*
   return (
-    <Slide appear={false} direction="down" in={!trigger}>
+    <Box Slide appear={false} direction="down" in={!trigger}>
       {children}
     </Slide>
   );
+  */
 }
 
 /**
@@ -197,15 +228,19 @@ const TopNavigation: React.FC<TopNavigationProps> = (props: TopNavigationProps) 
   // impersontating a user.
   const [isAdmin, setIsAdmin] = React.useState<boolean>(adminCookie !== undefined);
 
+  const [isHomeScreen, setIsHomeScreen] = React.useState<boolean>(true);
+
   /**
    * Checks the route path for logo display.
    */
   React.useEffect(() => {
     if (path.pathname === '/') {
       setShowLogo(false);
+      setIsHomeScreen(true);
     } else {
       if (!showLogo) {
         setShowLogo(true);
+        setIsHomeScreen(false);
       }
     }
 
@@ -313,14 +348,22 @@ const TopNavigation: React.FC<TopNavigationProps> = (props: TopNavigationProps) 
       ) : (
         <React.Fragment>
           {searchBar ? (
-            <StyledMobileAppBar position='sticky' color='inherit'>
+            <StyledMobileAppBar position='sticky' color='inherit'
+              className={clsx({
+                [classes.menuBorder]: showLogo
+              })}
+            >
               <Toolbar disableGutters={true} style={{minHeight: '50px'}}>
               {/*<SearchField toggleSearchField={toggleSearchField} />*/}
               </Toolbar>
             </StyledMobileAppBar>
           ) : (
-            <HideOnScroll>
-              <StyledMobileAppBar position='sticky' color='inherit'>
+            <MoveOnScroll isHomeScreen={isHomeScreen}>
+              <StyledMobileAppBar position='sticky' color='inherit'
+                className={clsx({
+                  [classes.menuBorder]: showLogo
+                })}
+              >
                 <Toolbar disableGutters={true} style={{minHeight: '50px'}}>
                   <MenuIconButton
                     style={{marginLeft: '6px', marginTop: '4px', padding: '6px 6px 6px'}}
@@ -371,7 +414,7 @@ const TopNavigation: React.FC<TopNavigationProps> = (props: TopNavigationProps) 
                   )}
                 </Toolbar>
               </StyledMobileAppBar>
-            </HideOnScroll>
+            </MoveOnScroll>
           )}
         </React.Fragment>
       )}

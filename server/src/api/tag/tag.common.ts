@@ -5,8 +5,10 @@
 
 // Enumerators.
 import { LogLevel } from '../../shared/logging/Logging.enum';
+import { TagAssociation } from './tag.enum';
 
 // Intefaces.
+import { ResponseObject } from '../../models/database/connect.interface';
 import {
   TagDocument,
   TagDetails
@@ -149,4 +151,79 @@ export default class TagCommon {
     return tag;
   }
 
+  /**
+   * Returns a list of tags by recursively linking.
+   *
+   * @param { string } url - the url of the top level tag.
+   * @param { TagAssociation } association - the target association.
+   */
+  static RecursiveSearchTags(id: string, association: TagAssociation): Promise<Array<TagDetails>> {
+
+    const tags: Array<TagDetails> = []; 
+
+    return Tag.find({
+      linkFrom: id
+    })
+    .lean()
+    .then((tagDetails: Array<TagDetails>) => {
+      if (!tagDetails || tagDetails.length <= 0) {
+        return tags;
+      }
+
+      let i = 0;
+
+      const nextList: Array<string> = [];
+
+      do {
+        const current: TagDetails = tagDetails[i];
+        
+        if (current.association === association) {
+          tags.push({...current});
+        } else {
+          nextList.push(current._id);
+        }
+
+        i++;
+      } while (i < tagDetails.length);
+
+      if (nextList.length > 0) {
+        return Tag.find({
+          linkFrom: nextList,
+          association: association
+        })
+        .lean();
+      } else {
+        return nextList;
+      }
+    })
+    .then((tagDetails: Array<TagDetails>) => {
+      if (!tagDetails || tagDetails.length <= 0) {
+        return tags;
+      }
+
+      let i = 0;
+
+      do {
+        tags.push({...tagDetails[i]});
+        i++;
+      } while (i < tagDetails.length);
+
+      return tags;
+    })
+    .catch((error: Error) => {
+      // Set the response object.
+      const responseObject: ResponseObject = Connect.setResponse({
+        data: {
+          errorCode: `RECURSIVE_TAG_SEARCH_FAILED`,
+          message: `There was a problem searching for tags.`
+        },
+        error
+      }, 404, `There was a problem recursively searching for tags.`);
+
+      Logging.Send(LogLevel.ERROR, responseObject);
+
+      return tags;
+    });
+
+  }
 }
