@@ -9,6 +9,7 @@ import * as Mongoose from 'mongoose';
 // Interfaces.
 import {
   Reviewed,
+  PublicUserStatisticsDetails,
   UserStatisticsDetails,
   UserStatisticsDocument
 } from './userStatistics.interface';
@@ -56,6 +57,22 @@ UserStatisticsSchema
     if (this.invited) {
       userStatistics.invited = this.invited as Array<Mongoose.Types.ObjectId>;
     }
+
+    return userStatistics;
+  });
+
+// Define a structure to be used for public details.
+UserStatisticsSchema
+  .virtual('publicDetails')
+  .get(function() {
+    const userStatistics: PublicUserStatisticsDetails = {
+      followers: this.followers as number,
+      ravesCount: this.ravesCount as number,
+    }
+
+    //if (this.invited) {
+      //userStatistics.invited = this.invited as Array<Mongoose.Types.ObjectId>;
+    //}
 
     return userStatistics;
   });
