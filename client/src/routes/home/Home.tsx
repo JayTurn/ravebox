@@ -174,7 +174,7 @@ const frontloadHome = async (props: HomeProps) => {
   const list: Array<RaveStreamListItem> = getHomeStreamList(); 
 
   // Perform the API request to get the review group.
-  await API.requestAPI<RaveStreamCategoryListResponse>('/stream/category_list', {
+  await API.requestAPI<RaveStreamCategoryListResponse>('stream/category_list', {
     method: RequestType.GET
   })
   .then((response: RaveStreamCategoryListResponse) => {
