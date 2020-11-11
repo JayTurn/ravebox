@@ -53,6 +53,7 @@ export function useRetrieveRaveStreamCategoryList(
 
   // Format the api request path.
   const {
+    existing,
     name,
     updateList
   } = {...params};
@@ -61,7 +62,10 @@ export function useRetrieveRaveStreamCategoryList(
   const isMounted = useIsMounted();
 
   // Define the retrieval status to be used for view rendering.
-  const [retrieved, setRetrieved] = React.useState(RetrievalStatus.REQUESTED);
+  const [retrieved, setRetrieved] = React.useState(existing && existing.length > 0 
+    ? RetrievalStatus.SUCCESS
+    : RetrievalStatus.REQUESTED
+  );
 
   /**
    * Handle state updates to the url parameters and request status.

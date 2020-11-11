@@ -46,13 +46,13 @@ import { RaveStreamCategoryList } from '../RaveStream.interface';
 // Override the admin tabs.
 const StyledTabs = withStyles(theme => ({
   indicator: {
-    backgroundColor: theme.palette.primary.light,
-    height: 4
+    backgroundColor: theme.palette.primary.main
+    //height: 4
   },
   root: {
     //boxShadow: `inset 0 -2px 0 ${theme.palette.primary.light}`,
-    backgroundColor: theme.palette.primary.main,
-    color: theme.palette.common.white
+    //backgroundColor: theme.palette.primary.main,
+    //color: theme.palette.common.white
   }
 }))(Tabs);
 
@@ -64,7 +64,8 @@ const StyledTabsDesktop = withStyles(theme => ({
     height: 4
   },
   root: {
-    backgroundColor: theme.palette.background.paper,
+    backgroundColor: theme.palette.background.paper
+    //boxShadow: `inset 0 -2px 0 ${theme.palette.primary.light}`,
     //color: theme.palette.common.white
   }
 }))(Tabs);

@@ -15,7 +15,11 @@ import { LogoColor } from './Logo.enum';
 import { LogoProps } from './Logo.interface';
 
 // Logo icon.
-import { LogoSVG, LogoSVGIcon } from './LogoSVG';
+import {
+  LogoSVG,
+  LogoSVGIcon,
+  LogoSVGStacked
+} from './LogoSVG';
 
 /**
  * Renders the ravebox logo.
@@ -43,7 +47,11 @@ const Logo: React.FC<LogoProps> = (props: LogoProps) => {
           alignItems='center'
         >
           <Grid item xs={12}>
-            <SvgIcon component={LogoSVG} />
+            {props.stacked ? (
+              <SvgIcon component={LogoSVGStacked} />
+            ) : (
+              <SvgIcon component={LogoSVG} />
+            )}
           </Grid>
         </Grid>
       )}

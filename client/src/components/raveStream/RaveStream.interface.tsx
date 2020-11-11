@@ -57,6 +57,7 @@ export interface RetrieveStreamByURLParams {
  * Retrive the product stream category parameters.
  */
 export interface RetrieveStreamCategoryListParams {
+  existing?: Array<RaveStreamCategoryList>;
   name: string;
   updateList?: (raveStreams: Array<RaveStreamCategoryList>) => void;
 }

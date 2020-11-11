@@ -11,4 +11,5 @@ export interface LogoProps {
   color: LogoColor;
   iconOnly: boolean;
   fullWidth?: string;
+  stacked?: boolean;
 }
