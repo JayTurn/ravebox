@@ -8,11 +8,17 @@ import { RaveStreamType } from './RaveStream.enum';
 
 // Interfaces.
 import {
+  Product
+} from '../product/Product.interface';
+import {
   RaveStream,
   RaveStreamListItem,
   RaveStreamURLParams
 } from './RaveStream.interface';
 import { Review } from '../review/Review.interface';
+
+// Utilities.
+import { Pluralize } from '../../utils/display/textFormats/TextFormats';
 
 /**
  * Creates an empty rave Stream object for use in object definitions.
@@ -290,4 +296,84 @@ export const calculateVideoRatio: (
   }
 
   return width / height;
+}
+
+/**
+ * Returns the title for the rave stream based on the stream type.
+ *
+ * @param { RaveStream } raveStream - the rave stream data.
+ *
+ * @return string
+ */
+export const getStreamPageTitle: (
+  raveStream: RaveStream
+) => string = (
+  raveStream: RaveStream
+): string => {
+  let title: string = '';
+
+  switch (raveStream.streamType) {
+    case RaveStreamType.CATEGORY:
+      title = `Watch video reviews of ${raveStream.title} products shared by people with real experiences - Ravebox`;
+      break;
+    case RaveStreamType.COLLECTON:
+    case RaveStreamType.PRODUCT_TYPE:
+      title = `Watch video reviews of ${Pluralize(raveStream.title)} shared by people with real experiences - Ravebox`;
+      break;
+    case RaveStreamType.PRODUCT:
+      if (raveStream.reviews && raveStream.reviews.length > 0) {
+        const product: Product | undefined = raveStream.reviews[0].product;
+        if (product) {
+          title = `Watch video reviews of the ${product.brand.name} ${product.name} shared by people with real experiences - Ravebox`;
+        } else {
+          title = `Discover and compare products with video reviews shared by people with real experiences - Ravebox`;
+        }
+      } else {
+          title = `Discover and compare products with video reviews shared by people with real experiences - Ravebox`;
+      }
+      break;
+    default:
+  }
+
+  return title;
+}
+
+/**
+ * Returns the description for the rave stream based on the stream type.
+ *
+ * @param { RaveStream } raveStream - the rave stream data.
+ *
+ * @return string
+ */
+export const getStreamPageDescription: (
+  raveStream: RaveStream
+) => string = (
+  raveStream: RaveStream
+): string => {
+  let description: string = '';
+
+  switch (raveStream.streamType) {
+    case RaveStreamType.CATEGORY:
+      description = `Discover and compare ${raveStream.title} products by watching video reviews shared by users on Ravebox.`;
+      break;
+    case RaveStreamType.COLLECTON:
+    case RaveStreamType.PRODUCT_TYPE:
+      description = `Discover and compare ${Pluralize(raveStream.title)} by watching video reviews shared by users on Ravebox`;
+      break;
+    case RaveStreamType.PRODUCT:
+      if (raveStream.reviews && raveStream.reviews.length > 0) {
+        const product: Product | undefined = raveStream.reviews[0].product;
+        if (product) {
+          description = `Discover what people are saying about the ${product.brand.name} ${product.name} by watching video reviews shared by users on Ravebox`;
+        } else {
+          description = `Discover and compare products by watching video reviews shared by people on Ravebox`;
+        }
+      } else {
+          description = `Discover and compare products by watching video reviews shared by people on Ravebox`;
+      }
+      break;
+    default:
+  }
+
+  return description;
 }

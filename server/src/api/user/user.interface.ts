@@ -19,6 +19,7 @@ import {
 } from '../follow/follow.interface';
 import { ReviewDetails } from '../review/review.interface';
 import {
+  PublicUserStatisticsDetails,
   UserStatisticsDetails,
   UserStatisticsDocument
 } from '../userStatistics/userStatistics.interface';
@@ -67,7 +68,7 @@ export interface PublicUserDetails {
   handle: string;
   links?: Array<LinkDetails>;
   profileImage?: string;
-  statistics?: UserStatisticsDetails;
+  statistics?: PublicUserStatisticsDetails;
   role: UserRole;
 }
 

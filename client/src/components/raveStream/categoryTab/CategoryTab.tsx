@@ -57,21 +57,21 @@ const useStyles = makeStyles((theme: Theme) =>
     },
     cardBackground: {
       backgroundColor: theme.palette.background.paper,
+    },
+    spaceAbove: {
+    },
+    spaceBelow: {
+    },
+    swipeBackground: {
+      backgroundColor: `rgba(100, 106, 240, .1)`,
+      paddingTop: theme.spacing(.5),
+      paddingBottom: theme.spacing(.5),
       '&:first-child': {
         paddingTop: theme.spacing(.5)
       },
       '&:last-child': {
         paddingBottom: theme.spacing(.5)
       }
-    },
-    spaceAbove: {
-      paddingTop: theme.spacing(.5)
-    },
-    spaceBelow: {
-      paddingBottom: theme.spacing(.5)
-    },
-    swipeBackground: {
-      backgroundColor: `rgba(100, 106, 240, .1)`
     }
   })
 );
@@ -146,9 +146,7 @@ const CategoryStreamTab: React.FC<CategoryStreamTabProps> = (props: CategoryStre
         <Grid item xs={12}
           className={clsx(
             classes.cardBackground, {
-              [classes.swipeBackground]: !largeScreen,
-              [classes.spaceAbove]: index === 0,
-              [classes.spaceBelow]: index === props.categoryList.streamItems.length - 1 
+              [classes.swipeBackground]: !largeScreen
             }
           )}
         >

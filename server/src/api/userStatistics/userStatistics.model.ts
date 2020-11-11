@@ -70,10 +70,6 @@ UserStatisticsSchema
       ravesCount: this.ravesCount as number,
     }
 
-    //if (this.invited) {
-      //userStatistics.invited = this.invited as Array<Mongoose.Types.ObjectId>;
-    //}
-
     return userStatistics;
   });
 

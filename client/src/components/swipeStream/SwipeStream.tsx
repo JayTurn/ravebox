@@ -80,6 +80,8 @@ import {
 import {
   buildContextPath,
   buildRaveStreamPath,
+  getStreamPageDescription,
+  getStreamPageTitle,
   retrieveRaveURL
 } from '../raveStream/RaveStream.common';
 
@@ -253,7 +255,6 @@ const SwipeStream: React.FC<SwipeStreamProps> = (props: SwipeStreamProps) => {
 
   const [upperOverlay, setUpperOverlay] = React.useState<SwipeView>(SwipeView.PRODUCT);
 
-
   /**
    * Track the stream view.
    */
@@ -278,62 +279,7 @@ const SwipeStream: React.FC<SwipeStreamProps> = (props: SwipeStreamProps) => {
         props.history.push(contextPath);
       }
 
-      /*
-      && ravePath !== props.location.pathname) {
-      // Get the new path and update it in the browser.
-      let path: string = `/stream/${props.match.params.streamType}/${props.match.params.firstPath}`;
-
-      if (props.match.params.secondPath) {
-        path += `/${props.match.params.secondPath}`;
-      }
-
-      let reviewUrl: string = '';
-
-      if (props.match.params.thirdPath) {
-        reviewUrl = props.match.params.thirdPath;
-      }
-      if (props.match.params.fourthPath) {
-        reviewUrl = props.match.params.fourthPath;
-        path += `/${props.match.params.thirdPath}`;
-      }
-
-      loadRave(reviewUrl)(props.match.params);
-
-      */
     }
-
-    /*
-    if (props.review && props.review.url) {
-      // We are always looking for the last path as it is always unique to the
-      // rave. We check the newly requested url against the current rave url
-      // to determine if we should load a new rave.
-      if (props.match.params.fourthPath) {
-        // If the fourth path doesn't match the review url, we need to
-        // load the new one.
-        if (props.review.url !== ravePath) {
-          // Updates the active index 
-          loadRave(props.review.url)(props.activeIndex);
-          handleDisplayChange(SwipeView.VIDEO);
-          setRavePath(props.match.params.fourthPath);
-        }
-        return;
-      }
-
-      // Check the third path when we don't have a third path.
-      if (props.match.params.thirdPath) {
-        // If the current rave path doesn't match the review url, we need to
-        // load the new one.
-        if (props.review.url !== ravePath) {
-          // Updates the active index 
-          loadRave(props.review.url)(props.activeIndex);
-          handleDisplayChange(SwipeView.VIDEO);
-          setRavePath(props.match.params.thirdPath);
-        }
-
-        return;
-      }
-    }
-    */
 
     // Track the category list page view.
     if (!pageViewed && props.product && props.product._id) {
@@ -398,6 +344,23 @@ const SwipeStream: React.FC<SwipeStreamProps> = (props: SwipeStreamProps) => {
 
   return (
     <Box className={clsx(classes.container)}>
+      {props.raveStream && props.review && props.review.user && props.review.product &&
+        <Helmet>
+          <title>{getStreamPageTitle(props.raveStream)}</title>
+          <meta name='description' content={getStreamPageDescription(props.raveStream)} />
+          <link rel='canonical' href={`https://ravebox.io${props.history.location.pathname}`} />
+          <meta name='og:site_name' content={`Ravebox`} />
+          <meta name='og:title' content={`Watch the ${props.review.product.brand.name} ${props.review.product.name} rave created by ${props.review.user.handle} - Ravebox`} />
+          <meta name='og:description' content={`${props.review.user.handle} talks about their experience with the ${props.review.product.brand.name} ${props.review.product.name} on Ravebox.`} />
+          <meta name='og:image' content={`${props.review.thumbnail}`} />
+          <meta name='og:url' content={`https://ravebox.io${props.review.url}`} />
+          <meta name='twitter:title' content={`Watch the ${props.review.product.brand.name} ${props.review.product.name} rave created by ${props.review.user.handle} - Ravebox`} />
+          <meta name='twitter:description' content={`${props.review.user.handle} talks about their experience with the ${props.review.product.brand.name} ${props.review.product.name} on Ravebox.`} />
+          <meta name='twitter:image' content={`${props.review.thumbnail}`} />
+          <meta name='twitter:image:alt' content={`Preview image for ${props.review.user.handle}'s rave of the ${props.review.product.brand.name} ${props.review.product.name}`} />
+          <meta name='twitter:card' content={`summary_large_image`} />
+        </Helmet>
+      }
       <LoadingRavebox title={`Loading stream`} />
       {props.raveStream && props.raveStream.reviews && props.raveStream.reviews.length > 0 &&
         <SwipeVideoController

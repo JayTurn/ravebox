@@ -72,7 +72,6 @@ const TermsOfService = loadable(() => import('./policies/TermsOfService'));
 const TopNavigation = loadable(() => import('../components/navigation/top/TopNavigation'));
 const Verify = loadable(() => import('./user/verify/Verify'));
 const ViewProduct = loadable(() => import('./product/view/ViewProduct'));
-const ViewReview = loadable(() => import('./review/view/ViewReview'));
 
 // Hooks.
 import { useRetrieveProfile } from '../components/user/profile/useRetrieveProfile.hook';
@@ -338,9 +337,6 @@ const App: React.FC<AppProps> = (props: AppProps) => {
                       <PrivateRoute exact={true} path="/review/edit/:id">
                         <EditReview />
                       </PrivateRoute>
-                      <Route exact={true} path="/review/:brand/:productName/:reviewTitle">
-                        <ViewReview />
-                      </Route>
                       <Route exact={true} path="/">
                         <Home />
                       </Route>

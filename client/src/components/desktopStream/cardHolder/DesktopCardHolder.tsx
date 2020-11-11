@@ -53,8 +53,9 @@ const useStyles = makeStyles((theme: Theme) =>
       margin: theme.spacing(1, 0)
     },
     container: {
+      backgroundColor: theme.palette.background.default,
       position: 'relative',
-      margin: theme.spacing(4, 0)
+      padding: theme.spacing(3, 0)
     },
     productContainer: {
       margin: theme.spacing(.5, 0),

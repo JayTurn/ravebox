@@ -114,7 +114,8 @@ const useStyles = makeStyles((theme: Theme) =>
       backgroundColor: theme.palette.background.paper
     },
     categoryMenuContainerLarge: {
-      padding: theme.spacing(0, 2)
+      padding: theme.spacing(0, 2),
+      zIndex: 1
     },
     container: {
     },

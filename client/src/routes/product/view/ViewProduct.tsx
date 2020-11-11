@@ -220,7 +220,7 @@ const ViewProduct: React.FC<ViewProductProps> = (props: ViewProductProps) => {
               <PageTitle title={`${product.brand.name} ${product.name}`} />
               <Helmet>
                 <title>{product.brand.name} {product.name} - Ravebox</title>
-                <meta name='description' content={`Discover reviews for the ${product.brand.name} ${product.name} created and shared by users on Ravebox.`} />
+                <meta name='description' content={`${product.brand.name} ${product.name} raves created and shared by users on Ravebox.`} />
                 <link rel='canonical' href={`https://ravebox.io/product/${product.url}`} />
               </Helmet>
             </React.Fragment>
