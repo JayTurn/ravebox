@@ -174,7 +174,9 @@ const SwipeCardHolder: React.FC<SwipeCardHolderProps> = (
     streamType
   } = {...props};
 
-  const title: string = Pluralize(props.title);
+  const title: string = props.overrideTitle
+    ? props.title
+    : Pluralize(props.title);
 
   const [activeIndex, setActiveIndex] = React.useState<number>(0);
 
@@ -249,14 +251,16 @@ const SwipeCardHolder: React.FC<SwipeCardHolderProps> = (
               </React.Fragment>
             )}
           </Grid>
-          <Grid item>
-            <StyledButton
-              clickAction={handleNavigate}
-              size='small'
-              title='Play all'
-              variant='outlined'
-            />
-          </Grid>
+          {!props.hidePlayAll &&
+            <Grid item>
+              <StyledButton
+                clickAction={handleNavigate}
+                size='small'
+                title='Play all'
+                variant='outlined'
+              />
+            </Grid>
+          }
         </Grid>
       </Grid>
       {props.reviews.length > 0 &&

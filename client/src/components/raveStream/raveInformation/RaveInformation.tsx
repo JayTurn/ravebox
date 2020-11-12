@@ -165,9 +165,11 @@ const RaveInformation: React.FC<RaveInformationProps> = (props: RaveInformationP
           </Grid>
           {props.raveStream &&
             <SwipeCardHolder
+              hidePlayAll={true}
+              overrideTitle={true}
               reviews={reviews ? [...reviews] : []}
               streamType={props.raveStream.streamType} 
-              title={`${props.raveStream.title}`}
+              title='Up next'
             />
           }
         </React.Fragment>

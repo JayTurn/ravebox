@@ -28,26 +28,16 @@ import { withRouter } from 'react-router';
 
 // Actions.
 import { updateActive } from '../../../store/product/Actions';
-import {
-  updateListByCategory,
-} from '../../../store/review/Actions';
 
 // Components.
-import PageTitle from '../../../components/elements/pageTitle/PageTitle';
-import ReviewList from '../../../components/review/list/ReviewList';
-import ListByQuery from '../../../components/review/listByQuery/ListByQuery';
-import ListTitle from '../../../components/elements/listTitle/ListTitle';
+import ProductTitle from '../../../components/product/title/ProductTitle';
+import ProductTabs from '../../../components/product/tabs/ProductTabs';
 
 // Enumerators.
 import {
   RequestType,
   RetrievalStatus
 } from '../../../utils/api/Api.enum';
-import {
-  PresentationType,
-  ReviewListType
-} from '../../../components/review/listByQuery/ListByQuery.enum';
-import { ScreenContext } from '../../../components/review/Review.enum';
 import { ViewState } from '../../../utils/display/view/ViewState.enum';
 
 // Hooks.
@@ -55,23 +45,13 @@ import { useAnalytics } from '../../../components/analytics/Analytics.provider';
 import {
   useRetrieveProductByURL
 } from '../../../components/product/useRetrieveProductByURL.hook';
-import {
-  useRetrieveListByQuery
-} from '../../../components/review/listByQuery/useRetrieveListsByQuery.hook';
 
 // Interfaces.
 import { AnalyticsContextProps } from '../../../components/analytics/Analytics.interface';
 import {
-  Category
-} from '../../../components/category/Category.interface';
-import {
   ProductResponse,
   ProductView
 } from '../../../components/product/Product.interface';
-import {
-  Review,
-  ReviewGroup
-} from '../../../components/review/Review.interface';
 import { ViewProductProps } from './ViewProduct.interface';
 
 /**
@@ -80,44 +60,17 @@ import { ViewProductProps } from './ViewProduct.interface';
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     container: {
+      backgroundColor: theme.palette.background.paper
     },
-    listContainer: {
-      padding: 0
+    containerSwipe: {
+      backgroundColor: `rgba(100,106,240, .1)`
     },
-    listContainerLarge: {
-      padding: theme.spacing(0, 2)
-    }
+    productTitleContainer: {
+      backgroundColor: theme.palette.background.paper,
+      padding: theme.spacing(2)
+    },
   })
 );
-
-/**
- * Formulates a list of categories based on the selected product.
- *
- * @param { Array<Category> } categories - the list of categories.
- *
- * @return Array<string>
- */
-const setCategoryQueries: (
-  categories: Array<Category>
-) => Array<string> = (
-  categories: Array<Category>
-): Array<string> => {
-  const queries: Array<string> = [];
-
-  if (!categories || categories.length <= 0) {
-    return queries;
-  }
-
-  let i: number = 0;
-
-  do {
-    const current: Category = categories[i];
-      queries.push(current.key);
-    i++;
-  } while (i < categories.length);
-
-  return queries;
-}
 
 /**
  * Loads the product and related reviews from the api before rendering.
@@ -141,7 +94,7 @@ const frontloadViewProduct = async (props: ViewProductProps) => {
   .then((response: ProductResponse) => {
     if (props.updateActive) {
       props.updateActive({
-        product: response.product
+        ...response
       });
     }
   })
@@ -167,7 +120,7 @@ const ViewProduct: React.FC<ViewProductProps> = (props: ViewProductProps) => {
   const {
     product,
     productStatus,
-    reviews
+    raveStream
   } = useRetrieveProductByURL({
     existing: props.productView ? props.productView : undefined,
     setProductView: props.updateActive,
@@ -210,22 +163,47 @@ const ViewProduct: React.FC<ViewProductProps> = (props: ViewProductProps) => {
 
   return (
     <Grid
-      className={clsx(classes.container)}
+      alignItems='flex-start'
       container
+      className={clsx(
+        classes.container, {
+          [classes.containerSwipe]: !largeScreen
+        }
+      )}
     >
-      {productStatus === ViewState.FOUND &&
-        <Grid item xs={12}>
-          {product._id &&
-            <React.Fragment>
-              <PageTitle title={`${product.brand.name} ${product.name}`} />
-              <Helmet>
-                <title>{product.brand.name} {product.name} - Ravebox</title>
-                <meta name='description' content={`${product.brand.name} ${product.name} raves created and shared by users on Ravebox.`} />
-                <link rel='canonical' href={`https://ravebox.io/product/${product.url}`} />
-              </Helmet>
-            </React.Fragment>
-          }
-        </Grid>
+      {productStatus === ViewState.FOUND && product._id &&
+        <React.Fragment>
+          <Helmet>
+            <title>What users are saying about the {product.brand.name} {product.name} on Ravebox</title>
+            <meta name='description' content={`Watch ${product.brand.name} ${product.name} raves shared by users on Ravebox.`} />
+            <link rel='canonical' href={`https://ravebox.io${props.history.location.pathname}`} />
+            <title>What users are saying about the {product.brand.name} {product.name} on Ravebox</title>
+            <meta name='description' content={`Watch ${product.brand.name} ${product.name} raves shared by users on Ravebox.`} />
+            <link rel='canonical' href={`https://ravebox.io${props.history.location.pathname}`} />
+            <meta name='og:site_name' content={`Ravebox`} />
+            <meta name='og:title' content={`Everything you need to know about the ${product.brand.name} ${product.name} shared by users on Ravebox.`} />
+            <meta name='og:description' content={`Watch ${product.brand.name} ${product.name} video reviews shared by users on Ravebox.`} />
+            <meta name='og:image' content={product.images && product.images.length > 0 ? `${product.images[0].url}` : ''} />
+            <meta name='twitter:image' content={product.images && product.images.length > 0 ? `${product.images[0].url}` : ''} />
+            <meta name='og:url' content={`https://ravebox.io${props.history.location.pathname}`} />
+            <meta name='twitter:title' content={`Everything you need to know about the ${product.brand.name} ${product.name} shared by users on Ravebox.`} />
+            <meta name='twitter:description' content={`Watch ${product.brand.name} ${product.name} video reviews shared by users on Ravebox.`} />
+            <meta name='twitter:image:alt' content={`Preview image for the ${product.brand.name} ${product.name} shared on Ravebox`} />
+            <meta name='twitter:card' content={`summary_large_image`} />
+          </Helmet>
+          <Grid item xs={12} className={clsx(classes.productTitleContainer)}>
+            <ProductTitle
+              product={{...product}} 
+              variant='h1'
+            />
+          </Grid>
+          <Grid item xs={12}>
+            <ProductTabs
+              product={{...product}}
+              raveStream={raveStream}
+            />
+          </Grid>
+        </React.Fragment>
       }
     </Grid>
   );
@@ -239,8 +217,7 @@ const ViewProduct: React.FC<ViewProductProps> = (props: ViewProductProps) => {
 const mapDispatchToProps = (dispatch: Dispatch<AnyAction>) =>
   bindActionCreators(
     {
-      updateActive: updateActive,
-      updateListByCategory
+      updateActive: updateActive
     },
     dispatch
   );
@@ -249,14 +226,11 @@ const mapDispatchToProps = (dispatch: Dispatch<AnyAction>) =>
  * Mapping the state updates to the properties from redux.
  */
 const mapStateToProps = (state: any, ownProps: ViewProductProps) => {
-  // Retrieve the active category groups.
-  const categoryGroup: ReviewGroup | undefined = state.review ? state.review.listByCategory : undefined;
   // Retrieve the review from the active properties.
   const productView: ProductView = state.product ? state.product.active : undefined;
 
   return {
     ...ownProps,
-    categoryGroup,
     productView
   };
 };

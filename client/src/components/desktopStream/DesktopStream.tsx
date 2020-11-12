@@ -83,6 +83,8 @@ import {
 // Utilities.
 import {
   buildRaveStreamPath,
+  getStreamPageDescription,
+  getStreamPageTitle,
   retrieveRaveURL
 } from '../raveStream/RaveStream.common';
 
@@ -161,26 +163,28 @@ const formatURL: (
  */
 const frontloadProductStream = async (props: DesktopStreamProps) => {
 
-  /*
   // Format the api request path.
   const params: RaveStreamURLParams = {...props.match.params};
 
   // Set the path to be requested via the api and append the review title
   // if it has been provided in the URL.
-  let path: string = buildRaveStreamPath(params);
+  let path: string = buildRaveStreamPath(params)(false),
+      contextPath: string = buildRaveStreamPath(params)(true);
 
   await API.requestAPI<RaveStreamResponse>(`stream/${path}`, {
     method: RequestType.GET
   })
   .then((response: RaveStreamResponse) => {
     if (props.updateActiveRaveStream) {
-      props.updateActiveRaveStream({...response.raveStream});
+      props.updateActiveRaveStream({
+        ...response.raveStream,
+        path: contextPath
+      });
     }
   })
   .catch((error: Error) => {
     console.log(error);
   });
-  */
 
 };
 
@@ -266,6 +270,23 @@ const DesktopStream: React.FC<DesktopStreamProps> = (props: DesktopStreamProps) 
 
   return (
     <Grid container className={clsx(classes.container)}>
+      {props.raveStream && props.review && props.review.user && props.review.product &&
+        <Helmet>
+          <title>{getStreamPageTitle(props.raveStream)}</title>
+          <meta name='description' content={getStreamPageDescription(props.raveStream)} />
+          <link rel='canonical' href={`https://ravebox.io${props.history.location.pathname}`} />
+          <meta name='og:site_name' content={`Ravebox`} />
+          <meta name='og:title' content={`Watch the ${props.review.product.brand.name} ${props.review.product.name} rave created by ${props.review.user.handle} - Ravebox`} />
+          <meta name='og:description' content={`${props.review.user.handle} talks about their experience with the ${props.review.product.brand.name} ${props.review.product.name} on Ravebox.`} />
+          <meta name='og:image' content={`${props.review.thumbnail}`} />
+          <meta name='og:url' content={`https://ravebox.io${props.review.url}`} />
+          <meta name='twitter:title' content={`Watch the ${props.review.product.brand.name} ${props.review.product.name} rave created by ${props.review.user.handle} - Ravebox`} />
+          <meta name='twitter:description' content={`${props.review.user.handle} talks about their experience with the ${props.review.product.brand.name} ${props.review.product.name} on Ravebox.`} />
+          <meta name='twitter:image' content={`${props.review.thumbnail}`} />
+          <meta name='twitter:image:alt' content={`Preview image for ${props.review.user.handle}'s rave of the ${props.review.product.brand.name} ${props.review.product.name}`} />
+          <meta name='twitter:card' content={`summary_large_image`} />
+        </Helmet>
+      }
       <Grid item xs={8}>
        <Grid container>
         <Grid item xs={12} className={clsx(classes.videoContainer)}>

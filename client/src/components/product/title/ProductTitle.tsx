@@ -27,14 +27,17 @@ const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     brandName: {
       display: 'block',
-      fontSize: '1rem',
+      fontSize: '0.65em',
       fontWeight: 700
     },
     productName: {
-      fontSize: '1.5rem',
-      fontWeight: 400,
-      lineHeight: 1.2,
+      fontSize: '1.6rem',
+      fontWeight: 300,
+      lineHeight: 1.1,
       marginBottom: 0
+    },
+    productNameLarge: {
+      fontSize: '1.8rem', 
     }
   })
 );
@@ -54,7 +57,11 @@ const ProductTitle: React.FC<ProductTitleProps> = (props: ProductTitleProps) => 
     <Grid container>
       {props.product &&
         <Grid item xs={12}>
-          <Typography className={clsx(classes.productName)} variant={props.variant || 'h2'}>
+          <Typography className={clsx(
+            classes.productName, {
+              [classes.productNameLarge]: props.size === 'large'
+            }
+          )} variant={props.variant || 'h2'}>
             <Box component='span' className={clsx(classes.brandName)}>{props.product.brand.name}</Box>
             {props.product.name}
           </Typography>

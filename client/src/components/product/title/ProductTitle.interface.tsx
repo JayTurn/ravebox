@@ -12,4 +12,5 @@ import { Product } from '../Product.interface';
 export interface ProductTitleProps {
   product?: Product;
   variant?: 'h1' | 'h2' | 'h3';
+  size?: 'small' | 'large';
 }

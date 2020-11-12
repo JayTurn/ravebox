@@ -15,6 +15,9 @@ import {
 } from '../../utils/api/Api.enum';
 import { VideoType } from '../review/Review.enum';
 
+// Hooks.
+import { useIsMounted } from '../../utils/safety/useIsMounted.hook';
+
 // Interfaces.
 import {
   Product,
@@ -22,11 +25,13 @@ import {
   RetrieveProductByIdParams,
   RetrieveProductByURLParams
 } from './Product.interface';
+import { RaveStream } from '../raveStream/RaveStream.interface';
 import {
   Review
 } from '../review/Review.interface';
 
 // Utilities.
+import { emptyRaveStream } from '../raveStream/RaveStream.common';
 import { emptyProduct } from './Product.common';
 import { ViewStatus } from '../../utils/display/view/View';
 
@@ -44,6 +49,9 @@ export function useRetrieveProductByURL(params: RetrieveProductByURLParams) {
     requested,
   } = {...params};
 
+  // Add the safety check to ensure the component is still mounted.
+  const isMounted = useIsMounted();
+
   const path: string = `${requested.brand}/${requested.productName}`;
 
   // Define the retrieval status to be used for view rendering.
@@ -53,20 +61,10 @@ export function useRetrieveProductByURL(params: RetrieveProductByURLParams) {
   const [product, setProduct] = React.useState<Product>(existing ? existing.product : emptyProduct());
 
   // Define the product reviews to be set.
-  const [reviews, setReviews] = React.useState<Array<Review>>(existing && existing.reviews ?
-    existing.reviews : [{
-      _id: '',
-      created: new Date(),
-      description: '',
-      endTime: 0,
-      links: [],
-      sponsored: false,
-      startTime: 0,
-      title: '',
-      recommended: Recommended.RECOMMENDED,
-      url: '',
-      videoType: VideoType.NATIVE
-    }]
+  const [raveStream, setRaveStream] = React.useState<RaveStream>(
+    existing && existing.raveStream
+      ? existing.raveStream
+      : emptyRaveStream()
   );
 
   const [requestedPath, setRequestedPath] = React.useState<string>(path);
@@ -75,7 +73,8 @@ export function useRetrieveProductByURL(params: RetrieveProductByURLParams) {
    * Handle state updates to the requested path.
    */
   React.useEffect(() => {
-    if (path !== requestedPath || !product.url) {
+    if (path !== requestedPath || !product.url
+      && retrieved !== RetrievalStatus.WAITING) {
       setRetrieved(RetrievalStatus.REQUESTED);
       setRequestedPath(path);
     }
@@ -85,6 +84,9 @@ export function useRetrieveProductByURL(params: RetrieveProductByURLParams) {
    * Handle state updates to the url parameters and request status.
    */
   React.useEffect(() => {
+    if (!isMounted.current) {
+      return;
+    }
     // If we haven't performed a request continue.
     if (retrieved === RetrievalStatus.REQUESTED) {
       // Update the retrieval status to avoid subsequent requests.
@@ -95,18 +97,20 @@ export function useRetrieveProductByURL(params: RetrieveProductByURLParams) {
         method: RequestType.GET
       })
       .then((response: ProductResponse) => {
+        if (!isMounted.current) {
+          return;
+        }
         // If we have a product, set the product in the redux store and the
         // local state.
         if (response.product) {
           if (setProductView) {
             setProductView({
-              product: {...response.product},
-              reviews: response.reviews ? [...response.reviews] : []
+              ...response
             });
             setProduct(response.product)
             // If we have reviews, set them.
-            if (response.reviews) {
-              setReviews(response.reviews);
+            if (response.raveStream) {
+              setRaveStream(response.raveStream);
             }
           }
           setRetrieved(RetrievalStatus.SUCCESS);
@@ -118,7 +122,9 @@ export function useRetrieveProductByURL(params: RetrieveProductByURLParams) {
         }
       })
       .catch((error: Error) => {
-        setRetrieved(RetrievalStatus.FAILED);
+        if (isMounted.current) {
+          setRetrieved(RetrievalStatus.FAILED);
+        }
       });
     }
   }, [retrieved]);
@@ -126,6 +132,6 @@ export function useRetrieveProductByURL(params: RetrieveProductByURLParams) {
   return {
     product,
     productStatus: ViewStatus(retrieved),
-    reviews
+    raveStream
   }
 }

@@ -5,6 +5,7 @@
 
 // Modules.
 import Authenticate from '../../models/authentication/authenticate.model';
+import Brand from '../brand/brand.model';
 import Connect from '../../models/database/connect.model';
 import EnvConfig from '../../config/environment/environmentBaseConfig';
 import Images from '../../shared/images/Images.model';
@@ -18,11 +19,13 @@ import {
 } from 'express';
 import Product from './product.model';
 import Review from '../review/review.model';
+import StreamCommon from '../stream/stream.common';
 import * as S3 from 'aws-sdk/clients/s3';
 import Tag from '../tag/tag.model';
 
 // Enumerators.
 import { LogLevel } from '../../shared/logging/Logging.enum';
+import { StreamType } from '../stream/stream.enum';
 import { TagAssociation } from '../tag/tag.enum';
 import { Workflow } from '../../shared/enumerators/workflow.enum';
 
@@ -30,6 +33,7 @@ import { Workflow } from '../../shared/enumerators/workflow.enum';
 import {
   AuthenticatedUserRequest
 } from '../../models/authentication/authentication.interface';
+import { BrandDetails } from '../brand/brand.interface';
 import {
   ProductDetails,
   ProductDocument,
@@ -42,6 +46,9 @@ import {
   ReviewDetails,
   ReviewDocument
 } from '../review/review.interface';
+import {
+  StreamData,
+} from '../stream/stream.interface';
 import {
   TagDocument
 } from '../tag/tag.interface';
@@ -689,16 +696,27 @@ export default class ProductController {
     // Declare a variable to store the product information.
     let product: ProductDetails;
 
-    Product.findOne({
-      url: `${brand}/${productName}`,
+    Brand.findOne({
+      url: brand
     })
-    .populate({
-      path: 'brand',
-      model: 'Brand'
-    })
-    .populate({
-      path: 'productType',
-      model: 'Tag'
+    .lean()
+    .then((brandDetails: BrandDetails) => {
+      if (!brandDetails) {
+        throw new Error(`The product couldn't be found.`);
+      }
+
+     return Product.findOne({
+        url: productName,
+        brand: brandDetails._id
+      })
+      .populate({
+        path: 'brand',
+        model: 'Brand'
+      })
+      .populate({
+        path: 'productType',
+        model: 'Tag'
+      });
     })
     .then((productDetails: ProductDocument) => {
       if (!productDetails) {
@@ -707,58 +725,21 @@ export default class ProductController {
 
       product = productDetails.details;
 
-      return Review.find({
-        product: product._id,
-        published: Workflow.PUBLISHED
-      })
-      .populate({
-        path: 'product',
-        model: 'Product',
-      })
-      .populate({
-        path: 'statistics',
-        model: 'ReviewStatistic'
-      })
-      .populate({
-        path: 'user',
-        model: 'User'
+      return StreamCommon.RetrieveProductStream({
+        brand: brand,
+        product: productName,
+        streamType: StreamType.PRODUCT
       });
     })
-    .then((reviews: Array<ReviewDocument>) => {
-      // Define an empty reviews list to be populated with reviews if they've
-      // been found.
-      const reviewList: Array<ReviewDetails> = [];
+    .then((streamData: StreamData) => {
 
-      // Loop through the reviews and format each item with review, product
-      // and user details.
-      if (reviews.length > 0) {
-        // Fitler the results for each review to the details object only.
-
-        let i = 0;
-
-        // Create the list of reviews using the details virtual property.
-        do {
-          const current: ReviewDocument = reviews[i];
-
-          if (current) {
-            reviewList.push({
-              ...current.details,
-              product: {...current.product.details},
-              user: {...current.user.publicProfile}
-            });
-          }
-
-          i++
-        } while (i < reviews.length);
-      }
-
-      // Return the product and reviews with the response
+      // Return the product and rave stream with the response
       const responseObject: ResponseObject = Connect.setResponse({
         data: {
           product: product,
-          reviews: reviewList
+          raveStream: streamData
         }
-      }, 200, 'Reviews found');
+      }, 200, 'Product returned successfully');
 
       // Return the response for the authenticated user.
       response.status(responseObject.status).json(responseObject.data);

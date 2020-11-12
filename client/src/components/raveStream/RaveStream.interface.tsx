@@ -19,6 +19,7 @@ export interface RaveStream {
   title: string;
   reviews: Array<Review>;
   streamType: RaveStreamType;
+  path?: string;
 }
 
 /**

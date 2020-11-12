@@ -195,27 +195,28 @@ const formatURL: (
  */
 const frontloadProductStream = async (props: SwipeStreamProps) => {
 
-  /*
   // Format the api request path.
   const params: RaveStreamURLParams = {...props.match.params};
 
   // Set the path to be requested via the api and append the review title
   // if it has been provided in the URL.
-  let path: string = buildRaveStreamPath(params);
+  let path: string = buildRaveStreamPath(params)(false),
+      contextPath: string = buildRaveStreamPath(params)(true);
 
   await API.requestAPI<RaveStreamResponse>(`stream/${path}`, {
     method: RequestType.GET
   })
   .then((response: RaveStreamResponse) => {
     if (props.updateActiveRaveStream) {
-      props.updateActiveRaveStream({...response.raveStream});
+      props.updateActiveRaveStream({
+        ...response.raveStream,
+        path: contextPath
+      });
     }
   })
   .catch((error: Error) => {
     console.log(error);
   });
-  */
-
 };
 
 /**
