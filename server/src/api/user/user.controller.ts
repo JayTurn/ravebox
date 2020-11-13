@@ -22,6 +22,7 @@ import {
 } from 'express';
 import Review from '../review/review.model';
 import * as S3 from 'aws-sdk/clients/s3';
+import StreamCommon from '../stream/stream.common';
 import User from './user.model';
 import UserCommon from './user.common';
 import UserStatistics from '../userStatistics/userStatistics.model'
@@ -33,6 +34,7 @@ import {
   ContactList
 } from '../../shared/notifications/Notifications.enum';
 import { InvitationStatus } from '../invitation/invitation.enum';
+import { StreamType } from '../stream/stream.enum';
 import { LogLevel } from '../../shared/logging/Logging.enum';
 import { UserRole } from './user.enum';
 import { Workflow } from '../../shared/enumerators/workflow.enum';
@@ -53,13 +55,14 @@ import {
   UserDocument
 } from './user.interface';
 import {
-  UserStatisticsDetails as UserStats,
-  UserStatisticsDocument
-} from '../userStatistics/userStatistics.interface'
-import {
   ReviewDetails,
   ReviewDocument
 } from '../review/review.interface';
+import { StreamData } from '../stream/stream.interface';
+import {
+  UserStatisticsDetails as UserStats,
+  UserStatisticsDocument
+} from '../userStatistics/userStatistics.interface'
 
 /**
  * Defines the UserController Class.
@@ -1259,9 +1262,7 @@ export default class UserController {
     }
 
     // Define the channel object to be built upon.
-    const channel: UserChannel = {
-      reviews: []
-    };
+    const channel: UserChannel = {};
 
     // Perform the request to retrieve the user.
     User.findOne({
@@ -1275,68 +1276,27 @@ export default class UserController {
       // Add the public user details to the channel object.
       if (userDetails) {
         channel.profile = {...userDetails.publicProfile};
+      } else {
+        throw new Error(`${handle} user wasn't found`);
       }
 
-      // Perform a request to retrieve the reviews the user has recored.
-      return Review.find({
-        user: userDetails._id,
-        published: Workflow.PUBLISHED
+      return StreamCommon.RetrieveUserStreamList({
+        user: userDetails._id.toHexString(),
+        streamType: StreamType.PRODUCT_TYPE
       })
-      .populate({
-        path: 'product',
-        model: 'Product',
-      })
-      .populate({
-        path: 'statistics',
-        model: 'ReviewStatistic'
-      });
     })
-    .then((reviews: Array<ReviewDocument>) => {
-      let responseObject: ResponseObject;
+    .then((streamLists: Array<StreamData>) => {
 
-      // Return the channel without reviews if none exist.
-      if (!reviews || reviews.length <= 0) {
-        // Set the response object.
-        responseObject = Connect.setResponse({
-          data: {
-            channel: channel
-          }
-        }, 200, 'Channel returned successfully without reviews');
-
-        // Return the response.
-        response.status(responseObject.status).json(responseObject.data);
-
-        return;
+      if (streamLists && streamLists.length > 0) {
+        channel.raveStreams = streamLists;
       }
-
-      // If we have a list of reviews, loop through and populate the channel
-      // reviews.
-      let i = 0;
-
-      do {
-        // Curate the reviews with reduced details and statistics.
-        const current: ReviewDocument = reviews[i];
-        const reviewDetails: ReviewDetails = {
-          ...current.details,
-          user: channel.profile
-        };
-
-        if (current.statistics) {
-          reviewDetails.statistics = {...current.statistics.details};
-        }
-
-        channel.reviews.push({...reviewDetails});
-
-        i++;
-
-      } while (i < reviews.length);
 
       // Set the response object.
-      responseObject = Connect.setResponse({
+      const responseObject: ResponseObject = Connect.setResponse({
         data: {
-          channel: channel
+          ...channel
         }
-      }, 200, 'Channel returned successfully with reviews');
+      }, 200, 'Channel returned successfully without reviews');
 
       // Return the response.
       response.status(responseObject.status).json(responseObject.data);

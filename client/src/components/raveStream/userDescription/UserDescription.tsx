@@ -63,13 +63,14 @@ const useStyles = makeStyles((theme: Theme) =>
       overflow: 'hidden',
     },
     paragraph: {
-      fontSize: '.9rem',
+      fontSize: '1rem',
       marginBottom: theme.spacing(1),
     },
     showMoreLink: {
       fontSize: '.8rem',
       fontWeight: 500,
       margin: theme.spacing(0, 0, 2),
+      padding: theme.spacing(0, 2),
       textAlign: 'center',
       textTransform: 'uppercase'
     },
@@ -86,7 +87,10 @@ const useStyles = makeStyles((theme: Theme) =>
       fontWeight: 700,
       lineHeight: '1.5rem',
       textTransform: 'uppercase'
-    }
+    },
+    leftAlign: {
+      textAlign: 'left'
+    },
   })
 );
 
@@ -154,7 +158,11 @@ const UserDescription: React.FC<UserDescriptionProps> = (props: UserDescriptionP
               })}
             </Box>
           </Grid>
-          <Grid item xs={12} className={clsx(classes.showMoreLink)}>
+          <Grid item xs={12} className={clsx(
+            classes.showMoreLink, {
+              [classes.leftAlign]: props.alignMore === 'left'
+            }
+          )}>
             <Link onClick={handleExpansion}>{expanded ? 'Show less' : 'Show more'}</Link>
           </Grid>
         </React.Fragment>

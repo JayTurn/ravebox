@@ -30,6 +30,7 @@ const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     cardContainer: {
       borderRadius: 10,
+      boxShadow: 'none',
       display: 'inline-block',
       width: `100%`,
     },
@@ -38,8 +39,8 @@ const useStyles = makeStyles((theme: Theme) =>
     },
     container: {
       backgroundColor: theme.palette.background.default,
-      boxShadow: `0px -1px 1px rgba(100,106,240,.15), 0px 1px 3px rgba(100,106,240,.25)`,
-      margin: theme.spacing(1, 0)
+      //boxShadow: `0px -1px 1px rgba(100,106,240,.15), 0px 1px 3px rgba(100,106,240,.25)`,
+      margin: theme.spacing(1, 0, 0)
     },
     gridContainer: {
       padding: theme.spacing(2, 1)
@@ -77,7 +78,11 @@ const ProductImages: React.FC<ProductImagesProps> = (props: ProductImagesProps) 
           {props.images.map((productImage: ImageAndTitle) => {
             return (
               <Grid item xs={6} key={productImage.url}>
-                <Card className={clsx(classes.cardContainer)} key={productImage.url}>
+                <Card 
+                  className={clsx(classes.cardContainer)}
+                  key={productImage.url}
+                  raised={false}
+                >
                   <CardMedia
                     className={clsx(classes.cardMedia)}
                     image={productImage.url}

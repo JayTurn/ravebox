@@ -43,7 +43,6 @@ import { Review } from '../../review/Review.interface';
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     container: {
-      paddingTop: theme.spacing(1),
     },
     cardContainer: {
       backgroundColor: theme.palette.background.default,

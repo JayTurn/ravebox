@@ -9,7 +9,7 @@ import { RouteComponentProps } from 'react-router';
 // Interfaces.
 import { APIResponse } from '../../../utils/api/Api.interface';
 import { PublicProfile } from '../../../components/user/User.interface';
-import { Review } from '../../../components/review/Review.interface';
+import { RaveStream } from '../../../components/raveStream/RaveStream.interface';
 
 /**
  * Channel properties.
@@ -23,15 +23,8 @@ export interface ChannelProps extends RouteComponentProps<ChannelParams> {
  * Interface for the channel details.
  */
 export interface ChannelDetails {
-  profile?: {
-    _id: string;
-    avatar?: string;
-    handle: string;
-    ravesCount: number;
-    followers: number;
-    statistics?: string;
-  };
-  reviews?: Array<Review>;
+  profile?: PublicProfile;
+  raveStreams?: Array<RaveStream>;
 }
 
 /**
@@ -62,16 +55,6 @@ export interface RetrieveChannelParams {
  * Response interface for a channel request.
  */
 export interface ChannelResponse extends APIResponse {
-  channel: {
-    profile?: {
-      _id: string;
-      avatar?: string;
-      handle: string;
-      statistics: {
-        ravesCount: number;
-        followers: number;
-      }
-    };
-    reviews?: Array<Review>;
-  };
+  profile?: PublicProfile;
+  raveStream?: Array<RaveStream>;
 }

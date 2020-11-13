@@ -42,9 +42,8 @@ const StyledTabs = withStyles(theme => ({
     backgroundColor: theme.palette.primary.main
   },
   root: {
-    boxShadow: `0 -2px 0 ${theme.palette.background.paper}, 0 1px 3px rgba(100, 106, 240, .25)`,
-    backgroundColor: theme.palette.background.paper,
-    marginBottom: theme.spacing(1)
+    //boxShadow: `0 -2px 0 ${theme.palette.background.paper}, 0 1px 3px rgba(100, 106, 240, .25)`,
+    backgroundColor: theme.palette.background.paper
   }
 }))(Tabs);
 

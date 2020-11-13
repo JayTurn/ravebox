@@ -12,6 +12,7 @@ import { StyleType } from './Link.enum';
 export interface LinkProps extends MaterialLinkProps {
   title: string;
   path: string;
+  size?: 'large' | 'small';
   styleType?: StyleType;
   track?: LinkTrackingData;
 }

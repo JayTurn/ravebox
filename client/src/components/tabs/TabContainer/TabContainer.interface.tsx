@@ -12,6 +12,7 @@ export interface TabContainerProps {
   activeIndex: number;
   index: number;
   children: React.ReactNode;
+  minDesktopHeight?: number;
   updateHeight: (value: number) => void;
   toggleUpdate: boolean;
 }

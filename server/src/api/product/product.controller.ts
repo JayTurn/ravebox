@@ -18,7 +18,6 @@ import {
   Router
 } from 'express';
 import Product from './product.model';
-import Review from '../review/review.model';
 import StreamCommon from '../stream/stream.common';
 import * as S3 from 'aws-sdk/clients/s3';
 import Tag from '../tag/tag.model';
@@ -27,7 +26,6 @@ import Tag from '../tag/tag.model';
 import { LogLevel } from '../../shared/logging/Logging.enum';
 import { StreamType } from '../stream/stream.enum';
 import { TagAssociation } from '../tag/tag.enum';
-import { Workflow } from '../../shared/enumerators/workflow.enum';
 
 // Interfaces.
 import {
@@ -42,10 +40,6 @@ import {
 import {
   ResponseObject
 } from '../../models/database/connect.interface';
-import {
-  ReviewDetails,
-  ReviewDocument
-} from '../review/review.interface';
 import {
   StreamData,
 } from '../stream/stream.interface';

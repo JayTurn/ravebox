@@ -21,18 +21,21 @@ import {
   useSwipeable
 } from 'react-swipeable'
 import Grid from '@material-ui/core/Grid';
+import { Link as ReactLink } from 'react-router-dom';
 import MobileStepper from '@material-ui/core/MobileStepper';
 import * as React from 'react';
 import Typography from '@material-ui/core/Typography';
 import { withRouter } from 'react-router';
 
 // Components.
+import LinkElement from '../../elements/link/Link';
 import SwipeCard from '../card/SwipeCard';
 import StyledButton from '../../elements/buttons/StyledButton';
 
 // Enumerators.
 import { CardPosition } from '../card/SwipeCard.enum';
 import { RaveStreamType } from '../../raveStream/RaveStream.enum';
+import { StyleType } from '../../elements/link/Link.enum';
 
 // Interfaces.
 import { Review } from '../../review/Review.interface';
@@ -91,8 +94,8 @@ const useStyles = makeStyles((theme: Theme) =>
     container: {
       backgroundColor: theme.palette.common.white,
       //boxShadow: `0 -1px 0 rgba(100,106,240, .25)`,
-      boxShadow: `0px -1px 1px rgba(100,106,240,.15), 0px 1px 3px rgba(100,106,240,.25)`,
-      margin: theme.spacing(.75, 0),
+      //boxShadow: `0px -1px 1px rgba(100,106,240,.15), 0px 1px 3px rgba(100,106,240,.25)`,
+      margin: theme.spacing(1, 0, 0),
       overflow: 'hidden',
       padding: theme.spacing(0),
       position: 'relative'
@@ -106,6 +109,10 @@ const useStyles = makeStyles((theme: Theme) =>
       fontSize: '1.1rem',
       fontWeight: 500,
       marginBottom: 0
+    },
+    streamLink: {
+      color: 'inherit',
+      textDecoration: 'none'
     },
     streamTitle: {
       //color: theme.palette.common.white,
@@ -241,23 +248,29 @@ const SwipeCardHolder: React.FC<SwipeCardHolderProps> = (
             ) : (
               <React.Fragment>
                 {reviews && reviews.length > 0 && reviews[0].product &&
-                  <Typography variant='h2' className={clsx(classes.productTitle)}>
-                    <Box component='span' className={clsx(classes.brandText)}>
-                      {reviews[0].product.brand.name}
-                    </Box>
-                    {reviews[0].product.name}
-                  </Typography>
+                  <ReactLink
+                    className={clsx(classes.streamLink)}
+                    to={`/product/${reviews[0].product.brand.url}/${reviews[0].product.url}`}
+                    title={`View the ${reviews[0].product.brand.name} ${reviews[0].product.name} details`}
+                  >
+                    <Typography variant='h2' className={clsx(classes.productTitle)}>
+                      <Box component='span' className={clsx(classes.brandText)}>
+                        {reviews[0].product.brand.name}
+                      </Box>
+                      {reviews[0].product.name}
+                    </Typography>
+                  </ReactLink>
                 }
               </React.Fragment>
             )}
           </Grid>
           {!props.hidePlayAll &&
             <Grid item>
-              <StyledButton
-                clickAction={handleNavigate}
-                size='small'
+              <LinkElement
                 title='Play all'
-                variant='outlined'
+                path={`${path}`}
+                size='small'
+                styleType={StyleType.BUTTON_PRIMARY_OUTLINE}
               />
             </Grid>
           }

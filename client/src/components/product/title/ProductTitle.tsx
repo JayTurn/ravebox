@@ -14,6 +14,7 @@ import {
   withStyles
 } from '@material-ui/core/styles';
 import Grid from '@material-ui/core/Grid';
+import { Link as ReactLink } from 'react-router-dom';
 import * as React from 'react';
 import Typography from '@material-ui/core/Typography';
 
@@ -30,6 +31,10 @@ const useStyles = makeStyles((theme: Theme) =>
       fontSize: '0.65em',
       fontWeight: 700
     },
+    productLink: {
+      color: 'inherit',
+      textDecoration: 'none'
+    },
     productName: {
       fontSize: '1.6rem',
       fontWeight: 300,
@@ -38,6 +43,9 @@ const useStyles = makeStyles((theme: Theme) =>
     },
     productNameLarge: {
       fontSize: '1.8rem', 
+    },
+    productNameSmall: {
+      fontSize: '1.33rem'
     }
   })
 );
@@ -57,14 +65,33 @@ const ProductTitle: React.FC<ProductTitleProps> = (props: ProductTitleProps) => 
     <Grid container>
       {props.product &&
         <Grid item xs={12}>
-          <Typography className={clsx(
-            classes.productName, {
-              [classes.productNameLarge]: props.size === 'large'
-            }
-          )} variant={props.variant || 'h2'}>
-            <Box component='span' className={clsx(classes.brandName)}>{props.product.brand.name}</Box>
-            {props.product.name}
-          </Typography>
+          {props.linkTitle ? (
+            <ReactLink
+              className={clsx(classes.productLink)}
+              to={`/product/${props.product.brand.url}/${props.product.url}`}
+              title={`View the ${props.product.brand.name} ${props.product.name} details`}
+            >
+              <Typography className={clsx(
+                classes.productName, {
+                  [classes.productNameLarge]: props.size === 'large',
+                  [classes.productNameSmall]: props.size === 'small'
+                }
+              )} variant={props.variant || 'h2'}>
+                <Box component='span' className={clsx(classes.brandName)}>{props.product.brand.name}</Box>
+                {props.product.name}
+              </Typography>
+            </ReactLink>
+          ) : (
+            <Typography className={clsx(
+              classes.productName, {
+                [classes.productNameLarge]: props.size === 'large',
+                [classes.productNameSmall]: props.size === 'small'
+              }
+            )} variant={props.variant || 'h2'}>
+              <Box component='span' className={clsx(classes.brandName)}>{props.product.brand.name}</Box>
+              {props.product.name}
+            </Typography>
+          )}
         </Grid>
       }
     </Grid>

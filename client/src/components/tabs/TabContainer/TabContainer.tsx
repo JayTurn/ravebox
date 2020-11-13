@@ -103,6 +103,12 @@ const TabContainer: React.FC<TabContainerProps> = (props: TabContainerProps) => 
         updateHeight = 600;
       }
 
+      if (largeScreen && props.minDesktopHeight) {
+        if (updateHeight < props.minDesktopHeight) {
+          updateHeight = props.minDesktopHeight;
+        }
+      }
+
       setHeight(updateHeight);
       props.updateHeight(updateHeight);
     }

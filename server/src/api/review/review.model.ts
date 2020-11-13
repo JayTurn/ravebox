@@ -45,11 +45,13 @@ const ReviewSchema = new Schema<ReviewDocument>({
   },
   product:  { 
     type: Schema.Types.ObjectId, 
-    ref: 'Product'
+    ref: 'Product',
+    index: true
   },
   published: {
     type: Workflow,
-    default: Workflow.DRAFT
+    default: Workflow.DRAFT,
+    index: true
   },
   recommended: {
     type: Recommended

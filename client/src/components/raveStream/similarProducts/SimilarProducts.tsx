@@ -38,7 +38,6 @@ import { SimilarProductsProps } from './SimilarProducts.interface';
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     container: {
-      paddingTop: theme.spacing(1)
     },
     noResultsContainer: {
       backgroundColor: theme.palette.background.default,
@@ -49,12 +48,6 @@ const useStyles = makeStyles((theme: Theme) =>
     },
     noResultsText: {
       fontSize: '1rem'
-    },
-    spaceAbove: {
-      paddingTop: theme.spacing(.5)
-    },
-    spaceBelow: {
-      paddingBottom: theme.spacing(.5)
     }
   })
 );
@@ -130,10 +123,6 @@ const SimilarProducts: React.FC<SimilarProductsProps> = (props: SimilarProductsP
         <React.Fragment>
           {raveStreams.map((raveStream: RaveStream, index: number) => (
             <Grid item xs={12}
-              className={clsx({
-                [classes.spaceAbove]: index === 0,
-                [classes.spaceBelow]: index === raveStreams.length - 1  
-              })}
               key={index}
             >
               <SwipeCardHolder

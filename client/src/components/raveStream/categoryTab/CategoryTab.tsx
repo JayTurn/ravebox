@@ -64,14 +64,7 @@ const useStyles = makeStyles((theme: Theme) =>
     },
     swipeBackground: {
       backgroundColor: `rgba(100, 106, 240, .1)`,
-      paddingTop: theme.spacing(.5),
-      paddingBottom: theme.spacing(.5),
-      '&:first-child': {
-        paddingTop: theme.spacing(.5)
-      },
-      '&:last-child': {
-        paddingBottom: theme.spacing(.5)
-      }
+      paddingBottom: theme.spacing(1)
     }
   })
 );

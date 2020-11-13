@@ -10,7 +10,8 @@ import { Product } from '../Product.interface';
  * Product title properties.
  */
 export interface ProductTitleProps {
+  linkTitle?: boolean;
   product?: Product;
   variant?: 'h1' | 'h2' | 'h3';
-  size?: 'small' | 'large';
+  size?: 'small' | 'medium' | 'large';
 }

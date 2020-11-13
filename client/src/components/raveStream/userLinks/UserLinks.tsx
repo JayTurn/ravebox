@@ -53,18 +53,24 @@ const useStyles = makeStyles((theme: Theme) =>
       fontWeight: 600
     },
     titleContainer: {
-      backgroundColor: theme.palette.secondary.dark,
-      borderRadius: 10,
-      display: 'inline-block',
       margin: theme.spacing(2, 2, 0),
-      padding: theme.spacing(0, 1)
     },
     title: {
+      backgroundColor: theme.palette.secondary.dark,
+      borderRadius: 10,
       color: theme.palette.common.white,
+      display: 'inline',
       fontSize: '.75rem',
       fontWeight: 700,
       lineHeight: '1.5rem',
+      padding: theme.spacing(.75, 1),
+      textAlign: 'center',
       textTransform: 'uppercase'
+    },
+    alignCenter: {
+      marginLeft: 'auto',
+      marginRight: 'auto',
+      textAlign: 'center'
     }
   })
 );
@@ -90,7 +96,11 @@ const UserLinks: React.FC<UserLinksProps> = (props: UserLinksProps) => {
   return (
     <Grid container ref={ref}>
       <Grid item xs={12}>
-        <Box className={clsx(classes.titleContainer)}>
+        <Box className={clsx(
+          classes.titleContainer, {
+            [classes.alignCenter]: props.align === 'center'
+          }
+        )}>
           <Typography variant='body1' className={clsx(classes.title)}>
             {title}
           </Typography>
@@ -103,7 +113,11 @@ const UserLinks: React.FC<UserLinksProps> = (props: UserLinksProps) => {
               const linkPrefix: string = getExternalLinkPath(userLink.linkType);
 
               return (
-                <Grid item key={index} xs={12} className={clsx(classes.linkItem)}>
+                <Grid item key={index} xs={12} className={clsx(
+                  classes.linkItem, {
+                    [classes.alignCenter]: props.align === 'center'
+                  }
+                )}>
                   <Typography variant='body1'>
                     <Link
                       className={clsx(classes.linkText)}

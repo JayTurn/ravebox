@@ -84,10 +84,9 @@ const useStyles = makeStyles((theme: Theme) =>
       width: `300%`
     },
     tabPanelContainer: {
-      boxShadow: `inset 0px -1px 3px rgba(100,106,240,.25), inset 0px 1px 1px rgba(100,106,240,.15)`,
+      //boxShadow: `inset 0px -1px 3px rgba(100,106,240,.25), inset 0px 1px 1px rgba(100,106,240,.15)`,
       backgroundColor: `rgba(100,106,240, .1)`,
       overflow: 'hidden',
-      padding: theme.spacing(1, 0),
       position: 'relative',
       width: '100%'
     },

@@ -16,6 +16,7 @@ import {
   withStyles
 } from '@material-ui/core/styles';
 import Grid from '@material-ui/core/Grid';
+import { Link as ReactLink } from 'react-router-dom';
 import * as React from 'react';
 import Typography from '@material-ui/core/Typography';
 
@@ -42,7 +43,6 @@ import {
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     avatar: {
-      boxShadow: `0 1px 1px rgba(0,0,0,0.25)`,
       height: theme.spacing(5),
       width: theme.spacing(5)
     },
@@ -63,6 +63,10 @@ const useStyles = makeStyles((theme: Theme) =>
       fontWeight: 600
     },
     raveButton: {
+    },
+    userLink: {
+      color: 'inherit',
+      textDecoration: 'none'
     },
     userStatisticsText: {
       fontSize: '.7rem',
@@ -95,46 +99,52 @@ const CardUser: React.FC<CardUserProps> = (props: CardUserProps) => {
   const avatar: string | undefined = review.user ? getExternalAvatar(review.user) : undefined; 
 
   return (
-    <Grid
-      container
-      alignItems='center'
-      className={clsx(classes.container)}
-      justify='flex-start'
-    >
+    <React.Fragment>
       {review.user &&
-        <React.Fragment>
-          <Grid item>
-            {avatar ? (
-              <Avatar
-                alt={review.user.handle}
-                className={clsx(classes.avatar)}
-                src={avatar}
-              />
-            ) : (
-              <Avatar
-                alt={review.user.handle}
-                className={clsx(classes.avatarIcon)}
+        <ReactLink
+          className={clsx(classes.userLink)}
+          to={`/user/channel/${review.user.handle}`}
+          title={`Visit the profile of ${review.user.handle}`}
+        >
+          <Grid
+            container
+            alignItems='center'
+            className={clsx(classes.container)}
+            justify='flex-start'
+          >
+            <Grid item>
+              {avatar ? (
+                <Avatar
+                  alt={review.user.handle}
+                  className={clsx(classes.avatar)}
+                  src={avatar}
+                />
+              ) : (
+                <Avatar
+                  alt={review.user.handle}
+                  className={clsx(classes.avatarIcon)}
+                >
+                  {firstLetter} 
+                </Avatar>
+              )}
+            </Grid>
+            <Grid item className={clsx(classes.handleContainer)}>
+              <Typography
+                className={clsx(classes.handleText)}
+                variant='body1'
               >
-                {firstLetter} 
-              </Avatar>
-            )}
-          </Grid>
-          <Grid item className={clsx(classes.handleContainer)}>
-            <Typography
-              className={clsx(classes.handleText)}
-              variant='body1'
-            >
-              {review.user.role === Role.YOUTUBE ? 'youtube' : review.user.handle}
-            </Typography>
-            {review.user.statistics &&
-              <Typography variant='body2' className={classes.userStatisticsText}>
-                {statistics}
+                {review.user.role === Role.YOUTUBE ? 'youtube' : review.user.handle}
               </Typography>
-            }
+              {review.user.statistics &&
+                <Typography variant='body2' className={classes.userStatisticsText}>
+                  {statistics}
+                </Typography>
+              }
+            </Grid>
           </Grid>
-        </React.Fragment>
+        </ReactLink>
       }
-    </Grid>
+    </React.Fragment>
   );
 }
 

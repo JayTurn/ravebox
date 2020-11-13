@@ -624,7 +624,7 @@ export default class StreamCommon {
       let streamTitle = '';
 
       Tag.findOne({
-        name: item.productType,
+        url: item.productType,
         association: TagAssociation.PRODUCT
       })
       .lean()
