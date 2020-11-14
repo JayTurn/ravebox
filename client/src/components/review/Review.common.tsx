@@ -13,7 +13,10 @@ import {
 import { VideoType } from './Review.enum';
 
 // Interfaces.
-import { Review } from './Review.interface';
+import {
+  AggregateReviewScore,
+  Review
+} from './Review.interface';
 import { EventObject } from '../analytics/Analytics.interface';
 
 // Utilities.
@@ -150,3 +153,42 @@ export const filterReviews: (
   return updatedReviews;
 }
 
+/**
+ * Calculates the aggregate review score based on the reviews provided.
+ *
+ * @param { Array<Review> } reviews - the reviews.
+ *
+ * @return number
+ */
+export const calculateAggregateReviewScore: (
+  reviews: Array<Review>
+) => AggregateReviewScore = (
+  reviews: Array<Review>
+): AggregateReviewScore => {
+  let score: AggregateReviewScore = {
+    averageScore: 0,
+    count: 0,
+    highestAllowedRating: Recommended.RECOMMENDED,
+    lowestAllowedRating: Recommended.NOT_RECOMMENDED,
+    totalScore: 0,
+  };
+
+  if (reviews.length <= 0) {
+    return score;
+  }
+
+  let i: number = 0;
+
+  do {
+    const current: Review = {...reviews[i]};
+
+    score.totalScore += current.recommended;
+    score.count ++;
+
+    i++;
+  } while (i < reviews.length);
+
+  score.averageScore = score.totalScore / score.count;
+
+  return score;
+}
