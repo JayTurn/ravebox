@@ -23,6 +23,7 @@ import Grid from '@material-ui/core/Grid';
 import Typography from '@material-ui/core/Typography';
 import { TransitionGroup } from 'react-transition-group';
 import * as React from 'react';
+import { withRouter } from 'react-router';
 
 // Actions.
 import {
@@ -200,6 +201,8 @@ const SwipeVideoController: React.FC<SwipeVideoControllerProps> = (props: SwipeV
           props.updateActiveIndex(props.activeIndex - 1);
           setShowOverlay(false);
           handleOverlayDisplay();
+        } else {
+          props.history.goBack();
         }
       }
     }
@@ -376,7 +379,7 @@ const mapStateToProps = (state: any, ownProps: SwipeVideoControllerProps) => {
   };
 };
 
-export default connect(
+export default withRouter(connect(
   mapStateToProps,
   mapDispatchToProps,
-)(SwipeVideoController);
+)(SwipeVideoController));

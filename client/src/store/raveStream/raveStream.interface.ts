@@ -29,9 +29,9 @@ export type RaveStreamAction = ActionType<typeof actions>;
  */
 export interface RaveStreamStore {
   active: number;
-  raveStream: RaveStream;
   activeCategory: number;
   categoryList: Array<RaveStreamCategoryList>;
+  raveStream: RaveStream;
   raveStreamList: RaveStreamList;
   product: Product;
   review: Review;

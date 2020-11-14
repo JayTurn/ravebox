@@ -30,11 +30,11 @@ import useMediaQuery from '@material-ui/core/useMediaQuery';
 
 // Actions.
 import {
-  login,
-} from '../store/user/Actions';
-import {
   add
 } from '../store/xsrf/Actions';
+import {
+  login,
+} from '../store/user/Actions';
 import { updateAPIImageConfig } from '../store/configuration/Actions';
 
 // Components.
@@ -209,7 +209,7 @@ const App: React.FC<AppProps> = (props: AppProps) => {
         props.updateLoading(true);
       }
     }
-  }));
+  }), [props.history, props.location]);
 
   React.useEffect(() => {
     if (chooseTheme < 0) {
