@@ -25,7 +25,6 @@ import { Helmet } from 'react-helmet';
 import { helmetJsonLdProp } from 'react-schemaorg';
 import { Product } from '../../../components/product/Product.interface';
 import {
-  InteractionCounter,
   Product as ProductSchema,
   VideoObject as VideoSchema,
   WithContext

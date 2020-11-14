@@ -22,6 +22,7 @@ import {
 import { frontloadConnect } from 'react-frontload';
 import Grid from '@material-ui/core/Grid';
 import { Helmet } from 'react-helmet';
+import { helmetJsonLdProp } from 'react-schemaorg';
 import LinearProgress from '@material-ui/core/LinearProgress';
 import * as React from 'react';
 import { Route } from 'react-router-dom';
@@ -54,6 +55,7 @@ import {
   RetrievalStatus
 } from '../../utils/api/Api.enum';
 import { SwipeView } from './SwipeStream.enum';
+import { VideoType } from '../review/Review.enum';
 import { ViewState } from '../../utils/display/view/ViewState.enum';
 
 // Hooks.
@@ -66,6 +68,10 @@ import { useIsMounted } from '../../utils/safety/useIsMounted.hook';
 // Interfaces.
 import { AnalyticsContextProps } from '../analytics/Analytics.interface';
 import { Product } from '../product/Product.interface';
+import {
+  Review as ReviewSchema,
+  VideoObject as VideoSchema
+} from 'schema-dts';
 import {
   RaveStream,
   RaveStreamResponse,
@@ -80,6 +86,8 @@ import {
 import {
   buildContextPath,
   buildRaveStreamPath,
+  buildReviewSchema,
+  buildVideoSchema,
   getStreamPageDescription,
   getStreamPageTitle,
   retrieveRaveURL
@@ -256,6 +264,15 @@ const SwipeStream: React.FC<SwipeStreamProps> = (props: SwipeStreamProps) => {
 
   const [upperOverlay, setUpperOverlay] = React.useState<SwipeView>(SwipeView.PRODUCT);
 
+  const schemas = [
+    helmetJsonLdProp<ReviewSchema>(
+      buildReviewSchema(props.product)(props.review)
+    ),
+    helmetJsonLdProp<VideoSchema>(
+      buildVideoSchema(props.review)
+    )
+  ];
+
   /**
    * Track the stream view.
    */
@@ -346,7 +363,9 @@ const SwipeStream: React.FC<SwipeStreamProps> = (props: SwipeStreamProps) => {
   return (
     <Box className={clsx(classes.container)}>
       {props.raveStream && props.review && props.review.user && props.review.product &&
-        <Helmet>
+        <Helmet
+          script={schemas}
+        >
           <title>{getStreamPageTitle(props.raveStream)}</title>
           <meta name='description' content={getStreamPageDescription(props.raveStream)} />
           <link rel='canonical' href={`https://ravebox.io${props.history.location.pathname}`} />

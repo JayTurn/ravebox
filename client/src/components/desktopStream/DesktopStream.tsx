@@ -23,6 +23,7 @@ import {
 import { frontloadConnect } from 'react-frontload';
 import Grid from '@material-ui/core/Grid';
 import { Helmet } from 'react-helmet';
+import { helmetJsonLdProp } from 'react-schemaorg';
 import LinearProgress from '@material-ui/core/LinearProgress';
 import * as React from 'react';
 import { Route } from 'react-router-dom';
@@ -77,12 +78,18 @@ import {
 } from '../raveStream/RaveStream.interface';
 import { Review } from '../review/Review.interface';
 import {
+  Review as ReviewSchema,
+  VideoObject as VideoSchema
+} from 'schema-dts';
+import {
   DesktopStreamProps
 } from './DesktopStream.interface';
 
 // Utilities.
 import {
   buildRaveStreamPath,
+  buildReviewSchema,
+  buildVideoSchema,
   getStreamPageDescription,
   getStreamPageTitle,
   retrieveRaveURL
@@ -218,6 +225,15 @@ const DesktopStream: React.FC<DesktopStreamProps> = (props: DesktopStreamProps) 
 
   const isMounted = useIsMounted();
 
+  const schemas = [
+    helmetJsonLdProp<ReviewSchema>(
+      buildReviewSchema(props.product)(props.review)
+    ),
+    helmetJsonLdProp<VideoSchema>(
+      buildVideoSchema(props.review)
+    )
+  ];
+
   /**
    * Track the stream view.
    */
@@ -271,7 +287,9 @@ const DesktopStream: React.FC<DesktopStreamProps> = (props: DesktopStreamProps) 
   return (
     <Grid container className={clsx(classes.container)}>
       {props.raveStream && props.review && props.review.user && props.review.product &&
-        <Helmet>
+        <Helmet
+          script={schemas}
+        >
           <title>{getStreamPageTitle(props.raveStream)}</title>
           <meta name='description' content={getStreamPageDescription(props.raveStream)} />
           <link rel='canonical' href={`https://ravebox.io${props.history.location.pathname}`} />
