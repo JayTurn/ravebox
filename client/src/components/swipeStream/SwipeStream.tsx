@@ -273,6 +273,18 @@ const SwipeStream: React.FC<SwipeStreamProps> = (props: SwipeStreamProps) => {
     )
   ];
 
+ /**
+ * Intercept the back button to take us back to the stored back path.
+ */
+  React.useEffect(() => props.history.listen(() => {
+    if (props.history.action === 'POP') {
+      if (props.backPath) {
+        props.history.push(props.backPath);
+      }
+    }
+  }), [props.history, props.backPath]);
+
+
   /**
    * Track the stream view.
    */
@@ -289,6 +301,10 @@ const SwipeStream: React.FC<SwipeStreamProps> = (props: SwipeStreamProps) => {
         loadRave(raveURL)(props.match.params);
 
         const contextPath: string = buildContextPath(props.match.params.streamType)(props.match.params); 
+
+        if (ravePath) {
+          props.history.push(props.location.pathname);
+        }
 
         setRavePath(contextPath);
 
@@ -424,6 +440,7 @@ const mapDispatchToProps = (dispatch: Dispatch<AnyAction>) =>
 const mapStateToProps = (state: any, ownProps: SwipeStreamProps) => {
   // Retrieve the product stream from the active properties.
   const raveStream: RaveStream = state.raveStream ? state.raveStream.raveStream : undefined,
+        backPath: string = state.raveStream ? state.raveStream.backPath : '',
         loading: boolean = state.loading ? state.loading.loading : true,
         product: Product = state.raveStream ? state.raveStream.product : undefined,
         activeIndex: number = state.raveStream ? state.raveStream.active : 0;
@@ -437,6 +454,7 @@ const mapStateToProps = (state: any, ownProps: SwipeStreamProps) => {
   return {
     ...ownProps,
     activeIndex,
+    backPath,
     loading,
     product,
     raveStream,

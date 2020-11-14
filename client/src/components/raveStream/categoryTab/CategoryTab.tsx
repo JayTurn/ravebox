@@ -136,7 +136,7 @@ const CategoryStreamTab: React.FC<CategoryStreamTabProps> = (props: CategoryStre
   return (
     <Grid container className={clsx(classes.container)} ref={ref}>
       {props.categoryList.streamItems.map((raveStream: RaveStream, index: number) => (
-        <Grid item xs={12}
+        <Grid item key={index} xs={12}
           className={clsx(
             classes.cardBackground, {
               [classes.swipeBackground]: !largeScreen

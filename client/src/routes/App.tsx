@@ -35,6 +35,9 @@ import {
 import {
   login,
 } from '../store/user/Actions';
+import {
+  updateBackPath,
+} from '../store/raveStream/Actions';
 import { updateAPIImageConfig } from '../store/configuration/Actions';
 
 // Components.
@@ -208,6 +211,9 @@ const App: React.FC<AppProps> = (props: AppProps) => {
       if (props.updateLoading) {
         props.updateLoading(true);
       }
+      if (props.updateBackPath) {
+        props.updateBackPath(props.location.pathname);
+      }
     }
   }), [props.history, props.location]);
 
@@ -361,12 +367,14 @@ const App: React.FC<AppProps> = (props: AppProps) => {
  *
  */
 function mapStatetoProps(state: any, ownProps: AppProps) {
-  let profile: PrivateProfile = state.user ? state.user.profile : {_id: '', email: ''};
+  let profile: PrivateProfile = state.user ? state.user.profile : {_id: '', email: ''},
+      backPath: string = state.raveStream ? state.raveStream.backPath : '';
 
   const expanded: boolean = state.navigation ? state.navigation.display : false
 
   return {
     ...ownProps,
+    backPath,
     expanded,
     profile
   };
@@ -381,6 +389,7 @@ const mapDispatchToProps = (dispatch: Dispatch<AnyAction>) =>
   bindActionCreators(
     {
       login: login,
+      updateBackPath,
       updateXsrf: add
     },
     dispatch

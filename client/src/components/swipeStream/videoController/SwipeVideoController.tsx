@@ -202,7 +202,11 @@ const SwipeVideoController: React.FC<SwipeVideoControllerProps> = (props: SwipeV
           setShowOverlay(false);
           handleOverlayDisplay();
         } else {
-          props.history.goBack();
+          if (props.backPath) {
+            props.history.push(props.backPath);
+          } else {
+            props.history.goBack();
+          }
         }
       }
     }
@@ -368,11 +372,13 @@ const mapDispatchToProps = (dispatch: Dispatch<AnyAction>) =>
 const mapStateToProps = (state: any, ownProps: SwipeVideoControllerProps) => {
   // Retrieve the product stream from the active properties.
   const raveStream: RaveStream = state.raveStream ? state.raveStream.raveStream : undefined,
+        backPath: string = state.raveStream ? state.raveStream.backPath : '',
         activeIndex: number = state.raveStream ? state.raveStream.active : 0,
         product: Product = state.raveStream ? state.raveStream.product : undefined;
 
   return {
     ...ownProps,
+    backPath,
     activeIndex,
     product,
     raveStream

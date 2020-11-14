@@ -13,5 +13,6 @@ export enum RaveStreamVerb {
   UPDATE_CATEGORY_LIST = 'stream/update_category_list',
   UPDATE_LIST = 'stream/update_list',
   UPDATE_PRODUCT = 'stream/update_product',
-  UPDATE_REVIEW = 'stream/update_review'
+  UPDATE_REVIEW = 'stream/update_review',
+  UPDATE_BACK_PATH = 'stream/update_back_path'
 }

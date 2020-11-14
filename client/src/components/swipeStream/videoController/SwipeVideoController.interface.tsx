@@ -18,6 +18,7 @@ import { RaveStream } from '../../raveStream/RaveStream.interface';
  */
 export interface SwipeVideoControllerProps extends RouteComponentProps {
   activeIndex?: number;
+  backPath?: string;
   displayChange: (view: SwipeView) => void;
   product?: Product;
   raveStream?: RaveStream;

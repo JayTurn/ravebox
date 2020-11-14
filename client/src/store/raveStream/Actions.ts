@@ -45,6 +45,14 @@ export const updateActiveCategory = (activeCategory: number) => action(
   RaveStreamVerb.UPDATE_ACTIVE_CATEGORY, activeCategory);
 
 /**
+ * Updates the back path to be returned to in the redux store.
+ *
+ * @param { string } path - the path to be stored.
+ */
+export const updateBackPath = (path: string) => action(
+  RaveStreamVerb.UPDATE_BACK_PATH, path);
+
+/**
  * Updates a list of category streams.
  *
  * @param { RaveStreamCategoryList } raveStreamCategoryList - the list.

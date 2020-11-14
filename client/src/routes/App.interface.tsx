@@ -14,11 +14,13 @@ import { PrivateProfile } from '../components/user/User.interface';
  * App properties.
  */
 export interface AppProps extends RouteComponentProps {
+  backPath?: string;
   expanded?: boolean;
   loading?: boolean;
   login?: (profile: PrivateProfile) => {};
   profile?: PrivateProfile;
   showLogin?: Function;
+  updateBackPath?: (path: string) => void;
   updateImageConfiguration?: Function;
   updateLoading?: (loaded: boolean) => void;
   updateXsrf?: (token: string) => {};

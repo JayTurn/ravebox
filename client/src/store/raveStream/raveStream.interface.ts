@@ -30,6 +30,7 @@ export type RaveStreamAction = ActionType<typeof actions>;
 export interface RaveStreamStore {
   active: number;
   activeCategory: number;
+  backPath: string;
   categoryList: Array<RaveStreamCategoryList>;
   raveStream: RaveStream;
   raveStreamList: RaveStreamList;

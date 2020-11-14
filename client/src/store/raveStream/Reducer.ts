@@ -80,6 +80,28 @@ export default combineReducers<RaveStreamStore, RaveStreamAction>({
   },
 
   /**
+   * Define the back path stream reducer.
+   *
+   * @param { string } value - the current back path.
+   * @param { RaveStreamAction } action - the filters action.
+   *
+   * @return RaveStream
+   */
+  backPath: (
+    path: string = '',
+    action: RaveStreamAction
+  ) => {
+    // Update the configuration based on the redux action triggered.
+    switch (action.type) {
+      case RaveStreamVerb.UPDATE_BACK_PATH:
+        // Append the new value to the list of watched items.
+        return action.payload;
+      default:
+        return path;
+    }
+  },
+
+  /**
    * Define the loaded rave stream reducer.
    *
    * @param { RaveStream } state - the current rave stream.
