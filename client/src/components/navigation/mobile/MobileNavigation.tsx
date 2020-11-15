@@ -35,6 +35,12 @@ import { withRouter } from 'react-router';
 // Actions.
 import { toggleSide } from '../../../store/navigation/Actions';
 
+// Components.
+import Logo from '../../logo/Logo';
+
+// Enumerators.
+import { LogoColor } from '../../logo/Logo.enum';
+
 // Interfaces.
 import { PrivateProfile } from '../../user/User.interface';
 import { MobileNavigationProps } from './MobileNavigation.interface';
@@ -55,6 +61,9 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
   listBox: {
     width: drawerWidth,
     height: '100%'
+  },
+  logoContainer: {
+    paddingTop: theme.spacing(1)
   },
   drawer: {
     flexShrink: 0,
@@ -125,7 +134,10 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
   },
   listButtonOpen: {
     flexDirection: 'row',
-    paddingLeft: 24
+    padding: theme.spacing(1),
+    '&:hover': {
+      backgroundColor: 'inherit'
+    }
   },
   listButtonClosed: {
     paddingLeft: 2,
@@ -170,10 +182,12 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
     fontSize: '1.65rem',
   },
   menuTitleContainer: {
-    backgroundColor: 'rgba(245, 245, 245, 1)',
+    boxShadow: `0 8px 0 0 rgba(100, 106, 240, .1)`,
+    //backgroundColor: 'rgba(245, 245, 245, 1)',
   },
   menuItemsContainer: {
-    height: '70vh'
+    height: '70vh',
+    padding: theme.spacing(2)
   },
   disclaimerItemsContainer: {
     //height: '19vh'
@@ -230,6 +244,14 @@ const MobileNavigation: React.FC<MobileNavigationProps> = (props: MobileNavigati
               >
                 <ArrowBackRoundedIcon />
               </IconButton>
+            </Grid>
+            <Grid item xs={9} className={clsx(classes.logoContainer)}>
+              <Logo
+                alignCenter={true}
+                iconOnly={false}
+                fullWidth='115px'
+                color={LogoColor.MAIN} 
+              />
             </Grid>
           </Grid>
         </Grid>

@@ -32,7 +32,10 @@ const Logo: React.FC<LogoProps> = (props: LogoProps) => {
         <Grid
           container
           direction='row'
-          style={{width: props.fullWidth ? props.fullWidth : '40px'}}
+          style={{
+            width: props.fullWidth ? props.fullWidth : '40px',
+            margin: props.alignCenter ? '0 auto' : 'inherit'
+          }}
           alignItems='center'
         >
           <Grid item xs={12}>
@@ -43,7 +46,10 @@ const Logo: React.FC<LogoProps> = (props: LogoProps) => {
         <Grid
           container
           direction='row'
-          style={{width: props.fullWidth ? props.fullWidth : '150px'}}
+          style={{
+            width: props.fullWidth ? props.fullWidth : '150px',
+            margin: props.alignCenter ? '0 auto' : 'inherit'
+          }}
           alignItems='center'
         >
           <Grid item xs={12}>
