@@ -105,7 +105,6 @@ const useStyles = makeStyles((theme: Theme) =>
       padding: theme.spacing(0, 2)
     },
     productTitle: {
-      color: theme.palette.primary.main,
       fontSize: '1.1rem',
       fontWeight: 500,
       marginBottom: 0
@@ -116,11 +115,11 @@ const useStyles = makeStyles((theme: Theme) =>
     },
     streamTitle: {
       //color: theme.palette.common.white,
-      color: theme.palette.primary.main,
-      fontSize: '.85rem',
-      fontWeight: 700,
+      //color: theme.palette.primary.main,
+      fontSize: '1.2rem',
+      fontWeight: 800,
       margin: theme.spacing(.75, 0),
-      textTransform: 'uppercase'
+      textTransform: 'capitalize'
     },
     streamTitleContainer: {
       //borderTopRightRadius: 5,

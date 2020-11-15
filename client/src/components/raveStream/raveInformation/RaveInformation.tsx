@@ -101,6 +101,15 @@ const RaveInformation: React.FC<RaveInformationProps> = (props: RaveInformationP
 
   const [reviews, setReviews] = React.useState<Array<Review> | null>();
 
+  let moreReviews: boolean = false;
+
+  if (props.raveStream
+    && typeof props.activeIndex === 'number'
+    && (props.activeIndex < (props.raveStream.reviews.length - 1))
+  ) {
+    moreReviews = true;
+  }
+
   /**
    * Handles the updating of the height.
    */
@@ -163,7 +172,7 @@ const RaveInformation: React.FC<RaveInformationProps> = (props: RaveInformationP
               />  
             }
           </Grid>
-          {props.raveStream &&
+          {props.raveStream && moreReviews &&
             <SwipeCardHolder
               hidePlayAll={true}
               overrideTitle={true}
@@ -194,6 +203,7 @@ const mapStateToProps = (state: any, ownProps: RaveInformationProps) => {
 
   return {
     ...ownProps,
+    activeIndex,
     raveStream,
     review
   };

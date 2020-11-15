@@ -68,6 +68,8 @@ const UserRaves: React.FC<UserRavesProps> = (props: UserRavesProps) => {
 
   const [height, setHeight] = React.useState<number>(0);
 
+  const [ravesCount, setRavesCount] = React.useState<number>(0);
+
   /**
    * Handles the updating of the height.
    */
@@ -106,9 +108,14 @@ const UserRaves: React.FC<UserRavesProps> = (props: UserRavesProps) => {
         setUserId(props.user._id);
         handleHeightUpdate();
       }
+
+      if (raveStreams && raveStreams.length !== ravesCount) {
+        setRavesCount(raveStreams.length);
+        handleHeightUpdate();
+      }
     }
 
-  }, [height, ref, props.user, userId]);
+  }, [height, ref, props.user, userId, ravesCount, raveStreams]);
 
   return (
     <Grid container ref={ref}>

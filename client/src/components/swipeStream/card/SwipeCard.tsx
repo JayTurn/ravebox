@@ -45,8 +45,8 @@ const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     brandText: {
       display: 'block',
-      fontSize: '.85rem',
-      fontWeight: 700
+      fontSize: '.7em',
+      fontWeight: 800
     },
     buttonElement: {
       //fontWeight: 700,
@@ -70,7 +70,7 @@ const useStyles = makeStyles((theme: Theme) =>
       textDecoration: 'none'
     },
     productTitle: {
-      fontSize: '1.1rem',
+      fontSize: '1.3rem',
       fontWeight: 500
     },
     userContainer: {

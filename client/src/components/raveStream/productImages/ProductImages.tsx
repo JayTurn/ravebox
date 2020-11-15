@@ -43,17 +43,17 @@ const useStyles = makeStyles((theme: Theme) =>
       margin: theme.spacing(1, 0, 0)
     },
     gridContainer: {
-      padding: theme.spacing(2, 1)
+      padding: theme.spacing(1, 1, 2)
     },
     title: {
-      color: theme.palette.primary.main,
-      fontSize: '.85rem',
-      fontWeight: 700,
-      margin: theme.spacing(.75, 0),
-      textTransform: 'uppercase'
+      //color: theme.palette.common.white,
+      //color: theme.palette.primary.main,
+      fontSize: '1.2rem',
+      fontWeight: 800,
+      margin: theme.spacing(.75, 0, 0),
+      textTransform: 'capitalize'
     },
     titleContainer: {
-      borderBottom: `1px solid rgba(100, 106, 240, .15)`,
       padding: theme.spacing(.5, 2)
     }
   })
@@ -77,7 +77,7 @@ const ProductImages: React.FC<ProductImagesProps> = (props: ProductImagesProps) 
         <Grid container spacing={1}>
           {props.images.map((productImage: ImageAndTitle) => {
             return (
-              <Grid item xs={6} key={productImage.url}>
+              <Grid item xs={4} key={productImage.url}>
                 <Card 
                   className={clsx(classes.cardContainer)}
                   key={productImage.url}

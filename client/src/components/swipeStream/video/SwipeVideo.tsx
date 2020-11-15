@@ -82,7 +82,21 @@ const useStyles = makeStyles((theme: Theme) =>
       position: 'absolute',
       top: 0,
       width: '100%',
+      zIndex: 4
+    },
+    shadeOverlay: {
+      backgroundColor: theme.palette.common.black,
+      height: '100%',
+      left: 0,
+      opacity: 0,
+      position: 'absolute',
+      top: 0,
+      transition: 'opacity 200ms ease-in-out',
+      width: '100%',
       zIndex: 3
+    },
+    shadeOverlayVisible: {
+      opacity: .35
     },
     subtitle: {
       fontSize: '1rem',
@@ -348,6 +362,11 @@ const SwipeVideo: React.FC<SwipeVideoProps> = (props: SwipeVideoProps) => {
           unplayed={false}
         />
       </Box>
+      <Box className={clsx(
+        classes.shadeOverlay, {
+          [classes.shadeOverlayVisible]: !config.playing
+        }
+      )} />
       {/*
       <Box
         className={clsx(classes.thumbnailContainer)}

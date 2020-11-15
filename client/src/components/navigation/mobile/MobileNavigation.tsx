@@ -6,6 +6,7 @@
 // Modules.
 import * as React from 'react';
 import AccountBoxRoundedIcon from '@material-ui/icons/AccountBoxRounded';
+import ArrowBackRoundedIcon from '@material-ui/icons/ArrowBackRounded';
 import { bindActionCreators, Dispatch, AnyAction } from 'redux';
 import Box from '@material-ui/core/Box';
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
@@ -13,6 +14,7 @@ import clsx from 'clsx';
 import { connect } from 'react-redux';
 import Divider from '@material-ui/core/Divider';
 import HomeRoundedIcon from '@material-ui/icons/HomeRounded';
+import IconButton from '@material-ui/core/IconButton';
 import InfoRoundedIcon from '@material-ui/icons/InfoRounded';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
@@ -22,7 +24,7 @@ import { NavLink } from 'react-router-dom';
 import PageviewRoundedIcon from '@material-ui/icons/PageviewRounded';
 import QuestionAnswerRoundedIcon from '@material-ui/icons/QuestionAnswerRounded';
 import SubscriptionsRoundedIcon from '@material-ui/icons/SubscriptionsRounded';
-import SwipeableDrawer from '@material-ui/core/SwipeableDrawer';
+import Drawer from '@material-ui/core/Drawer';
 import Typography from '@material-ui/core/Typography';
 import VideocamRoundedIcon from '@material-ui/icons/VideocamRounded';
 import { withRouter } from 'react-router';
@@ -34,9 +36,15 @@ import { toggleSide } from '../../../store/navigation/Actions';
 import { PrivateProfile } from '../../user/User.interface';
 import { MobileNavigationProps } from './MobileNavigation.interface';
 
-const drawerWidth: number = 240;
+const drawerWidth: string = 'calc(100vw)';
 
 const useStyles = makeStyles((theme: Theme) => createStyles({
+  backIconButton: {
+    padding: theme.spacing(1)
+  },
+  backIconContainer: {
+    padding: theme.spacing(1, 2)
+  },
   copyrightText: {
     fontSize: '.8rem',
     fontWeight: 500
@@ -173,14 +181,20 @@ const MobileNavigation: React.FC<MobileNavigationProps> = (props: MobileNavigati
   }
 
   return (
-    <SwipeableDrawer
-      disableBackdropTransition={!iOS} 
-      disableDiscovery={iOS}
+    <Drawer
       open={props.expanded}
-      onOpen={toggleDrawer}
       onClose={toggleDrawer}
       anchor='left'
+      variant='temporary'
     >
+      <Box className={clsx(classes.backIconContainer)}>
+        <IconButton
+          className={clsx(classes.backIconButton)}
+          onClick={toggleDrawer}
+        >
+          <ArrowBackRoundedIcon />
+        </IconButton>
+      </Box>
       <Box className={clsx(classes.listBox)}>
         <List>
           <ListItem button className={clsx(classes.listButton, classes.listButtonOpen)}>
@@ -366,7 +380,7 @@ const MobileNavigation: React.FC<MobileNavigationProps> = (props: MobileNavigati
           </Typography>
         </Box>
       </Box>
-    </SwipeableDrawer>
+    </Drawer>
   );
 }
 

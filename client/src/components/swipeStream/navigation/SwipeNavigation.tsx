@@ -51,6 +51,7 @@ import ImpersonateUser from '../../admin/impersonateUser/ImpersonateUser';
 
 // Enumerators.
 import { LogoColor } from '../../logo/Logo.enum';
+import { RaveStreamType } from '../../raveStream/RaveStream.enum';
 
 // Interfaces.
 import {
@@ -59,8 +60,14 @@ import {
 } from './SwipeNavigation.interface';
 import { PrivateProfile } from '../../user/User.interface';
 
+// Utilities.
+import { Pluralize } from '../../../utils/display/textFormats/TextFormats';
+
 // Make the app specific styles.
 const useStyles = makeStyles((theme: Theme) => createStyles({
+  edgeContainer: {
+    width: 65
+  },
   root: { },
   lastButton: {
     marginRight: 0
@@ -132,8 +139,8 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
     backgroundColor: theme.palette.primary.main,
   },
   searchContainer: {
-    flexBasis: '62%',
-    flexShrink: 1,
+    //flexBasis: '62%',
+    flexShrink: 0,
     maxWidth: '62%'
   },
   searchIcon: {
@@ -151,7 +158,9 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
     marginRight: theme.spacing(.5)
   },
   searchText: {
-    fontSize: '.8rem',
+    fontSize: '.75rem',
+    fontWeight: 700,
+    padding: theme.spacing(.5, 1),
     maxWidth: '100%',
     overflow: 'hidden',
     textOverflow: 'ellipsis',
@@ -166,6 +175,9 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
   searchTextContainer: {
     flexShrink: 1,
     overflow: 'hidden'
+  },
+  searchTextCapitalized: {
+    textTransform: 'capitalize'
   },
   toolbar: {
     flexWrap: 'nowrap',
@@ -226,6 +238,10 @@ const SwipeNavigation: React.FC<SwipeNavigationProps> = (props: SwipeNavigationP
   // If we have an admin cookie, we'll need to display the button to stop
   // impersontating a user.
   const [isAdmin, setIsAdmin] = React.useState<boolean>(adminCookie !== undefined);
+
+  const title: string = props.streamType === RaveStreamType.PRODUCT
+    ? props.title
+    : Pluralize(props.title);
 
   /**
    * Checks the route path for logo display.
@@ -303,7 +319,7 @@ const SwipeNavigation: React.FC<SwipeNavigationProps> = (props: SwipeNavigationP
           justify='space-between'
           alignItems='center'
         >
-          <Grid item>
+          <Grid item className={clsx(classes.edgeContainer)}>
             <LogoIconButton
               onClick={toggleSideNavigation}
             >
@@ -326,6 +342,7 @@ const SwipeNavigation: React.FC<SwipeNavigationProps> = (props: SwipeNavigationP
               className={clsx(classes.searchButton)}
               container
             >
+              {/*
               <Grid
                 className={clsx(classes.searchIconContainer)}
                 item
@@ -337,27 +354,29 @@ const SwipeNavigation: React.FC<SwipeNavigationProps> = (props: SwipeNavigationP
                   }
                 )}/>
               </Grid>
+              */}
               <Grid item className={clsx(classes.searchTextContainer)}>
                 <Typography
                   className={clsx(
                     classes.searchText, {
                       [classes.searchTextWhite]: props.variant === 'white',
-                      [classes.searchTextColored]: props.variant === 'colored'
+                      [classes.searchTextColored]: props.variant === 'colored',
+                      [classes.searchTextCapitalized]: props.streamType !== RaveStreamType.PRODUCT
                     }
                   )}
                   variant='body1'
                 >
-                  {props.title}
+                  {title}
                 </Typography>
               </Grid>
             </Grid>
           </Grid>
           {props.profile ? (
-            <Grid item>
+            <Grid item className={clsx(classes.edgeContainer)}>
               <ProfileMenu />
             </Grid>
           ) : (
-            <Grid item>
+            <Grid item className={clsx(classes.edgeContainer)}>
               <MenuButton
                 color="inherit"
                 className={clsx(classes.linkButton)}

@@ -232,9 +232,7 @@ const LoadingRavebox: React.FC<LoadingRaveboxProps> = (props: LoadingRaveboxProp
  */
 function mapStatetoProps(state: any, ownProps: LoadingRaveboxProps) {
 
-  const loading: boolean = state.loading ? state.loading.loading : true;
-
-  console.log('LOADING: ', loading);
+  const loading: boolean = state.loading ? state.loading.loading : false;
 
   return {
     ...ownProps,

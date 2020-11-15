@@ -306,7 +306,7 @@ const SwipeStream: React.FC<SwipeStreamProps> = (props: SwipeStreamProps) => {
           props.history.push(props.location.pathname);
         }
 
-        setRavePath(contextPath);
+        setRavePath(props.location.pathname);
 
         handleDisplayChange(SwipeView.VIDEO);
       }

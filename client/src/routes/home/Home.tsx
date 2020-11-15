@@ -241,6 +241,52 @@ const Home: React.FC<HomeProps> = (props: HomeProps) => {
       })}
       container
     >
+      <Grid item xs={12} className={clsx(
+          classes.introContainer,
+          {
+            [classes.introContainerLarge]: largeScreen
+          }
+        )}
+      >
+        <Grid
+          container
+          direction='column'
+          alignItems='center'
+        >
+          <Grid item xs={12}>
+            <Logo
+              color={LogoColor.MAIN}
+              fullWidth={largeScreen ? '170px' : '100px'}
+              iconOnly={false}
+              stacked={true}
+            /> 
+          </Grid>
+          <Grid item xs={12}>
+            <Typography variant='h1' className={clsx(
+                classes.introText,
+                {
+                  [classes.introTextLarge]: largeScreen
+                }
+              )}
+            >
+              Where it's ok to talk about products.
+            </Typography>
+          </Grid>
+          {/*
+          <Grid item xs={12}>
+            <LinkElement
+              path={'/about'}
+              styleType={StyleType.BUTTON_PRIMARY}
+              title='Tell me more'
+              track={{
+                context: 'home',
+                targetScreen: 'about'
+              }}
+            />
+          </Grid>
+          */}
+        </Grid>
+      </Grid>
       {raveStreamsStatus === ViewState.WAITING &&
         <React.Fragment>
           <Grid item xs={12} sm={6} md={3} className={clsx(
@@ -287,52 +333,6 @@ const Home: React.FC<HomeProps> = (props: HomeProps) => {
       }
       {raveStreamsStatus === ViewState.FOUND &&
         <React.Fragment>
-          <Grid item xs={12} className={clsx(
-              classes.introContainer,
-              {
-                [classes.introContainerLarge]: largeScreen
-              }
-            )}
-          >
-            <Grid
-              container
-              direction='column'
-              alignItems='center'
-            >
-              <Grid item xs={12}>
-                <Logo
-                  color={LogoColor.MAIN}
-                  fullWidth={largeScreen ? '170px' : '100px'}
-                  iconOnly={false}
-                  stacked={true}
-                /> 
-              </Grid>
-              <Grid item xs={12}>
-                <Typography variant='h1' className={clsx(
-                    classes.introText,
-                    {
-                      [classes.introTextLarge]: largeScreen
-                    }
-                  )}
-                >
-                  Where it's ok to talk about products.
-                </Typography>
-              </Grid>
-              {/*
-              <Grid item xs={12}>
-                <LinkElement
-                  path={'/about'}
-                  styleType={StyleType.BUTTON_PRIMARY}
-                  title='Tell me more'
-                  track={{
-                    context: 'home',
-                    targetScreen: 'about'
-                  }}
-                />
-              </Grid>
-              */}
-            </Grid>
-          </Grid>
           <Grid item xs={12} className={clsx(
             classes.categoryMenuContainer, {
               [classes.categoryMenuContainerLarge]: largeScreen

@@ -26,7 +26,7 @@ import {
 const RaveStream: React.FC<RaveStreamProps> = (props: RaveStreamProps) => {
   // Define the component classes.
   const theme = useTheme(),
-        largeScreen = useMediaQuery(theme.breakpoints.up('sm'));
+        largeScreen = useMediaQuery(theme.breakpoints.up('md'));
   return (
     <React.Fragment>
       {largeScreen ? (

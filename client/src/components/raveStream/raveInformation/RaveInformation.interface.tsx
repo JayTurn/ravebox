@@ -12,6 +12,7 @@ import { Review } from '../../review/Review.interface';
  * Properties for the rave information.
  */
 export interface RaveInformationProps {
+  activeIndex?: number;
   index: number;
   product: Product;
   raveStream?: RaveStream;

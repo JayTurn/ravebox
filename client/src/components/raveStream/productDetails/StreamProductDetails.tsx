@@ -265,10 +265,12 @@ const StreamProductDetails: React.FC<StreamProductDetailsProps> = (props: Stream
       container
     >
       <Grid item xs={12}>
+        {/*
         <SwipeNavigation
           title={props.raveStream ? props.raveStream.title : ''}
           variant='colored'
         />
+        */}
         <Grid container>
           <Grid item xs={12} className={clsx(
             classes.paddedContent,

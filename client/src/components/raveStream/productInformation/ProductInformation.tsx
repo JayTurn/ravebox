@@ -121,9 +121,10 @@ const ProductInformation: React.FC<ProductInformationProps> = (props: ProductInf
       }
       {productStream && productStream.reviews &&
         <SwipeCardHolder
+          overrideTitle
           reviews={productStream.reviews ? [...productStream.reviews] : []}
           streamType={RaveStreamType.PRODUCT} 
-          title={`${productStream.title}`}
+          title='Product Raves'
         />
       }
     </Grid>
