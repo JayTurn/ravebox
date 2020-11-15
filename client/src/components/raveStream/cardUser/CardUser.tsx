@@ -72,6 +72,10 @@ const useStyles = makeStyles((theme: Theme) =>
       fontSize: '.7rem',
       fontWeight: 600,
       textTransform: 'uppercase'
+    },
+    userYTText: {
+      fontSize: '.7rem',
+      fontWeight: 600
     }
   })
 );
@@ -133,13 +137,21 @@ const CardUser: React.FC<CardUserProps> = (props: CardUserProps) => {
                 className={clsx(classes.handleText)}
                 variant='body1'
               >
-                {review.user.role === Role.YOUTUBE ? 'youtube' : review.user.handle}
+                {review.user.handle}
               </Typography>
-              {review.user.statistics &&
-                <Typography variant='body2' className={classes.userStatisticsText}>
-                  {statistics}
+              {review.user.role === Role.YOUTUBE ? (
+                <Typography variant='body2' className={classes.userYTText}>
+                  (via YouTube)
                 </Typography>
-              }
+              ) : (
+                <React.Fragment>
+                  {review.user.statistics &&
+                    <Typography variant='body2' className={classes.userStatisticsText}>
+                      {statistics}
+                    </Typography>
+                  }
+                </React.Fragment>
+              )}
             </Grid>
           </Grid>
         </ReactLink>
