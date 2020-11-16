@@ -348,6 +348,7 @@ const SwipeVideoOverlay: React.FC<SwipeVideoOverlayProps> = (props: SwipeVideoOv
           <React.Fragment>
             <Grid item xs={12}>
               <SwipeNavigation
+                streamType={props.raveStream.streamType}
                 title={props.raveStream ? props.raveStream.title : ''}
                 variant='white'
               />  

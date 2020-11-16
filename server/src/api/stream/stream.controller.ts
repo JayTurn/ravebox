@@ -22,6 +22,7 @@ import {
 import { ResponseObject } from '../../models/database/connect.interface';
 import {
   StreamData,
+  StreamList,
   StreamListItem
 } from './stream.interface';
 
@@ -68,6 +69,18 @@ export default class StreamController {
     router.get(
       `${path}/product_type/:productType/:reviewURL?`,
       StreamController.ProductType
+    );
+
+    // Retrieve a category stream.
+    router.get(
+      `${path}/category/:tag/:reviewURL?`,
+      StreamController.Category
+    );
+
+    // Retrieve a list stream.
+    router.get(
+      `${path}/category_list`,
+      StreamController.CategoryList
     );
 
     // Retrieve a list of streams.
@@ -315,6 +328,124 @@ export default class StreamController {
       return;
     })
   }
+
+  /**
+   * Retrieves a category stream.
+   *
+   * @param {object} req
+   * The request object.
+   *
+   * @param {object} res
+   * The response object.
+   */
+  static Category(request: Request, response: Response): void {
+    const tag: string = request.params.tag, 
+          reviewURL: string = request.params.reviewURL;
+
+    if (!tag) {
+      // Set the response object.
+      const responseObject: ResponseObject = Connect.setResponse({
+        data: {
+          errorCode: 'CATEGORY_STREAM_NOT_FOUND',
+          message: 'There was a problem retrieving reviews for this category'
+        },
+      }, 404, `Category was missing from the request`);
+
+      Logging.Send(LogLevel.WARNING, responseObject);
+
+      // Return the response for the authenticated user.
+      response.status(responseObject.status).json(responseObject.data);
+        
+      return;
+    }
+
+    StreamCommon.RetrieveCategoryStream({
+      category: tag,
+      streamType: StreamType.CATEGORY
+    })
+    .then((streamData: StreamData) => {
+
+      // If a review title was provided, place it at the beginning of the stream
+      // if it exists.
+      if (reviewURL && streamData.reviews.length > 1) {
+        streamData.reviews = StreamCommon.SetFirstReview(
+          streamData.reviews, reviewURL);
+      }
+
+      // Set the response object.
+      const responseObject: ResponseObject = Connect.setResponse({
+        data: {
+          raveStream: streamData
+        }
+      }, 200, 'Stream loaded');
+
+      // Return the response for the authenticated user.
+      response.status(responseObject.status).json(responseObject.data);
+
+    })
+    .catch((error: Error) => {
+      // Set the response object.
+      const responseObject: ResponseObject = Connect.setResponse({
+        data: {
+          errorCode: 'CATEGORY_STREAM_RETRIEVAL_FAILED',
+          message: 'There was a problem retrieving reviews for this category stream'
+        },
+        error: error
+      }, 404, `There was a problem locating a stream for ${tag}`);
+
+      Logging.Send(LogLevel.WARNING, responseObject);
+
+      // Return the response.
+      response.status(responseObject.status).json(responseObject.data);
+    });
+  }
+  
+  /**
+   * Retrieves a list of streams grouped by top level categories.
+   *
+   * @param {object} req
+   * The request object.
+   *
+   * @param {object} res
+   * The response object.
+   */
+  static CategoryList(request: Request, response: Response): void {
+    StreamCommon.RetrieveStreamProductListsByCategory()
+      .then((streamList: Array<StreamList>) => {
+
+        // Loop through the lists and only add items with results.
+        const results: Array<StreamList> = [];
+
+        if (streamList.length > 0) {
+
+          let i = 0;
+
+          do {
+            const current: StreamList = {...streamList[i]};
+
+            const display: boolean = StreamCommon.DisplayCategoryList(current);
+
+            if (display) {
+              results.push({...streamList[i]});
+            }
+            i++;
+          } while (i < streamList.length);
+        }
+
+        // Set the response object.
+        const responseObject: ResponseObject = Connect.setResponse({
+          data: {
+            raveStreams: results
+          }
+        }, 200, 'Category stream lists retrieved successfully');
+
+        // Return the response for the authenticated user.
+        response.status(responseObject.status).json(responseObject.data);
+      })
+      .catch((error: Error) => {
+        throw error;
+      });
+  }
   
   /**
    * Retrieves a list of streams.
@@ -345,13 +476,27 @@ export default class StreamController {
       return;
     }
 
-    StreamCommon.RetrieveStreamLists(list)
+    StreamCommon.RetrieveStreamListItems(list)
       .then((streamLists: Array<StreamData>) => {
+
+        // Loop through the lists and only add items with results.
+        const results: Array<StreamData> = [];
+
+        if (streamLists.length > 0) {
+          let i = 0;
+
+          do {
+            if (streamLists[i]) {
+              results.push({...streamLists[i]});
+            }
+            i++;
+          } while (i < streamLists.length);
+        }
 
         // Set the response object.
         const responseObject: ResponseObject = Connect.setResponse({
           data: {
-            raveStreams: streamLists
+            raveStreams: results
           }
         }, 200, 'Stream lists retrieved successfully');
 
@@ -452,7 +597,7 @@ export default class StreamController {
         i++;
       } while (i < collectionDetails.products.length);
 
-      StreamCommon.RetrieveStreamLists(list)
+      StreamCommon.RetrieveStreamListItems(list)
         .then((streamLists: Array<StreamData>) => {
 
             // Set the response object.

@@ -120,7 +120,7 @@ const DesktopRaveActions: React.FC<DesktopRaveActionsProps> = (props: DesktopRav
       {review && review.product && review.user &&
         <React.Fragment>
           <Grid item className={clsx(classes.titleContainer)}>
-            <ProductTitle product={review.product} />
+            <ProductTitle product={review.product} linkTitle={true} />
           </Grid>
           <Grid item>
             <Grid container>

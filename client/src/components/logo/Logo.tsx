@@ -15,7 +15,11 @@ import { LogoColor } from './Logo.enum';
 import { LogoProps } from './Logo.interface';
 
 // Logo icon.
-import { LogoSVG, LogoSVGIcon } from './LogoSVG';
+import {
+  LogoSVG,
+  LogoSVGIcon,
+  LogoSVGStacked
+} from './LogoSVG';
 
 /**
  * Renders the ravebox logo.
@@ -28,7 +32,10 @@ const Logo: React.FC<LogoProps> = (props: LogoProps) => {
         <Grid
           container
           direction='row'
-          style={{width: props.fullWidth ? props.fullWidth : '40px'}}
+          style={{
+            width: props.fullWidth ? props.fullWidth : '40px',
+            margin: props.alignCenter ? '0 auto' : 'inherit'
+          }}
           alignItems='center'
         >
           <Grid item xs={12}>
@@ -39,11 +46,18 @@ const Logo: React.FC<LogoProps> = (props: LogoProps) => {
         <Grid
           container
           direction='row'
-          style={{width: props.fullWidth ? props.fullWidth : '150px'}}
+          style={{
+            width: props.fullWidth ? props.fullWidth : '150px',
+            margin: props.alignCenter ? '0 auto' : 'inherit'
+          }}
           alignItems='center'
         >
           <Grid item xs={12}>
-            <SvgIcon component={LogoSVG} />
+            {props.stacked ? (
+              <SvgIcon component={LogoSVGStacked} />
+            ) : (
+              <SvgIcon component={LogoSVG} />
+            )}
           </Grid>
         </Grid>
       )}

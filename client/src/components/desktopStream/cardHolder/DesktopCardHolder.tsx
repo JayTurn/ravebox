@@ -15,6 +15,7 @@ import {
   withStyles
 } from '@material-ui/core/styles';
 import Grid from '@material-ui/core/Grid';
+import { Link as ReactLink } from 'react-router-dom';
 import * as React from 'react';
 import Typography from '@material-ui/core/Typography';
 import { withRouter } from 'react-router';
@@ -37,6 +38,7 @@ import {
   buildURLForStream,
   getStreamName
 } from '../../raveStream/RaveStream.common';
+import { Pluralize } from '../../../utils/display/textFormats/TextFormats';
 
 /**
  * Create the theme styles to be used for the display.
@@ -52,12 +54,17 @@ const useStyles = makeStyles((theme: Theme) =>
       margin: theme.spacing(1, 0)
     },
     container: {
+      backgroundColor: theme.palette.background.default,
       position: 'relative',
-      margin: theme.spacing(4, 0)
+      padding: theme.spacing(3, 0)
     },
     productContainer: {
       margin: theme.spacing(.5, 0),
       padding: theme.spacing(0, 2)
+    },
+    streamLink: {
+      color: 'inherit',
+      textDecoration: 'none'
     },
     streamTitle: {
       fontSize: '1.1rem',
@@ -77,9 +84,9 @@ const useStyles = makeStyles((theme: Theme) =>
       borderRadius: 20,
       color: theme.palette.common.white,
       display: 'inline-block',
-      margin: theme.spacing(1),
+      margin: theme.spacing(.5, 1),
       padding: theme.spacing(0, 1),
-      lineHeight: '1.5rem',
+      lineHeight: 2,
       fontSize: '.7rem',
       fontWeight: 700,
       textTransform: 'uppercase'
@@ -100,8 +107,9 @@ const DesktopCardHolder: React.FC<DesktopCardHolderProps> = (
   const {
     reviews,
     streamType,
-    title
   } = {...props};
+
+  const title: string = Pluralize(props.title);
 
   const path: string = buildURLForStream(
     streamType)(reviews[0])(false);
@@ -131,13 +139,19 @@ const DesktopCardHolder: React.FC<DesktopCardHolderProps> = (
         <Grid container alignItems='flex-end'>
           <Grid item className={clsx(classes.streamTitleContainer)}>
             {streamType !== RaveStreamType.PRODUCT || props.overrideTitle ? (
-              <Typography variant='h2' className={clsx(classes.streamTitle)}>
-                {props.title}
-              </Typography>
+              <ReactLink
+                className={clsx(classes.streamLink)}
+                to={path}
+                title={`View all raves for the ${title} category`}
+              >
+                <Typography variant='h2' className={clsx(classes.streamTitle)}>
+                  {title}
+                </Typography>
+              </ReactLink>
             ) : (
               <React.Fragment>
                 {product &&
-                  <ProductTitle product={{...product}} />
+                  <ProductTitle product={{...product}} linkTitle={true} />
                 }
               </React.Fragment>
             )}
@@ -145,7 +159,7 @@ const DesktopCardHolder: React.FC<DesktopCardHolderProps> = (
           {!props.hideStreamTag &&
             <Grid item xs={12}>
               <Typography className={clsx(classes.streamTypeTitle)} variant='body1'>
-                {streamName} stream
+                {streamName}
               </Typography>
             </Grid>
           }
@@ -175,7 +189,7 @@ const DesktopCardHolder: React.FC<DesktopCardHolderProps> = (
                 key={review._id}
               >
                 <DesktopCard
-                  hideProductTitles={props.hideProductTitles}
+                  hideProductTitles={props.hideProductTitles || false}
                   review={{...review}}
                   streamType={props.streamType}
                 />

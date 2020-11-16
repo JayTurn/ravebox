@@ -20,13 +20,22 @@ export interface StreamData {
   streamType: StreamType;
 }
 
+export type StreamGroup = Record<string, Array<ReviewDetails>>;
+
 export interface StreamListItem {
   streamType: StreamType;
   brand?: string;
   product?: string;
   productType?: string;
   collectionContext?: string;
+  category?: string;
   user?: string;
 }
 
-export type StreamGroup = Record<string, Array<ReviewDetails>>;
+export interface StreamList {
+  title: string;
+  streamItems: Array<StreamData>;
+  streamType: StreamType;
+  url: string;
+}
+

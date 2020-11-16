@@ -11,6 +11,7 @@ import * as actions from './Actions';
 // Interfaces.
 import {
   RaveStream,
+  RaveStreamCategoryList,
   RaveStreamList
 } from '../../components/raveStream/RaveStream.interface';
 import { Review } from '../../components/review/Review.interface';
@@ -28,6 +29,9 @@ export type RaveStreamAction = ActionType<typeof actions>;
  */
 export interface RaveStreamStore {
   active: number;
+  activeCategory: number;
+  backPath: string;
+  categoryList: Array<RaveStreamCategoryList>;
   raveStream: RaveStream;
   raveStreamList: RaveStreamList;
   product: Product;

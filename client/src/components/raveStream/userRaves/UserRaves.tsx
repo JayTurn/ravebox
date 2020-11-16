@@ -51,14 +51,7 @@ import { filterReviews } from '../../review/Review.common';
  * Create the theme styles to be used for the display.
  */
 const useStyles = makeStyles((theme: Theme) =>
-  createStyles({
-    spaceAbove: {
-      paddingTop: theme.spacing(.5)
-    },
-    spaceBelow: {
-      paddingBottom: theme.spacing(.5)
-    }
-  })
+  createStyles({ })
 );
 
 /**
@@ -75,6 +68,8 @@ const UserRaves: React.FC<UserRavesProps> = (props: UserRavesProps) => {
 
   const [height, setHeight] = React.useState<number>(0);
 
+  const [ravesCount, setRavesCount] = React.useState<number>(0);
+
   /**
    * Handles the updating of the height.
    */
@@ -83,7 +78,7 @@ const UserRaves: React.FC<UserRavesProps> = (props: UserRavesProps) => {
   ): void => {
     if (ref && ref.current) {
       if (ref.current.clientHeight < 600) {
-        setHeight(600);
+        setHeight(ref.current.clientHeight);
         props.updateHeight(600);
       } else {
         setHeight(ref.current.clientHeight);
@@ -113,9 +108,14 @@ const UserRaves: React.FC<UserRavesProps> = (props: UserRavesProps) => {
         setUserId(props.user._id);
         handleHeightUpdate();
       }
+
+      if (raveStreams && raveStreams.length !== ravesCount) {
+        setRavesCount(raveStreams.length);
+        handleHeightUpdate();
+      }
     }
 
-  }, [height, ref, props.user, userId]);
+  }, [height, ref, props.user, userId, ravesCount, raveStreams]);
 
   return (
     <Grid container ref={ref}>
@@ -135,13 +135,7 @@ const UserRaves: React.FC<UserRavesProps> = (props: UserRavesProps) => {
       {raveStreamsStatus === ViewState.FOUND &&
         <React.Fragment>
           {raveStreams.map((raveStream: RaveStream, index: number) => (
-            <Grid item xs={12}
-              className={clsx({
-                [classes.spaceAbove]: index === 0,
-                [classes.spaceBelow]: index === raveStreams.length - 1  
-              })}
-              key={index}
-            >
+            <Grid item xs={12} key={index}>
               <SwipeCardHolder
                 title={raveStream.title}
                 streamType={raveStream.streamType}

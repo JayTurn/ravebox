@@ -124,8 +124,8 @@ UserSchema
     }
 
     if (this.statistics && this.statistics.user) {
-      //const statistics: UserStatistics = 
-      publicUserDetails.statistics = UserStatisticsCommon.RetrieveDetailsFromDocument(this.statistics);
+      publicUserDetails.statistics = UserStatisticsCommon
+        .RetrieveDetailsFromDocument(this.statistics);
     }
 
 

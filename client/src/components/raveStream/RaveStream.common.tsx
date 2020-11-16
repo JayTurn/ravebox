@@ -5,14 +5,30 @@
 
 // Enumerators.
 import { RaveStreamType } from './RaveStream.enum';
+import {
+  Recommended
+} from '../review/recommendation/Recommendation.enum';
+import { VideoType } from '../review/Review.enum';
 
 // Interfaces.
+import { ImageAndTitle } from '../elements/image/Image.interface';
+import {
+  Product
+} from '../product/Product.interface';
+import {
+  Review as ReviewSchema,
+  VideoObject as VideoSchema,
+  WithContext
+} from 'schema-dts';
 import {
   RaveStream,
   RaveStreamListItem,
   RaveStreamURLParams
 } from './RaveStream.interface';
 import { Review } from '../review/Review.interface';
+
+// Utilities.
+import { Pluralize } from '../../utils/display/textFormats/TextFormats';
 
 /**
  * Creates an empty rave Stream object for use in object definitions.
@@ -255,6 +271,9 @@ export const getHomeStreamList: (
     streamType: RaveStreamType.PRODUCT_TYPE,
     productType: 'phone'
   }, {
+    streamType: RaveStreamType.CATEGORY,
+    category: 'shoes'
+  }, {
     streamType: RaveStreamType.COLLECTON,
     brand: 'google',
     collectionContext: 'competing',
@@ -287,4 +306,186 @@ export const calculateVideoRatio: (
   }
 
   return width / height;
+}
+
+/**
+ * Returns the title for the rave stream based on the stream type.
+ *
+ * @param { RaveStream } raveStream - the rave stream data.
+ *
+ * @return string
+ */
+export const getStreamPageTitle: (
+  raveStream: RaveStream
+) => string = (
+  raveStream: RaveStream
+): string => {
+  let title: string = '';
+
+  switch (raveStream.streamType) {
+    case RaveStreamType.CATEGORY:
+      title = `Watch video reviews of ${raveStream.title} products shared by people with real experiences - Ravebox`;
+      break;
+    case RaveStreamType.COLLECTON:
+    case RaveStreamType.PRODUCT_TYPE:
+      title = `Watch video reviews of ${Pluralize(raveStream.title)} shared by people with real experiences - Ravebox`;
+      break;
+    case RaveStreamType.PRODUCT:
+      if (raveStream.reviews && raveStream.reviews.length > 0) {
+        const product: Product | undefined = raveStream.reviews[0].product;
+        if (product) {
+          title = `Watch video reviews of the ${product.brand.name} ${product.name} shared by people with real experiences - Ravebox`;
+        } else {
+          title = `Discover and compare products with video reviews shared by people with real experiences - Ravebox`;
+        }
+      } else {
+          title = `Discover and compare products with video reviews shared by people with real experiences - Ravebox`;
+      }
+      break;
+    default:
+  }
+
+  return title;
+}
+
+/**
+ * Returns the description for the rave stream based on the stream type.
+ *
+ * @param { RaveStream } raveStream - the rave stream data.
+ *
+ * @return string
+ */
+export const getStreamPageDescription: (
+  raveStream: RaveStream
+) => string = (
+  raveStream: RaveStream
+): string => {
+  let description: string = '';
+
+  switch (raveStream.streamType) {
+    case RaveStreamType.CATEGORY:
+      description = `Discover and compare ${raveStream.title} products by watching video reviews shared by users on Ravebox.`;
+      break;
+    case RaveStreamType.COLLECTON:
+    case RaveStreamType.PRODUCT_TYPE:
+      description = `Discover and compare ${Pluralize(raveStream.title)} by watching video reviews shared by users on Ravebox`;
+      break;
+    case RaveStreamType.PRODUCT:
+      if (raveStream.reviews && raveStream.reviews.length > 0) {
+        const product: Product | undefined = raveStream.reviews[0].product;
+        if (product) {
+          description = `Discover what people are saying about the ${product.brand.name} ${product.name} by watching video reviews shared by users on Ravebox`;
+        } else {
+          description = `Discover and compare products by watching video reviews shared by people on Ravebox`;
+        }
+      } else {
+          description = `Discover and compare products by watching video reviews shared by people on Ravebox`;
+      }
+      break;
+    default:
+  }
+
+  return description;
+}
+
+/**
+ * Builds the review schema for SEO purposes.
+ *
+ * @param { Review } review - the product object.
+ * @param { RaveStream } raveStream - the rave stream containing reviews.
+ *
+ * @return { ReviewSchema }
+ */
+export const buildReviewSchema: (
+  product?: Product
+) => (
+  review?: Review
+) => WithContext<ReviewSchema> = (
+  product?: Product
+) => (
+  review?: Review
+): WithContext<ReviewSchema> => {
+  const schema: WithContext<ReviewSchema> = {
+    '@context': 'https://schema.org',
+    '@type': 'Review'
+  };
+
+  if (review) {
+    schema.reviewRating = {
+      '@type': 'Rating',
+      ratingValue: review.recommended,
+      bestRating: Recommended.RECOMMENDED,
+      worstRating: Recommended.NOT_RECOMMENDED
+    };
+
+    if (product && review.user) {
+      schema.name = `${review.title}`;
+      schema.author = {
+        '@type': 'Person',
+        'name': review.user.handle
+      };
+      schema.reviewBody = review.description;
+    }
+  }
+
+  if (product) {
+    schema.itemReviewed = {
+      '@type': 'Product',
+      name: product.name,
+      brand: {
+        '@type': 'Brand',
+        'name': product.brand.name
+      }
+    };
+    // Add any product images.
+    if (product && product.images && product.images.length > 0) {
+      schema.itemReviewed.image = product.images.map((imageItem: ImageAndTitle) => {
+        return imageItem.url;
+      });
+    }
+
+    // Add the product description.
+    if (product.description) {
+      schema.itemReviewed.description = `Watch ${product.brand.name} ${product.name} review videos shared by users on Ravebox.`;
+    }
+  }
+
+  return schema;
+}
+
+/**
+ * Builds a video object schema based on the review provided.
+ *
+ * @param { Review } review - the review for the product.
+ *
+ * @return VideoSchema
+ */
+export const buildVideoSchema: (
+  review?: Review
+) => WithContext<VideoSchema> = (
+  review?: Review
+): WithContext<VideoSchema> => {
+  const schema: WithContext<VideoSchema> = {
+    '@context': 'https://schema.org',
+    '@type': 'VideoObject',
+  };
+
+  if (review) {
+    if (review.user && review.product) {
+      schema.name = `${review.product.brand.name} ${review.product.name} review by ${review.user.handle} - ${review.title}`;
+      schema.description = `${review.description}`;
+      schema.thumbnailUrl = review.thumbnail;
+      schema.uploadDate = new Date(review.created).toISOString();
+    }
+
+    if (review.videoType === VideoType.YOUTUBE) {
+      schema.embedUrl = review.videoURL;
+    } else {
+      schema.contentUrl = review.videoURL;
+    }
+  }
+
+  // @ToDo: Add InteractionStatistic when the type definitions are resolved.
+
+  return schema;
 }

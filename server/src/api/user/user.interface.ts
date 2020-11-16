@@ -17,8 +17,9 @@ import {
   FollowDocument,
   Following
 } from '../follow/follow.interface';
-import { ReviewDetails } from '../review/review.interface';
+import { StreamData } from '../stream/stream.interface';
 import {
+  PublicUserStatisticsDetails,
   UserStatisticsDetails,
   UserStatisticsDocument
 } from '../userStatistics/userStatistics.interface';
@@ -67,7 +68,7 @@ export interface PublicUserDetails {
   handle: string;
   links?: Array<LinkDetails>;
   profileImage?: string;
-  statistics?: UserStatisticsDetails;
+  statistics?: PublicUserStatisticsDetails;
   role: UserRole;
 }
 
@@ -98,7 +99,7 @@ export interface ProfileSettings {
  */
 export interface UserChannel {
   profile?: PublicUserDetails;
-  reviews?: Array<ReviewDetails>;
+  raveStreams?: Array<StreamData>;
 }
 
 /**

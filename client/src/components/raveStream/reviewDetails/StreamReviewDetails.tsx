@@ -26,7 +26,10 @@ import { StreamReviewDetailsSection } from './StreamReviewDetails.enum';
 // Components.
 import FollowButton from '../../follow/button/FollowButton';
 import StreamUserProfile from '../userProfile/StreamUserProfile';
-import UserAbout from '../userAbout/UserAbout';
+import TabContainer from '../../tabs/TabContainer/TabContainer';
+import TabMenu from '../../tabs/TabMenu/TabMenu';
+import UserDescription from '../userDescription/UserDescription';
+import UserLinks from '../userLinks/UserLinks';
 import UserRaves from '../userRaves/UserRaves';
 
 // Enumerators.
@@ -40,9 +43,11 @@ import { useAnalytics } from '../../../components/analytics/Analytics.provider';
 
 // Interfaces.
 import { AnalyticsContextProps } from '../../../components/analytics/Analytics.interface';
+import { PublicProfile } from '../../user/User.interface';
 import {
   StreamReviewDetailsProps
 } from './StreamReviewDetails.interface';
+import { TabMenuItem } from '../../tabs/TabMenu/TabMenu.interface';
 import { Review } from '../../review/Review.interface';
 
 // Override the admin tabs.
@@ -61,6 +66,16 @@ const StyledTabs = withStyles(theme => ({
  */
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
+    card: {
+      backgroundColor: theme.palette.background.default,
+      borderRadius: 20,
+    },
+    cardContainer: {
+      padding: theme.spacing(1, 1, 0)
+    },
+    coloredBackground: {
+      paddingBottom: theme.spacing(3)
+    },
     container: {
       backgroundColor: theme.palette.background.default,
       height: 'calc(100vh)',
@@ -71,17 +86,16 @@ const useStyles = makeStyles((theme: Theme) =>
     },
     tab: {
       float: 'left',
-      width: 'calc(100% / 2)'
+    },
+    tabContainer: {
     },
     tabPanel: {
+      backgroundColor: `rgba(100, 106, 240, .1)`,
       position: 'absolute',
       top: 0,
-      transition: 'transform 300ms ease-in-out',
-      width: `200%`
+      transition: 'transform 300ms ease-in-out'
     },
     tabPanelContainer: {
-      boxShadow: `inset 0px -1px 3px rgba(100,106,240,.25), inset 0px 1px 1px rgba(100,106,240,.15)`,
-      backgroundColor: `rgba(100,106,240, .1)`,
       overflow: 'hidden',
       padding: theme.spacing(1, 0),
       position: 'relative',
@@ -91,7 +105,7 @@ const useStyles = makeStyles((theme: Theme) =>
       flexWrap: 'nowrap'
     },
     userContainer: {
-      //backgroundColor: `rgba(0,0,0,0.04)`,
+      backgroundColor: theme.palette.background.paper,
       padding: theme.spacing(14, 1, 2)
     }
   })
@@ -99,27 +113,54 @@ const useStyles = makeStyles((theme: Theme) =>
 
 /**
  * Returns a string or number based on the active tab.
- *
- * @param { StreamReviewDetailsSection } showing
+ * 
+ * @param { number } showing - the index of the current tab showing.
+ * @param { number } count - the total number of tabs.
  *
  * @return string
  */
-const setTabSection: (
-  showing: StreamReviewDetailsSection
+const setVisibleTab: (
+  showing: number
+) => (
+  count: number
 ) => string = (
-  showing: StreamReviewDetailsSection
+  showing: number
+) => (
+  count: number
 ): string => {
-  let value: number = 0;
-  switch (showing) {
-    case StreamReviewDetailsSection.RAVES:
-      return 'translate3d(0, 0, 0)';
-    case StreamReviewDetailsSection.DETAILS:
-      value = 100 / 2;
-      return `translate3d(calc(-${value}%), 0, 0)`;
-    default:
-      return 'translate3d(0, 0, 0)';
-  }
+  let value: number = (100 / count) * showing;
+
+  return `translate3d(calc(-${value}%), 0, 0)`;
 };
+
+/**
+ * Builds the list of tab menu items.
+ *
+ * @param { Product } product - the product.
+ * @param { RaveStream } raveStream - the rave stream.
+ *
+ * @return Array<TabMenuItem>
+ */
+const buildTabMenuItems: (
+  user?: PublicProfile
+) => Array<TabMenuItem> = (
+  user?: PublicProfile
+): Array<TabMenuItem> => {
+
+  const menuItems: Array<TabMenuItem> = [{
+    title: 'Raves',
+    id: 'raves'
+  }];
+
+  if (user && (user.about || (user.links && user.links.length > 0))) {
+    menuItems.push({
+      title: 'About',
+      id: 'about'
+    });
+  }
+
+  return menuItems;
+}
 
 /**
  * Renders the video in the stream.
@@ -137,87 +178,56 @@ const StreamReviewDetails: React.FC<StreamReviewDetailsProps> = (props: StreamRe
 
   const { user } = {...props.review};
 
-  const [activeTab, setActiveTab] = React.useState<StreamReviewDetailsSection>(
-    StreamReviewDetailsSection.RAVES);
+  const [selectedTab, setSelectedTab] = React.useState<number>(0);
+
 
   const [tabHeight, setTabHeight] = React.useState<number>(0);
 
+  const tabMenuItems: Array<TabMenuItem> = buildTabMenuItems(user);
+
+  const tabCount: number = tabMenuItems.length;
+
   const [userId, setUserId] = React.useState<string>('');
 
-  const [raveHeight, setRaveHeight] = React.useState<number | null>(null);
-  const [detailsHeight, setDetailsHeight] = React.useState<number | null>(null);
+  const [triggerUpdate, setTriggerUpdate] = React.useState<boolean>(false);
 
   /**
    * Handles switching between tabs.
    *
-   * @param { StreamReviewDetailsSection } value - the selected review section.
+   * @param { number } index - the selected tab index.
    */
   const handleTabSwitch: (
-    value: StreamReviewDetailsSection
+    value: number
   ) => void = (
-    value: StreamReviewDetailsSection
+    value: number
   ): void => {
-    if (value === activeTab) {
+    if (value === selectedTab) {
       return;
     }
-    setActiveTab(value);
-    updateTabHeight(value);
+    setSelectedTab(value);
   }
 
   /**
-   * Handles updates to the container height.
+   * Updates the table height.
    *
-   * @param { number } - the height to set the container.
+   * @param { number } value - the height to be updated.
    */
-  const updateTabHeight: (
-    value: StreamReviewDetailsSection
+  const handleTabHeightUpdate: (
+    value: number
   ) => void = (
-    value: StreamReviewDetailsSection
+    value: number
   ): void => {
-
-    switch (value) {
-      case StreamReviewDetailsSection.RAVES:
-        if (raveHeight) {
-          setTabHeight(raveHeight);
-        }
-        break;
-      case StreamReviewDetailsSection.DETAILS:
-        if (detailsHeight) {
-          setTabHeight(detailsHeight);
-        }
-        break;
-      default:
-    }
+    setTabHeight(value);
   }
 
   /**
-   * Handles updating the raves tab height.
+   * Handles triggering a height update from a tab container because a child
+   * container has been modified.
    */
-  const handleRaveHeightUpdate: (
-    value: number
+  const handleToggleUpdate: (
   ) => void = (
-    value: number
   ): void => {
-    setRaveHeight(value);
-
-    if (activeTab === StreamReviewDetailsSection.RAVES) {
-      setTabHeight(value);
-    }
-  }
-
-  /**
-   * Handles updating the details tab height.
-   */
-  const handleAboutHeightUpdate: (
-    value: number
-  ) => void = (
-    value: number
-  ): void => {
-    setDetailsHeight(value);
-
-    if (activeTab === StreamReviewDetailsSection.DETAILS) {
-      setTabHeight(value);
-    }
+    setTriggerUpdate(!triggerUpdate);
   }
 
   /**
@@ -226,7 +236,7 @@ const StreamReviewDetails: React.FC<StreamReviewDetailsProps> = (props: StreamRe
   React.useEffect(() => {
     if (user && user._id !== userId) {
       setUserId(user._id);
-      setActiveTab(StreamReviewDetailsSection.RAVES);
+      setSelectedTab(0);
     }
   }, [user, userId]);
 
@@ -242,38 +252,18 @@ const StreamReviewDetails: React.FC<StreamReviewDetailsProps> = (props: StreamRe
             <Grid item xs={12} className={clsx(classes.userContainer)}>
               <StreamUserProfile
                 showFollow={true}
-                user={user}
+                user={{...user}}
                 variant='large'
               />
             </Grid>
-            <Grid container>
-              <Grid item xs={12}>
-                <StyledTabs
-                  value={activeTab}
-                  variant='scrollable'
-                >
-                  <Tab
-                    disableRipple
-                    id={`review-section-${StreamReviewDetailsSection.RAVES}`}
-                    label='Raves'
-                    onClick={(e: React.SyntheticEvent) => 
-                      handleTabSwitch(StreamReviewDetailsSection.RAVES)
-                    }
-                    value={StreamReviewDetailsSection.RAVES}
-                  />
-                  {user.about || (user.links && user.links.length > 0) &&
-                    <Tab
-                      disableRipple
-                      id={`review-section-${StreamReviewDetailsSection.DETAILS}`}
-                      label={`About`}
-                      onClick={(e: React.SyntheticEvent) => 
-                        handleTabSwitch(StreamReviewDetailsSection.DETAILS)
-                      }
-                      value={StreamReviewDetailsSection.DETAILS}
-                    />
-                  }
-                </StyledTabs>
-              </Grid>
+            <Grid item xs={12}>
+              <TabMenu
+                activeIndex={selectedTab}
+                tabItems={tabMenuItems}
+                updateActiveTab={handleTabSwitch}
+              />
+            </Grid>
+            <Grid item xs={12}>
               <Box
                 className={clsx(classes.tabPanelContainer)}
                 style={{height: tabHeight}}
@@ -282,27 +272,76 @@ const StreamReviewDetails: React.FC<StreamReviewDetailsProps> = (props: StreamRe
                   className={clsx(classes.tabPanel)}
                   style={{
                     height: tabHeight,
-                    transform: `${setTabSection(activeTab)}`
+                    transform: `${setVisibleTab(selectedTab || 0)(tabCount)}`,
+                    width: `${100 * tabCount}%`
                   }}
                 >
                   <div
                     className={clsx(classes.tab)}
+                    style={{width: `${100 / tabCount}%`}}
                   >
-                    <UserRaves
-                      user={user}
-                      updateHeight={handleRaveHeightUpdate}
-                    />
-                  </div>
-                  {user.about || (user.links && user.links.length > 0) &&
-                    <div
-                      className={clsx(classes.tab)}
+                    <TabContainer
+                      activeIndex={selectedTab}
+                      index={0}
+                      updateHeight={handleTabHeightUpdate}
+                      toggleUpdate={triggerUpdate}
                     >
-                      <UserAbout
-                        updateHeight={handleAboutHeightUpdate}
-                        user={user}
+                      <UserRaves
+                        user={{...user}}
+                        updateHeight={handleToggleUpdate}
                       />
-                    </div>
-                  }
+                    </TabContainer>
+                  </div>
+                  <div
+                    className={clsx(classes.tab)}
+                    style={{width: `${100 / tabCount}%`}}
+                  >
+                    {user &&
+                      <TabContainer
+                        activeIndex={selectedTab}
+                        index={1}
+                        minDesktopHeight={500}
+                        updateHeight={handleTabHeightUpdate}
+                        toggleUpdate={triggerUpdate}
+                      >
+                        <Grid
+                          justify='flex-start'
+                          container
+                          className={clsx(classes.coloredBackground)}
+                        >
+                          {user.about &&
+                            <Grid item xs={12} md={6}
+                              className={clsx(classes.cardContainer)}
+                            >
+                              <Grid container className={clsx(classes.card)}>
+                                <Grid item xs={12}>
+                                  <UserDescription
+                                    alignMore='left'
+                                    updateHeight={handleToggleUpdate}
+                                    user={{...user}}
+                                  />
+                                </Grid>
+                              </Grid>
+                            </Grid>
+                          }
+                          {user.links && user.links.length > 0 && 
+                            <Grid item xs={12} md={3}
+                              className={clsx(classes.cardContainer)}
+                            >
+                              <Grid container className={clsx(classes.card)}>
+                                <Grid item xs={12}>
+                                  <UserLinks
+                                    updateHeight={handleToggleUpdate}
+                                    user={{...user}}
+                                  />
+                                </Grid>
+                              </Grid>
+                            </Grid>
+                          }
+                        </Grid>
+                      </TabContainer>
+                    }
+                  </div>
                 </Box>
               </Box>
             </Grid>

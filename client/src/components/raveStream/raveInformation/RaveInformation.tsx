@@ -63,7 +63,7 @@ const useStyles = makeStyles((theme: Theme) =>
     cardContainer: {
       backgroundColor: theme.palette.background.default,
       borderRadius: 20,
-      margin: theme.spacing(1.75, 1, 1),
+      margin: theme.spacing(1, 1, 0),
     },
     descriptionCard: {
     },
@@ -100,6 +100,15 @@ const RaveInformation: React.FC<RaveInformationProps> = (props: RaveInformationP
   const [height, setHeight] = React.useState<number>(0);
 
   const [reviews, setReviews] = React.useState<Array<Review> | null>();
+
+  let moreReviews: boolean = false;
+
+  if (props.raveStream
+    && typeof props.activeIndex === 'number'
+    && (props.activeIndex < (props.raveStream.reviews.length - 1))
+  ) {
+    moreReviews = true;
+  }
 
   /**
    * Handles the updating of the height.
@@ -163,11 +172,13 @@ const RaveInformation: React.FC<RaveInformationProps> = (props: RaveInformationP
               />  
             }
           </Grid>
-          {props.raveStream &&
+          {props.raveStream && moreReviews &&
             <SwipeCardHolder
+              hidePlayAll={true}
+              overrideTitle={true}
               reviews={reviews ? [...reviews] : []}
               streamType={props.raveStream.streamType} 
-              title={`${props.raveStream.title}`}
+              title='Up next'
             />
           }
         </React.Fragment>
@@ -192,6 +203,7 @@ const mapStateToProps = (state: any, ownProps: RaveInformationProps) => {
 
   return {
     ...ownProps,
+    activeIndex,
     raveStream,
     review
   };

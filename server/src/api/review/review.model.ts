@@ -45,11 +45,13 @@ const ReviewSchema = new Schema<ReviewDocument>({
   },
   product:  { 
     type: Schema.Types.ObjectId, 
-    ref: 'Product'
+    ref: 'Product',
+    index: true
   },
   published: {
     type: Workflow,
-    default: Workflow.DRAFT
+    default: Workflow.DRAFT,
+    index: true
   },
   recommended: {
     type: Recommended
@@ -159,6 +161,14 @@ ReviewSchema
 
     // Load the user details.
     const user: PublicUserDetails = UserCommon.RetrievePublicDetailsFromDocument(this.user);
+
+    // Updated the statistics
+    if (user.statistics) {
+      user.statistics = {
+        followers: user.statistics.followers,
+        ravesCount: user.statistics.ravesCount
+      };
+    }
 
     const review: ReviewDetails = {
       _id: this._id,

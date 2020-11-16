@@ -23,6 +23,7 @@ import {
 import { frontloadConnect } from 'react-frontload';
 import Grid from '@material-ui/core/Grid';
 import { Helmet } from 'react-helmet';
+import { helmetJsonLdProp } from 'react-schemaorg';
 import LinearProgress from '@material-ui/core/LinearProgress';
 import * as React from 'react';
 import { Route } from 'react-router-dom';
@@ -77,12 +78,20 @@ import {
 } from '../raveStream/RaveStream.interface';
 import { Review } from '../review/Review.interface';
 import {
+  Review as ReviewSchema,
+  VideoObject as VideoSchema
+} from 'schema-dts';
+import {
   DesktopStreamProps
 } from './DesktopStream.interface';
 
 // Utilities.
 import {
   buildRaveStreamPath,
+  buildReviewSchema,
+  buildVideoSchema,
+  getStreamPageDescription,
+  getStreamPageTitle,
   retrieveRaveURL
 } from '../raveStream/RaveStream.common';
 
@@ -161,26 +170,28 @@ const formatURL: (
  */
 const frontloadProductStream = async (props: DesktopStreamProps) => {
 
-  /*
   // Format the api request path.
   const params: RaveStreamURLParams = {...props.match.params};
 
   // Set the path to be requested via the api and append the review title
   // if it has been provided in the URL.
-  let path: string = buildRaveStreamPath(params);
+  let path: string = buildRaveStreamPath(params)(false),
+      contextPath: string = buildRaveStreamPath(params)(true);
 
   await API.requestAPI<RaveStreamResponse>(`stream/${path}`, {
     method: RequestType.GET
   })
   .then((response: RaveStreamResponse) => {
     if (props.updateActiveRaveStream) {
-      props.updateActiveRaveStream({...response.raveStream});
+      props.updateActiveRaveStream({
+        ...response.raveStream,
+        path: contextPath
+      });
     }
   })
   .catch((error: Error) => {
     console.log(error);
   });
-  */
 
 };
 
@@ -213,6 +224,15 @@ const DesktopStream: React.FC<DesktopStreamProps> = (props: DesktopStreamProps) 
   const [pageViewed, setPageViewed] = React.useState<boolean>(false);
 
   const isMounted = useIsMounted();
+
+  const schemas = [
+    helmetJsonLdProp<ReviewSchema>(
+      buildReviewSchema(props.product)(props.review)
+    ),
+    helmetJsonLdProp<VideoSchema>(
+      buildVideoSchema(props.review)
+    )
+  ];
 
   /**
    * Track the stream view.
@@ -266,6 +286,25 @@ const DesktopStream: React.FC<DesktopStreamProps> = (props: DesktopStreamProps) 
 
   return (
     <Grid container className={clsx(classes.container)}>
+      {props.raveStream && props.review && props.review.user && props.review.product &&
+        <Helmet
+          script={schemas}
+        >
+          <title>{getStreamPageTitle(props.raveStream)}</title>
+          <meta name='description' content={getStreamPageDescription(props.raveStream)} />
+          <link rel='canonical' href={`https://ravebox.io${props.history.location.pathname}`} />
+          <meta name='og:site_name' content={`Ravebox`} />
+          <meta name='og:title' content={`Watch the ${props.review.product.brand.name} ${props.review.product.name} rave created by ${props.review.user.handle} - Ravebox`} />
+          <meta name='og:description' content={`${props.review.user.handle} talks about their experience with the ${props.review.product.brand.name} ${props.review.product.name} on Ravebox.`} />
+          <meta name='og:image' content={`${props.review.thumbnail}`} />
+          <meta name='og:url' content={`https://ravebox.io${props.review.url}`} />
+          <meta name='twitter:title' content={`Watch the ${props.review.product.brand.name} ${props.review.product.name} rave created by ${props.review.user.handle} - Ravebox`} />
+          <meta name='twitter:description' content={`${props.review.user.handle} talks about their experience with the ${props.review.product.brand.name} ${props.review.product.name} on Ravebox.`} />
+          <meta name='twitter:image' content={`${props.review.thumbnail}`} />
+          <meta name='twitter:image:alt' content={`Preview image for ${props.review.user.handle}'s rave of the ${props.review.product.brand.name} ${props.review.product.name}`} />
+          <meta name='twitter:card' content={`summary_large_image`} />
+        </Helmet>
+      }
       <Grid item xs={8}>
        <Grid container>
         <Grid item xs={12} className={clsx(classes.videoContainer)}>

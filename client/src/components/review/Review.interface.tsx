@@ -120,3 +120,14 @@ export interface RetrieveReviewParams {
   review?: Review;
   setReview?: (review: Review) => void;
 }
+
+/**
+ * Review score aggregate.
+ */
+export interface AggregateReviewScore {
+  averageScore: number;
+  count: number;
+  highestAllowedRating: number;
+  lowestAllowedRating: number;
+  totalScore: number;
+}

@@ -8,7 +8,7 @@ import API from '../../utils/api/Api.model';
 import * as React from 'react';
 
 // Enumerators.
-import { Recommended } from '../review/recommendation/Recommendation.enum';
+import { RaveStreamType } from './RaveStream.enum'; 
 import {
   RequestType,
   RetrievalStatus
@@ -94,6 +94,31 @@ const getRaveIndex: (
 }
 
 /**
+ * Determines if we have a new request or if we're attempting to retrieve
+ * data we already have.
+ *
+ * @param { RaveStream } existing - the existing rave stream.
+ * @param { RaveStreamURLParams } params - the rave stream params.
+ *
+ * @return boolean
+ */
+const requestNecessary: (
+  existing?: RaveStream
+) => (
+  contextPath: string
+) => boolean = (
+  existing?: RaveStream
+) => (
+  contextPath: string
+): boolean => {
+  if (!existing) {
+    return true;
+  }
+
+  return existing.path !== contextPath;
+}
+
+/**
  * Returns a rave stream if it exists using the url.
  *
  * @param { RetrieveProductStreamByURLParams } params - the product params.
@@ -125,7 +150,10 @@ export function useRetrieveRaveStreamByURL(
   const [requestParams, setRequestParams] = React.useState<RaveStreamURLParams>({...requested});
 
   // Define the retrieval status to be used for view rendering.
-  const [retrieved, setRetrieved] = React.useState(RetrievalStatus.REQUESTED);
+  const [retrieved, setRetrieved] = React.useState(requestNecessary(existing)(contextPath)
+    ? RetrievalStatus.REQUESTED
+    : RetrievalStatus.SUCCESS
+  );
 
   // Define the rave stream to be set using the existing value if it has
   // been preloaded via sever side rendering.
@@ -241,7 +269,10 @@ export function useRetrieveRaveStreamByURL(
         if (response.raveStream) {
           if (setActiveRaveStream && setActiveProduct && setActiveRave) {
             setActiveRave(0);
-            setActiveRaveStream({...response.raveStream});
+            setActiveRaveStream({
+              ...response.raveStream,
+              path: contextPath
+            });
             setActiveProduct(retrieveProductFromStream(response.raveStream));
           }
 

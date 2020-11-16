@@ -131,7 +131,22 @@ const useStyles = makeStyles((theme: Theme) =>
     },
     userStatisticsText: {
       textTransform: 'uppercase'
-    }
+    },
+    userYTText: {
+      //textTransform: 'uppercase'
+    },
+    ytLarge: {
+      fontSize: '.85rem',
+      fontWeight: 600,
+    },
+    ytSide: {
+      fontSize: '.75rem',
+      fontWeight: 600,
+    },
+    ytSmall: {
+      fontSize: '.8rem',
+      fontWeight: 600,
+    },
   })
 );
 
@@ -242,7 +257,7 @@ const StreamUserProfile: React.FC<StreamUserProfileProps> = (props: StreamUserPr
                   }
                 )}
               >
-                {props.user.role === Role.YOUTUBE ? 'y' : firstLetter}
+                {firstLetter}
               </Avatar>
             )}
           </Grid>
@@ -262,19 +277,33 @@ const StreamUserProfile: React.FC<StreamUserProfileProps> = (props: StreamUserPr
                 [classes.handleSmall]: props.variant === 'small'
               }
             )}>
-              {props.user.role === Role.YOUTUBE ? 'youtube' : props.user.handle}
+              {props.user.handle}
             </Typography>
-            {props.user.statistics &&
+            {props.user.role === Role.YOUTUBE ? (
               <Typography variant='body2' className={clsx(
-                classes.userStatisticsText, {
-                  [classes.statisticsLarge]: props.variant === 'large',
-                  [classes.statisticsSide]: props.variant === 'side',
-                  [classes.statisticsSmall]: props.variant === 'small'
+                classes.userYTText, {
+                  [classes.ytLarge]: props.variant === 'large',
+                  [classes.ytSide]: props.variant === 'side',
+                  [classes.ytSmall]: props.variant === 'small'
                 }
               )}>
-                {statisticsText}
+                (via YouTube)
               </Typography>
-            }
+            ) : (
+              <React.Fragment>
+                {props.user.statistics &&
+                  <Typography variant='body2' className={clsx(
+                    classes.userStatisticsText, {
+                      [classes.statisticsLarge]: props.variant === 'large',
+                      [classes.statisticsSide]: props.variant === 'side',
+                      [classes.statisticsSmall]: props.variant === 'small'
+                    }
+                  )}>
+                    {statisticsText}
+                  </Typography>
+                }
+              </React.Fragment>
+            )}
           </Grid>
         </Grid>
       </Grid>

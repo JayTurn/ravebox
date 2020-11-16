@@ -21,6 +21,7 @@ import { Review } from '../../review/Review.interface';
 export interface SwipeCardHolderProps extends RouteComponentProps<RaveStreamURLParams> {
   title: string;
   reviews: Array<Review>
+  hidePlayAll?: boolean;
   streamType: RaveStreamType;
   url?: string;
   overrideTitle?: boolean;

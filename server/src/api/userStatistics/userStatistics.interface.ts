@@ -25,6 +25,14 @@ export interface UserStatisticsDocument extends Mongoose.Document {
 }
 
 /**
+ * Public user statistics.
+ */
+export interface PublicUserStatisticsDetails {
+  followers: number;
+  ravesCount: number;
+}
+
+/**
  * User statistics.
  */
 export interface UserStatisticsDetails {

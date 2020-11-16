@@ -12,6 +12,7 @@ import { RaveStreamVerb } from './Actions.enum';
 // Dependent interfaces.
 import {
   RaveStream,
+  RaveStreamCategoryList,
   RaveStreamList
 } from '../../components/raveStream/RaveStream.interface';
 import { Review } from '../../components/review/Review.interface';
@@ -34,6 +35,30 @@ export const update = (raveStream: RaveStream) => action(
  */
 export const updateActive = (index: number) => action(
   RaveStreamVerb.UPDATE_ACTIVE, index);
+
+/**
+ * Updates the active category index in the redux store.
+ *
+ * @param { number } index - the category index to be made active.
+ */
+export const updateActiveCategory = (activeCategory: number) => action(
+  RaveStreamVerb.UPDATE_ACTIVE_CATEGORY, activeCategory);
+
+/**
+ * Updates the back path to be returned to in the redux store.
+ *
+ * @param { string } path - the path to be stored.
+ */
+export const updateBackPath = (path: string) => action(
+  RaveStreamVerb.UPDATE_BACK_PATH, path);
+
+/**
+ * Updates a list of category streams.
+ *
+ * @param { RaveStreamCategoryList } raveStreamCategoryList - the list.
+ */
+export const updateCategoryList = (categoryList: Array<RaveStreamCategoryList>) => action(
+  RaveStreamVerb.UPDATE_CATEGORY_LIST, categoryList);
 
 /**
  * Updates a list of streams.

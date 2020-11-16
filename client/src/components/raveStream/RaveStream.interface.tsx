@@ -19,6 +19,7 @@ export interface RaveStream {
   title: string;
   reviews: Array<Review>;
   streamType: RaveStreamType;
+  path?: string;
 }
 
 /**
@@ -54,7 +55,16 @@ export interface RetrieveStreamByURLParams {
 }
 
 /**
- * Retrive the product stream by URL parameters.
+ * Retrive the product stream category parameters.
+ */
+export interface RetrieveStreamCategoryListParams {
+  existing?: Array<RaveStreamCategoryList>;
+  name: string;
+  updateList?: (raveStreams: Array<RaveStreamCategoryList>) => void;
+}
+
+/**
+ * Retrive the product stream by list parameters.
  */
 export interface RetrieveStreamByListParams {
   queries: Array<RaveStreamListItem>;
@@ -75,6 +85,7 @@ export interface RetrieveStreamByProductParams {
 export interface RaveStreamListItem {
   streamType: RaveStreamType;
   brand?: string;
+  category?: string;
   collectionContext?: string;
   product?: string;
   productType?: string;
@@ -101,4 +112,22 @@ export interface RaveStreamListResponse {
 export interface RaveStreamList {
   title: string;
   raveStreams: Array<RaveStream>;
+}
+
+/**
+ * Rave stream list.
+ */
+export interface RaveStreamCategoryList {
+  streamItems: Array<RaveStream>;
+  streamType: RaveStreamType;
+  title: string;
+  url: string;
+}
+
+/**
+ * Rave stream list response.
+ */
+export interface RaveStreamCategoryListResponse {
+  raveStreams: Array<RaveStreamCategoryList>;
+  title: string;
 }

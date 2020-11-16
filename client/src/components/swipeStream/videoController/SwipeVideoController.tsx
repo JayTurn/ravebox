@@ -23,6 +23,7 @@ import Grid from '@material-ui/core/Grid';
 import Typography from '@material-ui/core/Typography';
 import { TransitionGroup } from 'react-transition-group';
 import * as React from 'react';
+import { withRouter } from 'react-router';
 
 // Actions.
 import {
@@ -200,6 +201,12 @@ const SwipeVideoController: React.FC<SwipeVideoControllerProps> = (props: SwipeV
           props.updateActiveIndex(props.activeIndex - 1);
           setShowOverlay(false);
           handleOverlayDisplay();
+        } else {
+          if (props.backPath) {
+            props.history.push(props.backPath);
+          } else {
+            props.history.goBack();
+          }
         }
       }
     }
@@ -365,18 +372,20 @@ const mapDispatchToProps = (dispatch: Dispatch<AnyAction>) =>
 const mapStateToProps = (state: any, ownProps: SwipeVideoControllerProps) => {
   // Retrieve the product stream from the active properties.
   const raveStream: RaveStream = state.raveStream ? state.raveStream.raveStream : undefined,
+        backPath: string = state.raveStream ? state.raveStream.backPath : '',
         activeIndex: number = state.raveStream ? state.raveStream.active : 0,
         product: Product = state.raveStream ? state.raveStream.product : undefined;
 
   return {
     ...ownProps,
+    backPath,
     activeIndex,
     product,
     raveStream
   };
 };
 
-export default connect(
+export default withRouter(connect(
   mapStateToProps,
   mapDispatchToProps,
-)(SwipeVideoController);
+)(SwipeVideoController));

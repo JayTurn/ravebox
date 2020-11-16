@@ -42,8 +42,10 @@ export const getExternalAvatar: (
   user?: PublicProfile
 ): string | undefined => {
 
-  let avatar: string | undefined;
+  return user ? user.avatar : undefined;
 
+  /*
+  let avatar: string | undefined;
   if (user && user.role !== Role.YOUTUBE) {
     avatar = user.avatar;
   } else {
@@ -51,6 +53,7 @@ export const getExternalAvatar: (
   }
 
   return avatar;
+  */
 }
 
 /**

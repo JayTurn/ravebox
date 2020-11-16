@@ -30,11 +30,14 @@ import useMediaQuery from '@material-ui/core/useMediaQuery';
 
 // Actions.
 import {
+  add
+} from '../store/xsrf/Actions';
+import {
   login,
 } from '../store/user/Actions';
 import {
-  add
-} from '../store/xsrf/Actions';
+  updateBackPath,
+} from '../store/raveStream/Actions';
 import { updateAPIImageConfig } from '../store/configuration/Actions';
 
 // Components.
@@ -72,7 +75,6 @@ const TermsOfService = loadable(() => import('./policies/TermsOfService'));
 const TopNavigation = loadable(() => import('../components/navigation/top/TopNavigation'));
 const Verify = loadable(() => import('./user/verify/Verify'));
 const ViewProduct = loadable(() => import('./product/view/ViewProduct'));
-const ViewReview = loadable(() => import('./review/view/ViewReview'));
 
 // Hooks.
 import { useRetrieveProfile } from '../components/user/profile/useRetrieveProfile.hook';
@@ -209,8 +211,11 @@ const App: React.FC<AppProps> = (props: AppProps) => {
       if (props.updateLoading) {
         props.updateLoading(true);
       }
+      if (props.updateBackPath) {
+        props.updateBackPath(props.location.pathname);
+      }
     }
-  }));
+  }), [props.history, props.location]);
 
   React.useEffect(() => {
     if (chooseTheme < 0) {
@@ -338,9 +343,6 @@ const App: React.FC<AppProps> = (props: AppProps) => {
                       <PrivateRoute exact={true} path="/review/edit/:id">
                         <EditReview />
                       </PrivateRoute>
-                      <Route exact={true} path="/review/:brand/:productName/:reviewTitle">
-                        <ViewReview />
-                      </Route>
                       <Route exact={true} path="/">
                         <Home />
                       </Route>
@@ -365,12 +367,14 @@ const App: React.FC<AppProps> = (props: AppProps) => {
  *
  */
 function mapStatetoProps(state: any, ownProps: AppProps) {
-  let profile: PrivateProfile = state.user ? state.user.profile : {_id: '', email: ''};
+  let profile: PrivateProfile = state.user ? state.user.profile : {_id: '', email: ''},
+      backPath: string = state.raveStream ? state.raveStream.backPath : '';
 
   const expanded: boolean = state.navigation ? state.navigation.display : false
 
   return {
     ...ownProps,
+    backPath,
     expanded,
     profile
   };
@@ -385,6 +389,7 @@ const mapDispatchToProps = (dispatch: Dispatch<AnyAction>) =>
   bindActionCreators(
     {
       login: login,
+      updateBackPath,
       updateXsrf: add
     },
     dispatch

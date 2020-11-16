@@ -3,6 +3,9 @@
  * Interfaces for the video controller.
  */
 
+// Modules.
+import { RouteComponentProps } from 'react-router';
+
 // Enumerators.
 import { SwipeView } from '../SwipeStream.enum';
 
@@ -13,8 +16,9 @@ import { RaveStream } from '../../raveStream/RaveStream.interface';
 /**
  * SwipeVideoController properties.
  */
-export interface SwipeVideoControllerProps {
+export interface SwipeVideoControllerProps extends RouteComponentProps {
   activeIndex?: number;
+  backPath?: string;
   displayChange: (view: SwipeView) => void;
   product?: Product;
   raveStream?: RaveStream;

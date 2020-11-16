@@ -15,6 +15,7 @@ import {
   withStyles
 } from '@material-ui/core/styles';
 import Grid from '@material-ui/core/Grid';
+import { Link as ReactLink } from 'react-router-dom';
 import * as React from 'react';
 import Typography from '@material-ui/core/Typography';
 import { withRouter } from 'react-router';
@@ -22,11 +23,13 @@ import { withRouter } from 'react-router';
 // Components.
 import CardUser from '../../raveStream/cardUser/CardUser';
 import CardVideo from '../../raveStream/cardVideo/CardVideo';
+import LinkElement from '../../elements/link/Link';
 import StyledButton from '../../elements/buttons/StyledButton';
 
 // Enumerators.
 import { CardPosition } from './SwipeCard.enum';
 import { RaveStreamType } from '../../raveStream/RaveStream.enum';
+import { StyleType } from '../../elements/link/Link.enum';
 
 // Interfaces.
 import { Review } from '../../review/Review.interface';
@@ -42,8 +45,8 @@ const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     brandText: {
       display: 'block',
-      fontSize: '.85rem',
-      fontWeight: 700
+      fontSize: '.7em',
+      fontWeight: 800
     },
     buttonElement: {
       //fontWeight: 700,
@@ -62,8 +65,12 @@ const useStyles = makeStyles((theme: Theme) =>
     productContainer: {
       padding: theme.spacing(0, 2, 1)
     },
+    productLink: {
+      color: 'inherit',
+      textDecoration: 'none'
+    },
     productTitle: {
-      fontSize: '1.1rem',
+      fontSize: '1.3rem',
       fontWeight: 500
     },
     userContainer: {
@@ -132,12 +139,18 @@ const SwipeCard: React.FC<SwipeCardProps> = (props: SwipeCardProps) => {
         {streamType !== RaveStreamType.PRODUCT &&
           <Grid item xs={12} className={clsx(classes.productContainer)}>
             {review.product &&
-              <Typography variant='h3' className={clsx(classes.productTitle)}>
-                <Box component='span' className={clsx(classes.brandText)}>
-                  {review.product.brand.name}
-                </Box>
-                {review.product.name}
-              </Typography>
+              <ReactLink
+                className={clsx(classes.productLink)}
+                to={`/product/${review.product.brand.url}/${review.product.url}`}
+                title={`View the ${review.product.brand.name} ${review.product.name} details`}
+              >
+                <Typography variant='h3' className={clsx(classes.productTitle)}>
+                  <Box component='span' className={clsx(classes.brandText)}>
+                    {review.product.brand.name}
+                  </Box>
+                  {review.product.name}
+                </Typography>
+              </ReactLink>
             }
           </Grid>
         }
@@ -155,12 +168,12 @@ const SwipeCard: React.FC<SwipeCardProps> = (props: SwipeCardProps) => {
               <CardUser review={{...review}} />
             </Grid>
             <Grid item>
-              <StyledButton
+              <LinkElement
                 className={clsx(classes.buttonElement)}
-                clickAction={handleNavigate}
-                color='primary'
+                title='Play rave'
+                path={`${path}`}
                 size='small'
-                title='View rave'
+                styleType={StyleType.BUTTON_PRIMARY}
               />
             </Grid>
           </Grid>

@@ -62,6 +62,10 @@ const useStyles = makeStyles((theme: Theme) =>
       whiteSpace: 'normal',
       overflow: 'hidden',
     },
+    linkInfoContainer: {
+      marginTop: theme.spacing(1),
+      padding: theme.spacing(0, 2)
+    },
     paragraph: {
       fontSize: '1rem',
       marginBottom: theme.spacing(1),
@@ -176,7 +180,7 @@ const ProductDescription: React.FC<ProductDescriptionProps> = (props: ProductDes
             </Grid>
           }
           {reviewLink.info &&
-            <Grid item xs={12}>
+            <Grid item xs={12} className={clsx(classes.linkInfoContainer)}>
               {reviewLink.info.split('\n').map((item: string, index: number) => {
                 if (item) {
                   return (

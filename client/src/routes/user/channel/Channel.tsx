@@ -32,6 +32,8 @@ import { updateActive } from '../../../store/channel/Actions';
 // Components.
 import ChannelTitle from '../../../components/channel/title/ChannelTitle';
 import ReviewList from '../../../components/review/list/ReviewList';
+import StreamUserProfile from '../../../components/raveStream/userProfile/StreamUserProfile';
+import UserTabs from '../../../components/user/tabs/UserTabs';
 
 // Enumerators.
 import {
@@ -39,10 +41,13 @@ import {
   RetrievalStatus
 } from '../../../utils/api/Api.enum';
 import { ScreenContext } from '../../../components/review/Review.enum';
+import { ViewState } from '../../../utils/display/view/ViewState.enum';
 
 // Hooks.
 import { useAnalytics } from '../../../components/analytics/Analytics.provider';
-import { useRetrieveChannel } from './useRetrieveChannel';
+import {
+  useRetrieveUserChannel
+} from './useRetrieveUserChannel.hook';
 
 // Interfaces.
 import { AnalyticsContextProps } from '../../../components/analytics/Analytics.interface';
@@ -66,6 +71,10 @@ const useStyles = makeStyles((theme: Theme) =>
     },
     listContainerLarge: {
       padding: theme.spacing(0, 2)
+    },
+    profileContainer: {
+      backgroundColor: theme.palette.background.paper,
+      padding: theme.spacing(4)
     }
   })
 );
@@ -112,6 +121,7 @@ const retrieveStatistics: (
  * @param { ReviewDetailsProps } props - the review details properties.
  */
 const frontloadReviewDetails = async (props: ChannelProps) => {
+  /*
   // Retrieve the user's handle from the url path.
   const { handle } = {...props.match.params};
 
@@ -146,6 +156,7 @@ const frontloadReviewDetails = async (props: ChannelProps) => {
   .catch((error: Error) => {
     console.log(error);
   });
+  */
 };
 
 
@@ -165,7 +176,7 @@ const Channel: React.FC<ChannelProps> = (props: ChannelProps) => {
   const { handle } = {...props.match.params};
 
   // Register the hook for subsequent channel retrieval.
-  const { retrievalStatus } = useRetrieveChannel({
+  const { retrievalStatus } = useRetrieveUserChannel({
     handle: handle,
     channel: props.channel,
     updateActive: props.updateActive
@@ -192,44 +203,29 @@ const Channel: React.FC<ChannelProps> = (props: ChannelProps) => {
   }, [pageViewed, props.location.pathname, props.channel]);
 
   return (
-    <React.Fragment>
-      {retrievalStatus === RetrievalStatus.SUCCESS &&
+    <Grid container>
+      {retrievalStatus === ViewState.FOUND && 
         <React.Fragment>
-          {props.channel && 
-            <Grid container direction='column'>
-              {props.channel.profile &&
-                <Grid item xs={12}>
-                  <Helmet>
-                    <title>{props.channel.profile.handle} reviews - ravebox</title>
-                    <meta name='description' content={`Watch video reviews of products and experiences created and shared by ${props.channel.profile.handle} on Ravebox`} />
-                    <link rel='canonical' href={`https://ravebox.io/user/channel/${props.channel.profile.handle}`} />
-                  </Helmet>
-                  <ChannelTitle
-                    avatar={props.channel.profile.avatar}
-                    handle={props.channel.profile.handle}
-                    statistics={props.channel.profile.statistics || ''} />
-                </Grid>
-              }
-              {props.channel.reviews && props.channel.reviews.length > 0 &&
-                <Grid item xs={12} className={clsx(
-                    classes.listContainer,
-                    {
-                      [classes.listContainerLarge]: largeScreen
-                    }
-                  )}
-                >
-                  <ReviewList
-                    context={ScreenContext.CHANNEL}
-                    reviews={props.channel.reviews} 
-                    retrievalStatus={RetrievalStatus.SUCCESS}
-                  />
-                </Grid>
-              }
-            </Grid>
+          {props.channel && props.channel.profile &&
+            <React.Fragment>
+              <Grid item xs={12} className={clsx(classes.profileContainer)}>
+                <StreamUserProfile     
+                  showFollow={true}
+                  user={props.channel.profile}
+                  variant='large'
+                />
+              </Grid>
+              <Grid item xs={12}>
+                <UserTabs
+                  user={props.channel.profile}
+                  raveStreams={props.channel.raveStreams}
+                />
+              </Grid>
+            </React.Fragment>
           }
         </React.Fragment>
       }
-    </React.Fragment>
+    </Grid>
   );
 }
 

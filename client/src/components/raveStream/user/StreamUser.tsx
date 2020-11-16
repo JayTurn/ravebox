@@ -10,6 +10,7 @@ import {
   Dispatch
 } from 'redux';
 import Avatar from '@material-ui/core/Avatar';
+import Box from '@material-ui/core/Box';
 import clsx from 'clsx';
 import { connect } from 'react-redux';
 import {
@@ -123,6 +124,12 @@ const useStyles = makeStyles((theme: Theme) =>
     },
     userDetailsContainer: {
       paddingBottom: theme.spacing(1)
+    },
+    ytText: {
+      color: theme.palette.common.white,
+      display: 'block',
+      fontSize: '.65em',
+      textAlign: 'center'
     }
   })
 );
@@ -250,7 +257,7 @@ const StreamUser: React.FC<StreamUserProps> = (props: StreamUserProps) => {
                       alt={props.user.handle}
                       className={clsx(classes.avatarIcon)}
                     >
-                      {props.user.role === Role.YOUTUBE ? 'y' : firstLetter} 
+                      {firstLetter} 
                     </Avatar>
                   )}    
                 </Grid>
@@ -259,7 +266,16 @@ const StreamUser: React.FC<StreamUserProps> = (props: StreamUserProps) => {
                     className={clsx(classes.handleText)}
                     variant='body1'
                   >
-                    {props.user.role === Role.YOUTUBE ? 'youtube' : props.user.handle}
+                    {props.user.handle}
+                    <React.Fragment>
+                      {props.user.role === Role.YOUTUBE &&
+                        <Box component='span' className={clsx(
+                          classes.ytText
+                        )}>
+                          (via YouTube)
+                        </Box>
+                      }
+                    </React.Fragment>
                   </Typography>
                 </Grid>
               </Grid>

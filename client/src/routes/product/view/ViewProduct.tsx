@@ -18,36 +18,36 @@ import {
   useTheme,
   withStyles
 } from '@material-ui/core/styles';
+import { connect } from 'react-redux';
+import { frontloadConnect } from 'react-frontload';
 import Grid from '@material-ui/core/Grid';
 import { Helmet } from 'react-helmet';
+import { helmetJsonLdProp } from 'react-schemaorg';
+import { Product } from '../../../components/product/Product.interface';
+import {
+  Product as ProductSchema,
+  VideoObject as VideoSchema,
+  WithContext
+} from 'schema-dts';
+import { RaveStream } from '../../../components/raveStream/RaveStream.interface';
+import { Review } from '../../../components/review/Review.interface';
 import * as React from 'react';
-import { frontloadConnect } from 'react-frontload';
-import { connect } from 'react-redux';
 import useMediaQuery from '@material-ui/core/useMediaQuery';
 import { withRouter } from 'react-router';
 
 // Actions.
 import { updateActive } from '../../../store/product/Actions';
-import {
-  updateListByCategory,
-} from '../../../store/review/Actions';
 
 // Components.
-import PageTitle from '../../../components/elements/pageTitle/PageTitle';
-import ReviewList from '../../../components/review/list/ReviewList';
-import ListByQuery from '../../../components/review/listByQuery/ListByQuery';
-import ListTitle from '../../../components/elements/listTitle/ListTitle';
+import ProductTitle from '../../../components/product/title/ProductTitle';
+import ProductTabs from '../../../components/product/tabs/ProductTabs';
 
 // Enumerators.
 import {
   RequestType,
   RetrievalStatus
 } from '../../../utils/api/Api.enum';
-import {
-  PresentationType,
-  ReviewListType
-} from '../../../components/review/listByQuery/ListByQuery.enum';
-import { ScreenContext } from '../../../components/review/Review.enum';
+import { VideoType } from '../../../components/review/Review.enum';
 import { ViewState } from '../../../utils/display/view/ViewState.enum';
 
 // Hooks.
@@ -55,24 +55,23 @@ import { useAnalytics } from '../../../components/analytics/Analytics.provider';
 import {
   useRetrieveProductByURL
 } from '../../../components/product/useRetrieveProductByURL.hook';
-import {
-  useRetrieveListByQuery
-} from '../../../components/review/listByQuery/useRetrieveListsByQuery.hook';
 
 // Interfaces.
-import { AnalyticsContextProps } from '../../../components/analytics/Analytics.interface';
 import {
-  Category
-} from '../../../components/category/Category.interface';
+  AggregateReviewScore 
+} from '../../../components/review/Review.interface';
+import { AnalyticsContextProps } from '../../../components/analytics/Analytics.interface';
+import { ImageAndTitle } from '../../../components/elements/image/Image.interface';
 import {
   ProductResponse,
   ProductView
 } from '../../../components/product/Product.interface';
-import {
-  Review,
-  ReviewGroup
-} from '../../../components/review/Review.interface';
 import { ViewProductProps } from './ViewProduct.interface';
+
+// Utilities.
+import {
+  calculateAggregateReviewScore
+} from '../../../components/review/Review.common';
 
 /**
  * Create the theme styles to be used for the display.
@@ -80,43 +79,106 @@ import { ViewProductProps } from './ViewProduct.interface';
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     container: {
+      backgroundColor: theme.palette.background.paper
     },
-    listContainer: {
-      padding: 0
+    containerSwipe: {
+      backgroundColor: `rgba(100,106,240, .1)`
     },
-    listContainerLarge: {
-      padding: theme.spacing(0, 2)
-    }
+    productTitleContainer: {
+      backgroundColor: theme.palette.background.paper,
+      padding: theme.spacing(2)
+    },
   })
 );
 
 /**
- * Formulates a list of categories based on the selected product.
+ * Builds the product schema for SEO purposes.
  *
- * @param { Array<Category> } categories - the list of categories.
+ * @param { Product } product - the product object.
+ * @param { RaveStream } raveStream - the rave stream containing reviews.
  *
- * @return Array<string>
+ * @return { ProductSchema }
  */
-const setCategoryQueries: (
-  categories: Array<Category>
-) => Array<string> = (
-  categories: Array<Category>
-): Array<string> => {
-  const queries: Array<string> = [];
+const buildProductSchema: (
+  product: Product
+) => (
+  raveStream: RaveStream
+) => WithContext<ProductSchema> = (
+  product: Product
+) => (
+  raveStream: RaveStream
+): WithContext<ProductSchema> => {
+  const schema: WithContext<ProductSchema> = {
+    '@context': 'https://schema.org',
+    '@type': 'Product',
+    name: product.name,
+    brand: {
+      '@type': 'Brand',
+      'name': product.brand.name
+    }
+  };
 
-  if (!categories || categories.length <= 0) {
-    return queries;
+  // Add any product images.
+  if (product.images && product.images.length > 0) {
+    schema.image = product.images.map((imageItem: ImageAndTitle) => {
+      return imageItem.url;
+    });
   }
 
-  let i: number = 0;
+  // Add the product description.
+  if (product.description) {
+    schema.description = `Watch ${product.brand.name} ${product.name} review videos shared by users on Ravebox.`;
+  }
 
-  do {
-    const current: Category = categories[i];
-      queries.push(current.key);
-    i++;
-  } while (i < categories.length);
+  if (raveStream.reviews.length > 0) {
+    const score: AggregateReviewScore = calculateAggregateReviewScore(raveStream.reviews);
 
-  return queries;
+    schema.aggregateRating = {
+      '@type': 'AggregateRating',
+      bestRating: score.highestAllowedRating,
+      ratingCount: score.count,
+      ratingValue: score.averageScore,
+      reviewCount: score.count,
+      worstRating: score.lowestAllowedRating
+    };
+  }
+
+  return schema;
+}
+
+/**
+ * Builds a list of video objects based on the reviews provided.
+ *
+ * @param { Review } review - the review for the product.
+ *
+ * @return VideoSchema
+ */
+export const buildVideoSchema: (
+  review: Review
+) => WithContext<VideoSchema> = (
+  review: Review
+): WithContext<VideoSchema> => {
+  const schema: WithContext<VideoSchema> = {
+    '@context': 'https://schema.org',
+    '@type': 'VideoObject',
+  };
+
+  if (review.user && review.product) {
+    schema.name = `${review.product.brand.name} ${review.product.name} review by ${review.user.handle} - ${review.title}`;
+    schema.description = `${review.description}`;
+    schema.thumbnailUrl = review.thumbnail;
+    schema.uploadDate = new Date(review.created).toISOString();
+  }
+
+  if (review.videoType === VideoType.YOUTUBE) {
+    schema.embedUrl = review.videoURL;
+  } else {
+    schema.contentUrl = review.videoURL;
+  }
+
+  // @ToDo: Add InteractionStatistic when the type definitions are resolved.
+
+  return schema;
 }
 
 /**
@@ -141,7 +203,7 @@ const frontloadViewProduct = async (props: ViewProductProps) => {
   .then((response: ProductResponse) => {
     if (props.updateActive) {
       props.updateActive({
-        product: response.product
+        ...response
       });
     }
   })
@@ -167,7 +229,7 @@ const ViewProduct: React.FC<ViewProductProps> = (props: ViewProductProps) => {
   const {
     product,
     productStatus,
-    reviews
+    raveStream
   } = useRetrieveProductByURL({
     existing: props.productView ? props.productView : undefined,
     setProductView: props.updateActive,
@@ -176,6 +238,12 @@ const ViewProduct: React.FC<ViewProductProps> = (props: ViewProductProps) => {
 
   // Create a page viewed state to avoid duplicate views.
   const [pageViewed, setPageViewed] = React.useState<boolean>(false);
+
+  const schemas = [helmetJsonLdProp<ProductSchema>(buildProductSchema(product)(raveStream))];
+
+  raveStream.reviews.forEach((item: Review) => {
+    schemas.push(helmetJsonLdProp<VideoSchema>(buildVideoSchema({...item})));
+  });
 
   /**
    * Track the product page view.
@@ -210,22 +278,49 @@ const ViewProduct: React.FC<ViewProductProps> = (props: ViewProductProps) => {
 
   return (
     <Grid
-      className={clsx(classes.container)}
+      alignItems='flex-start'
       container
+      className={clsx(
+        classes.container, {
+          [classes.containerSwipe]: !largeScreen
+        }
+      )}
     >
-      {productStatus === ViewState.FOUND &&
-        <Grid item xs={12}>
-          {product._id &&
-            <React.Fragment>
-              <PageTitle title={`${product.brand.name} ${product.name}`} />
-              <Helmet>
-                <title>{product.brand.name} {product.name} - Ravebox</title>
-                <meta name='description' content={`Discover reviews for the ${product.brand.name} ${product.name} created and shared by users on Ravebox.`} />
-                <link rel='canonical' href={`https://ravebox.io/product/${product.url}`} />
-              </Helmet>
-            </React.Fragment>
-          }
-        </Grid>
+      {productStatus === ViewState.FOUND && product._id &&
+        <React.Fragment>
+          <Helmet
+            script={schemas}
+          >
+            <title>What users are saying about the {product.brand.name} {product.name} on Ravebox</title>
+            <meta name='description' content={`Watch ${product.brand.name} ${product.name} raves shared by users on Ravebox.`} />
+            <link rel='canonical' href={`https://ravebox.io${props.history.location.pathname}`} />
+            <title>What users are saying about the {product.brand.name} {product.name} on Ravebox</title>
+            <meta name='description' content={`Watch ${product.brand.name} ${product.name} raves shared by users on Ravebox.`} />
+            <link rel='canonical' href={`https://ravebox.io${props.history.location.pathname}`} />
+            <meta name='og:site_name' content={`Ravebox`} />
+            <meta name='og:title' content={`Everything you need to know about the ${product.brand.name} ${product.name} shared by users on Ravebox.`} />
+            <meta name='og:description' content={`Watch ${product.brand.name} ${product.name} video reviews shared by users on Ravebox.`} />
+            <meta name='og:image' content={product.images && product.images.length > 0 ? `${product.images[0].url}` : ''} />
+            <meta name='twitter:image' content={product.images && product.images.length > 0 ? `${product.images[0].url}` : ''} />
+            <meta name='og:url' content={`https://ravebox.io${props.history.location.pathname}`} />
+            <meta name='twitter:title' content={`Everything you need to know about the ${product.brand.name} ${product.name} shared by users on Ravebox.`} />
+            <meta name='twitter:description' content={`Watch ${product.brand.name} ${product.name} video reviews shared by users on Ravebox.`} />
+            <meta name='twitter:image:alt' content={`Preview image for the ${product.brand.name} ${product.name} shared on Ravebox`} />
+            <meta name='twitter:card' content={`summary_large_image`} />
+          </Helmet>
+          <Grid item xs={12} className={clsx(classes.productTitleContainer)}>
+            <ProductTitle
+              product={{...product}} 
+              variant='h1'
+            />
+          </Grid>
+          <Grid item xs={12}>
+            <ProductTabs
+              product={{...product}}
+              raveStream={raveStream}
+            />
+          </Grid>
+        </React.Fragment>
       }
     </Grid>
   );
@@ -239,8 +334,7 @@ const ViewProduct: React.FC<ViewProductProps> = (props: ViewProductProps) => {
 const mapDispatchToProps = (dispatch: Dispatch<AnyAction>) =>
   bindActionCreators(
     {
-      updateActive: updateActive,
-      updateListByCategory
+      updateActive: updateActive
     },
     dispatch
   );
@@ -249,14 +343,11 @@ const mapDispatchToProps = (dispatch: Dispatch<AnyAction>) =>
  * Mapping the state updates to the properties from redux.
  */
 const mapStateToProps = (state: any, ownProps: ViewProductProps) => {
-  // Retrieve the active category groups.
-  const categoryGroup: ReviewGroup | undefined = state.review ? state.review.listByCategory : undefined;
   // Retrieve the review from the active properties.
   const productView: ProductView = state.product ? state.product.active : undefined;
 
   return {
     ...ownProps,
-    categoryGroup,
     productView
   };
 };

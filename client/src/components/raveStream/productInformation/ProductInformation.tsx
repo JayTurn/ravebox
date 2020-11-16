@@ -43,7 +43,6 @@ import { Review } from '../../review/Review.interface';
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     container: {
-      paddingTop: theme.spacing(1),
     },
     cardContainer: {
       backgroundColor: theme.palette.background.default,
@@ -122,9 +121,10 @@ const ProductInformation: React.FC<ProductInformationProps> = (props: ProductInf
       }
       {productStream && productStream.reviews &&
         <SwipeCardHolder
+          overrideTitle
           reviews={productStream.reviews ? [...productStream.reviews] : []}
           streamType={RaveStreamType.PRODUCT} 
-          title={`${productStream.title}`}
+          title='Product Raves'
         />
       }
     </Grid>

@@ -60,7 +60,8 @@ const TagSchema = new Schema({
   },
   url: {
     type: String,
-    default: ''
+    default: '',
+    index: true
   }
 });
 

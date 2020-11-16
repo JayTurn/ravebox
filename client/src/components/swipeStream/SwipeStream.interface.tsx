@@ -21,6 +21,7 @@ import { Review } from '../review/Review.interface';
  */
 export interface SwipeStreamProps extends RouteComponentProps<RaveStreamURLParams> {
   activeIndex?: number;
+  backPath?: string;
   loading?: boolean;
   product?: Product;
   ravePath?: string;

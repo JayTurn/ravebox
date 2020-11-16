@@ -78,6 +78,26 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
       backgroundColor: `rgba(221,222,255,1)`
     }
   },
+  buttonPrimaryOutline: {
+    backgroundColor: theme.palette.common.white,
+    boxShadow: `inset 0 0 0 1px ${theme.palette.primary.main}`,
+    borderRadius: theme.shape.borderRadius,
+    color: theme.palette.primary.main,
+    display: 'block',
+    fontSize: '.875rem',
+    fontWeight: 700,
+    lineHeight: 1.75,
+    minWidth: 64,
+    padding: theme.spacing(1.25, 2),
+    textTransform: 'uppercase',
+    transition: theme.transitions.create('background-color', {
+      easing: theme.transitions.easing.sharp,
+      duration: theme.transitions.duration.short
+    }),
+    '&:hover': {
+      backgroundColor: `rgba(100,106,240,0.1)`
+    }
+  },
   buttonSecondary: {
     backgroundColor: theme.palette.secondary.main,
     borderRadius: theme.shape.borderRadius,
@@ -126,6 +146,13 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
       backgroundColor: `rgba(67,74,217, 0.05)`
     }
   },
+  small: {
+    fontSize: '.8125rem',
+    fontWeight: 600,
+    lineHeight: 1.75,
+    padding: '4px 9px',
+    minWidth: 'auto',
+  },
   standardPrimary: {
   }
 }));
@@ -169,9 +196,11 @@ const LinkElement: React.FC<LinkProps> = (props: LinkProps) => {
         classes.root, {
         [classes.buttonPrimary]: styleType === StyleType.BUTTON_PRIMARY,
         [classes.buttonPrimaryInverse]: styleType === StyleType.BUTTON_PRIMARY_INVERSE,
+        [classes.buttonPrimaryOutline]: styleType === StyleType.BUTTON_PRIMARY_OUTLINE,
         [classes.buttonSecondary]: styleType === StyleType.BUTTON_SECONDARY,
         [classes.buttonSecondaryInverse]: styleType === StyleType.BUTTON_SECONDARY_INVERSE,
-        [classes.searchResultItem]: styleType === StyleType.SEARCH_RESULT_ITEM
+        [classes.searchResultItem]: styleType === StyleType.SEARCH_RESULT_ITEM,
+        [classes.small]: props.size === 'small',
       })}
       color={props.color}
       component={({className, children}) => {

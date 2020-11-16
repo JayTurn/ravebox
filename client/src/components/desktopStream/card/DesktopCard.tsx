@@ -22,10 +22,13 @@ import { withRouter } from 'react-router';
 // Components.
 import CardUser from '../../raveStream/cardUser/CardUser';
 import DesktopCardVideo from '../cardVideo/DesktopCardVideo';
+import LinkElement from '../../elements/link/Link';
+import ProductTitle from '../../product/title/ProductTitle';
 import StyledButton from '../../elements/buttons/StyledButton';
 
 // Enumerators.
 import { RaveStreamType } from '../../raveStream/RaveStream.enum';
+import { StyleType } from '../../elements/link/Link.enum';
 
 // Interfaces.
 import { Review } from '../../review/Review.interface';
@@ -102,12 +105,12 @@ const DesktopCard: React.FC<DesktopCardProps> = (props: DesktopCardProps) => {
       {!props.hideProductTitles &&
         <Grid item xs={12} className={clsx(classes.productContainer)}>
           {review.product &&
-            <Typography variant='h3' className={clsx(classes.productTitle)}>
-              <Box component='span' className={clsx(classes.brandText)}>
-                {review.product.brand.name}
-              </Box>
-              {review.product.name}
-            </Typography>
+            <ProductTitle
+              linkTitle={true}
+              product={{...review.product}} 
+              size='small'
+              variant='h3'
+            />
           }
         </Grid>
       }
@@ -124,12 +127,12 @@ const DesktopCard: React.FC<DesktopCardProps> = (props: DesktopCardProps) => {
             <CardUser review={{...review}} />
           </Grid>
           <Grid item>
-            <StyledButton
+            <LinkElement
               className={clsx(classes.buttonElement)}
-              clickAction={handleNavigate}
-              color='primary'
+              title='Play rave'
+              path={`${path}`}
               size='small'
-              title='View rave'
+              styleType={StyleType.BUTTON_PRIMARY}
             />
           </Grid>
         </Grid>

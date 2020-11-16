@@ -16,7 +16,6 @@ import {
 } from '@material-ui/core/styles';
 import Grid from '@material-ui/core/Grid';
 import * as React from 'react';
-import SwipeableViews from 'react-swipeable-views';
 import Tab from '@material-ui/core/Tab';
 import Tabs from '@material-ui/core/Tabs';
 import Typography from '@material-ui/core/Typography';
@@ -85,10 +84,9 @@ const useStyles = makeStyles((theme: Theme) =>
       width: `300%`
     },
     tabPanelContainer: {
-      boxShadow: `inset 0px -1px 3px rgba(100,106,240,.25), inset 0px 1px 1px rgba(100,106,240,.15)`,
+      //boxShadow: `inset 0px -1px 3px rgba(100,106,240,.25), inset 0px 1px 1px rgba(100,106,240,.15)`,
       backgroundColor: `rgba(100,106,240, .1)`,
       overflow: 'hidden',
-      padding: theme.spacing(1, 0),
       position: 'relative',
       width: '100%'
     },
@@ -267,10 +265,12 @@ const StreamProductDetails: React.FC<StreamProductDetailsProps> = (props: Stream
       container
     >
       <Grid item xs={12}>
+        {/*
         <SwipeNavigation
           title={props.raveStream ? props.raveStream.title : ''}
           variant='colored'
         />
+        */}
         <Grid container>
           <Grid item xs={12} className={clsx(
             classes.paddedContent,

@@ -150,6 +150,7 @@ const LoadingRavebox: React.FC<LoadingRaveboxProps> = (props: LoadingRaveboxProp
     }
 
     if (!display && props.loading) {
+      setProgress(0);
       setDisplay(true);
     }
 
@@ -159,6 +160,7 @@ const LoadingRavebox: React.FC<LoadingRaveboxProps> = (props: LoadingRaveboxProp
           return;
         }
         setDisplay(false);
+        setProgress(0);
       }, 300);
     }
 
@@ -230,9 +232,8 @@ const LoadingRavebox: React.FC<LoadingRaveboxProps> = (props: LoadingRaveboxProp
  */
 function mapStatetoProps(state: any, ownProps: LoadingRaveboxProps) {
 
-  const loading: boolean = state.loading ? state.loading.loading : true;
+  const loading: boolean = state.loading ? state.loading.loading : false;
 
-  console.log('LOADING_STATE: ', loading);
   return {
     ...ownProps,
     loading

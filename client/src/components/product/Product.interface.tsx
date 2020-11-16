@@ -7,6 +7,7 @@
 import { Brand } from '../brand/Brand.interface';
 import { CategoryItem } from '../category/Category.interface';
 import { ImageAndTitle } from '../elements/image/Image.interface';
+import { RaveStream } from '../raveStream/RaveStream.interface';
 import { Review } from '../review/Review.interface';
 import { Tag } from '../tag/Tag.interface';
 
@@ -52,7 +53,7 @@ export interface RetrieveProductByURLParams {
  */
 export interface ProductResponse {
   product: Product;
-  reviews?: Array<Review>;
+  raveStream?: RaveStream;
 }
 
 /**
@@ -60,7 +61,7 @@ export interface ProductResponse {
  */
 export interface ProductView {
   product: Product;
-  reviews?: Array<Review>;
+  raveStream?: RaveStream;
 }
 
 export interface ProductByIdMatchParams {

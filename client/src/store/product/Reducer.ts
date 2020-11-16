@@ -29,8 +29,7 @@ import {
 import { emptyProduct } from '../../components/product/Product.common';
 
 const emptyProductView: ProductView = {
-  product: emptyProduct(),
-  reviews: []
+  product: emptyProduct()
 }
 
 /**
