@@ -186,7 +186,7 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
     //backgroundColor: 'rgba(245, 245, 245, 1)',
   },
   menuItemsContainer: {
-    height: '60vh',
+    height: '50vh',
     padding: theme.spacing(2)
   },
   disclaimerItemsContainer: {
