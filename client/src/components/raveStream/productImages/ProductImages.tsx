@@ -4,6 +4,7 @@
  */
 
 // Modules.
+import Backdrop from '@material-ui/core/Backdrop';
 import Box from '@material-ui/core/Box';
 import Card from '@material-ui/core/Card';
 import CardMedia from '@material-ui/core/CardMedia';
@@ -18,6 +19,9 @@ import {
 import Grid from '@material-ui/core/Grid';
 import Typography from '@material-ui/core/Typography';
 import * as React from 'react';
+
+// Components.
+import ProductImage from './ProductImage';
 
 // Interfaces.
 import { ImageAndTitle } from '../../elements/image/Image.interface';
@@ -78,17 +82,7 @@ const ProductImages: React.FC<ProductImagesProps> = (props: ProductImagesProps) 
           {props.images.map((productImage: ImageAndTitle) => {
             return (
               <Grid item xs={4} key={productImage.url}>
-                <Card 
-                  className={clsx(classes.cardContainer)}
-                  key={productImage.url}
-                  raised={false}
-                >
-                  <CardMedia
-                    className={clsx(classes.cardMedia)}
-                    image={productImage.url}
-                    title={productImage.title}
-                  />
-                </Card>
+                <ProductImage image={{...productImage}} />
               </Grid>
             );
           })}

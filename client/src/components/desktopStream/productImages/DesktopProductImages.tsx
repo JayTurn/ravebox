@@ -19,6 +19,9 @@ import Grid from '@material-ui/core/Grid';
 import Typography from '@material-ui/core/Typography';
 import * as React from 'react';
 
+// Components.
+import ProductImage from '../../raveStream/productImages/ProductImage';
+
 // Interfaces.
 import { ImageAndTitle } from '../../elements/image/Image.interface';
 import { DesktopProductImagesProps } from './DesktopProductImages.interface';
@@ -75,13 +78,7 @@ const DesktopProductImages: React.FC<DesktopProductImagesProps> = (props: Deskto
           {props.images.map((productImage: ImageAndTitle) => {
             return (
               <Grid item xs={props.xs || 6} md={props.md || 4} lg={props.lg || 3} key={productImage.url}>
-                <Card className={clsx(classes.cardContainer)} key={productImage.url}>
-                  <CardMedia
-                    className={clsx(classes.cardMedia)}
-                    image={productImage.url}
-                    title={productImage.title}
-                  />
-                </Card>
+                <ProductImage image={productImage} />
               </Grid>
             );
           })}
