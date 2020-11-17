@@ -7,6 +7,7 @@
 import Box from '@material-ui/core/Box';
 import Button from '@material-ui/core/Button';
 import clsx from 'clsx';
+import { connect } from 'react-redux';
 import {
   createStyles,
   makeStyles,
@@ -24,6 +25,7 @@ import { withRouter } from 'react-router';
 // Components.
 import CardUser from '../cardUser/CardUser';
 import PlaybackIcon from '../../elements/playbackIcon/PlaybackIcon';
+import RaveStreamMute from '../mute/RaveStreamMute';
 import StyledButton from '../../elements/buttons/StyledButton';
 
 // Enumerators.
@@ -49,6 +51,12 @@ const useStyles = makeStyles((theme: Theme) =>
       position: 'relative',
       width: 'calc(100% - 16px)'
     },
+    muteButton: {
+      bottom: theme.spacing(1),
+      left: theme.spacing(1),
+      opacity: 0,
+      position: 'absolute'
+    },
     overlay: {
       height: '100%',
       left: 0,
@@ -58,6 +66,9 @@ const useStyles = makeStyles((theme: Theme) =>
       zIndex: 3
     },
     player: {
+    },
+    showMute: {
+      opacity: .8
     },
     thumbnailContainer: {
       backgroundSize: 'cover',
@@ -92,6 +103,7 @@ const CardVideo: React.FC<CardVideoProps> = (props: CardVideoProps) => {
 
   const {
     active,
+    muted,
     review
   } = {...props};
 
@@ -119,7 +131,7 @@ const CardVideo: React.FC<CardVideoProps> = (props: CardVideoProps) => {
       }
     },
     height: 'calc(100vw * .75)',
-    muted: true,
+    muted: muted ? true : false,
     playing: props.active && props.playing,
     playsinline: true,
     url: '',
@@ -221,7 +233,13 @@ const CardVideo: React.FC<CardVideoProps> = (props: CardVideoProps) => {
         playing: false
       });
     }
-  }, [config.playing, props.active, unplayed])
+    if (props.active && muted !== config.muted) {
+      setConfig({
+        ...config,
+        muted: muted ? true : false
+      });
+    }
+  }, [config.playing, props.active, unplayed, muted])
 
   return (
     <Box className={clsx(classes.container)}>
@@ -235,6 +253,15 @@ const CardVideo: React.FC<CardVideoProps> = (props: CardVideoProps) => {
           playing={config.playing}
           unplayed={unplayed} 
         />
+        <Box
+          className={clsx(
+            classes.muteButton, {
+              [classes.showMute]: config.playing && !unplayed
+            }
+          )}
+        > 
+          <RaveStreamMute />
+        </Box>
       </Box>
       <Box
         className={clsx(classes.thumbnailContainer)}
@@ -266,4 +293,19 @@ const CardVideo: React.FC<CardVideoProps> = (props: CardVideoProps) => {
   );
 }
 
-export default withRouter(CardVideo);
+/**
+ * Mapping the state updates to the properties from redux.
+ */
+const mapStateToProps = (state: any, ownProps: CardVideoProps) => {
+  // Retrieve the video progress from the redux store.
+  const muted: boolean = state.video ? state.video.muted : true;
+
+  return {
+    ...ownProps,
+    muted,
+  };
+};
+
+export default withRouter(connect(
+  mapStateToProps
+)(CardVideo));

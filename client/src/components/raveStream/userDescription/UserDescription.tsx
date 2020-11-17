@@ -51,7 +51,7 @@ const useStyles = makeStyles((theme: Theme) =>
       textAlign: 'center'
     },
     container: {
-      padding: theme.spacing(2)
+      padding: theme.spacing(2),
     },
     contentContainer: {
       lineHeight: '1rem',
@@ -75,18 +75,11 @@ const useStyles = makeStyles((theme: Theme) =>
       textTransform: 'uppercase'
     },
     titleContainer: {
-      backgroundColor: theme.palette.secondary.dark,
-      borderRadius: 10,
-      display: 'inline-block',
       margin: theme.spacing(2, 2, 0),
-      padding: theme.spacing(0, 1)
     },
     title: {
-      color: theme.palette.common.white,
-      fontSize: '.75rem',
-      fontWeight: 700,
-      lineHeight: '1.5rem',
-      textTransform: 'uppercase'
+      fontSize: '1.1rem',
+      fontWeight: 800
     },
     leftAlign: {
       textAlign: 'left'
@@ -105,7 +98,7 @@ const UserDescription: React.FC<UserDescriptionProps> = (props: UserDescriptionP
   // Set an expanded state for the description content.
   const [expanded, setExpanded] = React.useState<boolean>(false);
 
-  const title: string = props.user && props.user.role !== Role.YOUTUBE
+  const title: string = props.user 
     ? `About ${props.user.handle}`
     : `About`;
 

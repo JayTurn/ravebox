@@ -53,6 +53,7 @@ const StyledTabsDesktop = withStyles(theme => ({
     backgroundColor: theme.palette.primary.main
   },
   root: {
+    backgroundColor: theme.palette.background.paper,
     boxShadow: `inset 0 -2px 0 rgba(100, 106, 240, .1)`
   }
 }))(Tabs);
