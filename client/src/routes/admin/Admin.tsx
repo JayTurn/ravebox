@@ -128,10 +128,11 @@ const Admin: React.FC<AdminProps> = (props: AdminProps) => {
         </Typography>
         <StyledDivider />
       </Grid>
-      <Grid item className={clsx(classes.padding)}>
+      <Grid item className={clsx(classes.padding)} xs={12}>
         <StyledTabs
+          scrollButtons='on'
           value={path}
-          variant={largeScreen ? 'standard' : 'fullWidth'}
+          variant={largeScreen ? 'standard' : 'scrollable'}
         >
           <Tab
             disableRipple

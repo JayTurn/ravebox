@@ -500,6 +500,7 @@ const AdminProductRow: React.FC<AdminProductRowProps> = (props: AdminProductRowP
                     name='description'
                     required={false}
                     rows={4}
+                    rowsMax={30}
                     type='text'
                     title="Product description"
                   />

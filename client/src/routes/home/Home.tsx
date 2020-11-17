@@ -269,7 +269,7 @@ const Home: React.FC<HomeProps> = (props: HomeProps) => {
                 }
               )}
             >
-              Where it's ok to talk about products.
+              A new home for product conversations.
             </Typography>
           </Grid>
           {/*
