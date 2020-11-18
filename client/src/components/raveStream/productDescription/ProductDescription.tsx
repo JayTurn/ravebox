@@ -47,11 +47,10 @@ const useStyles = makeStyles((theme: Theme) =>
       }
     },
     buyButtonContainer: {
-      margin: theme.spacing(2, 0),
-      textAlign: 'center'
+      margin: theme.spacing(2, 2, 0),
     },
     container: {
-      padding: theme.spacing(2)
+      padding: theme.spacing(0, 2)
     },
     contentContainer: {
       lineHeight: '1rem',
@@ -62,34 +61,39 @@ const useStyles = makeStyles((theme: Theme) =>
       whiteSpace: 'normal',
       overflow: 'hidden',
     },
+    helperText: {
+      fontSize: '.7rem',
+      margin: theme.spacing(2, 0),
+    },
+    paddedContainer: {
+      padding: theme.spacing(0, 2)
+    },
     linkInfoContainer: {
       marginTop: theme.spacing(1),
       padding: theme.spacing(0, 2)
     },
     paragraph: {
       fontSize: '1rem',
-      marginBottom: theme.spacing(1),
+      marginTop: theme.spacing(2),
+    },
+    promoCode: {
+      fontSize: '1rem',
+      fontWeight: 700,
+      marginTop: theme.spacing(1)
     },
     showMoreLink: {
       fontSize: '.8rem',
       fontWeight: 500,
-      margin: theme.spacing(0, 0, 2),
+      margin: theme.spacing(2, 0, 3),
       textAlign: 'center',
       textTransform: 'uppercase'
     },
     titleContainer: {
-      backgroundColor: theme.palette.secondary.dark,
-      borderRadius: 10,
-      display: 'inline-block',
       margin: theme.spacing(2, 2, 0),
-      padding: theme.spacing(0, 1)
     },
     title: {
-      color: theme.palette.common.white,
-      fontSize: '.75rem',
-      fontWeight: 700,
-      lineHeight: '1.5rem',
-      textTransform: 'uppercase'
+      fontSize: '1.1rem',
+      fontWeight: 800
     }
   })
 );
@@ -105,11 +109,11 @@ const ProductDescription: React.FC<ProductDescriptionProps> = (props: ProductDes
   // Set an expanded state for the description content.
   const [expanded, setExpanded] = React.useState<boolean>(false);
 
-  const title: string = props.user && props.user.role !== Role.YOUTUBE
+  const title: string = props.user
     ? `What ${props.user.handle} says`
     : `What they say`;
 
-  const user: string = props.user && props.user.role !== Role.YOUTUBE
+  const user: string = props.user
     ? props.user.handle
     : 'the user';
 
@@ -170,13 +174,18 @@ const ProductDescription: React.FC<ProductDescriptionProps> = (props: ProductDes
       }
       {reviewLink && reviewLink.path &&
         <React.Fragment>
+          <Grid item xs={12}>
+            <Box className={clsx(classes.titleContainer)}>
+              <Typography variant='body1' className={clsx(classes.title)}>
+                Where to buy
+              </Typography>
+            </Box>
+          </Grid>
           {reviewLink.code &&
-            <Grid item xs={12}>
-              <Box className={clsx(classes.titleContainer)}>
-                <Typography variant='body1' className={clsx(classes.title)}>
-                  Promo from {user}
-                </Typography>
-              </Box>
+            <Grid item xs={12} className={clsx(classes.paddedContainer)}>
+              <Typography variant='body1' className={clsx(classes.promoCode)}>
+                PROMO CODE: {reviewLink.code}
+              </Typography>
             </Grid>
           }
           {reviewLink.info &&
@@ -199,12 +208,20 @@ const ProductDescription: React.FC<ProductDescriptionProps> = (props: ProductDes
           }
           <Grid item xs={12} className={clsx(classes.buyButtonContainer)}>
             <Link
-              className={clsx(classes.buyButton)}
               href={`https://${reviewLink.path}`} 
               target='_blank'
             >
-              Buy
+              {`https://${reviewLink.path}`}
             </Link>
+          </Grid>
+          <Grid item xs={12} className={clsx(classes.paddedContainer)}>
+            <Typography
+              className={clsx(classes.helperText)}
+              component='p'
+              variant='body1' 
+            >
+              *The above link has been provided by {user} and is not affiliated with Ravebox
+            </Typography>
           </Grid>
         </React.Fragment>
       }

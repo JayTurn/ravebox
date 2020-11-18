@@ -142,7 +142,7 @@ const DesktopSimilarTab: React.FC<DesktopSimilarTabProps> = (props: DesktopSimil
               key={index}
             >
               <DesktopCardHolder
-                lg={4}
+                lg={5}
                 md={6}
                 sm={12}
                 hideProductTitles={false}

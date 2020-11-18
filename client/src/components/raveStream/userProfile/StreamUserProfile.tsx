@@ -16,6 +16,7 @@ import {
 } from '@material-ui/core/styles';
 import Grid from '@material-ui/core/Grid';
 import { NavLink } from 'react-router-dom';
+import { Link as ReactLink } from 'react-router-dom';
 import * as React from 'react';
 import Typography from '@material-ui/core/Typography';
 import useMediaQuery from '@material-ui/core/useMediaQuery';
@@ -129,6 +130,10 @@ const useStyles = makeStyles((theme: Theme) =>
     userContainerSmall: {
       marginLeft: theme.spacing(2)
     },
+    userLink: {
+      color: 'inherit',
+      textDecoration: 'none'
+    },
     userStatisticsText: {
       textTransform: 'uppercase'
     },
@@ -228,84 +233,90 @@ const StreamUserProfile: React.FC<StreamUserProfileProps> = (props: StreamUserPr
       direction='row'
     >
       <Grid item xs={12}>
-        <Grid
-          alignItems='center'
-          container
-          style={{flexWrap: 'nowrap', maxWidth: '100%'}}
+        <ReactLink
+          className={clsx(classes.userLink)}
+          to={`/user/channel/${props.user.handle}`}
+          title={`Visit the profile of ${props.user.handle}`}
         >
-          <Grid item>
-            {avatar ? (
-              <Avatar
-                alt={props.user.handle}
-                className={clsx(
-                  classes.avatar, {
-                    [classes.avatarLargeSize]: props.variant === 'large',
-                    [classes.avatarSideSize]: props.variant === 'side',
-                    [classes.avatarSmallSize]: props.variant === 'small'
-                  }
-                )}
-                src={avatar}
-              />
-            ) : (
-              <Avatar
-                alt={props.user.handle}
-                className={clsx(
-                  classes.avatarIcon, {
-                    [classes.avatarLargeSize]: props.variant === 'large',
-                    [classes.avatarSideSize]: props.variant === 'side',
-                    [classes.avatarSmallSize]: props.variant === 'small'
-                  }
-                )}
-              >
-                {firstLetter}
-              </Avatar>
-            )}
-          </Grid>
-          <Grid item 
-            className={clsx(
-              classes.userContainer, {
-                [classes.userContainerLarge]: props.variant === 'large',
-                [classes.userContainerSide]: props.variant === 'side',
-                [classes.userContainerSmall]: props.variant === 'small'
-              }
-            )}
+          <Grid
+            alignItems='center'
+            container
+            style={{flexWrap: 'nowrap', maxWidth: '100%'}}
           >
-            <Typography variant='body2' className={clsx(
-              classes.handleText, {
-                [classes.handleLarge]: props.variant === 'large',
-                [classes.handleSide]: props.variant === 'side',
-                [classes.handleSmall]: props.variant === 'small'
-              }
-            )}>
-              {props.user.handle}
-            </Typography>
-            {props.user.role === Role.YOUTUBE ? (
+            <Grid item>
+              {avatar ? (
+                <Avatar
+                  alt={props.user.handle}
+                  className={clsx(
+                    classes.avatar, {
+                      [classes.avatarLargeSize]: props.variant === 'large',
+                      [classes.avatarSideSize]: props.variant === 'side',
+                      [classes.avatarSmallSize]: props.variant === 'small'
+                    }
+                  )}
+                  src={avatar}
+                />
+              ) : (
+                <Avatar
+                  alt={props.user.handle}
+                  className={clsx(
+                    classes.avatarIcon, {
+                      [classes.avatarLargeSize]: props.variant === 'large',
+                      [classes.avatarSideSize]: props.variant === 'side',
+                      [classes.avatarSmallSize]: props.variant === 'small'
+                    }
+                  )}
+                >
+                  {firstLetter}
+                </Avatar>
+              )}
+            </Grid>
+            <Grid item 
+              className={clsx(
+                classes.userContainer, {
+                  [classes.userContainerLarge]: props.variant === 'large',
+                  [classes.userContainerSide]: props.variant === 'side',
+                  [classes.userContainerSmall]: props.variant === 'small'
+                }
+              )}
+            >
               <Typography variant='body2' className={clsx(
-                classes.userYTText, {
-                  [classes.ytLarge]: props.variant === 'large',
-                  [classes.ytSide]: props.variant === 'side',
-                  [classes.ytSmall]: props.variant === 'small'
+                classes.handleText, {
+                  [classes.handleLarge]: props.variant === 'large',
+                  [classes.handleSide]: props.variant === 'side',
+                  [classes.handleSmall]: props.variant === 'small'
                 }
               )}>
-                (via YouTube)
+                {props.user.handle}
               </Typography>
-            ) : (
-              <React.Fragment>
-                {props.user.statistics &&
-                  <Typography variant='body2' className={clsx(
-                    classes.userStatisticsText, {
-                      [classes.statisticsLarge]: props.variant === 'large',
-                      [classes.statisticsSide]: props.variant === 'side',
-                      [classes.statisticsSmall]: props.variant === 'small'
-                    }
-                  )}>
-                    {statisticsText}
-                  </Typography>
-                }
-              </React.Fragment>
-            )}
+              {props.user.role === Role.YOUTUBE ? (
+                <Typography variant='body2' className={clsx(
+                  classes.userYTText, {
+                    [classes.ytLarge]: props.variant === 'large',
+                    [classes.ytSide]: props.variant === 'side',
+                    [classes.ytSmall]: props.variant === 'small'
+                  }
+                )}>
+                  (via YouTube)
+                </Typography>
+              ) : (
+                <React.Fragment>
+                  {props.user.statistics &&
+                    <Typography variant='body2' className={clsx(
+                      classes.userStatisticsText, {
+                        [classes.statisticsLarge]: props.variant === 'large',
+                        [classes.statisticsSide]: props.variant === 'side',
+                        [classes.statisticsSmall]: props.variant === 'small'
+                      }
+                    )}>
+                      {statisticsText}
+                    </Typography>
+                  }
+                </React.Fragment>
+              )}
+            </Grid>
           </Grid>
-        </Grid>
+        </ReactLink>
       </Grid>
       {props.showFollow &&
         <Grid item xs={12} className={clsx(classes.followContainer)}>

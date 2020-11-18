@@ -150,7 +150,7 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
     fontSize: '.8125rem',
     fontWeight: 600,
     lineHeight: 1.75,
-    padding: '4px 9px',
+    padding: '7px 9px',
     minWidth: 'auto',
   },
   standardPrimary: {

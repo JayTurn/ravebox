@@ -17,6 +17,7 @@ import { Review } from '../../review/Review.interface';
  */
 export interface CardVideoProps extends RouteComponentProps {
   active: boolean;
+  muted?: boolean;
   playing: boolean;
   review: Review;
   url: string;

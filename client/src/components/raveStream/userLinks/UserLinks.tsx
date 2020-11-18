@@ -43,7 +43,7 @@ import { getExternalLinkPath } from '../../user/User.common';
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     linkContainer: {
-      margin: theme.spacing(2, 0),
+      margin: theme.spacing(1, 0, 2),
       padding: theme.spacing(0, 2)
     },
     linkItem: {
@@ -56,16 +56,9 @@ const useStyles = makeStyles((theme: Theme) =>
       margin: theme.spacing(2, 2, 0),
     },
     title: {
-      backgroundColor: theme.palette.secondary.dark,
-      borderRadius: 10,
-      color: theme.palette.common.white,
       display: 'inline',
-      fontSize: '.75rem',
-      fontWeight: 700,
-      lineHeight: '1.5rem',
-      padding: theme.spacing(.75, 1),
-      textAlign: 'center',
-      textTransform: 'uppercase'
+      fontSize: '1.1rem',
+      fontWeight: 800
     },
     alignCenter: {
       marginLeft: 'auto',
