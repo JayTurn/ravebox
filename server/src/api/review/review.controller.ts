@@ -677,6 +677,25 @@ export default class ReviewController {
     .populate({
       path: 'product',
       model: 'Product',
+      populate: [{
+        path: 'brand',
+        model: 'Brand'
+      }, {
+        path: 'productType',
+        model: 'Tag'
+      }]
+    })
+    .populate({
+      path: 'statistics',
+      model: 'ReviewStatistic' 
+    })
+    .populate({
+      path: 'user',
+      model: 'User',
+      populate: [{
+        path: 'statistics',
+        model: 'UserStatistic'
+      }]
     })
     .then((reviewDocument: ReviewDocument) => {
       return {

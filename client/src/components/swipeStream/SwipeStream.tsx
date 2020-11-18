@@ -395,7 +395,7 @@ const SwipeStream: React.FC<SwipeStreamProps> = (props: SwipeStreamProps) => {
           <meta name='twitter:card' content={`summary_large_image`} />
         </Helmet>
       }
-      <LoadingRavebox title={`Loading stream`} />
+      <LoadingRavebox title={`Loading rave`} />
       {props.raveStream && props.raveStream.reviews && props.raveStream.reviews.length > 0 &&
         <SwipeVideoController
           showing={swipeView}

@@ -103,7 +103,7 @@ const EditReview: React.FC<EditReviewProps> = (props: EditReviewProps) => {
         <React.Fragment>
           {review.product &&
             <Helmet>
-              <title>Edit your {review.product.brand} {review.product.name} review - Ravebox</title>
+              <title>Edit your {review.product.brand.name} {review.product.name} review - Ravebox</title>
               <link rel='canonical' href='https://ravebox.io/about' />
             </Helmet>
           }
