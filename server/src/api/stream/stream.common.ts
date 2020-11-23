@@ -127,7 +127,7 @@ export default class StreamCommon {
         });
 
         i++;
-      } while (i < streamListItems.length);
+      } while (i < tags.length);
 
       return StreamCommon.RetrieveStreamListItems(streamListItems);
 
