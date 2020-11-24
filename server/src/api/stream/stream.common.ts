@@ -282,6 +282,9 @@ export default class StreamCommon {
               path: 'statistics',
               model: 'UserStatistic'
             }]
+          })
+          .sort({
+            score: -1
           });
         }
 
@@ -312,6 +315,9 @@ export default class StreamCommon {
               path: 'statistics',
               model: 'UserStatistic'
             }]
+          })
+          .sort({
+            score: -1
           });
         }
 
@@ -417,6 +423,9 @@ export default class StreamCommon {
             path: 'statistics',
             model: 'UserStatistic'
           }]
+        })
+        .sort({
+          score: -1
         });
       })
       .then((reviewDocuments: Array<ReviewDocument>) => {
@@ -575,6 +584,9 @@ export default class StreamCommon {
             path: 'statistics',
             model: 'UserStatistic'
           }]
+        })
+        .sort({
+          score: -1
         });
       })
       .then((reviewDocuments: Array<ReviewDocument>) => {
@@ -676,6 +688,9 @@ export default class StreamCommon {
             path: 'statistics',
             model: 'UserStatistic'
           }]
+        })
+        .sort({
+          score: -1
         });
       })
       .then((reviewDocuments: Array<ReviewDocument>) => {
@@ -757,6 +772,9 @@ export default class StreamCommon {
             path: 'statistics',
             model: 'UserStatistic'
           }]
+        })
+        .sort({
+          score: -1
         });
       })
       .then((reviewDocuments: Array<ReviewDocument>) => {
