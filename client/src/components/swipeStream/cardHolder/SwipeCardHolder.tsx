@@ -279,7 +279,7 @@ const SwipeCardHolder: React.FC<SwipeCardHolderProps> = (
         <React.Fragment>
           <Grid item xs={12}
             className={classes.cardsContainer}
-            style={{paddingTop: streamType === RaveStreamType.PRODUCT ? `calc(82.5% + 40px)` : `calc(82.5% + 85px)`}}
+            style={{paddingTop: streamType === RaveStreamType.PRODUCT ? `calc(82.5% + 40px)` : `calc(82.5% + 108px)`}}
           >
             <Box {...swipeableHandlers}>
               {props.reviews.map((review: Review, index: number) => (

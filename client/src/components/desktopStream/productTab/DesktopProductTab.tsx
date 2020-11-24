@@ -147,7 +147,7 @@ const DesktopProductTab: React.FC<DesktopProductTabProps> = (props: DesktopProdu
         <Grid item xs={12} className={clsx(classes.raveContainer)}>
           <DesktopCardHolder
             hideProductTitles={true}
-            lg={4}
+            lg={6}
             md={6}
             sm={12}
             hideStreamTag={true}

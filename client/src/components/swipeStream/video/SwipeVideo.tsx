@@ -204,7 +204,7 @@ const SwipeVideo: React.FC<SwipeVideoProps> = (props: SwipeVideoProps) => {
   ) => void = (
   ): void => {
     props.nextVideo();
-  }
+  };
 
   /**
    * Handles video buffering.

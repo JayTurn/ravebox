@@ -53,8 +53,14 @@ const useStyles = makeStyles((theme: Theme) =>
         //borderRadius: 20
       }
     },
+    cardUser: {
+    },
     container: {
-      width: '100%'
+      width: '100%',
+      margin: theme.spacing(1.5, 0)
+    },
+    playButtonContainer: {
+      flexShrink: 0
     },
     productContainer: {
       padding: theme.spacing(0, 2, 1)
@@ -65,6 +71,9 @@ const useStyles = makeStyles((theme: Theme) =>
     },
     userContainer: {
       padding: theme.spacing(1, 2)
+    },
+    userDetails: {
+      flexWrap: 'nowrap'
     },
     videoContainer: {
       padding: theme.spacing(1, 2)
@@ -122,11 +131,13 @@ const DesktopCard: React.FC<DesktopCardProps> = (props: DesktopCardProps) => {
         }
       </Grid>
       <Grid item xs={12} className={clsx(classes.userContainer)}>
-        <Grid container justify='space-between' alignItems='center'>
-          <Grid item>
+        <Grid container justify='space-between' alignItems='center' 
+          className={clsx(classes.userDetails)}
+        >
+          <Grid item className={clsx(classes.cardUser)}>
             <CardUser review={{...review}} />
           </Grid>
-          <Grid item>
+          <Grid item className={clsx(classes.playButtonContainer)}>
             <LinkElement
               className={clsx(classes.buttonElement)}
               title='Play rave'

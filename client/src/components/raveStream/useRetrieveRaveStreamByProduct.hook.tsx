@@ -86,7 +86,7 @@ export function useRetrieveRaveStreamByProduct(
   React.useEffect(() => {
     // If we haven't performed a request continue.
     if (retrieved === RetrievalStatus.REQUESTED && product && productId) {
-      if (isMounted) {
+      if (isMounted.current) {
         // Update the retrieval status to avoid subsequent requests.
         setRetrieved(RetrievalStatus.WAITING);
       }
@@ -99,25 +99,25 @@ export function useRetrieveRaveStreamByProduct(
         // If we have a rave stream, set rave stream the in the redux store and the
         // local state.
         if (response.raveStream) {
-          if (isMounted) {
+          if (isMounted.current) {
             setRetrieved(RetrievalStatus.SUCCESS);
             setProductStream(response.raveStream);
           }
         } else {
-          if (isMounted) {
+          if (isMounted.current) {
             setRetrieved(RetrievalStatus.NOT_FOUND);
             setProductStream(null);
           }
         }
       })
       .catch((error: Error) => {
-        if (isMounted) {
+        if (isMounted.current) {
           setRetrieved(RetrievalStatus.FAILED);
           setProductStream(null);
         }
       });
     }
-  }, [retrieved, isMounted]);
+  }, [product, productId, retrieved, isMounted]);
 
   return {
     productStream,
