@@ -56,6 +56,9 @@ const useStyles = makeStyles((theme: Theme) =>
     },
     cardContainer: {
     },
+    cardUserDetails: {
+      padding: theme.spacing(.5, 0)
+    },
     container: {
       position: 'absolute',
       transition: 'transform 300ms ease-in-out',
@@ -63,7 +66,7 @@ const useStyles = makeStyles((theme: Theme) =>
       width: '100%'
     },
     productContainer: {
-      padding: theme.spacing(0, 2, 1)
+      padding: theme.spacing(1, 2, 2)
     },
     productLink: {
       color: 'inherit',
@@ -163,7 +166,9 @@ const SwipeCard: React.FC<SwipeCardProps> = (props: SwipeCardProps) => {
           />  
         </Grid>
         <Grid item xs={12} className={clsx(classes.userContainer)}>
-          <Grid container justify='space-between' alignItems='center'>
+          <Grid container justify='space-between' alignItems='center'
+            className={clsx(classes.cardUserDetails)}
+          >
             <Grid item>
               <CardUser review={{...review}} />
             </Grid>

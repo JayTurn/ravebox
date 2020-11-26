@@ -26,6 +26,7 @@ import * as React from 'react';
 import ProductDescription from '../../raveStream/productDescription/ProductDescription';
 import DesktopCardHolder from '../cardHolder/DesktopCardHolder';
 import StreamUserProfile from '../../raveStream/userProfile/StreamUserProfile';
+import UserProductLinks from '../../raveStream/userProductLinks/UserProductLinks';
 
 // Enumerators.
 import { RaveStreamType } from '../../raveStream/RaveStream.enum';
@@ -149,10 +150,15 @@ const DesktopRaveTab: React.FC<DesktopRaveTabProps> = (props: DesktopRaveTabProp
             )}>
                 <ProductDescription
                   description={props.review.description} 
-                  reviewLinks={props.review.links}
                   updateHeight={handleHeightUpdate}
                   user={props.review.user}
-                />  
+                /> 
+                {props.review.links && props.review.links.length > 0 &&
+                  <UserProductLinks
+                    reviewLinks={props.review.links}
+                    user={props.review.user}
+                  />
+                }
             </Grid>
           }
           {/*

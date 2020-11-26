@@ -78,7 +78,7 @@ const useStyles = makeStyles((theme: Theme) =>
       margin: theme.spacing(2, 2, 0),
     },
     title: {
-      fontSize: '1.1rem',
+      fontSize: '1.2rem',
       fontWeight: 800
     },
     leftAlign: {

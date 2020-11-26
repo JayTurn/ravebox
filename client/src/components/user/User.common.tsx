@@ -71,31 +71,31 @@ export const getExternalLinkPath: (
   let path: string = 'https://';
   switch (linkType) {
     case UserLinkType.FACEBOOK:
-      path += 'facebook.com/' 
+      path += 'facebook.com/';
       break;
     case UserLinkType.INSTAGRAM:
-      path += 'instagram.com/' 
+      path += 'instagram.com/';
       break;
     case UserLinkType.LINKEDIN:
-      path += 'linkedin.com/in/' 
+      path += 'linkedin.com/in/'; 
       break;
     case UserLinkType.PINTEREST:
-      path += 'pinterest.com/' 
+      path += 'pinterest.com/'; 
       break;
     case UserLinkType.TIKTOK:
-      path += 'tiktok.com/@' 
+      path += 'tiktok.com/@';
       break;
     case UserLinkType.TWITTER:
-      path += 'twitter.com/' 
+      path += 'twitter.com/';
       break;
     case UserLinkType.YOUTUBE:
-      path += 'youtube.com/channel/' 
+      path += 'youtube.com/c/'; 
       break;
     default:
   }
 
   return path;
-}
+};
 
 /**
  * Formats the display of the user statistics.

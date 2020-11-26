@@ -1,6 +1,6 @@
 /**
- * ProductDescription.tsx
- * Product images component.
+ * UserProductLinks.tsx
+ * User product links.
  */
 
 // Modules.
@@ -23,7 +23,7 @@ import * as React from 'react';
 import { Role } from '../../user/User.enum';
 
 // Interfaces.
-import { ProductDescriptionProps } from './ProductDescription.interface';
+import { UserProductLinksProps } from './UserProductLinks.interface';
 import { ReviewLink } from '../../review/Review.interface';
 
 /**
@@ -31,18 +31,9 @@ import { ReviewLink } from '../../review/Review.interface';
  */
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
-    buyButton: {
-      backgroundColor: theme.palette.primary.main,
-      borderRadius: 6,
-      color: theme.palette.common.white,
-      display: 'inline-block',
-      fontSize: '.9rem',
-      fontWeight: 600,
-      padding: theme.spacing(1, 3),
-      textTransform: 'uppercase',
-      '&:hover': {
-        textDecoration: 'none'
-      }
+    buyLink: {
+      fontSize: '1rem',
+      wordBreak: 'break-all'
     },
     buyButtonContainer: {
       margin: theme.spacing(2, 2, 0),
@@ -99,7 +90,7 @@ const useStyles = makeStyles((theme: Theme) =>
 /**
  * Renders the product images.
  */
-const ProductDescription: React.FC<ProductDescriptionProps> = (props: ProductDescriptionProps) => {
+const UserProductLinks: React.FC<UserProductLinksProps> = (props: UserProductLinksProps) => {
   // Define the component classes.
   const classes = useStyles(),
         theme = useTheme();
@@ -107,46 +98,34 @@ const ProductDescription: React.FC<ProductDescriptionProps> = (props: ProductDes
   // Set an expanded state for the description content.
   const [expanded, setExpanded] = React.useState<boolean>(false);
 
-  const title: string = props.user
-    ? `What ${props.user.handle} says`
-    : `What they say`;
-
   const user: string = props.user
     ? props.user.handle
     : 'the user';
-  
-  /**
-   * Handles switching between full and short text.
-   */
-  const handleExpansion: (
-  ) => void = (
-  ): void => {
-    setExpanded(!expanded);
-    setTimeout(() => {
-      props.updateHeight();
-    }, 0);
-  }
+
+  const reviewLink: ReviewLink | null = props.reviewLinks && props.reviewLinks.length > 0
+    ? props.reviewLinks[0] : null;
 
   return (
     <Grid container>
-      {props.description &&
+      {reviewLink && reviewLink.path &&
         <React.Fragment>
           <Grid item xs={12}>
             <Box className={clsx(classes.titleContainer)}>
               <Typography variant='body1' className={clsx(classes.title)}>
-                {title}
+                Where to buy
               </Typography>
             </Box>
           </Grid>
-          <Grid item xs={12} className={clsx(classes.container)}>
-            <Box
-              className={clsx(
-                classes.contentContainer, {
-                  [classes.contentContainerSmall]: !expanded
-                }
-              )}
-            >
-              {props.description.split('\n').map((item: string, index: number) => {
+          {reviewLink.code &&
+            <Grid item xs={12} className={clsx(classes.paddedContainer)}>
+              <Typography variant='body1' className={clsx(classes.promoCode)}>
+                PROMO CODE: {reviewLink.code}
+              </Typography>
+            </Grid>
+          }
+          {reviewLink.info &&
+            <Grid item xs={12} className={clsx(classes.linkInfoContainer)}>
+              {reviewLink.info.split('\n').map((item: string, index: number) => {
                 if (item) {
                   return (
                     <Typography
@@ -160,10 +139,25 @@ const ProductDescription: React.FC<ProductDescriptionProps> = (props: ProductDes
                   );
                 }
               })}
-            </Box>
+            </Grid>
+          }
+          <Grid item xs={12} className={clsx(classes.buyButtonContainer)}>
+            <Link
+              className={clsx(classes.buyLink)}
+              href={`https://${reviewLink.path}`} 
+              target='_blank'
+            >
+              {`https://${reviewLink.path}`}
+            </Link>
           </Grid>
-          <Grid item xs={12} className={clsx(classes.showMoreLink)}>
-            <Link onClick={handleExpansion}>{expanded ? 'Show less' : 'Show more'}</Link>
+          <Grid item xs={12} className={clsx(classes.paddedContainer)}>
+            <Typography
+              className={clsx(classes.helperText)}
+              component='p'
+              variant='body1' 
+            >
+              *The above link has been provided by {user} and is not affiliated with Ravebox
+            </Typography>
           </Grid>
         </React.Fragment>
       }
@@ -171,4 +165,4 @@ const ProductDescription: React.FC<ProductDescriptionProps> = (props: ProductDes
   );
 };
 
-export default ProductDescription;
+export default UserProductLinks;

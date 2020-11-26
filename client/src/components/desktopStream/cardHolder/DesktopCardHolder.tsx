@@ -51,12 +51,12 @@ const useStyles = makeStyles((theme: Theme) =>
       fontWeight: 800
     },
     cardsContainer: {
-      margin: theme.spacing(1, 0)
+      margin: theme.spacing(0)
     },
     container: {
       backgroundColor: theme.palette.background.default,
+      paddingTop: theme.spacing(2),
       position: 'relative',
-      padding: theme.spacing(3, 0)
     },
     productContainer: {
       margin: theme.spacing(.5, 0),
@@ -76,7 +76,6 @@ const useStyles = makeStyles((theme: Theme) =>
       padding: theme.spacing(0, 1)
     },
     streamTypeContainer: {
-      marginBottom: theme.spacing(1),
       padding: theme.spacing(0, 1)
     },
     streamTypeTitle: {

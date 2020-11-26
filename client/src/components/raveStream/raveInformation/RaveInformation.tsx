@@ -26,6 +26,7 @@ import * as React from 'react';
 import ProductDescription from '../productDescription/ProductDescription';
 import StreamUserProfile from '../userProfile/StreamUserProfile';
 import SwipeCardHolder from '../../swipeStream/cardHolder/SwipeCardHolder';
+import UserProductLinks from '../userProductLinks/UserProductLinks';
 
 // Enumerators.
 import { RaveStreamType } from '../RaveStream.enum';
@@ -166,8 +167,17 @@ const RaveInformation: React.FC<RaveInformationProps> = (props: RaveInformationP
             {props.review.description &&
               <ProductDescription
                 description={props.review.description} 
-                reviewLinks={props.review.links}
                 updateHeight={handleHeightUpdate}
+                user={props.review.user}
+              />  
+            }
+          </Grid>
+          <Grid item xs={12} className={clsx(
+            classes.cardContainer
+          )}>
+            {props.review.links && props.review.links.length > 0 &&
+              <UserProductLinks
+                reviewLinks={props.review.links}
                 user={props.review.user}
               />  
             }

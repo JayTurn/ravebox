@@ -56,6 +56,10 @@ const ReviewSchema = new Schema<ReviewDocument>({
   recommended: {
     type: Recommended
   },
+  score: {
+    type: Number,
+    default: 50
+  },
   statistics: {
     type: Schema.Types.ObjectId, 
     ref: 'ReviewStatistic'

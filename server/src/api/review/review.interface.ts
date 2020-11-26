@@ -45,6 +45,7 @@ export interface ReviewDocument extends Mongoose.Document {
   product: ProductDocument;
   published: Workflow;
   recommended: Recommended;
+  score: number;
   sponsored: Array<string>;
   statistics: ReviewStatisticsDocument;
   thumbnail: string;

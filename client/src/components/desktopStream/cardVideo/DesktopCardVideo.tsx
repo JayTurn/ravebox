@@ -182,7 +182,7 @@ const DesktopCardVideo: React.FC<DesktopCardVideoProps> = (props: DesktopCardVid
   const handleComplete: (
   ) => void = (
   ): void => {
-  }
+  };
 
   /**
    * Handles video buffering.
@@ -191,7 +191,7 @@ const DesktopCardVideo: React.FC<DesktopCardVideoProps> = (props: DesktopCardVid
   ) => void = (
   ): void => {
     setLoading(true);
-  }
+  };
 
   /**
    * Handles completion of video buffering.
@@ -200,7 +200,7 @@ const DesktopCardVideo: React.FC<DesktopCardVideoProps> = (props: DesktopCardVid
   ) => void = (
   ): void => {
     setLoading(false);
-  }
+  };
 
   /**
    * Handles playback.
@@ -230,7 +230,7 @@ const DesktopCardVideo: React.FC<DesktopCardVideoProps> = (props: DesktopCardVid
       });
     }
     setPlaying(!config.playing);
-  }
+  };
 
   /**
    * Handles the progress of video.
@@ -250,7 +250,7 @@ const DesktopCardVideo: React.FC<DesktopCardVideoProps> = (props: DesktopCardVid
         playedSeconds: state.playedSeconds
       });
     }
-  }
+  };
 
   /**
    * Handles the video when it is ready.
@@ -258,12 +258,25 @@ const DesktopCardVideo: React.FC<DesktopCardVideoProps> = (props: DesktopCardVid
   const handleReady: (
   ) => void = (
   ): void => {
+    if (playerRef) {
+      const current: Player | null = playerRef.current;
+
+      if (current) {
+        const pl: any = current.getInternalPlayer();
+
+        if (pl && pl.seekTo) {
+          pl.seekTo(props.review.startTime || 0, true);
+        }
+        
+      }
+    }
+
     setConfig({
       ...config,
       playing: true
     });
     setPlaying(true);
-  }
+  };
 
   /**
    * Handles the video when it is ready.
@@ -307,7 +320,7 @@ const DesktopCardVideo: React.FC<DesktopCardVideoProps> = (props: DesktopCardVid
   ): void => {
     setUnplayed(false);
     setLoading(false);
-  }
+  };
 
   /**
    * Update the playing state.

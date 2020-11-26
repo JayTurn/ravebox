@@ -189,7 +189,7 @@ const SwipeVideo: React.FC<SwipeVideoProps> = (props: SwipeVideoProps) => {
       forceHLS: true
     },
     height: height,
-    muted: props.muted ? true : false,
+    muted: false,
     playing: props.active && props.playing,
     playsinline: true,
     url: props.review.videoURL,
@@ -204,7 +204,7 @@ const SwipeVideo: React.FC<SwipeVideoProps> = (props: SwipeVideoProps) => {
   ) => void = (
   ): void => {
     props.nextVideo();
-  }
+  };
 
   /**
    * Handles video buffering.
@@ -268,14 +268,12 @@ const SwipeVideo: React.FC<SwipeVideoProps> = (props: SwipeVideoProps) => {
     if (playerRef) {
       const current: Player | null = playerRef.current;
 
+
       setReady(true);
 
       if (current) {
-        const pl: any = current.getInternalPlayer();
-
-        if (pl && pl.seekTo) {
-          pl.seekTo(props.review.startTime || 0, true);
-        }
+        current.seekTo(props.review.startTime || 0);
+        //const pl: any = current.getInternalPlayer();
 
         if (props.active && props.update) {
           // Reset the video progress.
@@ -294,10 +292,15 @@ const SwipeVideo: React.FC<SwipeVideoProps> = (props: SwipeVideoProps) => {
             ...config,
             playing: true
           });
+        } else {
+          setConfig({
+            ...config,
+            playing: false
+          });
         }
       }
     }
-  }
+  };
 
   /**
    * Handles the video when it is first played.
@@ -307,7 +310,20 @@ const SwipeVideo: React.FC<SwipeVideoProps> = (props: SwipeVideoProps) => {
   ): void => {
     setUnplayed(false);
     setLoading(false);
-  }
+
+    if (playerRef) {
+      const current: Player | null = playerRef.current;
+
+      if (current) {
+        //current.seekTo(props.review.startTime || 0);
+        //const pl: any = current.getInternalPlayer();
+
+        //if (pl && pl.seekTo) {
+          //pl.seekTo(props.review.startTime || 0, true);
+        //}
+      }
+    }
+  };
 
   /**
    * Update the playing state.

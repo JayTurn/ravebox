@@ -73,18 +73,11 @@ const useStyles = makeStyles((theme: Theme) =>
       textTransform: 'uppercase'
     },
     titleContainer: {
-      backgroundColor: theme.palette.secondary.dark,
-      borderRadius: 10,
-      display: 'inline-block',
       margin: theme.spacing(2, 2, 0),
-      padding: theme.spacing(0, 1)
     },
     title: {
-      color: theme.palette.common.white,
-      fontSize: '.75rem',
-      fontWeight: 700,
-      lineHeight: '1.5rem',
-      textTransform: 'uppercase'
+      fontSize: '1.2rem',
+      fontWeight: 800
     }
   })
 );
@@ -158,7 +151,7 @@ const ProductSpecifications: React.FC<ProductSpecificationsProps> = (props: Prod
         <Grid item xs={12} className={clsx(classes.buyButtonContainer)}>
           <Link
             className={clsx(classes.buyButton)}
-            href={`https://${props.website}`} 
+            href={`https://${props.website}?utm_source=ravebox&utm_medium=rave`} 
             target='_blank'
           >
             Official website

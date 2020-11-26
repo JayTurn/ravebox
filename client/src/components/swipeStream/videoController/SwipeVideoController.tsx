@@ -182,6 +182,7 @@ const SwipeVideoController: React.FC<SwipeVideoControllerProps> = (props: SwipeV
             props.raveStream.reviews[props.activeIndex + 1].product || emptyProduct()
           );
           props.updateActiveIndex(props.activeIndex + 1);
+          setPlaying(true);
           setShowOverlay(false);
           handleOverlayDisplay();
         }
@@ -198,6 +199,7 @@ const SwipeVideoController: React.FC<SwipeVideoControllerProps> = (props: SwipeV
           props.updateProduct(
             props.raveStream.reviews[props.activeIndex - 1].product || emptyProduct()
           );
+          setPlaying(true);
           props.updateActiveIndex(props.activeIndex - 1);
           setShowOverlay(false);
           handleOverlayDisplay();

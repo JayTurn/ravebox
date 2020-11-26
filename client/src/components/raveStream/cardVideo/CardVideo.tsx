@@ -201,7 +201,7 @@ const CardVideo: React.FC<CardVideoProps> = (props: CardVideoProps) => {
   ) => void = (
   ): void => {
     setLoading(false);
-  }
+  };
 
   /**
    * Handles the video when it is ready.
@@ -209,18 +209,32 @@ const CardVideo: React.FC<CardVideoProps> = (props: CardVideoProps) => {
   const handleReady: (
   ) => void = (
   ): void => {
+
+    if (playerRef) {
+      const current: Player | null = playerRef.current;
+
+      if (current) {
+        const pl: any = current.getInternalPlayer();
+
+        if (pl && pl.seekTo) {
+          pl.seekTo(props.review.startTime || 0, true);
+        }
+        
+      }
+    }
+
     setConfig({
       ...config,
       playing: true
     });
-  }
+  };
 
   const handleStart: (
   ) => void = (
   ): void => {
     setUnplayed(false);
     setLoading(false);
-  }
+  };
 
   /**
    * Pause video playback when not the active video.
@@ -239,7 +253,7 @@ const CardVideo: React.FC<CardVideoProps> = (props: CardVideoProps) => {
         muted: muted ? true : false
       });
     }
-  }, [config.playing, props.active, unplayed, muted])
+  }, [config.playing, props.active, unplayed, muted]);
 
   return (
     <Box className={clsx(classes.container)}>
@@ -269,8 +283,7 @@ const CardVideo: React.FC<CardVideoProps> = (props: CardVideoProps) => {
           backgroundImage: `url(${review.thumbnail})`,
           opacity: unplayed ? 1 : 0
         }}
-      >
-      </Box>
+      />
       <Box
         className={clsx(classes.videoContainer)}
         style={{
