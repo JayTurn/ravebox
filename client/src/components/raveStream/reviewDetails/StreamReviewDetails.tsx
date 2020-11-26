@@ -142,15 +142,22 @@ const setVisibleTab: (
  * @return Array<TabMenuItem>
  */
 const buildTabMenuItems: (
+  tabCount: number
+) => (
   user?: PublicProfile
 ) => Array<TabMenuItem> = (
+  tabCount: number
+) => (
   user?: PublicProfile
 ): Array<TabMenuItem> => {
+  const menuItems: Array<TabMenuItem> = [];
 
-  const menuItems: Array<TabMenuItem> = [{
-    title: 'Raves',
-    id: 'raves'
-  }];
+  if (tabCount > 1) {
+    menuItems.push({
+      title: 'Raves',
+      id: 'raves'
+    });
+  }
 
   if (user && (user.about || (user.links && user.links.length > 0))) {
     menuItems.push({
@@ -160,7 +167,7 @@ const buildTabMenuItems: (
   }
 
   return menuItems;
-}
+};
 
 /**
  * Renders the video in the stream.
@@ -180,12 +187,11 @@ const StreamReviewDetails: React.FC<StreamReviewDetailsProps> = (props: StreamRe
 
   const [selectedTab, setSelectedTab] = React.useState<number>(0);
 
-
   const [tabHeight, setTabHeight] = React.useState<number>(0);
 
-  const tabMenuItems: Array<TabMenuItem> = buildTabMenuItems(user);
+  const [tabCount, setTabCount] = React.useState<number>(1);
 
-  const tabCount: number = tabMenuItems.length;
+  const [tabMenuItems, setTabMenuItems] = React.useState<Array<TabMenuItem>>(buildTabMenuItems(tabCount)(user));
 
   const [userId, setUserId] = React.useState<string>('');
 
@@ -205,7 +211,7 @@ const StreamReviewDetails: React.FC<StreamReviewDetailsProps> = (props: StreamRe
       return;
     }
     setSelectedTab(value);
-  }
+  };
 
   /**
    * Updates the table height.
@@ -218,7 +224,7 @@ const StreamReviewDetails: React.FC<StreamReviewDetailsProps> = (props: StreamRe
     value: number
   ): void => {
     setTabHeight(value);
-  }
+  };
 
   /**
    * Handles triggering a height update from a tab container because a child
@@ -228,7 +234,25 @@ const StreamReviewDetails: React.FC<StreamReviewDetailsProps> = (props: StreamRe
   ) => void = (
   ): void => {
     setTriggerUpdate(!triggerUpdate);
-  }
+  };
+
+  /**
+   * Handles updating the user tabs when rave streams have been found.
+   *
+   * @param { number } count - the number of rave streams found.
+   */
+  const handleTabUpdate: (
+    raveStreamCount: number
+  ) => void = (
+    raveStreamCount: number
+  ): void => {
+    if (raveStreamCount > 0) {
+      setTabCount(2);
+    } else {
+      setTabCount(1);
+    }
+    setTabMenuItems(buildTabMenuItems(tabCount)(user));
+  };
 
   /**
    * Update the height on the first load.
@@ -276,22 +300,25 @@ const StreamReviewDetails: React.FC<StreamReviewDetailsProps> = (props: StreamRe
                     width: `${100 * tabCount}%`
                   }}
                 >
-                  <div
-                    className={clsx(classes.tab)}
-                    style={{width: `${100 / tabCount}%`}}
-                  >
-                    <TabContainer
-                      activeIndex={selectedTab}
-                      index={0}
-                      updateHeight={handleTabHeightUpdate}
-                      toggleUpdate={triggerUpdate}
+                  {tabCount > 1 &&
+                    <div
+                      className={clsx(classes.tab)}
+                      style={{width: `${100 / tabCount}%`}}
                     >
-                      <UserRaves
-                        user={{...user}}
-                        updateHeight={handleToggleUpdate}
-                      />
-                    </TabContainer>
-                  </div>
+                      <TabContainer
+                        activeIndex={selectedTab}
+                        index={tabMenuItems.length - 2}
+                        updateHeight={handleTabHeightUpdate}
+                        toggleUpdate={triggerUpdate}
+                      >
+                        <UserRaves
+                          exclude={props.review._id}
+                          user={{...user}}
+                          updateHeight={handleToggleUpdate}
+                        />
+                      </TabContainer>
+                    </div>
+                  }
                   <div
                     className={clsx(classes.tab)}
                     style={{width: `${100 / tabCount}%`}}
@@ -299,7 +326,7 @@ const StreamReviewDetails: React.FC<StreamReviewDetailsProps> = (props: StreamRe
                     {user &&
                       <TabContainer
                         activeIndex={selectedTab}
-                        index={1}
+                        index={tabMenuItems.length - 1}
                         minDesktopHeight={500}
                         updateHeight={handleTabHeightUpdate}
                         toggleUpdate={triggerUpdate}

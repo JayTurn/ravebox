@@ -368,7 +368,7 @@ const SwipeVideoOverlay: React.FC<SwipeVideoOverlayProps> = (props: SwipeVideoOv
                 <Grid item className={clsx(classes.swipeContainer)} xs={12}>
                   <SwipeHelper
                     direction={SwipeDirection.DOWN}
-                    title='Swipe for details'
+                    title='Swipe down'
                   />
                 </Grid>
               </Grid>
@@ -389,7 +389,7 @@ const SwipeVideoOverlay: React.FC<SwipeVideoOverlayProps> = (props: SwipeVideoOv
                 <Grid item className={clsx(classes.swipeContainer)} xs={12}>
                   <SwipeHelper
                     direction={SwipeDirection.UP}
-                    title='Swipe for details'
+                    title='Swipe up'
                   />
                 </Grid>
               </Grid>

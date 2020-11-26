@@ -189,7 +189,7 @@ const SwipeVideo: React.FC<SwipeVideoProps> = (props: SwipeVideoProps) => {
       forceHLS: true
     },
     height: height,
-    muted: false,
+    muted: props.muted ? true : false,
     playing: props.active && props.playing,
     playsinline: true,
     url: props.review.videoURL,

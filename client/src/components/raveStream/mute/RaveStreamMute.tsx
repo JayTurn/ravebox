@@ -98,7 +98,7 @@ const RaveStreamMute: React.FC<RaveStreamMuteProps> = (props: RaveStreamMuteProp
       )}
     </IconButton>
   );
-}
+};
 
 /**
  * Map dispatch actions to properties on the stream.
@@ -117,7 +117,7 @@ const mapDispatchToProps = (dispatch: Dispatch<AnyAction>) =>
  * Mapping the state updates to the properties from redux.
  */
 const mapStateToProps = (state: any, ownProps: RaveStreamMuteProps) => {
-  const muted: boolean = state.video ? state.video.muted : true;
+  const muted: boolean = state.video ? state.video.muted : false;
 
   return {
     ...ownProps,

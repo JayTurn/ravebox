@@ -35,12 +35,11 @@ const useStyles = makeStyles((theme: Theme) =>
       transform: 'rotate(-90deg)'
     },
     icon: {
-      backgroundColor: `rgba(255,255,255,.1)`,
+      //backgroundColor: `rgba(255,255,255,.1)`,
       borderRadius: 12,
       color: `rgba(255,255,255,.8)`,
-      padding: '4px',
-      height: 24,
-      width: 24
+      height: 32,
+      width: 32 
     },
     iconContainer: {
       textAlign: 'center'
@@ -49,7 +48,6 @@ const useStyles = makeStyles((theme: Theme) =>
       color: `rgba(255,255,255,.8)`,
       fontWeight: 700,
       fontSize: '.8rem',
-      marginBottom: theme.spacing(.5),
       textAlign: 'center',
       textTransform: 'uppercase'
     }

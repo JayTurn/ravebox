@@ -459,7 +459,7 @@ const mapStateToProps = (state: any, ownProps: DesktopCardVideoProps) => {
   // Retrieve the video progress from the redux store.
   const activeId: string = state.video ? state.video.active : '',
         videoProgress: VideoProgress = state.video ? state.video.progress : undefined,
-        muted: boolean = state.video ? state.video.muted : true;
+        muted: boolean = state.video ? state.video.muted : false;
 
   return {
     ...ownProps,
