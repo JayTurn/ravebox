@@ -180,9 +180,6 @@ const SwipeStream: React.FC<SwipeStreamProps> = (props: SwipeStreamProps) => {
     ? screenfull as screenfull.Screenfull
     : null;
 
-  // Define the reference to the swipe container for full screen display.
-  const boxRef = React.useRef<Element>(null);
-
   const [fullscreen, setFullscreen] = React.useState<boolean>(false);
 
   const {
@@ -234,7 +231,7 @@ const SwipeStream: React.FC<SwipeStreamProps> = (props: SwipeStreamProps) => {
   * Intercept the back button to take us back to the stored back path.
   */
   React.useEffect(() => {
-    if (boxRef && !fullscreen && sf) {
+    if (!fullscreen && sf) {
       sf.request();
       setFullscreen(true);
     }
@@ -245,7 +242,7 @@ const SwipeStream: React.FC<SwipeStreamProps> = (props: SwipeStreamProps) => {
         setFullscreen(false);
       }
     }
-  }, [fullscreen, boxRef]);
+  }, [fullscreen]);
 
 
   /**
@@ -338,7 +335,7 @@ const SwipeStream: React.FC<SwipeStreamProps> = (props: SwipeStreamProps) => {
   }
 
   return (
-    <Box className={clsx(classes.container)} ref={boxRef}>
+    <Box className={clsx(classes.container)}>
       {props.raveStream && props.review && props.review.user && props.review.product &&
         <Helmet
           script={schemas}
