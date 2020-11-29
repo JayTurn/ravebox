@@ -12,44 +12,35 @@ import {
   createStyles,
   makeStyles,
   Theme,
-  useTheme,
-  withStyles
+  useTheme
 } from '@material-ui/core/styles';
-import Fade from '@material-ui/core/Fade';
-import Grid from '@material-ui/core/Grid';
-import IconButton from '@material-ui/core/IconButton';
-import PlayArrowRoundedIcon from '@material-ui/icons/PlayArrowRounded';
-import PauseRoundedIcon from '@material-ui/icons/PauseRounded';
-import Typography from '@material-ui/core/Typography';
-import * as React from 'react';
 import {
   EventData,
   SwipeableHandlers,
-  SwipeableOptions,
   useSwipeable
 } from 'react-swipeable'
+import Grid from '@material-ui/core/Grid';
+import Typography from '@material-ui/core/Typography';
+import * as React from 'react';
+import useMediaQuery from '@material-ui/core/useMediaQuery';
 
 // Components.
-import StyledButton from '../../elements/buttons/StyledButton';
 import SwipeNavigation from '../navigation/SwipeNavigation';
-import SwipeVideo from '../video/SwipeVideo';
 import StreamUser from '../../raveStream/user/StreamUser';
 import SwipeHelper from '../../elements/swipeHelper/SwipeHelper';
 
 // Enumerators.
 import { SwipeDirection } from '../../elements/swipeHelper/SwipeHelper.enum';
 import {
-  SwipeView,
-  VideoPosition
+  SwipeView
 } from '../SwipeStream.enum';
-import { ViewState } from '../../../utils/display/view/ViewState.enum';
 
 // Hooks.
-import { useAnalytics } from '../../../components/analytics/Analytics.provider';
+// import { useAnalytics } from '../../../components/analytics/Analytics.provider';
 import { useIsMounted } from '../../../utils/safety/useIsMounted.hook';
 
 // Interfaces.
-import { AnalyticsContextProps } from '../../../components/analytics/Analytics.interface';
+// import { AnalyticsContextProps } from '../../../components/analytics/Analytics.interface';
 import { RaveStream } from '../../raveStream/RaveStream.interface';
 import {
   SwipeVideoOverlayProps
@@ -126,6 +117,9 @@ const useStyles = makeStyles((theme: Theme) =>
       marginTop: theme.spacing(1),
       textAlign: 'center'
     },
+    productTitleContainerLarge: {
+      textAlign: 'left'
+    },
     swipeContainer: {
       padding: theme.spacing(0, 2, 0)
     },
@@ -141,26 +135,25 @@ const useStyles = makeStyles((theme: Theme) =>
  */
 const SwipeVideoOverlay: React.FC<SwipeVideoOverlayProps> = (props: SwipeVideoOverlayProps) => {
   // Define the analytics context and a tracking event.
-  const analytics: AnalyticsContextProps = useAnalytics() as AnalyticsContextProps;
+  // const analytics: AnalyticsContextProps = useAnalytics() as AnalyticsContextProps;
 
   // Define the component classes.
   const classes = useStyles(),
-        theme = useTheme();
+        theme = useTheme(),
+        largeScreen = useMediaQuery(theme.breakpoints.up('sm'));
 
   // Add the safety check to ensure the component is still mounted.
   const isMounted = useIsMounted();
 
   // Create a page viewed state to avoid duplicate views.
-  const [pageViewed, setPageViewed] = React.useState<boolean>(false);
+  // const [pageViewed, setPageViewed] = React.useState<boolean>(false);
 
-  const activeIndex: number = props.activeIndex || 0;
+  // const activeIndex: number = props.activeIndex || 0;
 
   const [unplayed, setUnplayed] = React.useState<boolean>(true);
 
   const [startX, setStartX] = React.useState<number>(0);
   const [startY, setStartY] = React.useState<number>(0);
-
-  const [overlayTimeout, setOverlayTimeout] = React.useState<ReturnType<typeof setTimeout> | void | null>(null);
 
   /**
    * Handles mouse down handling.
@@ -353,7 +346,13 @@ const SwipeVideoOverlay: React.FC<SwipeVideoOverlayProps> = (props: SwipeVideoOv
                 variant='white'
               />  
               <Grid container alignItems='center' justify='space-between'>
-                <Grid item className={clsx(classes.productTitleContainer)} xs={12}>
+                <Grid item
+                  xs={12}
+                  className={clsx(
+                    classes.productTitleContainer, {
+                      [classes.productTitleContainerLarge]: largeScreen
+                    }
+                  )}>
                   {props.review && props.review.product &&
                     <Typography className={clsx(classes.productTitle)}variant='h1'>
                       <Box className={clsx(classes.brandText)}>
@@ -364,14 +363,16 @@ const SwipeVideoOverlay: React.FC<SwipeVideoOverlayProps> = (props: SwipeVideoOv
                   }
                 </Grid>
               </Grid>
-              <Grid container justify='flex-start'>
-                <Grid item className={clsx(classes.swipeContainer)} xs={12}>
-                  <SwipeHelper
-                    direction={SwipeDirection.DOWN}
-                    title='Swipe down'
-                  />
+              {!largeScreen &&
+                <Grid container justify='flex-start'>
+                  <Grid item className={clsx(classes.swipeContainer)} xs={12}>
+                    <SwipeHelper
+                      direction={SwipeDirection.DOWN}
+                      title='Swipe down'
+                    />
+                  </Grid>
                 </Grid>
-              </Grid>
+              }
             </Grid>
             <Grid item xs={12}>
               <Grid
@@ -385,14 +386,16 @@ const SwipeVideoOverlay: React.FC<SwipeVideoOverlayProps> = (props: SwipeVideoOv
               </Grid>
             </Grid>
             <Grid item xs={12} className={clsx(classes.userContainer)}>
-              <Grid container>
-                <Grid item className={clsx(classes.swipeContainer)} xs={12}>
-                  <SwipeHelper
-                    direction={SwipeDirection.UP}
-                    title='Swipe up'
-                  />
+              {!largeScreen &&
+                <Grid container>
+                  <Grid item className={clsx(classes.swipeContainer)} xs={12}>
+                    <SwipeHelper
+                      direction={SwipeDirection.UP}
+                      title='Swipe up'
+                    />
+                  </Grid>
                 </Grid>
-              </Grid>
+              }
               <StreamUser play={handlePlay} playing={props.playing}/>
             </Grid>
           </React.Fragment>

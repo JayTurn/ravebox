@@ -17,17 +17,15 @@ import {
   createStyles,
   makeStyles,
   Theme,
-  useTheme,
-  withStyles
+  useTheme
 } from '@material-ui/core/styles';
 import Grid from '@material-ui/core/Grid';
 import IconButton from '@material-ui/core/IconButton';
-import PlayArrowRoundedIcon from '@material-ui/icons/PlayArrowRounded';
-import PauseRoundedIcon from '@material-ui/icons/PauseRounded';
 import * as React from 'react';
 import Typography from '@material-ui/core/Typography';
 import VolumeMuteRoundedIcon from '@material-ui/icons/VolumeMuteRounded';
 import VolumeOffRoundedIcon from '@material-ui/icons/VolumeOffRounded';
+import useMediaQuery from '@material-ui/core/useMediaQuery';
 
 // Actions.
 import {
@@ -53,7 +51,6 @@ import { Review } from '../../review/Review.interface';
 import { StreamUserProps } from './StreamUser.interface';
 
 // Utilities.
-import { CountIdentifier } from '../../../utils/display/numeric/Numeric';
 import {
   emptyReview,
   formatReviewProperties
@@ -69,6 +66,9 @@ const useStyles = makeStyles((theme: Theme) =>
       border: `1px solid ${theme.palette.common.white}`,
       height: theme.spacing(6),
       width: theme.spacing(6)
+    },
+    avatarContainerLarge: {
+      marginRight: theme.spacing(1)
     },
     avatarIcon: {
       border: `2px solid ${theme.palette.secondary.main}`,
@@ -130,43 +130,12 @@ const useStyles = makeStyles((theme: Theme) =>
       display: 'block',
       fontSize: '.65em',
       textAlign: 'center'
+    },
+    ytTextLarge: {
+      textAlign: 'left'
     }
   })
 );
-
-/**
- * Creates a statistics string.
- *
- * @param { PublicProfile } user - the user to generate statistics for.
- *
- * @return string
- */
-const formatStatistics: (
-  user?: PublicProfile
-) => string = (
-  user?: PublicProfile
-): string => {
-  let statistics: string = '';
-
-  if (user && user.statistics) {
-    const ravesCount: string = CountIdentifier(user.statistics.ravesCount)('rave');
-
-    statistics += ravesCount;
-
-    if (user.statistics.followers > 0) {
-      const followerCount: string = CountIdentifier(user.statistics.followers)('follower');
-
-      if (user.statistics.ravesCount > 0) {
-        statistics += ` | `;
-      }
-
-      statistics += `${followerCount}`;
-    }
-
-  }
-
-  return statistics;
-}
 
 /**
  * Renders the rave creator details in the stream.
@@ -175,14 +144,15 @@ const StreamUser: React.FC<StreamUserProps> = (props: StreamUserProps) => {
 
   // Define the component classes.
   const classes = useStyles(),
-        theme = useTheme();
+        theme = useTheme(),
+        largeScreen = useMediaQuery(theme.breakpoints.up('sm'));
 
   const firstLetter: string = props.review && props.review.user ?
     props.review.user.handle.substr(0,1) : 'R';
 
   const avatar: string | undefined = props.user ? getExternalAvatar(props.user) : undefined; 
 
-  const statistics: string = props.review ? formatStatistics(props.review.user) : '';
+  // const statistics: string = props.review ? formatStatistics(props.review.user) : '';
 
   // Formats the review event data for tracking purposes.
   const [eventData, setEventData] = React.useState<EventObject>(
@@ -242,10 +212,17 @@ const StreamUser: React.FC<StreamUserProps> = (props: StreamUserProps) => {
           item
           xs={12}
         >
-          <Grid container justify='center' alignItems='flex-end'>
+          <Grid container justify={largeScreen ? 'flex-start' : 'center'} alignItems={largeScreen ? 'center' : 'flex-end'}>
             <Grid item>
-              <Grid container alignItems='center' direction='column'>
-                <Grid item xs={12}>
+              <Grid container
+                alignItems={largeScreen ? 'flex-start' : 'center'}
+                direction={largeScreen ? 'row' : 'column'}
+              >
+                <Grid item xs={largeScreen ? undefined : 12}
+                  className={clsx({
+                    [classes.avatarContainerLarge]: largeScreen
+                  })}
+                >
                   {avatar ? (
                     <Avatar
                       alt={props.user.handle}
@@ -261,7 +238,7 @@ const StreamUser: React.FC<StreamUserProps> = (props: StreamUserProps) => {
                     </Avatar>
                   )}    
                 </Grid>
-                <Grid item className={clsx(classes.userDetailsContainer)} xs={12}>
+                <Grid item className={clsx(classes.userDetailsContainer)} xs={largeScreen ? undefined : 12}>
                   <Typography
                     className={clsx(classes.handleText)}
                     variant='body1'
@@ -270,7 +247,9 @@ const StreamUser: React.FC<StreamUserProps> = (props: StreamUserProps) => {
                     <React.Fragment>
                       {props.user.role === Role.YOUTUBE &&
                         <Box component='span' className={clsx(
-                          classes.ytText
+                          classes.ytText, {
+                            [classes.ytTextLarge] : largeScreen
+                          }
                         )}>
                           (via YouTube)
                         </Box>

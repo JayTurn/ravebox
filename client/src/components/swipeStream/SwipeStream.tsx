@@ -235,8 +235,15 @@ const SwipeStream: React.FC<SwipeStreamProps> = (props: SwipeStreamProps) => {
   */
   React.useEffect(() => {
     if (boxRef && !fullscreen && sf) {
-      sf.toggle();
+      sf.request();
       setFullscreen(true);
+    }
+
+    return () => {
+      if (fullscreen && sf) {
+        sf.exit();
+        setFullscreen(false);
+      }
     }
   }, [fullscreen, boxRef]);
 
