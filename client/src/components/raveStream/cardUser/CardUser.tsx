@@ -89,8 +89,7 @@ const CardUser: React.FC<CardUserProps> = (props: CardUserProps) => {
         theme = useTheme();
 
   const firstLetter: string = props.review && props.review.user ?
-    props.review.user.handle.substr(0,1) : 'R';
-
+    props.review.user.handle.substr(0, 1) : 'R';
 
   const {
     review

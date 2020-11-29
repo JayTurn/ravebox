@@ -15,14 +15,10 @@ import { connect } from 'react-redux';
 import {
   createStyles,
   makeStyles,
-  Theme,
-  useTheme,
-  withStyles
+  Theme
 } from '@material-ui/core/styles';
 import Grid from '@material-ui/core/Grid';
 import Player from 'react-player';
-import Typography from '@material-ui/core/Typography';
-import { TransitionGroup } from 'react-transition-group';
 import * as React from 'react';
 
 // Actions.
@@ -34,18 +30,15 @@ import {
 import PlaybackIcon from '../../elements/playbackIcon/PlaybackIcon';
 
 // Enumerators.
-import { ViewState } from '../../../utils/display/view/ViewState.enum';
 import {
-  SwipeView,
   VideoPosition
 } from '../SwipeStream.enum';
 
 // Hooks.
-import { useAnalytics } from '../../../components/analytics/Analytics.provider';
+// import { useAnalytics } from '../../../components/analytics/Analytics.provider';
 
 // Interfaces.
-import { AnalyticsContextProps } from '../../../components/analytics/Analytics.interface';
-import { Review } from '../../review/Review.interface';
+// import { AnalyticsContextProps } from '../../../components/analytics/Analytics.interface';
 import {
   SwipeVideoProps
 } from './SwipeVideo.interface';
@@ -156,7 +149,7 @@ const setVideoPosition: (
  */
 const SwipeVideo: React.FC<SwipeVideoProps> = (props: SwipeVideoProps) => {
   // Define the analytics context and a tracking event.
-  const analytics: AnalyticsContextProps = useAnalytics() as AnalyticsContextProps;
+  // const analytics: AnalyticsContextProps = useAnalytics() as AnalyticsContextProps;
 
   // Define the player reference to be used for video controls.
   const playerRef = React.useRef<Player>(null);
@@ -170,11 +163,10 @@ const SwipeVideo: React.FC<SwipeVideoProps> = (props: SwipeVideoProps) => {
   const height: string = `calc(100vw * .5625)`;
 
   // Define the component classes.
-  const classes = useStyles(),
-        theme = useTheme();
+  const classes = useStyles();
 
   // Create a page viewed state to avoid duplicate views.
-  const [pageViewed, setPageViewed] = React.useState<boolean>(false);
+  // const [pageViewed, setPageViewed] = React.useState<boolean>(false);
 
   // Define a first load property to show the thumbnail.
   const [unplayed, setUnplayed] = React.useState<boolean>(true);
@@ -222,20 +214,6 @@ const SwipeVideo: React.FC<SwipeVideoProps> = (props: SwipeVideoProps) => {
   ) => void = (
   ): void => {
     setLoading(false);
-  }
-
-  /**
-   * Handles the video playback.
-   */
-  const handlePlayback: (
-  ) => void = (
-  ): void => {
-    if (playerRef) {
-      setConfig({
-        ...config,
-        playing: !config.playing
-      });
-    }
   }
 
   /**
@@ -315,6 +293,7 @@ const SwipeVideo: React.FC<SwipeVideoProps> = (props: SwipeVideoProps) => {
       const current: Player | null = playerRef.current;
 
       if (current) {
+        console.log(current);
         //current.seekTo(props.review.startTime || 0);
         //const pl: any = current.getInternalPlayer();
 

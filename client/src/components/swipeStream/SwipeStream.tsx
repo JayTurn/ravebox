@@ -15,19 +15,14 @@ import { connect } from 'react-redux';
 import {
   createStyles,
   makeStyles,
-  Theme,
-  useTheme,
-  withStyles
+  Theme
 } from '@material-ui/core/styles';
 import { frontloadConnect } from 'react-frontload';
-import Grid from '@material-ui/core/Grid';
 import { Helmet } from 'react-helmet';
 import { helmetJsonLdProp } from 'react-schemaorg';
-import LinearProgress from '@material-ui/core/LinearProgress';
 import * as React from 'react';
-import { Route } from 'react-router-dom';
-import { Transition } from 'react-transition-group';
-import useMediaQuery from '@material-ui/core/useMediaQuery';
+import screenfull from 'screenfull';
+// import useMediaQuery from '@material-ui/core/useMediaQuery';
 import { withRouter } from 'react-router';
 
 // Actions.
@@ -41,32 +36,26 @@ import {
 } from '../../store/loading/Actions';
 
 // Components.
-import StyledButton from '../elements/buttons/StyledButton';
 import StreamProductDetails from '../raveStream/productDetails/StreamProductDetails';
 import StreamReviewDetails from '../raveStream/reviewDetails/StreamReviewDetails';
 import SwipeVideoController from './videoController/SwipeVideoController';
 import LoadingRavebox from '../placeholders/loadingRavebox/LoadingRavebox';
 
 // Enumerators.
-import { LogoColor } from '../logo/Logo.enum';
-import { RaveStreamType } from '../raveStream/RaveStream.enum';
+// import { RaveStreamType } from '../raveStream/RaveStream.enum';
 import {
-  RequestType,
-  RetrievalStatus
+  RequestType
 } from '../../utils/api/Api.enum';
 import { SwipeView } from './SwipeStream.enum';
-import { VideoType } from '../review/Review.enum';
-import { ViewState } from '../../utils/display/view/ViewState.enum';
 
 // Hooks.
-import { useAnalytics } from '../analytics/Analytics.provider';
+// import { useAnalytics } from '../analytics/Analytics.provider';
 import {
   useRetrieveRaveStreamByURL 
 } from '../raveStream/useRetrieveRaveStreamByURL.hook';
-import { useIsMounted } from '../../utils/safety/useIsMounted.hook';
 
 // Interfaces.
-import { AnalyticsContextProps } from '../analytics/Analytics.interface';
+// import { AnalyticsContextProps } from '../analytics/Analytics.interface';
 import { Product } from '../product/Product.interface';
 import {
   Review as ReviewSchema,
@@ -84,7 +73,7 @@ import {
 
 // Utilities.
 import {
-  buildContextPath,
+  // buildContextPath,
   buildRaveStreamPath,
   buildReviewSchema,
   buildVideoSchema,
@@ -147,56 +136,6 @@ const useStyles = makeStyles((theme: Theme) =>
 );
 
 /**
- * Formats the url.
- */
-const formatURL: (
-  params: RaveStreamURLParams
-) => (
-  ravePath: string
-) => string = (
-  params: RaveStreamURLParams
-) => (
-  ravePath: string
-): string => {
-  let path: string = `/stream/${params.streamType}`;
-
-  switch (params.streamType) {
-    case RaveStreamType.COLLECTON:
-      if (params.firstPath) {
-        path += `/${params.firstPath}`;
-      }
-      if (params.secondPath) {
-        path += `/${params.secondPath}`;
-      }
-      if (params.thirdPath) {
-        path += `/${params.thirdPath}`;
-      }
-      break;
-    case RaveStreamType.PRODUCT:
-      if (params.firstPath) {
-        path += `/${params.firstPath}`;
-      }
-
-      if (params.secondPath) {
-        path += `/${params.secondPath}`;
-      }
-      break;
-    case RaveStreamType.PRODUCT_TYPE:
-      if (params.firstPath) {
-        path += `/${params.firstPath}`;
-      }
-      break;
-    default:
-  }
-
-  if (ravePath) {
-    path += `/${ravePath}`;
-  }
-
-  return path;
-}
-
-/**
  * Loads the rave stream from the api before rendering.
  * 
  * @param { SwipeStreamProps } props - the swipe stream properties.
@@ -232,17 +171,24 @@ const frontloadProductStream = async (props: SwipeStreamProps) => {
  */
 const SwipeStream: React.FC<SwipeStreamProps> = (props: SwipeStreamProps) => {
   // Define the analytics context and a tracking event.
-  const analytics: AnalyticsContextProps = useAnalytics() as AnalyticsContextProps;
+  // const analytics: AnalyticsContextProps = useAnalytics() as AnalyticsContextProps;
 
   // Define the component classes.
-  const classes = useStyles(),
-        theme = useTheme(),
-        largeScreen = useMediaQuery(theme.breakpoints.up('sm'));
+  const classes = useStyles();
+        // theme = useTheme();
+  const sf: screenfull.Screenfull | null = screenfull.isEnabled
+    ? screenfull as screenfull.Screenfull
+    : null;
+
+  // Define the reference to the swipe container for full screen display.
+  const boxRef = React.useRef<Element>(null);
+
+  const [fullscreen, setFullscreen] = React.useState<boolean>(false);
 
   const {
     isMounted,
     loadRave,
-    raveStream,
+    // raveStream,
     raveStreamStatus
   } = useRetrieveRaveStreamByURL({
     existing: props.raveStream ? props.raveStream : undefined,
@@ -284,6 +230,16 @@ const SwipeStream: React.FC<SwipeStreamProps> = (props: SwipeStreamProps) => {
     }
   }), [props.history, props.backPath]);
 
+ /**
+  * Intercept the back button to take us back to the stored back path.
+  */
+  React.useEffect(() => {
+    if (boxRef && !fullscreen && sf) {
+      sf.toggle();
+      setFullscreen(true);
+    }
+  }, [fullscreen, boxRef]);
+
 
   /**
    * Track the stream view.
@@ -300,7 +256,7 @@ const SwipeStream: React.FC<SwipeStreamProps> = (props: SwipeStreamProps) => {
       if (ravePath !== props.location.pathname) {
         loadRave(raveURL)(props.match.params);
 
-        const contextPath: string = buildContextPath(props.match.params.streamType)(props.match.params); 
+        // const contextPath: string = buildContextPath(props.match.params.streamType)(props.match.params);
 
         if (ravePath) {
           props.history.push(props.location.pathname);
@@ -375,7 +331,7 @@ const SwipeStream: React.FC<SwipeStreamProps> = (props: SwipeStreamProps) => {
   }
 
   return (
-    <Box className={clsx(classes.container)}>
+    <Box className={clsx(classes.container)} ref={boxRef}>
       {props.raveStream && props.review && props.review.user && props.review.product &&
         <Helmet
           script={schemas}

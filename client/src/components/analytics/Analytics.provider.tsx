@@ -70,8 +70,8 @@ export const AnalyticsProvider = (
       } else {
         reject();
       }
-    })
-  }
+    });
+  };
 
   /**
    * Creates the user to be tracked.

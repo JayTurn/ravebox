@@ -67,7 +67,7 @@ services:
     build: client/
     command: yarn start
     container_name: client
-    image: jayturn/react:1.4.3
+    image: jayturn/react:1.4.4
     depends_on:
       - mongodb
       - node_server
