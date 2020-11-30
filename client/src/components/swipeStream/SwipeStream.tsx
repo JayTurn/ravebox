@@ -21,7 +21,6 @@ import { frontloadConnect } from 'react-frontload';
 import { Helmet } from 'react-helmet';
 import { helmetJsonLdProp } from 'react-schemaorg';
 import * as React from 'react';
-import screenfull from 'screenfull';
 // import useMediaQuery from '@material-ui/core/useMediaQuery';
 import { withRouter } from 'react-router';
 
@@ -176,11 +175,6 @@ const SwipeStream: React.FC<SwipeStreamProps> = (props: SwipeStreamProps) => {
   // Define the component classes.
   const classes = useStyles();
         // theme = useTheme();
-  const sf: screenfull.Screenfull | null = screenfull.isEnabled
-    ? screenfull as screenfull.Screenfull
-    : null;
-
-  const [fullscreen, setFullscreen] = React.useState<boolean>(false);
 
   const {
     isMounted,
@@ -226,24 +220,6 @@ const SwipeStream: React.FC<SwipeStreamProps> = (props: SwipeStreamProps) => {
       }
     }
   }), [props.history, props.backPath]);
-
- /**
-  * Intercept the back button to take us back to the stored back path.
-  */
-  React.useEffect(() => {
-    if (!fullscreen && sf) {
-      sf.request();
-      setFullscreen(true);
-    }
-
-    return () => {
-      if (fullscreen && sf) {
-        sf.exit();
-        setFullscreen(false);
-      }
-    }
-  }, [fullscreen]);
-
 
   /**
    * Track the stream view.

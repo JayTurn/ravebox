@@ -15,11 +15,13 @@ import { connect } from 'react-redux';
 import {
   createStyles,
   makeStyles,
-  Theme
+  Theme,
+  useTheme
 } from '@material-ui/core/styles';
 import Grid from '@material-ui/core/Grid';
 import Player from 'react-player';
 import * as React from 'react';
+import useMediaQuery from '@material-ui/core/useMediaQuery';
 
 // Actions.
 import {
@@ -160,10 +162,13 @@ const SwipeVideo: React.FC<SwipeVideoProps> = (props: SwipeVideoProps) => {
   //const height: string = videoRatio !== 0
     //? `calc(100vw / ${videoRatio})`
     //: `calc(100vw * .5625)`; 
-  const height: string = `calc(100vw * .5625)`;
+  const height: string = `calc(100vw * .5625)`,
+        width: string = `calc(100vh / .5625)`;
 
   // Define the component classes.
-  const classes = useStyles();
+  const classes = useStyles(),
+        theme = useTheme(),
+        largeScreen = useMediaQuery(theme.breakpoints.up('sm'));
 
   // Create a page viewed state to avoid duplicate views.
   // const [pageViewed, setPageViewed] = React.useState<boolean>(false);
@@ -174,19 +179,21 @@ const SwipeVideo: React.FC<SwipeVideoProps> = (props: SwipeVideoProps) => {
 
   const [ready, setReady] = React.useState<boolean>(false);
 
+  const [landscape, setLandscape] = React.useState<boolean>(largeScreen); 
+
   // Define the player controls.
   const [config, setConfig] = React.useState({
     controls: false,
     file: {
       forceHLS: true
     },
-    height: height,
+    height: landscape ? '100%' : height,
     muted: props.muted ? true : false,
     playing: props.active && props.playing,
     playsinline: true,
     url: props.review.videoURL,
     volume: 1,
-    width: 'calc(100vw)'
+    width: landscape ? width : 'calc(100vw)'
   });
 
   /**
@@ -308,6 +315,32 @@ const SwipeVideo: React.FC<SwipeVideoProps> = (props: SwipeVideoProps) => {
    * Update the playing state.
    */
   React.useEffect(() => {
+    // Set the portrait screen size if we're viewing a smaller screen.
+    if (landscape && !largeScreen) {
+      setConfig({
+        ...config,
+        height: height,
+        width: `calc(100vw)`
+      });
+      setLandscape(false);
+    }
+
+    // Set the landscape screen size if we're viewing a larger screen.
+    if (!landscape && largeScreen) {
+      setConfig({
+        ...config,
+        height: 'calc(100vh)',
+        width: width
+      });
+      setLandscape(true);
+    }
+
+  }, [landscape, largeScreen]);
+
+  /**
+   * Update the playing state.
+   */
+  React.useEffect(() => {
 
     if (!playerRef || !playerRef.current) {
       return;
@@ -377,10 +410,15 @@ const SwipeVideo: React.FC<SwipeVideoProps> = (props: SwipeVideoProps) => {
         container
         alignItems='center'
       >
-        <Grid item xs={12}>
+        <Grid item xs={12} style={{overflow: 'hidden'}}>
           <Box
             className={clsx(classes.videoBox)}
-            style={{height: height}}
+            style={{
+              height: landscape ? 'calc(100vh)' : height,
+              margin: 'auto',
+              overflow: 'hidden',
+              width: landscape ? width : 'calc(100vw)'
+            }}
           >
             <Player
               {...config}
