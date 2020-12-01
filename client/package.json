@@ -1,6 +1,6 @@
 {
-  "name": "RaveboxUI",
-  "version": "0.0.1",
+  "name": "ravebox",
+  "version": "2.0.0-alpha",
   "private": true,
   "browserslist": {
     "production": [
@@ -63,6 +63,7 @@
     "rxjs": "6.6.3",
     "rxjs-compat": "6.6.3",
     "schema-dts": "0.7.1",
+    "screenfull": "5.0.2",
     "serialize-javascript": "5.0.0",
     "typesafe-actions": "5.1.0",
     "universal-cookie": "4.0.3",

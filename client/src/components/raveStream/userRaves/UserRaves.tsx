@@ -85,12 +85,13 @@ const UserRaves: React.FC<UserRavesProps> = (props: UserRavesProps) => {
         props.updateHeight(ref.current.clientHeight + 30);
       }
     }
-  }
+  };
 
   const {
     raveStreams,
     raveStreamsStatus
   } = useRetrieveUserRaveStreams({
+    exclude: props.exclude,
     user: props.user,
     updateHeight: handleHeightUpdate
   });
@@ -112,6 +113,10 @@ const UserRaves: React.FC<UserRavesProps> = (props: UserRavesProps) => {
       if (raveStreams && raveStreams.length !== ravesCount) {
         setRavesCount(raveStreams.length);
         handleHeightUpdate();
+
+        if (props.updateRaveStreamCount) {
+          props.updateRaveStreamCount(raveStreams.length);
+        }
       }
     }
 

@@ -82,7 +82,7 @@ export default combineReducers<VideoStore, VideoAction>({
    * @return VideoProgress
    */
   muted: (
-    state: boolean = true,
+    state: boolean = false,
     action: VideoAction
   ) => {
     // Update the configuration based on the redux action triggered.

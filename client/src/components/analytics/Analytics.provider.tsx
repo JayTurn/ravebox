@@ -57,21 +57,21 @@ export const AnalyticsProvider = (
         ReactGA.initialize(`${process.env.RAZZLE_GA_KEY}`);
 
         if (process.env.RAZZLE_ENVIRONMENT !== 'local') {
-          ReactPixel = require('react-facebook-pixel');
+          //ReactPixel = require('react-facebook-pixel');
 
           // Initialize facebook pixel.
-          ReactPixel.default.init(`${process.env.RAZZLE_FB_KEY}`, undefined, {
-            autoConfig: true,
-            debug: false
-          });
+          //ReactPixel.default.init(`${process.env.RAZZLE_FB_KEY}`, undefined, {
+            //autoConfig: true,
+            //debug: false
+          //});
         }
 
         resolve(amplitudeInstance);
       } else {
         reject();
       }
-    })
-  }
+    });
+  };
 
   /**
    * Creates the user to be tracked.

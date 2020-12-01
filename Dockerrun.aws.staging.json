@@ -24,7 +24,10 @@
     {
       "name": "api",
       "image": "jayturn/node-server:1.3.4",
-      "command": ["yarn", "start:staging"],
+      "command": [
+        "yarn",
+        "start:staging"
+      ],
       "essential": true,
       "memoryReservation": 512,
       "portMappings": [
@@ -42,8 +45,11 @@
     },
     {
       "name": "client",
-      "image": "jayturn/react:1.4.3",
-      "command": ["yarn", "start:staging"],
+      "image": "jayturn/react:1.4.4",
+      "command": [
+        "yarn",
+        "start:staging"
+      ],
       "essential": true,
       "memoryReservation": 512,
       "portMappings": [

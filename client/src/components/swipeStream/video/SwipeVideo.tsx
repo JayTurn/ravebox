@@ -16,14 +16,12 @@ import {
   createStyles,
   makeStyles,
   Theme,
-  useTheme,
-  withStyles
+  useTheme
 } from '@material-ui/core/styles';
 import Grid from '@material-ui/core/Grid';
 import Player from 'react-player';
-import Typography from '@material-ui/core/Typography';
-import { TransitionGroup } from 'react-transition-group';
 import * as React from 'react';
+import useMediaQuery from '@material-ui/core/useMediaQuery';
 
 // Actions.
 import {
@@ -34,18 +32,15 @@ import {
 import PlaybackIcon from '../../elements/playbackIcon/PlaybackIcon';
 
 // Enumerators.
-import { ViewState } from '../../../utils/display/view/ViewState.enum';
 import {
-  SwipeView,
   VideoPosition
 } from '../SwipeStream.enum';
 
 // Hooks.
-import { useAnalytics } from '../../../components/analytics/Analytics.provider';
+// import { useAnalytics } from '../../../components/analytics/Analytics.provider';
 
 // Interfaces.
-import { AnalyticsContextProps } from '../../../components/analytics/Analytics.interface';
-import { Review } from '../../review/Review.interface';
+// import { AnalyticsContextProps } from '../../../components/analytics/Analytics.interface';
 import {
   SwipeVideoProps
 } from './SwipeVideo.interface';
@@ -156,7 +151,7 @@ const setVideoPosition: (
  */
 const SwipeVideo: React.FC<SwipeVideoProps> = (props: SwipeVideoProps) => {
   // Define the analytics context and a tracking event.
-  const analytics: AnalyticsContextProps = useAnalytics() as AnalyticsContextProps;
+  // const analytics: AnalyticsContextProps = useAnalytics() as AnalyticsContextProps;
 
   // Define the player reference to be used for video controls.
   const playerRef = React.useRef<Player>(null);
@@ -167,14 +162,16 @@ const SwipeVideo: React.FC<SwipeVideoProps> = (props: SwipeVideoProps) => {
   //const height: string = videoRatio !== 0
     //? `calc(100vw / ${videoRatio})`
     //: `calc(100vw * .5625)`; 
-  const height: string = `calc(100vw * .5625)`;
+  const height: string = `calc(100vw * .5625)`,
+        width: string = `calc(100vh / .5625)`;
 
   // Define the component classes.
   const classes = useStyles(),
-        theme = useTheme();
+        theme = useTheme(),
+        largeScreen = useMediaQuery(theme.breakpoints.up('sm'));
 
   // Create a page viewed state to avoid duplicate views.
-  const [pageViewed, setPageViewed] = React.useState<boolean>(false);
+  // const [pageViewed, setPageViewed] = React.useState<boolean>(false);
 
   // Define a first load property to show the thumbnail.
   const [unplayed, setUnplayed] = React.useState<boolean>(true);
@@ -182,19 +179,21 @@ const SwipeVideo: React.FC<SwipeVideoProps> = (props: SwipeVideoProps) => {
 
   const [ready, setReady] = React.useState<boolean>(false);
 
+  const [landscape, setLandscape] = React.useState<boolean>(largeScreen); 
+
   // Define the player controls.
   const [config, setConfig] = React.useState({
     controls: false,
     file: {
       forceHLS: true
     },
-    height: height,
-    muted: false,
+    height: landscape ? '100%' : height,
+    muted: props.muted ? true : false,
     playing: props.active && props.playing,
     playsinline: true,
     url: props.review.videoURL,
     volume: 1,
-    width: 'calc(100vw)'
+    width: landscape ? width : 'calc(100vw)'
   });
 
   /**
@@ -222,20 +221,6 @@ const SwipeVideo: React.FC<SwipeVideoProps> = (props: SwipeVideoProps) => {
   ) => void = (
   ): void => {
     setLoading(false);
-  }
-
-  /**
-   * Handles the video playback.
-   */
-  const handlePlayback: (
-  ) => void = (
-  ): void => {
-    if (playerRef) {
-      setConfig({
-        ...config,
-        playing: !config.playing
-      });
-    }
   }
 
   /**
@@ -315,6 +300,7 @@ const SwipeVideo: React.FC<SwipeVideoProps> = (props: SwipeVideoProps) => {
       const current: Player | null = playerRef.current;
 
       if (current) {
+        console.log(current);
         //current.seekTo(props.review.startTime || 0);
         //const pl: any = current.getInternalPlayer();
 
@@ -324,6 +310,32 @@ const SwipeVideo: React.FC<SwipeVideoProps> = (props: SwipeVideoProps) => {
       }
     }
   };
+
+  /**
+   * Update the playing state.
+   */
+  React.useEffect(() => {
+    // Set the portrait screen size if we're viewing a smaller screen.
+    if (landscape && !largeScreen) {
+      setConfig({
+        ...config,
+        height: height,
+        width: `calc(100vw)`
+      });
+      setLandscape(false);
+    }
+
+    // Set the landscape screen size if we're viewing a larger screen.
+    if (!landscape && largeScreen) {
+      setConfig({
+        ...config,
+        height: 'calc(100vh)',
+        width: width
+      });
+      setLandscape(true);
+    }
+
+  }, [landscape, largeScreen]);
 
   /**
    * Update the playing state.
@@ -398,10 +410,15 @@ const SwipeVideo: React.FC<SwipeVideoProps> = (props: SwipeVideoProps) => {
         container
         alignItems='center'
       >
-        <Grid item xs={12}>
+        <Grid item xs={12} style={{overflow: 'hidden'}}>
           <Box
             className={clsx(classes.videoBox)}
-            style={{height: height}}
+            style={{
+              height: landscape ? 'calc(100vh)' : height,
+              margin: 'auto',
+              overflow: 'hidden',
+              width: landscape ? width : 'calc(100vw)'
+            }}
           >
             <Player
               {...config}
