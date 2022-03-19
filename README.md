@@ -26,7 +26,7 @@ Videos were then served behind a CDN on AWS CloudFront.
 
 ## Where are the tests? ##
 
-There are no tests. Aaaarrgh! I didn't include any tests because the purpose of Ravebox was to create a prototype to test a hypothesis in the market. If the platform took off I would have introduced tests.
+There are no tests. Aaaarrgh! Various shortcuts were made because the purpose of Ravebox was to create a prototype to test a hypothesis in the market. If the platform took off I would have introduced tests.
 
 ## Will this run if I attempt to build it? ##
 
