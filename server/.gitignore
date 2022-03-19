@@ -40,3 +40,9 @@ Thumbs.db
 
 # Ignore built ts files
 dist/**/*
+
+# Ignore settings files.
+.env.*
+src/config/environment/local.ts
+src/config/environment/production.ts
+src/config/environment/staging.ts
